@@ -22,12 +22,13 @@ defmodule LivePlaygroundWeb.ModalsLive do
     <div class="mt-10 space-x-4">
       <%= live_patch("Centered with single action",
           to: Routes.modals_path(@socket, :single_action),
-          class: tw_button_classes()
+          class: tw_button_classes(:secondary)
         ) %>
     </div>
     <%= if @live_action == :single_action do %>
       <%= live_modal Components.SingleActionComponent,
-        return_to: Routes.live_path(@socket, __MODULE__) %>
+        return_to: Routes.live_path(@socket, __MODULE__),
+        close_btn: false %>
     <% end %>
     """
   end

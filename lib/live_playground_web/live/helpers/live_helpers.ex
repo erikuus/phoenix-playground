@@ -9,7 +9,8 @@ defmodule LivePlaygroundWeb.Helpers.LiveHelpers do
       id: :modal,
       component: component,
       opts: opts,
-      return_to: Keyword.fetch!(opts, :return_to)
+      return_to: Keyword.fetch!(opts, :return_to),
+      close_btn: Keyword.fetch!(opts, :close_btn)
     )
   end
 end
