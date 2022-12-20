@@ -3,12 +3,12 @@ defmodule LivePlaygroundWeb.Helpers.TailwindHelpers do
     "
       inline-flex
       items-center
+      justify-center
       border
       font-medium
       shadow-sm
       focus:outline-none
       focus:ring-2
-      focus:ring-indigo-500
       focus:ring-offset-2
       #{get_button_type_classes(type)}
       #{get_button_size_classes(size)}
@@ -18,8 +18,27 @@ defmodule LivePlaygroundWeb.Helpers.TailwindHelpers do
   defp get_button_type_classes(type) do
     Keyword.fetch!(
       [
-        primary: "border-transparent text-white bg-indigo-600 hover:bg-indigo-700",
-        secondary: "border-gray-300 text-gray-700 bg-white hover:bg-gray-50"
+        primary: "
+          border-transparent
+          text-white
+          bg-indigo-600
+          hover:bg-indigo-700
+          focus:ring-indigo-500
+        ",
+        secondary: "
+          border-gray-300
+          text-gray-700
+          bg-white
+          hover:bg-gray-50
+          focus:ring-indigo-500
+        ",
+        dangerous: "
+          border-transparent
+          text-white
+          bg-red-600
+          hover:bg-red-700
+          focus:ring-red-500
+        "
       ],
       type
     )
@@ -38,22 +57,10 @@ defmodule LivePlaygroundWeb.Helpers.TailwindHelpers do
     )
   end
 
-  def tw_modal_content_classes() do
+  def tw_icon_classes() do
     "
-      relative
-      transform
-      overflow-hidden
-      rounded-lg
-      bg-white
-      px-4
-      pt-5
-      pb-4
-      text-left
-      shadow-xl
-      transition-all
-      sm:my-8
-      sm:w-full
-      sm:max-w-sm sm:p-6
+      text-gray-400
+      hover:text-gray-500
     "
   end
 end

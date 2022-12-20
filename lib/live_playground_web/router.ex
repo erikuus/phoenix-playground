@@ -19,6 +19,10 @@ defmodule LivePlaygroundWeb.Router do
 
     live "/modals", ModalsLive
     live "/modals/single-action", ModalsLive, :single_action
+    live "/modals/wide-buttons", ModalsLive, :wide_buttons
+    live "/modals/left-buttons", ModalsLive, :left_buttons
+    live "/modals/right-buttons", ModalsLive, :right_buttons
+    live "/modals/gray-footer", ModalsLive, :gray_footer
 
     get "/", PageController, :index
   end

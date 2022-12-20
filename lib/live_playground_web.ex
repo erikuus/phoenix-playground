@@ -50,6 +50,7 @@ defmodule LivePlaygroundWeb do
       import LivePlaygroundWeb.Helpers.LiveHelpers
       import LivePlaygroundWeb.Helpers.TailwindHelpers
       import LivePlaygroundWeb.Helpers.IconHelpers
+      import LivePlaygroundWeb.Helpers.DevHelpers
 
       unquote(view_helpers())
     end
