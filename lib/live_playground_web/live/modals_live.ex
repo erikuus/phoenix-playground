@@ -18,8 +18,8 @@ defmodule LivePlaygroundWeb.ModalsLive do
   end
 
   def render(assigns) do
-    ~L"""
-    <div class="mt-6 space-x-0 space-y-3 xl:space-x-3 xl:space-y-0">
+    ~H"""
+    <div class="my-10 space-x-0 space-y-3 xl:space-x-3 xl:space-y-0">
       <%= open_modal_btn("Centered with single action", @socket, :single_action) %>
       <%= open_modal_btn("Centered with wide buttons", @socket, :wide_buttons) %>
       <%= open_modal_btn("Left-aligned buttons", @socket, :left_buttons) %>
@@ -28,13 +28,25 @@ defmodule LivePlaygroundWeb.ModalsLive do
     </div>
 
     <%= show_live_modal(@socket, @live_action) %>
+
+    <!-- start hiding from live code -->
+    <div class="space-y-6">
+      <%= raw(live_code("lib/live_playground_web/live/helpers/live_helpers.ex", "def live_modal", "end")) %>
+      <%= raw(live_code("lib/live_playground_web.ex", "def live_component", "end")) %>
+      <%= raw(live_code("lib/live_playground_web/live/components/modal_component.ex")) %>
+      <%= raw(live_code("lib/live_playground_web.ex", "def live_view", "end")) %>
+      <%= raw(live_code("lib/live_playground_web/router.ex", "scope \"/\", LivePlaygroundWeb", "end")) %>
+      <%= raw(live_code("lib/live_playground_web/live/modals_live.ex")) %>
+      <%= raw(live_code("lib/live_playground_web/live/components/modal_content/single_action_component.ex")) %>
+    </div>
+    <!-- end hiding from live code -->
     """
   end
 
   defp open_modal_btn(text, socket, action) do
     live_patch(text,
       to: Routes.modals_path(socket, action),
-      class: "w-full xl:w-auto #{tw_button_classes(:secondary)}"
+      class: "w-full xl:w-auto #{tw_button_classes()}"
     )
   end
 
