@@ -19,7 +19,7 @@ defmodule LivePlaygroundWeb.Helpers.LiveHelpers do
       <div class="px-4 py-5 sm:px-6 text-gray-400 font-mono">
         #{filename}
       </div>
-      <div class="bg-gray-50 px-4 py-5 sm:p-6 select-all">
+      <div class="bg-[#f8f8f8] px-4 py-5 sm:p-6 select-all">
         #{read_file(filename) |> split_code(starting, ending) |> clean_code() |> Makeup.highlight()}
       </div>
     </div>
