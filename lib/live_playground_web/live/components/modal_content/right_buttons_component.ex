@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.Components.ModalContent.RightButtonsComponent do
+defmodule LivePlaygroundWeb.Live.ModalContent.RightButtonsComponent do
   use LivePlaygroundWeb, :live_component
 
   def render(assigns) do

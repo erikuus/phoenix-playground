@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.Helpers.DevHelpers do
+defmodule LivePlaygroundWeb.DevHelpers do
   def lorem_ipsum_words(count) do
     String.split(lorem_ipsum(), " ", trim: true)
     |> Enum.slice(0..(count - 1))

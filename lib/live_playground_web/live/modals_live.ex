@@ -1,7 +1,7 @@
 defmodule LivePlaygroundWeb.ModalsLive do
   use LivePlaygroundWeb, :live_view
 
-  alias LivePlaygroundWeb.Components.ModalContent
+  alias LivePlaygroundWeb.Live.ModalContent
 
   def mount(_params, _session, socket) do
     socket =
@@ -31,7 +31,7 @@ defmodule LivePlaygroundWeb.ModalsLive do
 
     <!-- start hiding from live code -->
     <div class="space-y-6">
-      <%= raw(live_code("lib/live_playground_web/live/helpers/live_helpers.ex", "def live_modal", "end")) %>
+      <%= raw(live_code("lib/live_playground_web/helpers/live_helpers.ex", "def live_modal", "end")) %>
       <%= raw(live_code("lib/live_playground_web.ex", "def live_component", "end")) %>
       <%= raw(live_code("lib/live_playground_web/live/components/modal_component.ex")) %>
       <%= raw(live_code("lib/live_playground_web.ex", "def live_view", "end")) %>

@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.Components.ModalContent.GrayFooterComponent do
+defmodule LivePlaygroundWeb.Live.ModalContent.GrayFooterComponent do
   use LivePlaygroundWeb, :live_component
 
   def render(assigns) do

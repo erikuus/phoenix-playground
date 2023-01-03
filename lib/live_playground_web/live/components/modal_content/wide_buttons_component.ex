@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.Components.ModalContent.WideButtonsComponent do
+defmodule LivePlaygroundWeb.Live.ModalContent.WideButtonsComponent do
   use LivePlaygroundWeb, :live_component
 
   def render(assigns) do

@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.Components.ModalContent.SingleActionComponent do
+defmodule LivePlaygroundWeb.Live.ModalContent.SingleActionComponent do
   use LivePlaygroundWeb, :live_component
 
   def render(assigns) do

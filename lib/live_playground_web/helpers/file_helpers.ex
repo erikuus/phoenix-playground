@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.Helpers.FileHelper do
+defmodule LivePlaygroundWeb.FileHelpers do
   def read_file(filename) do
     Path.expand("./")
     |> Path.join(filename)

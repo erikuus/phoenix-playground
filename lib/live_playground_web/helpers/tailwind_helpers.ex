@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.Helpers.TailwindHelpers do
+defmodule LivePlaygroundWeb.TailwindHelpers do
   def tw_button_classes(type \\ :primary, size \\ :md) do
     "
       inline-flex

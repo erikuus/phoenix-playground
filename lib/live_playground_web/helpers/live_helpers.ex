@@ -1,10 +1,10 @@
-defmodule LivePlaygroundWeb.Helpers.LiveHelpers do
+defmodule LivePlaygroundWeb.LiveHelpers do
   import Phoenix.LiveView.Helpers
-  import LivePlaygroundWeb.Helpers.FileHelper
+  import LivePlaygroundWeb.FileHelpers
 
   def live_modal(component, opts, close_opts \\ %{capture_close: true, show_close_btn: false}) do
     live_component(
-      LivePlaygroundWeb.Components.ModalComponent,
+      LivePlaygroundWeb.Live.ModalComponent,
       id: :modal,
       component: component,
       opts: opts,

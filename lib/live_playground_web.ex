@@ -36,7 +36,8 @@ defmodule LivePlaygroundWeb do
       import Phoenix.Controller,
         only: [get_flash: 1, get_flash: 2, view_module: 1, view_template: 1]
 
-      import LivePlaygroundWeb.Helpers.TailwindHelpers
+      import LivePlaygroundWeb.TailwindHelpers
+      import LivePlaygroundWeb.IconHelpers
 
       unquote(view_helpers())
     end
@@ -47,10 +48,10 @@ defmodule LivePlaygroundWeb do
       use Phoenix.LiveView,
         layout: {LivePlaygroundWeb.LayoutView, "live.html"}
 
-      import LivePlaygroundWeb.Helpers.LiveHelpers
-      import LivePlaygroundWeb.Helpers.TailwindHelpers
-      import LivePlaygroundWeb.Helpers.IconHelpers
-      import LivePlaygroundWeb.Helpers.DevHelpers
+      import LivePlaygroundWeb.LiveHelpers
+      import LivePlaygroundWeb.TailwindHelpers
+      import LivePlaygroundWeb.IconHelpers
+      import LivePlaygroundWeb.DevHelpers
 
       unquote(view_helpers())
     end
@@ -60,8 +61,8 @@ defmodule LivePlaygroundWeb do
     quote do
       use Phoenix.LiveComponent
 
-      import LivePlaygroundWeb.Helpers.TailwindHelpers
-      import LivePlaygroundWeb.Helpers.IconHelpers
+      import LivePlaygroundWeb.TailwindHelpers
+      import LivePlaygroundWeb.IconHelpers
 
       unquote(view_helpers())
     end
@@ -70,6 +71,9 @@ defmodule LivePlaygroundWeb do
   def component do
     quote do
       use Phoenix.Component
+
+      import LivePlaygroundWeb.TailwindHelpers
+      import LivePlaygroundWeb.IconHelpers
 
       unquote(view_helpers())
     end
