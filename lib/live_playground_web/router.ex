@@ -24,6 +24,9 @@ defmodule LivePlaygroundWeb.Router do
     live "/modals/right-buttons", ModalsLive, :right_buttons
     live "/modals/gray-footer", ModalsLive, :gray_footer
 
+    live "/upload", UploadLive
+    live "/upload-cloud", UploadCloudLive
+
     get "/", PageController, :index
   end
 
