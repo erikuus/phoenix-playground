@@ -31,13 +31,13 @@ defmodule LivePlaygroundWeb.ModalsLive do
 
     <!-- start hiding from live code -->
     <div class="space-y-6">
-      <%= raw(live_code("lib/live_playground_web/helpers/live_helpers.ex", "def live_modal", "end")) %>
-      <%= raw(live_code("lib/live_playground_web.ex", "def live_component", "end")) %>
-      <%= raw(live_code("lib/live_playground_web/live/components/modal_component.ex")) %>
-      <%= raw(live_code("lib/live_playground_web.ex", "def live_view", "end")) %>
-      <%= raw(live_code("lib/live_playground_web/router.ex", "scope \"/\", LivePlaygroundWeb", "end")) %>
-      <%= raw(live_code("lib/live_playground_web/live/modals_live.ex")) %>
-      <%= raw(live_code("lib/live_playground_web/live/components/modal_content/single_action_component.ex")) %>
+      <%= raw(code("lib/live_playground_web/helpers/live_helpers.ex", "def live_modal", "end")) %>
+      <%= raw(code("lib/live_playground_web.ex", "def live_component", "end")) %>
+      <%= raw(code("lib/live_playground_web/live/components/modal_component.ex")) %>
+      <%= raw(code("lib/live_playground_web.ex", "def live_view", "end")) %>
+      <%= raw(code("lib/live_playground_web/router.ex", "scope \"/\", LivePlaygroundWeb", "end")) %>
+      <%= raw(code("lib/live_playground_web/live/modals_live.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/components/modal_content/single_action_component.ex")) %>
     </div>
     <!-- end hiding from live code -->
     """
