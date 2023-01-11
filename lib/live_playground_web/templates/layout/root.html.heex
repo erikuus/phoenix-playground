@@ -13,8 +13,8 @@
     <style><%= Makeup.stylesheet() %></style>
   </head>
   <body class="font-sans antialiased text-gray-600 min-h-full flex flex-col" scroll-region>
+    <!-- Off-canvas menu for mobile, show/hide based on off-canvas menu state. -->
     <div x-data="{ open: false }" @keydown.window.escape="open = false">
-      <!-- Off-canvas menu for mobile, show/hide based on off-canvas menu state. -->
       <div x-show="open" class="relative z-40 md:hidden" role="dialog" aria-modal="true">
         <div class="fixed inset-0 bg-gray-600 bg-opacity-75 cursor-text"></div>
         <div class="fixed inset-0 z-40 flex">
@@ -29,20 +29,18 @@
                 </svg>
               </button>
             </div>
-
+            <!-- Mobile menu -->
             <div class="h-0 flex-1 overflow-y-auto pt-5 pb-4">
               <nav class="mt-5 space-y-1 px-2">
                 <LivePlaygroundWeb.MenuComponent.mobile />
               </nav>
             </div>
           </div>
-
           <div class="w-14 flex-shrink-0">
             <!-- Force sidebar to shrink to fit close icon -->
           </div>
         </div>
       </div>
-
       <!-- Static sidebar for desktop -->
       <div class="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
         <!-- Sidebar component, swap this element with another sidebar if you like -->
@@ -70,7 +68,9 @@
               <h1 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
                 <%= @title %>
               </h1>
-              <p><%= @description %></p>
+              <p class="mb-10">
+                <%= @description %>
+              </p>
               <%= @inner_content %>
             </div>
           </div>
