@@ -1,4 +1,24 @@
 defmodule LivePlaygroundWeb.TailwindHelpers do
+  def tw_label_classes() do
+    "
+      block
+      text-sm
+      font-medium
+      text-gray-700
+    "
+  end
+
+  def tw_input_classes() do
+    "
+      block w-full
+      rounded-md
+      border-gray-300
+      shadow-sm
+      focus:border-indigo-500
+      focus:ring-indigo-500 sm:text-sm
+    "
+  end
+
   def tw_button_classes(type \\ :primary, size \\ :md) do
     "
       inline-flex

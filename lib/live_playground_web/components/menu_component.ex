@@ -26,6 +26,7 @@ defmodule LivePlaygroundWeb.MenuComponent do
   defp items() do
     [
       %{icon: &svg_icon_home(&1), label: "Home", path: "/"},
+      %{icon: &svg_icon_cursor_arrow_ripple(&1), label: "Clicks", path: "/clicks"},
       %{icon: &svg_icon_rectangle_stack(&1), label: "Modals", path: "/modals"},
       %{icon: &svg_icon_arrow_up_tray(&1), label: "Upload", path: "/upload"},
       %{icon: &svg_icon_cloud_arrow_up(&1), label: "Cloud Upload", path: "/upload-cloud"}

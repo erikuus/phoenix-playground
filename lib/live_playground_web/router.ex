@@ -17,6 +17,9 @@ defmodule LivePlaygroundWeb.Router do
   scope "/", LivePlaygroundWeb do
     pipe_through :browser
 
+    live "/clicks", ClicksLive
+    live "/clicks/show-list", ClicksLive, :show_list
+
     live "/modals", ModalsLive
     live "/modals/single-action", ModalsLive, :single_action
     live "/modals/wide-buttons", ModalsLive, :wide_buttons
