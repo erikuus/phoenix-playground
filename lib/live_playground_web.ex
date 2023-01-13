@@ -37,7 +37,6 @@ defmodule LivePlaygroundWeb do
         only: [get_flash: 1, get_flash: 2, view_module: 1, view_template: 1]
 
       import LivePlaygroundWeb.TailwindHelpers
-      import LivePlaygroundWeb.IconHelpers
 
       unquote(view_helpers())
     end
@@ -72,9 +71,6 @@ defmodule LivePlaygroundWeb do
     quote do
       use Phoenix.Component
 
-      import LivePlaygroundWeb.TailwindHelpers
-      import LivePlaygroundWeb.IconHelpers
-
       unquote(view_helpers())
     end
   end
@@ -102,7 +98,7 @@ defmodule LivePlaygroundWeb do
       use Phoenix.HTML
 
       # Import LiveView and .heex helpers (live_render, live_patch, <.form>, etc)
-      import Phoenix.LiveView.Helpers
+      import Phoenix.Component
 
       # Import basic rendering functionality (render, render_layout, etc)
       import Phoenix.View
