@@ -49,7 +49,6 @@ defmodule LivePlaygroundWeb do
 
       import LivePlaygroundWeb.LiveHelpers
       import LivePlaygroundWeb.TailwindHelpers
-      import LivePlaygroundWeb.IconHelpers
       import LivePlaygroundWeb.DevHelpers
 
       unquote(view_helpers())
@@ -61,7 +60,6 @@ defmodule LivePlaygroundWeb do
       use Phoenix.LiveComponent
 
       import LivePlaygroundWeb.TailwindHelpers
-      import LivePlaygroundWeb.IconHelpers
 
       unquote(view_helpers())
     end

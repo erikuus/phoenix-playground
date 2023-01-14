@@ -1,13 +1,15 @@
 defmodule LivePlaygroundWeb.Live.ModalContent.GrayFooterComponent do
   use LivePlaygroundWeb, :live_component
 
+  import LivePlaygroundWeb.IconComponent
+
   def render(assigns) do
     ~H"""
     <div class="sm:w-full sm:max-w-lg">
       <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
         <div class="sm:flex sm:items-start">
           <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-            <%= raw(svg_icon_exclamation_triangle("h-6 w-6 text-red-600")) %>
+            <.icon name="exclamation_triangle" class="h-6 w-6 text-red-600" />
           </div>
           <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
             <h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-title"><%= @title %></h3>

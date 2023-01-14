@@ -19,6 +19,17 @@ defmodule LivePlaygroundWeb.TailwindHelpers do
     "
   end
 
+  def tw_radio_classes() do
+    "
+      h-4
+      w-4
+      mr-3
+      border-gray-300
+      text-indigo-600
+      focus:ring-indigo-500
+    "
+  end
+
   def tw_button_classes(type \\ :primary, size \\ :md) do
     "
       inline-flex
@@ -75,12 +86,5 @@ defmodule LivePlaygroundWeb.TailwindHelpers do
       ],
       size
     )
-  end
-
-  def tw_icon_classes() do
-    "
-      text-gray-400
-      hover:text-gray-500
-    "
   end
 end

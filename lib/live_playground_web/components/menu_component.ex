@@ -1,11 +1,13 @@
 defmodule LivePlaygroundWeb.MenuComponent do
   use LivePlaygroundWeb, :component
 
+  import LivePlaygroundWeb.IconComponent
+
   def desktop(assigns) do
     ~H"""
     <%= for item <- items() do %>
     <a href={"#{item.path}"} class={"#{bg_class(item.path, @current_path)} text-gray-900 group flex items-center px-2 py-2 text-sm font-medium rounded-md"}>
-      <%= raw(item.icon.("text-gray-500 mr-3 flex-shrink-0 h-6 w-6")) %>
+      <.icon name={"#{item.icon}"} class="text-gray-500 mr-3 flex-shrink-0 h-6 w-6" />
       <%= item.label %>
     </a>
     <% end  %>
@@ -16,7 +18,7 @@ defmodule LivePlaygroundWeb.MenuComponent do
     ~H"""
     <%= for item <- items() do %>
     <a href={"#{item.path}"} class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex items-center px-2 py-2 text-base font-medium rounded-md">
-      <%= raw(item.icon.("text-gray-500 mr-3 flex-shrink-0 h-6 w-6")) %>
+      <.icon name={"#{item.icon}"} class="text-gray-500 mr-3 flex-shrink-0 h-6 w-6" />
       <%= item.label %>
     </a>
     <% end  %>
@@ -25,11 +27,12 @@ defmodule LivePlaygroundWeb.MenuComponent do
 
   defp items() do
     [
-      %{icon: &svg_icon_home(&1), label: "Home", path: "/"},
-      %{icon: &svg_icon_cursor_arrow_ripple(&1), label: "Clicks", path: "/clicks"},
-      %{icon: &svg_icon_rectangle_stack(&1), label: "Modals", path: "/modals"},
-      %{icon: &svg_icon_arrow_up_tray(&1), label: "Upload", path: "/upload"},
-      %{icon: &svg_icon_cloud_arrow_up(&1), label: "Cloud Upload", path: "/upload-cloud"}
+      %{icon: "home", label: "Home", path: "/"},
+      %{icon: "cursor_arrow_ripple", label: "Clicks", path: "/clicks"},
+      %{icon: "arrow_path", label: "Changes", path: "/changes"},
+      %{icon: "rectangle_stack", label: "Modals", path: "/modals"},
+      %{icon: "arrow_up_tray", label: "Upload", path: "/upload"},
+      %{icon: "cloud_arrow_up", label: "Cloud Upload", path: "/upload-cloud"}
     ]
   end
 

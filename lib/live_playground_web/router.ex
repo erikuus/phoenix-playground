@@ -20,6 +20,8 @@ defmodule LivePlaygroundWeb.Router do
     live "/clicks", ClicksLive
     live "/clicks/show-list", ClicksLive, :show_list
 
+    live "/changes", ChangesLive
+
     live "/modals", ModalsLive
     live "/modals/single-action", ModalsLive, :single_action
     live "/modals/wide-buttons", ModalsLive, :wide_buttons
