@@ -1,6 +1,7 @@
 defmodule LivePlaygroundWeb.ModalsLive do
   use LivePlaygroundWeb, :live_view
 
+  import LivePlaygroundWeb.TailwindComponent
   alias LivePlaygroundWeb.Live.ModalContent
 
   def mount(_params, _session, socket) do
@@ -20,11 +21,11 @@ defmodule LivePlaygroundWeb.ModalsLive do
   def render(assigns) do
     ~H"""
     <div class="space-x-0 space-y-3 xl:space-x-3 xl:space-y-0">
-      <%= open_modal_btn("Centered single action", @socket, :single_action) %>
-      <%= open_modal_btn("Centered wide buttons", @socket, :wide_buttons) %>
-      <%= open_modal_btn("Left buttons", @socket, :left_buttons) %>
-      <%= open_modal_btn("Right buttons", @socket, :right_buttons) %>
-      <%= open_modal_btn("Gray footer", @socket, :gray_footer) %>
+      <.button patch={Routes.modals_path(@socket, :single_action)} class="w-full xl:w-auto">Centered single action</.button>
+      <.button patch={Routes.modals_path(@socket, :wide_buttons)} class="w-full xl:w-auto">Centered wide buttons</.button>
+      <.button patch={Routes.modals_path(@socket, :left_buttons)} class="w-full xl:w-auto">Left buttons</.button>
+      <.button patch={Routes.modals_path(@socket, :right_buttons)} class="w-full xl:w-auto">Right buttons</.button>
+      <.button patch={Routes.modals_path(@socket, :gray_footer)} class="w-full xl:w-auto">Gray footer</.button>
     </div>
 
     <%= show_live_modal(@socket, @live_action) %>
@@ -33,9 +34,6 @@ defmodule LivePlaygroundWeb.ModalsLive do
     <div class="mt-10 space-y-6">
       <%= raw(code("lib/live_playground_web/helpers/live_helpers.ex",
         "def live_modal",
-        "end")) %>
-      <%= raw(code("lib/live_playground_web.ex",
-        "def live_component",
         "end")) %>
       <%= raw(code("lib/live_playground_web/live/components/modal_component.ex")) %>
       <%= raw(code("lib/live_playground_web.ex",
@@ -49,13 +47,6 @@ defmodule LivePlaygroundWeb.ModalsLive do
     </div>
     <!-- end hiding from live code -->
     """
-  end
-
-  defp open_modal_btn(text, socket, action) do
-    live_patch(text,
-      to: Routes.modals_path(socket, action),
-      class: "w-full xl:w-auto #{tw_button_classes()}"
-    )
   end
 
   defp show_live_modal(socket, :single_action) do

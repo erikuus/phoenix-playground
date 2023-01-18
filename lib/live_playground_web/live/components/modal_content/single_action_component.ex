@@ -1,6 +1,7 @@
 defmodule LivePlaygroundWeb.Live.ModalContent.SingleActionComponent do
   use LivePlaygroundWeb, :live_component
 
+  import LivePlaygroundWeb.TailwindComponent
   import LivePlaygroundWeb.IconComponent
 
   def render(assigns) do
@@ -16,9 +17,7 @@ defmodule LivePlaygroundWeb.Live.ModalContent.SingleActionComponent do
         </div>
       </div>
       <div class="mt-5 sm:mt-6">
-        <%= live_patch "Go back to dashboard",
-          class: "#{tw_button_classes()} w-full text-base sm:text-sm",
-          to: @return_to %>
+        <.button patch={@return_to} class="w-full">Go back to dashboard</.button>
       </div>
     </div>
     """

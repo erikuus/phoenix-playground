@@ -1,6 +1,7 @@
 defmodule LivePlaygroundWeb.Live.ModalContent.GrayFooterComponent do
   use LivePlaygroundWeb, :live_component
 
+  import LivePlaygroundWeb.TailwindComponent
   import LivePlaygroundWeb.IconComponent
 
   def render(assigns) do
@@ -20,12 +21,8 @@ defmodule LivePlaygroundWeb.Live.ModalContent.GrayFooterComponent do
         </div>
       </div>
       <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-        <%= live_patch "Deactivate",
-          class: "#{tw_button_classes(:dangerous)} w-full sm:w-auto text-base sm:text-sm",
-          to: @go_to %>
-        <%= live_patch "Cancel",
-          class: "#{tw_button_classes(:secondary)} w-full sm:w-auto text-base sm:text-sm mt-3 sm:mt-0 sm:mr-3",
-          to: @return_to %>
+        <.button patch={@go_to} color={:dangerous} class="w-full sm:w-auto">Deactivate</.button>
+        <.button patch={@return_to} color={:secondary} class="w-full sm:w-auto mt-3 sm:mt-0 sm:mr-3">Cancel</.button>
       </div>
     </div>
     """

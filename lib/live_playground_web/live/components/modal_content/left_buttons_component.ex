@@ -1,6 +1,7 @@
 defmodule LivePlaygroundWeb.Live.ModalContent.LeftButtonsComponent do
   use LivePlaygroundWeb, :live_component
 
+  import LivePlaygroundWeb.TailwindComponent
   import LivePlaygroundWeb.IconComponent
 
   def render(assigns) do
@@ -18,12 +19,8 @@ defmodule LivePlaygroundWeb.Live.ModalContent.LeftButtonsComponent do
         </div>
       </div>
       <div class="mt-5 sm:mt-4 sm:ml-10 sm:flex sm:pl-4">
-        <%= live_patch "Deactivate",
-          class: "#{tw_button_classes(:dangerous)} w-full sm:w-auto text-base sm:text-sm",
-          to: @go_to %>
-        <%= live_patch "Cancel",
-          class: "#{tw_button_classes(:secondary)} w-full sm:w-auto text-base sm:text-sm mt-3 sm:mt-0 sm:ml-3",
-          to: @return_to %>
+        <.button patch={@go_to} color={:dangerous} class="w-full sm:w-auto">Deactivate</.button>
+        <.button patch={@return_to} color={:secondary} class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-3">Cancel</.button>
       </div>
     </div>
     """

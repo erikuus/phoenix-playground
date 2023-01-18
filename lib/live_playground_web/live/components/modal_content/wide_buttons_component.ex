@@ -1,6 +1,7 @@
 defmodule LivePlaygroundWeb.Live.ModalContent.WideButtonsComponent do
   use LivePlaygroundWeb, :live_component
 
+  import LivePlaygroundWeb.TailwindComponent
   import LivePlaygroundWeb.IconComponent
 
   def render(assigns) do
@@ -16,12 +17,8 @@ defmodule LivePlaygroundWeb.Live.ModalContent.WideButtonsComponent do
         </div>
       </div>
       <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-        <%= live_patch "Deactivate",
-          class: "#{tw_button_classes(:primary)} w-full text-base sm:text-sm",
-          to: @go_to %>
-        <%= live_patch "Cancel",
-          class: "#{tw_button_classes(:secondary)} w-full text-base sm:text-sm mt-3 sm:mt-0",
-          to: @return_to %>
+        <.button patch={@go_to} color={:primary} class="w-full">Deactivate</.button>
+        <.button patch={@return_to} color={:secondary} class="w-full mt-3 sm:mt-0">Cancel</.button>
       </div>
     </div>
     """
