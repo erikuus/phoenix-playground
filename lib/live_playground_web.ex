@@ -36,8 +36,6 @@ defmodule LivePlaygroundWeb do
       import Phoenix.Controller,
         only: [get_flash: 1, get_flash: 2, view_module: 1, view_template: 1]
 
-      import LivePlaygroundWeb.TailwindHelpers
-
       unquote(view_helpers())
     end
   end
@@ -48,7 +46,6 @@ defmodule LivePlaygroundWeb do
         layout: {LivePlaygroundWeb.LayoutView, "live.html"}
 
       import LivePlaygroundWeb.LiveHelpers
-      import LivePlaygroundWeb.TailwindHelpers
       import LivePlaygroundWeb.DevHelpers
 
       unquote(view_helpers())
@@ -58,8 +55,6 @@ defmodule LivePlaygroundWeb do
   def live_component do
     quote do
       use Phoenix.LiveComponent
-
-      import LivePlaygroundWeb.TailwindHelpers
 
       unquote(view_helpers())
     end
