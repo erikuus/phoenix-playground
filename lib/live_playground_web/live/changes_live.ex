@@ -1,12 +1,15 @@
 defmodule LivePlaygroundWeb.ChangesLive do
   use LivePlaygroundWeb, :live_view
 
+  import LivePlaygroundWeb.TailwindComponent
+
   def mount(_params, _session, socket) do
     socket =
       assign(socket,
         title: "Changes",
         description: "How to handle form changes in live view",
-        type: "2"
+        color: "red",
+        shape: "rectangle"
       )
 
     {:ok, socket}
@@ -14,58 +17,99 @@ defmodule LivePlaygroundWeb.ChangesLive do
 
   def render(assigns) do
     ~H"""
-    <form id="dynamic-form">
-      <div class="mb-4">
-        <label for="type" class={"#{tw_label_classes()}"}>Text</label>
-        <div class="mt-1">
-          <select id="type" name="type" phx-change="select-type" class={"#{tw_input_classes()}"}>
-            <%= options_for_select(type_options(), @type) %>
-          </select>
-        </div>
+    <form id="dynamic-form" class="space-y-5" phx-change="refresh">
+      <div>
+        <.select id="color" label="Color" name="color">
+          <%= options_for_select(color_options(), @color) %>
+        </.select>
       </div>
-      <%= render_partial(:type, @type, assigns) %>
-      <div class="mb-4 space-y-4">
-        <div class="flex items-center">
-          <input id="card" name="payment-method" type="radio" class={"#{tw_radio_classes()}"}>
-          <label for="card" class={"#{tw_label_classes()}"}>Credit Card</label>
-        </div>
-        <div class="flex items-center">
-          <input id="invoice" name="payment-method" type="radio" class={"#{tw_radio_classes()}"}>
-          <label for="invoice" class={"#{tw_label_classes()}"}>Invoice</label>
-        </div>
-        <div class="flex items-center">
-          <input id="cash" name="payment-method" type="radio" class={"#{tw_radio_classes()}"}>
-          <label for="cash" class={"#{tw_label_classes()}"}>Cash</label>
-        </div>
+      <%= render_partial(:color, @color, assigns) %>
+
+      <div>
+        <.fieldset legend="Shapes">
+          <.radio name="shape" value="circle" id="circle" label="Circle" current={@shape} />
+
+          <.radio name="shape" value="rectangle" id="rectangle" label="Rectangle" current={@shape} />
+          <%= render_partial(:rectangle, @shape, assigns) %>
+
+          <.radio name="shape" value="square" id="square" label="Square" current={@shape} />
+          <%= render_partial(:square, @shape, assigns) %>
+        </.fieldset>
       </div>
+
     </form>
     """
   end
 
-  defp render_partial(:type, "1", assigns) do
+  defp render_partial(:color, "green", assigns) do
     ~H"""
-    type 1
+    <div id="greens" phx-update="ignore" class="space-y-5 ml-6">
+      <div>
+        <.input id="dark-green" label="Dark Green" name="dark_green" type="text" />
+      </div>
+      <div>
+        <.input id="light-green" label="Light Green" name="light_green" type="text" />
+      </div>
+    </div>
     """
   end
 
-  defp render_partial(:type, "2", assigns) do
+  defp render_partial(:color, "blue", assigns) do
     ~H"""
-    type 2
+    <div id="blues" phx-update="ignore" class="space-y-5 ml-6">
+      <div>
+        <.input id="dark-blue" label="Dark Blue" name="dark_blue" type="text" />
+      </div>
+      <div>
+        <.input id="light-blue" label="Light Blue" name="light_blue" type="text" />
+      </div>
+    </div>
+    """
+  end
+
+  defp render_partial(:rectangle, "rectangle", assigns) do
+    ~H"""
+    <div id="rectangles" phx-update="ignore" class="ml-6">
+      <.radio id="a" label="A" name="rectangles" value="1" />
+      <.radio id="b" label="B" name="rectangles" value="2" />
+    </div>
+    """
+  end
+
+  defp render_partial(:square, "square", assigns) do
+    ~H"""
+    <div id="squares" phx-update="ignore" class="ml-6">
+      <.radio id="c" label="C" name="squares" value="3" />
+      <.radio id="d" label="D" name="squares" value="4" />
+    </div>
     """
   end
 
   defp render_partial(_, _, _), do: nil
 
-  def handle_event("select-type", %{"type" => type}, socket) do
-    socket = assign(socket, type: type)
+  def handle_event("refresh", %{"color" => color, "shape" => shape}, socket) do
+    socket =
+      assign(socket,
+        color: color,
+        shape: shape
+      )
+
     {:noreply, socket}
   end
 
-  defp type_options do
+  defp color_options do
     [
-      A: 1,
-      B: 2,
-      C: 3
+      Red: "red",
+      Green: "green",
+      Blue: "blue"
+    ]
+  end
+
+  defp shape_options do
+    [
+      Circle: "circle",
+      Rectangle: "rectangle",
+      Square: "square"
     ]
   end
 end
