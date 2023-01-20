@@ -33,25 +33,37 @@ defmodule LivePlaygroundWeb.DevHelpers do
 
   defp shuffle(list, false), do: list
 
-  def code(filename, starting \\ nil, ending \\ nil) do
+  def code(filename, from, to, tpl \\ nil) do
     """
     <div class="overflow-auto overscroll-auto rounded-lg bg-white border border-gray-200">
       <div class="px-4 py-5 sm:px-6 text-gray-400 font-mono">
         #{filename}
       </div>
       <div class="bg-[#f8f8f8] px-4 py-5 sm:p-6 select-all">
-        #{read_file(filename) |> split_code(starting, ending) |> clean_code() |> Makeup.highlight()}
+        #{read_file(filename) |> split_code(from, to, tpl) |> clean_code() |> Makeup.highlight()}
       </div>
     </div>
     """
   end
 
-  defp split_code(code, nil, nil), do: code
+  def code(filename) do
+    """
+    <div class="overflow-auto overscroll-auto rounded-lg bg-white border border-gray-200">
+      <div class="px-4 py-5 sm:px-6 text-gray-400 font-mono">
+        #{filename}
+      </div>
+      <div class="bg-[#f8f8f8] px-4 py-5 sm:p-6 select-all">
+        #{read_file(filename) |> clean_code() |> Makeup.highlight()}
+      </div>
+    </div>
+    """
+  end
 
-  defp split_code(code, starting, ending) do
-    [_, code_after] = String.split(code, starting)
-    [code_between | _] = String.split(code_after, ending)
-    "#{starting}#{String.trim_trailing(code_between, " ")}#{ending}"
+  defp split_code(code, from, to, tpl) do
+    [_, code_after] = String.split(code, from)
+    [code_between | _] = String.split(code_after, to)
+    code = String.trim_trailing(code_between, " ")
+    if tpl, do: template(tpl, code), else: "#{from}#{code}#{to}"
   end
 
   defp clean_code(code) do
@@ -66,4 +78,16 @@ defmodule LivePlaygroundWeb.DevHelpers do
   end
 
   defp hide_code(code, false), do: code
+
+  defp template(:router, code) do
+    """
+      scope "/", LivePlaygroundWeb do
+        pipe_through :browser
+
+    #{String.trim(code, "\n")}
+      end
+    """
+  end
+
+  defp template(_, _), do: nil
 end

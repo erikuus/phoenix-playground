@@ -17,20 +17,28 @@ defmodule LivePlaygroundWeb.Router do
   scope "/", LivePlaygroundWeb do
     pipe_through :browser
 
+    # clicks
     live "/clicks", ClicksLive
     live "/clicks/show-list", ClicksLive, :show_list
+    # /
 
+    # changes
     live "/changes", ChangesLive
+    # /
 
+    # modals
     live "/modals", ModalsLive
     live "/modals/single-action", ModalsLive, :single_action
     live "/modals/wide-buttons", ModalsLive, :wide_buttons
     live "/modals/left-buttons", ModalsLive, :left_buttons
     live "/modals/right-buttons", ModalsLive, :right_buttons
     live "/modals/gray-footer", ModalsLive, :gray_footer
+    # /
 
+    # upload
     live "/upload", UploadLive
     live "/upload-cloud", UploadCloudLive
+    # /
 
     get "/", PageController, :index
   end

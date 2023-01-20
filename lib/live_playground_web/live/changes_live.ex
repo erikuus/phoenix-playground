@@ -9,7 +9,7 @@ defmodule LivePlaygroundWeb.ChangesLive do
         title: "Changes",
         description: "How to handle form changes in live view",
         color: "red",
-        shape: "rectangle"
+        shape: "circle"
       )
 
     {:ok, socket}
@@ -24,7 +24,6 @@ defmodule LivePlaygroundWeb.ChangesLive do
         </.select>
       </div>
       <%= render_partial(:color, @color, assigns) %>
-
       <div>
         <.fieldset legend="Shapes">
           <.radio name="shape" value="circle" id="circle" label="Circle" current={@shape} />
@@ -36,8 +35,14 @@ defmodule LivePlaygroundWeb.ChangesLive do
           <%= render_partial(:square, @shape, assigns) %>
         </.fieldset>
       </div>
-
     </form>
+
+    <!-- start hiding from live code -->
+    <div class="mt-10 space-y-6">
+      <%= raw(code("lib/live_playground_web/router.ex", "# changes", "# /", :router)) %>
+      <%= raw(code("lib/live_playground_web/live/changes_live.ex")) %>
+    </div>
+    <!-- end hiding from live code -->
     """
   end
 

@@ -32,16 +32,10 @@ defmodule LivePlaygroundWeb.ModalsLive do
 
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/helpers/live_helpers.ex",
-        "def live_modal",
-        "end")) %>
+      <%= raw(code("lib/live_playground_web/helpers/live_helpers.ex", "def live_modal", "end")) %>
       <%= raw(code("lib/live_playground_web/live/components/modal_component.ex")) %>
-      <%= raw(code("lib/live_playground_web.ex",
-        "def live_view",
-        "end")) %>
-      <%= raw(code("lib/live_playground_web/router.ex",
-        "    live \"/modals\", ModalsLive",
-        "    live \"/modals/gray-footer\", ModalsLive, :gray_footer")) %>
+      <%= raw(code("lib/live_playground_web.ex", "def live_view", "end")) %>
+      <%= raw(code("lib/live_playground_web/router.ex", "# modals", "# /", :router)) %>
       <%= raw(code("lib/live_playground_web/live/modals_live.ex")) %>
       <%= raw(code("lib/live_playground_web/live/components/modal_content/single_action_component.ex")) %>
     </div>

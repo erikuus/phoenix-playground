@@ -27,9 +27,7 @@ defmodule LivePlaygroundWeb.ClicksLive do
 
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/router.ex",
-        "    live \"/clicks\", ClicksLive",
-        "    live \"/clicks/show-list\", ClicksLive, :show_list")) %>
+      <%= raw(code("lib/live_playground_web/router.ex", "# clicks", "# /", :router)) %>
       <%= raw(code("lib/live_playground_web/live/clicks_live.ex")) %>
     </div>
     <!-- end hiding from live code -->
