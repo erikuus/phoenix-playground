@@ -19,7 +19,7 @@ defmodule LivePlayground.MixProject do
   def application do
     [
       mod: {LivePlayground.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :timex]
     ]
   end
 
@@ -50,7 +50,8 @@ defmodule LivePlayground.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:tailwind, "~> 0.1", runtime: Mix.env() == :dev},
       {:makeup, "~> 1.1"},
-      {:makeup_elixir, "~> 0.16.0"}
+      {:makeup_elixir, "~> 0.16.0"},
+      {:timex, "~> 3.0"}
     ]
   end
 
