@@ -7,5 +7,14 @@
     phx-click="lv:clear-flash"
     phx-value-key="error"><%= live_flash(@flash, :error) %></p>
 
-  <%= @inner_content %>
+  <.heading>
+    <%= @title %>
+    <:footer>
+      <%= @description %>
+    </:footer>
+  </.heading>
+
+  <div class="mt-6">
+    <%= @inner_content %>
+  </div>
 </main>

@@ -1,4 +1,4 @@
 defmodule LivePlaygroundWeb.PageView do
   use LivePlaygroundWeb, :view
-  import LivePlaygroundWeb.TailwindComponent
+  import LivePlaygroundWeb.UiComponent
 end

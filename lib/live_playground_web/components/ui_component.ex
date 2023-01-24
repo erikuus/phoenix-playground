@@ -1,5 +1,30 @@
-defmodule LivePlaygroundWeb.TailwindComponent do
+defmodule LivePlaygroundWeb.UiComponent do
   use LivePlaygroundWeb, :component
+
+  slot(:header)
+  slot(:buttons)
+  slot(:footer)
+  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+
+  def heading(assigns) do
+    ~H"""
+    <div class="md:flex md:items-center md:justify-between">
+      <div class="min-w-0 flex-1">
+        <%= render_slot(@header) %>
+        <h2 class={heading_classes(@class)}><%= render_slot(@inner_block) %></h2>
+        <%= render_slot(@footer) %>
+      </div>
+      <div class="mt-4 flex md:mt-0 md:ml-4">
+        <%= render_slot(@buttons) %>
+      </div>
+    </div>
+    """
+  end
+
+  def heading_classes(class \\ nil) do
+    "text-2xl font-bold leading-7 sm:truncate sm:text-3xl sm:tracking-tight #{class}"
+  end
 
   attr :patch, :string
   attr :href, :string
@@ -10,7 +35,7 @@ defmodule LivePlaygroundWeb.TailwindComponent do
 
   def button(%{patch: patch} = assigns) do
     ~H"""
-    <.link {@rest} patch={@patch} class={button_classes(@color, @size, @class)}}>
+    <.link {@rest} patch={@patch} class={button_classes(@color, @size, @class)}>
       <%= render_slot(@inner_block) %>
     </.link>
     """
@@ -18,7 +43,7 @@ defmodule LivePlaygroundWeb.TailwindComponent do
 
   def button(%{href: href} = assigns) do
     ~H"""
-    <.link {@rest} href={@href} class={button_classes(@color, @size, @class)}}>
+    <.link {@rest} href={@href} class={button_classes(@color, @size, @class)}>
       <%= render_slot(@inner_block) %>
     </.link>
     """
@@ -68,16 +93,6 @@ defmodule LivePlaygroundWeb.TailwindComponent do
   attr :hint, :string
   attr :class, :string, default: nil
   attr :rest, :global
-
-  def input(%{id: id, label: label, help: help} = assigns) do
-    ~H"""
-    <label for={@id} class={label_classes()}><%= @label %></label>
-    <div class="mt-1">
-      <input {@rest} id={@id} class={input_classes(@class)}>
-    </div>
-    <p class="mt-2 text-sm text-gray-500"><%= @help %></p>
-    """
-  end
 
   def input(%{id: id, label: label, help: help} = assigns) do
     ~H"""
@@ -314,6 +329,34 @@ defmodule LivePlaygroundWeb.TailwindComponent do
   def fieldset(assigns) do
     ~H"""
     <%= render_slot(@inner_block) %>
+    """
+  end
+
+  attr :title, :string, required: true
+  attr :description, :string, required: true
+  attr :go_text, :string, default: "OK"
+  attr :return_text, :string, default: "Cancel"
+  attr :go_to, :string
+  attr :return_to, :string
+
+  def confirm(assigns) do
+    ~H"""
+    <div class="p-4 sm:p-6 sm:w-full sm:max-w-sm">
+      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+        <svg class="h-6 w-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+        </svg>
+      </div>
+      <div class="mt-3 text-center sm:mt-5">
+        <h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-title"><%= @title %></h3>
+        <div class="mt-2">
+          <p class="text-sm text-gray-500"><%= @description %></p>
+        </div>
+      </div>
+      <div class="mt-5 sm:mt-6">
+        <.button patch={@return_to} class="w-full"><%= @return_text %></.button>
+      </div>
+    </div>
     """
   end
 end

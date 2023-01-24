@@ -26,6 +26,9 @@ defmodule LivePlaygroundWeb.Router do
     live "/changes", ChangesLive
     # /
 
+    live "/send-interval", SendIntervalLive
+    live "/send-after", SendAfterLive
+
     # modals
     live "/modals", ModalsLive
     live "/modals/single-action", ModalsLive, :single_action

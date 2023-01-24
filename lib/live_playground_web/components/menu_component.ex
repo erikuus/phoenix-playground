@@ -17,7 +17,7 @@ defmodule LivePlaygroundWeb.MenuComponent do
   def mobile(assigns) do
     ~H"""
     <%= for item <- items() do %>
-    <a href={"#{item.path}"} class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex items-center px-2 py-2 text-base font-medium rounded-md">
+    <a href={"#{item.path}"} class={"#{bg_class(item.path, @current_path)} text-gray-600 group flex items-center px-2 py-2 text-base font-medium rounded-md"}>
       <.icon name={"#{item.icon}"} class="text-gray-500 mr-3 flex-shrink-0 h-6 w-6" />
       <%= item.label %>
     </a>

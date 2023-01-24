@@ -1,7 +1,7 @@
 defmodule LivePlaygroundWeb.ChangesLive do
   use LivePlaygroundWeb, :live_view
 
-  import LivePlaygroundWeb.TailwindComponent
+  import LivePlaygroundWeb.UiComponent
 
   def mount(_params, _session, socket) do
     socket =

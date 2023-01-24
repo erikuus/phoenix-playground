@@ -1,7 +1,7 @@
 defmodule LivePlaygroundWeb.Live.ModalContent.GrayFooterComponent do
   use LivePlaygroundWeb, :live_component
 
-  import LivePlaygroundWeb.TailwindComponent
+  import LivePlaygroundWeb.UiComponent
   import LivePlaygroundWeb.IconComponent
 
   def render(assigns) do

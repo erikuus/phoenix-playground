@@ -1,7 +1,7 @@
 defmodule LivePlaygroundWeb.ModalsLive do
   use LivePlaygroundWeb, :live_view
 
-  import LivePlaygroundWeb.TailwindComponent
+  import LivePlaygroundWeb.UiComponent
   alias LivePlaygroundWeb.Live.ModalContent
 
   def mount(_params, _session, socket) do
@@ -29,6 +29,8 @@ defmodule LivePlaygroundWeb.ModalsLive do
     </div>
 
     <%= show_live_modal(@socket, @live_action) %>
+
+
 
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">

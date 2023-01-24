@@ -1,5 +1,12 @@
-<div class="mt-6">
-  <.button href="/dashboard">
-    Phoenix LiveDashboard
-  </.button>
-</div>
+<.heading>
+  <%= @title %>
+  <:footer>
+    <%= @description %>
+  </:footer>
+  <:buttons>
+    <.button href="/dashboard">
+      Phoenix LiveDashboard
+    </.button>
+  </:buttons>
+</.heading>
+
