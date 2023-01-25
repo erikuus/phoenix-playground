@@ -9,7 +9,7 @@ defmodule LivePlaygroundWeb.UiComponent do
 
   def heading(assigns) do
     ~H"""
-    <div class="md:flex md:items-center md:justify-between">
+    <div class="mb-6 md:flex md:items-center md:justify-between">
       <div class="min-w-0 flex-1">
         <%= render_slot(@header) %>
         <h2 class={heading_classes(@class)}><%= render_slot(@inner_block) %></h2>
@@ -22,8 +22,31 @@ defmodule LivePlaygroundWeb.UiComponent do
     """
   end
 
-  def heading_classes(class \\ nil) do
+  defp heading_classes(class \\ nil) do
     "text-2xl font-bold leading-7 sm:truncate sm:text-3xl sm:tracking-tight #{class}"
+  end
+
+  attr :class, :string, default: nil
+
+  def statset(assigns) do
+    ~H"""
+    <dl class={"grid grid-cols-1 gap-5 sm:grid-cols-3 #{@class}"}>
+      <%= render_slot(@inner_block) %>
+    </dl>
+    """
+  end
+
+  attr :class, :string, default: nil
+  attr :label, :string, required: true
+  attr :data, :string, required: true
+
+  def stat(assigns) do
+    ~H"""
+    <div class={"relative overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6 #{@class}"}>
+      <dt class="truncate text-sm font-medium text-gray-500"><%= @label %></dt>
+      <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900"><%= render_slot(@inner_block) %></dd>
+    </div>
+    """
   end
 
   attr :patch, :string
