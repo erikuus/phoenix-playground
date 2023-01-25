@@ -45,7 +45,6 @@ defmodule LivePlaygroundWeb do
       use Phoenix.LiveView,
         layout: {LivePlaygroundWeb.LayoutView, "live.html"}
 
-      import LivePlaygroundWeb.LiveHelpers
       import LivePlaygroundWeb.DevHelpers
 
       unquote(view_helpers())

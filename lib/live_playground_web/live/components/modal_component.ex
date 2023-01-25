@@ -1,8 +1,6 @@
 defmodule LivePlaygroundWeb.Live.ModalComponent do
   use LivePlaygroundWeb, :live_component
 
-  import LivePlaygroundWeb.IconComponent
-
   def render(assigns) do
     ~H"""
     <div class="relative z-10 hover:bg-red-500" aria-labelledby="modal-title" role="dialog" aria-modal="true">
@@ -16,7 +14,12 @@ defmodule LivePlaygroundWeb.Live.ModalComponent do
           <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:p-0">
             <%= if @close_opts.show_close_btn do %>
             <div class="absolute top-0 right-0 hidden pt-4 pr-4 sm:block">
-              <.link patch={@return_to}><.icon name="x_mark" /></.link>
+              <.link patch={@return_to}>
+                <svg class="w-6 h-6 text-gray-400 hover:text-gray-500" xmlns="http://www.w3.org/2000/svg" 
+                  fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </.link>
             </div>
             <% end %>
             <%= live_component(@component, @opts) %>

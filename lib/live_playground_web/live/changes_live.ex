@@ -6,8 +6,6 @@ defmodule LivePlaygroundWeb.ChangesLive do
   def mount(_params, _session, socket) do
     socket =
       assign(socket,
-        title: "Changes",
-        description: "How to handle form changes in live view",
         color: "red",
         shape: "circle"
       )
@@ -17,6 +15,14 @@ defmodule LivePlaygroundWeb.ChangesLive do
 
   def render(assigns) do
     ~H"""
+    <!-- start hiding from live code -->
+    <.heading>
+      Changes
+      <:footer>
+        How to handle form changes in live view
+      </:footer>
+    </.heading>
+    <!-- end hiding from live code -->
     <form id="dynamic-form" class="space-y-5" phx-change="refresh">
       <div>
         <.select id="color" label="Color" name="color">
@@ -27,19 +33,15 @@ defmodule LivePlaygroundWeb.ChangesLive do
       <div>
         <.fieldset legend="Shapes">
           <.radio name="shape" value="circle" id="circle" label="Circle" current={@shape} />
-
           <.radio name="shape" value="rectangle" id="rectangle" label="Rectangle" current={@shape} />
           <%= render_partial(:rectangle, @shape, assigns) %>
-
           <.radio name="shape" value="square" id="square" label="Square" current={@shape} />
           <%= render_partial(:square, @shape, assigns) %>
         </.fieldset>
       </div>
     </form>
-
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/router.ex", "# changes", "# /", :router)) %>
       <%= raw(code("lib/live_playground_web/live/changes_live.ex")) %>
     </div>
     <!-- end hiding from live code -->

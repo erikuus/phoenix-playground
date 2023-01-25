@@ -6,8 +6,6 @@ defmodule LivePlaygroundWeb.ClicksLive do
   def mount(_params, _session, socket) do
     socket =
       assign(socket,
-        title: "Clicks",
-        description: "How to handle clicks in live view",
         input_values: [],
         input_fields: [],
         counter: 0,
@@ -23,11 +21,17 @@ defmodule LivePlaygroundWeb.ClicksLive do
 
   def render(assigns) do
     ~H"""
+    <!-- start hiding from live code -->
+    <.heading>
+      Clicks
+      <:footer>
+      How to handle clicks in live view
+      </:footer>
+    </.heading>
+    <!-- end hiding from live code -->
     <%= render_partial(@live_action, assigns) %>
-
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/router.ex", "# clicks", "# /", :router)) %>
       <%= raw(code("lib/live_playground_web/live/clicks_live.ex")) %>
     </div>
     <!-- end hiding from live code -->
