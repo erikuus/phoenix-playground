@@ -2,7 +2,7 @@ defmodule LivePlaygroundWeb.DevHelpers do
   import LivePlaygroundWeb.FileHelpers
 
   def lorem_ipsum_words(count, random \\ false) do
-    String.split(lorem_ipsum_text(), " ", trim: true)
+    String.split(get_lorem_ipsum(), " ", trim: true)
     |> shuffle(random)
     |> Enum.slice(0..(count - 1))
     |> Enum.join(" ")
@@ -10,7 +10,7 @@ defmodule LivePlaygroundWeb.DevHelpers do
 
   def lorem_ipsum_sentences(count, random \\ false) do
     sentences =
-      String.split(lorem_ipsum_text(), ".", trim: true)
+      String.split(get_lorem_ipsum(), ".", trim: true)
       |> shuffle(random)
       |> Enum.slice(0..(count - 1))
       |> Enum.join(". ")
@@ -19,13 +19,13 @@ defmodule LivePlaygroundWeb.DevHelpers do
   end
 
   def lorem_ipsum_paragraphs(count, random \\ false) do
-    String.split(lorem_ipsum_text(), "\n\n", trim: true)
+    String.split(get_lorem_ipsum(), "\n\n", trim: true)
     |> shuffle(random)
     |> Enum.slice(0..(count - 1))
     |> Enum.join("\n\n")
   end
 
-  defp lorem_ipsum_text() do
+  defp get_lorem_ipsum() do
     read_file("priv/static/text/lorem_ipsum")
   end
 
@@ -40,7 +40,7 @@ defmodule LivePlaygroundWeb.DevHelpers do
         #{filename}
       </div>
       <div class="bg-[#f8f8f8] px-4 py-5 sm:p-6 select-all">
-        #{read_file(filename) |> split_code(from, to, tpl) |> clean_code() |> Makeup.highlight()}
+        #{read_file(filename) |> show_marked(from, to, tpl) |> hide_marked() |> Makeup.highlight()}
       </div>
     </div>
     """
@@ -53,33 +53,36 @@ defmodule LivePlaygroundWeb.DevHelpers do
         #{filename}
       </div>
       <div class="bg-[#f8f8f8] px-4 py-5 sm:p-6 select-all">
-        #{read_file(filename) |> clean_code() |> Makeup.highlight()}
+        #{read_file(filename) |> hide_marked() |> Makeup.highlight()}
       </div>
     </div>
     """
   end
 
-  defp split_code(code, from, to, tpl) do
-    [_, code_after] = String.split(code, from)
-    [code_between | _] = String.split(code_after, to)
-    code = String.trim_trailing(code_between, " ")
-    if tpl, do: template(tpl, code), else: "#{from}#{code}#{to}"
+  defp show_marked(code, from, to, tpl) do
+    code
+    |> String.split([from, to])
+    |> Enum.at(1)
+    |> String.trim_trailing(" ")
+    |> apply_template(from, to, tpl)
   end
 
-  defp clean_code(code) do
+  defp hide_marked(code) do
     contains = String.contains?(code, "<!-- start hiding from live code -->")
     hide_code(code, contains)
   end
 
   defp hide_code(code, true) do
-    [code_before_hiding, code_after] = String.split(code, "<!-- start hiding from live code -->")
-    [_, code_after_hiding] = String.split(code_after, "<!-- end hiding from live code -->")
-    "#{String.trim(code_before_hiding)} #{code_after_hiding}"
+    code
+    |> String.split(["<!-- start hiding from live code -->", "<!-- end hiding from live code -->"])
+    |> Enum.take_every(2)
+    |> Enum.map(&String.trim_trailing/1)
+    |> Enum.join()
   end
 
   defp hide_code(code, false), do: code
 
-  defp template(:router, code) do
+  defp apply_template(code, _, _, :router) do
     """
       scope "/", LivePlaygroundWeb do
         pipe_through :browser
@@ -89,5 +92,5 @@ defmodule LivePlaygroundWeb.DevHelpers do
     """
   end
 
-  defp template(_, _), do: nil
+  defp apply_template(code, from, to, _), do: "#{from}#{code}#{to}"
 end
