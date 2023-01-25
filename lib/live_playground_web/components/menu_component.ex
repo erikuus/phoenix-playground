@@ -30,6 +30,8 @@ defmodule LivePlaygroundWeb.MenuComponent do
       %{icon: "home", label: "Home", path: "/"},
       %{icon: "cursor_arrow_ripple", label: "Clicks", path: "/clicks"},
       %{icon: "arrow_path", label: "Changes", path: "/changes"},
+      %{icon: "clock", label: "Send Interval", path: "/send-interval"},
+      %{icon: "paper_airplane", label: "Send After", path: "/send-after"},
       %{icon: "rectangle_stack", label: "Modals", path: "/modals"},
       %{icon: "arrow_up_tray", label: "Upload", path: "/upload"},
       %{icon: "cloud_arrow_up", label: "Cloud Upload", path: "/upload-cloud"}
