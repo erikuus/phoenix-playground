@@ -48,6 +48,16 @@ defmodule LivePlaygroundWeb.ChangesLive do
     """
   end
 
+  def handle_event("refresh", %{"color" => color, "shape" => shape}, socket) do
+    socket =
+      assign(socket,
+        color: color,
+        shape: shape
+      )
+
+    {:noreply, socket}
+  end
+
   defp render_partial(:color, "green", assigns) do
     ~H"""
     <div id="greens" phx-update="ignore" class="space-y-5 ml-6">
@@ -93,16 +103,6 @@ defmodule LivePlaygroundWeb.ChangesLive do
   end
 
   defp render_partial(_, _, _), do: nil
-
-  def handle_event("refresh", %{"color" => color, "shape" => shape}, socket) do
-    socket =
-      assign(socket,
-        color: color,
-        shape: shape
-      )
-
-    {:noreply, socket}
-  end
 
   defp color_options do
     [

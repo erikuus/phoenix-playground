@@ -38,52 +38,6 @@ defmodule LivePlaygroundWeb.ClicksLive do
     """
   end
 
-  defp render_action(:show_list, assigns) do
-    ~H"""
-    <ul role="list" class="mb-4 divide-y divide-gray-200">
-    <%= for tabular_value <- @tabular_values do  %>
-      <li class="py-4"><%= tabular_value %></li>
-    <% end %>
-    </ul>
-    <.button patch={Routes.live_path(@socket, __MODULE__)}>Reset</.button>
-    """
-  end
-
-  defp render_action(_, assigns) do
-    ~H"""
-    <form id="tabular-form" phx-submit="show-list">
-      <div id="tabular-fields" phx-update="append">
-      <%= for tabular_field <- @tabular_fields do  %>
-        <%= render_tabular_field(tabular_field) %>
-      <% end %>
-      </div>
-      <div class="space-x-2">
-      <%= if @counter < 5 do %>
-        <.button type="button" phx-click="add-input" color={:secondary}>Add field</.button>
-      <% end %>
-      <%= if @counter > 0 do %>
-        <.button type="submit">Show list</.button>
-      <% end %>
-      </div>
-    </form>
-    """
-  end
-
-  defp render_tabular_field(%{operation: :add} = assigns) do
-    ~H"""
-    <div id={"tabular-field-#{@index}"} class="mb-4 flex space-x-2">
-      <.input name="texts[]" type="text" value={lorem_ipsum_sentences(1, true)} />
-      <.button type="button" color={:secondary} phx-click="remove-input" phx-value-index={@index}>Remove</.button>
-    </div>
-    """
-  end
-
-  defp render_tabular_field(%{operation: :remove} = assigns) do
-    ~H"""
-    <div id={"tabular-field-#{@index}"}></div>
-    """
-  end
-
   def handle_event("add-input", _, socket) do
     index = socket.assigns.index
     socket = update(socket, :tabular_fields, &[%{index: index, operation: :add} | &1])
@@ -109,5 +63,43 @@ defmodule LivePlaygroundWeb.ClicksLive do
       )
 
     {:noreply, push_patch(socket, to: Routes.clicks_path(socket, :show_list))}
+  end
+
+  defp render_action(:show_list, assigns) do
+    ~H"""
+    <ul class="mb-4 divide-y divide-gray-200">
+      <li :for={tabular_value <- @tabular_values} class="py-4"><%= tabular_value %></li>
+    </ul>
+    <.button patch={Routes.live_path(@socket, __MODULE__)}>Reset</.button>
+    """
+  end
+
+  defp render_action(_, assigns) do
+    ~H"""
+    <form id="tabular-form" phx-submit="show-list">
+      <div :for={tabular_field <- @tabular_fields} id="tabular-fields" phx-update="append">
+        <%= render_tabular_field(tabular_field) %>
+      </div>
+      <div class="space-x-2">
+        <.button type="button" phx-click="add-input" color={:secondary} :if={@counter < 5}>Add field</.button>
+        <.button type="submit" :if={@counter > 0}>Show list</.button>
+      </div>
+    </form>
+    """
+  end
+
+  defp render_tabular_field(%{operation: :add} = assigns) do
+    ~H"""
+    <div id={"tabular-field-#{@index}"} class="mb-4 flex space-x-2">
+      <.input name="texts[]" type="text" value={lorem_ipsum_sentences(1, true)} />
+      <.button type="button" color={:secondary} phx-click="remove-input" phx-value-index={@index}>Remove</.button>
+    </div>
+    """
+  end
+
+  defp render_tabular_field(%{operation: :remove} = assigns) do
+    ~H"""
+    <div id={"tabular-field-#{@index}"}></div>
+    """
   end
 end
