@@ -6,13 +6,13 @@ defmodule LivePlaygroundWeb.ClicksLive do
   def mount(_params, _session, socket) do
     socket =
       assign(socket,
-        input_values: [],
-        input_fields: [],
+        tabular_values: [],
+        tabular_fields: [],
         counter: 0,
         index: 0
       )
 
-    {:ok, socket, temporary_assigns: [input_fields: []]}
+    {:ok, socket, temporary_assigns: [tabular_fields: []]}
   end
 
   def handle_params(_params, _url, socket) do
@@ -29,7 +29,7 @@ defmodule LivePlaygroundWeb.ClicksLive do
       </:footer>
     </.heading>
     <!-- end hiding from live code -->
-    <%= render_partial(@live_action, assigns) %>
+    <%= render_action(@live_action, assigns) %>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <%= raw(code("lib/live_playground_web/live/clicks_live.ex")) %>
@@ -38,23 +38,23 @@ defmodule LivePlaygroundWeb.ClicksLive do
     """
   end
 
-  defp render_partial(:show_list, assigns) do
+  defp render_action(:show_list, assigns) do
     ~H"""
     <ul role="list" class="mb-4 divide-y divide-gray-200">
-    <%= for input_value <- @input_values do  %>
-      <li class="py-4"><%= input_value %></li>
+    <%= for tabular_value <- @tabular_values do  %>
+      <li class="py-4"><%= tabular_value %></li>
     <% end %>
     </ul>
     <.button patch={Routes.live_path(@socket, __MODULE__)}>Reset</.button>
     """
   end
 
-  defp render_partial(_, assigns) do
+  defp render_action(_, assigns) do
     ~H"""
-    <form id="input-fields-form" phx-submit="show-list">
-      <div id="input-fields" phx-update="append">
-      <%= for input_field <- @input_fields do  %>
-        <%= raw(input_field) %>
+    <form id="tabular-form" phx-submit="show-list">
+      <div id="tabular-fields" phx-update="append">
+      <%= for tabular_field <- @tabular_fields do  %>
+        <%= render_tabular_field(tabular_field) %>
       <% end %>
       </div>
       <div class="space-x-2">
@@ -69,9 +69,24 @@ defmodule LivePlaygroundWeb.ClicksLive do
     """
   end
 
+  defp render_tabular_field(%{operation: :add} = assigns) do
+    ~H"""
+    <div id={"tabular-field-#{@index}"} class="mb-4 flex space-x-2">
+      <.input name="texts[]" type="text" value={lorem_ipsum_sentences(1, true)} />
+      <.button type="button" color={:secondary} phx-click="remove-input" phx-value-index={@index}>Remove</.button>
+    </div>
+    """
+  end
+
+  defp render_tabular_field(%{operation: :remove} = assigns) do
+    ~H"""
+    <div id={"tabular-field-#{@index}"}></div>
+    """
+  end
+
   def handle_event("add-input", _, socket) do
     index = socket.assigns.index
-    socket = update(socket, :input_fields, &[input_field(:add, index) | &1])
+    socket = update(socket, :tabular_fields, &[%{index: index, operation: :add} | &1])
     socket = update(socket, :counter, &(&1 + 1))
     socket = update(socket, :index, &(&1 + 1))
 
@@ -79,7 +94,7 @@ defmodule LivePlaygroundWeb.ClicksLive do
   end
 
   def handle_event("remove-input", %{"index" => index}, socket) do
-    socket = update(socket, :input_fields, &[input_field(:remove, index) | &1])
+    socket = update(socket, :tabular_fields, &[%{index: index, operation: :remove} | &1])
     socket = update(socket, :counter, &(&1 - 1))
     {:noreply, socket}
   end
@@ -87,32 +102,12 @@ defmodule LivePlaygroundWeb.ClicksLive do
   def handle_event("show-list", %{"texts" => texts}, socket) do
     socket =
       assign(socket,
-        input_values: texts,
-        input_fields: [],
+        tabular_values: texts,
+        tabular_fields: [],
         counter: 0,
         index: 0
       )
 
     {:noreply, push_patch(socket, to: Routes.clicks_path(socket, :show_list))}
-  end
-
-  defp input_field(:add, index) do
-    """
-    <div id="field#{index}" class="mb-4">
-      <label for="text#{index}" class="#{label_classes()}">Text</label>
-      <div class="mt-1 flex space-x-2">
-        <input type="text" name="texts[]" id="text#{index}" class="#{input_classes()}" value="#{lorem_ipsum_sentences(1, true)}">
-        <button type="button" class="#{button_classes(:secondary)}" phx-click="remove-input" phx-value-index="#{index}">
-          Remove
-        </button>
-      </div>
-    </div>
-    """
-  end
-
-  defp input_field(:remove, index) do
-    """
-    <div id="field#{index}"></div>
-    """
   end
 end
