@@ -80,7 +80,7 @@ defmodule LivePlaygroundWeb.UiComponent do
     """
   end
 
-  def button_classes(color \\ :primary, size \\ :md, class \\ nil) do
+  defp button_classes(color \\ :primary, size \\ :md, class \\ nil) do
     "inline-flex items-center justify-center border font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 #{button_color_classes(color)} #{button_size_classes(size)} #{class}"
   end
 
@@ -217,11 +217,11 @@ defmodule LivePlaygroundWeb.UiComponent do
     """
   end
 
-  def input_classes(class \\ nil) do
+  defp input_classes(class \\ nil) do
     "block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm #{class}"
   end
 
-  def label_classes(class \\ nil) do
+  defp label_classes(class \\ nil) do
     "block text-sm font-medium text-gray-700 #{class}"
   end
 
@@ -290,7 +290,7 @@ defmodule LivePlaygroundWeb.UiComponent do
     """
   end
 
-  def radio_classes(class \\ nil) do
+  defp radio_classes(class \\ nil) do
     "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500 #{class}"
   end
 
