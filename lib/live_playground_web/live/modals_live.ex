@@ -23,6 +23,7 @@ defmodule LivePlaygroundWeb.ModalsLive do
        How to open modals in live view
       </:footer>
     </.heading>
+    <!-- end hiding from live code -->
     <div class="space-x-0 space-y-3 xl:space-x-3 xl:space-y-0">
       <.button patch={Routes.modals_path(@socket, :single_action)} class="w-full xl:w-auto">Centered single action</.button>
       <.button patch={Routes.modals_path(@socket, :wide_buttons)} class="w-full xl:w-auto">Centered wide buttons</.button>
@@ -33,11 +34,11 @@ defmodule LivePlaygroundWeb.ModalsLive do
     <%= show_live_modal(@socket, @live_action) %>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
+      <%= raw(code("lib/live_playground_web/live/modals_live.ex")) %>
       <%= raw(code("lib/live_playground_web/helpers/live_helpers.ex", "def live_modal", "end")) %>
       <%= raw(code("lib/live_playground_web/live/components/modal_component.ex")) %>
-      <%= raw(code("lib/live_playground_web/router.ex", "# modals", "#", :router)) %>
-      <%= raw(code("lib/live_playground_web/live/modals_live.ex")) %>
       <%= raw(code("lib/live_playground_web/live/components/modal_content/single_action_component.ex")) %>
+      <%= raw(code("lib/live_playground_web/router.ex", "# modals", "#", :router)) %>
     </div>
     <!-- end hiding from live code -->
     """
