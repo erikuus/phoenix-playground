@@ -1,6 +1,8 @@
 defmodule LivePlaygroundWeb.Live.ModalComponent do
   use LivePlaygroundWeb, :live_component
 
+  import LivePlaygroundWeb.UiComponent
+
   def render(assigns) do
     ~H"""
     <div class="relative z-10 hover:bg-red-500" aria-labelledby="modal-title" role="dialog" aria-modal="true">
@@ -12,17 +14,19 @@ defmodule LivePlaygroundWeb.Live.ModalComponent do
           phx-key="escape"
           phx-target={"#{@myself}"}>
           <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:p-0">
-            <%= if @close_opts.show_close_btn do %>
-            <div class="absolute top-0 right-0 hidden pt-4 pr-4 sm:block">
+            <div class="absolute top-0 right-0 hidden pt-4 pr-4 sm:block" :if={@close_opts.show_close_btn}>
               <.link patch={@return_to}>
-                <svg class="w-6 h-6 text-gray-400 hover:text-gray-500" xmlns="http://www.w3.org/2000/svg" 
+                <svg class="w-6 h-6 text-gray-400 hover:text-gray-500" xmlns="http://www.w3.org/2000/svg"
                   fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </.link>
             </div>
+            <%= if is_confirm_component(@component) do %>
+              <.confirm type={@component} opts={Enum.into(@opts, %{})} />
+            <% else %>
+              <%= live_component(@component, @opts) %>
             <% end %>
-            <%= live_component(@component, @opts) %>
           </div>
         </div>
       </div>
@@ -39,5 +43,9 @@ defmodule LivePlaygroundWeb.Live.ModalComponent do
       end
 
     {:noreply, socket}
+  end
+
+  defp is_confirm_component(component) do
+    if component in [:confirm_return, :confirm_go_to], do: true, else: false
   end
 end

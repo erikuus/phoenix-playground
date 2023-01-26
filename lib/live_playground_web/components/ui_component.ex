@@ -355,14 +355,10 @@ defmodule LivePlaygroundWeb.UiComponent do
     """
   end
 
-  attr :title, :string, required: true
-  attr :description, :string, required: true
-  attr :go_text, :string, default: "OK"
-  attr :return_text, :string, default: "Cancel"
-  attr :go_to, :string
-  attr :return_to, :string
+  attr :type, :atom, required: true
+  attr :opts, :map, required: true
 
-  def confirm(assigns) do
+  def confirm(%{type: :confirm_return} = assigns) do
     ~H"""
     <div class="p-4 sm:p-6 sm:w-full sm:max-w-sm">
       <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
@@ -371,13 +367,35 @@ defmodule LivePlaygroundWeb.UiComponent do
         </svg>
       </div>
       <div class="mt-3 text-center sm:mt-5">
-        <h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-title"><%= @title %></h3>
+        <h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-title"><%= @opts.title %></h3>
         <div class="mt-2">
-          <p class="text-sm text-gray-500"><%= @description %></p>
+          <p class="text-sm text-gray-500"><%= @opts.description %></p>
         </div>
       </div>
       <div class="mt-5 sm:mt-6">
-        <.button patch={@return_to} class="w-full"><%= @return_text %></.button>
+        <.button patch={@opts.return_to} class="w-full"><%= @opts.return_text %></.button>
+      </div>
+    </div>
+    """
+  end
+
+  def confirm(%{type: :confirm_go_to} = assigns) do
+    ~H"""
+    <div class="p-4 sm:p-6 sm:w-full sm:max-w-lg">
+      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+        <svg class="h-6 w-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+        </svg>
+      </div>
+      <div class="mt-3 text-center sm:mt-5">
+        <h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-title"><%= @opts.title %></h3>
+        <div class="mt-2">
+          <p class="text-sm text-gray-500"><%= @opts.description %></p>
+        </div>
+      </div>
+      <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+        <.button patch={@opts.go_to} color={:primary} class="w-full"><%= @opts.go_text %></.button>
+        <.button patch={@opts.return_to} color={:secondary} class="w-full mt-3 sm:mt-0"><%= @opts.return_text %></.button>
       </div>
     </div>
     """

@@ -25,11 +25,9 @@ defmodule LivePlaygroundWeb.ModalsLive do
     </.heading>
     <!-- end hiding from live code -->
     <div class="space-x-0 space-y-3 xl:space-x-3 xl:space-y-0">
-      <.button patch={Routes.modals_path(@socket, :single_action)} class="w-full xl:w-auto">Centered single action</.button>
-      <.button patch={Routes.modals_path(@socket, :wide_buttons)} class="w-full xl:w-auto">Centered wide buttons</.button>
-      <.button patch={Routes.modals_path(@socket, :left_buttons)} class="w-full xl:w-auto">Left buttons</.button>
-      <.button patch={Routes.modals_path(@socket, :right_buttons)} class="w-full xl:w-auto">Right buttons</.button>
-      <.button patch={Routes.modals_path(@socket, :gray_footer)} class="w-full xl:w-auto">Gray footer</.button>
+      <.button patch={Routes.modals_path(@socket, :modal_a)} class="w-full xl:w-auto">Confirm Return</.button>
+      <.button patch={Routes.modals_path(@socket, :modal_b)} class="w-full xl:w-auto">Confirm Proceed</.button>
+      <.button patch={Routes.modals_path(@socket, :modal_c)} class="w-full xl:w-auto">Confirm Action</.button>
     </div>
     <%= show_live_modal(@socket, @live_action) %>
     <!-- start hiding from live code -->
@@ -44,48 +42,33 @@ defmodule LivePlaygroundWeb.ModalsLive do
     """
   end
 
-  defp show_live_modal(socket, :single_action) do
-    live_modal(ModalContent.SingleActionComponent,
+  defp show_live_modal(socket, :modal_a) do
+    live_modal(:confirm_return,
       title: "Payment successful",
       description: lorem_ipsum_sentences(2),
+      return_text: "Continue shopping",
       return_to: Routes.live_path(socket, __MODULE__)
     )
   end
 
-  defp show_live_modal(socket, :wide_buttons) do
-    live_modal(ModalContent.WideButtonsComponent,
-      title: "Payment successful",
+  defp show_live_modal(socket, :modal_b) do
+    live_modal(:confirm_go_to,
+      title: "Added to Cart",
       description: lorem_ipsum_sentences(4),
-      go_to: Routes.modals_path(socket, :left_buttons),
+      go_text: "Proceed to checkout",
+      go_to: Routes.modals_path(socket, :modal_c),
+      return_text: "Continue shopping",
       return_to: Routes.live_path(socket, __MODULE__)
     )
   end
 
-  defp show_live_modal(socket, :left_buttons) do
-    live_modal(ModalContent.LeftButtonsComponent,
-      title: "Deactivate account",
-      description: lorem_ipsum_sentences(3),
-      go_to: Routes.modals_path(socket, :right_buttons),
-      return_to: Routes.live_path(socket, __MODULE__)
-    )
-  end
-
-  defp show_live_modal(socket, :right_buttons) do
-    live_modal(ModalContent.RightButtonsComponent,
-      title: "Deactivate account",
-      description: lorem_ipsum_sentences(3),
-      go_to: Routes.modals_path(socket, :gray_footer),
-      return_to: Routes.live_path(socket, __MODULE__)
-    )
-  end
-
-  defp show_live_modal(socket, :gray_footer) do
+  defp show_live_modal(socket, :modal_c) do
     live_modal(
       ModalContent.GrayFooterComponent,
       [
         title: "Deactivate account",
         description: lorem_ipsum_sentences(3),
-        go_to: Routes.modals_path(socket, :single_action),
+        go_to: Routes.modals_path(socket, :modal_a),
         return_to: Routes.live_path(socket, __MODULE__)
       ],
       %{capture_close: false, show_close_btn: true}

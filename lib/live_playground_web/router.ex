@@ -25,11 +25,10 @@ defmodule LivePlaygroundWeb.Router do
 
     # modals
     live "/modals", ModalsLive
-    live "/modals/single-action", ModalsLive, :single_action
-    live "/modals/wide-buttons", ModalsLive, :wide_buttons
-    live "/modals/left-buttons", ModalsLive, :left_buttons
-    live "/modals/right-buttons", ModalsLive, :right_buttons
-    live "/modals/gray-footer", ModalsLive, :gray_footer
+    live "/modals/modal-a", ModalsLive, :modal_a
+    live "/modals/modal-b", ModalsLive, :modal_b
+    live "/modals/modal-c", ModalsLive, :modal_c
+    live "/modals/modal-d", ModalsLive, :modal_d
     #
 
     live "/upload", UploadLive
