@@ -38,33 +38,6 @@ defmodule LivePlaygroundWeb.ClicksLive do
     """
   end
 
-  def handle_event("add-input", _, socket) do
-    index = socket.assigns.index
-    socket = update(socket, :tabular_fields, &[%{index: index, operation: :add} | &1])
-    socket = update(socket, :counter, &(&1 + 1))
-    socket = update(socket, :index, &(&1 + 1))
-
-    {:noreply, socket}
-  end
-
-  def handle_event("remove-input", %{"index" => index}, socket) do
-    socket = update(socket, :tabular_fields, &[%{index: index, operation: :remove} | &1])
-    socket = update(socket, :counter, &(&1 - 1))
-    {:noreply, socket}
-  end
-
-  def handle_event("show-list", %{"texts" => texts}, socket) do
-    socket =
-      assign(socket,
-        tabular_values: texts,
-        tabular_fields: [],
-        counter: 0,
-        index: 0
-      )
-
-    {:noreply, push_patch(socket, to: Routes.clicks_path(socket, :show_list))}
-  end
-
   defp render_action(:show_list, assigns) do
     ~H"""
     <ul class="mb-4 divide-y divide-gray-200">
@@ -101,5 +74,32 @@ defmodule LivePlaygroundWeb.ClicksLive do
     ~H"""
     <div id={"tabular-field-#{@index}"}></div>
     """
+  end
+
+  def handle_event("add-input", _, socket) do
+    index = socket.assigns.index
+    socket = update(socket, :tabular_fields, &[%{index: index, operation: :add} | &1])
+    socket = update(socket, :counter, &(&1 + 1))
+    socket = update(socket, :index, &(&1 + 1))
+
+    {:noreply, socket}
+  end
+
+  def handle_event("remove-input", %{"index" => index}, socket) do
+    socket = update(socket, :tabular_fields, &[%{index: index, operation: :remove} | &1])
+    socket = update(socket, :counter, &(&1 - 1))
+    {:noreply, socket}
+  end
+
+  def handle_event("show-list", %{"texts" => texts}, socket) do
+    socket =
+      assign(socket,
+        tabular_values: texts,
+        tabular_fields: [],
+        counter: 0,
+        index: 0
+      )
+
+    {:noreply, push_patch(socket, to: Routes.clicks_path(socket, :show_list))}
   end
 end

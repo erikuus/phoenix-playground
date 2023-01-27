@@ -5,7 +5,6 @@ defmodule LivePlaygroundWeb.SendIntervalLive do
 
   def mount(_params, _session, socket) do
     if connected?(socket), do: :timer.send_interval(1000, self(), :tick)
-
     expiration_time = Timex.shift(Timex.now(), days: 2)
 
     socket =

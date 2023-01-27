@@ -7,7 +7,6 @@ defmodule LivePlaygroundWeb.SendAfterLive do
 
   def mount(_params, _session, socket) do
     if connected?(socket), do: Process.send_after(self(), :refresh, 1000)
-
     {:ok, assign_stats(socket)}
   end
 
