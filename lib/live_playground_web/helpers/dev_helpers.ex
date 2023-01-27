@@ -39,7 +39,7 @@ defmodule LivePlaygroundWeb.DevHelpers do
       <div class="px-4 py-5 sm:px-6 text-gray-400 font-mono">
         #{filename}
       </div>
-      <div class="bg-[#f8f8f8] px-4 py-5 sm:p-6 select-all">
+      <div class="bg-[#f8f8f8] px-4 py-5 sm:p-6">
         #{read_file(filename) |> show_marked(from, to, tpl) |> hide_marked() |> Makeup.highlight()}
       </div>
     </div>
@@ -52,7 +52,7 @@ defmodule LivePlaygroundWeb.DevHelpers do
       <div class="px-4 py-5 sm:px-6 text-gray-400 font-mono">
         #{filename}
       </div>
-      <div class="bg-[#f8f8f8] px-4 py-5 sm:p-6 select-all">
+      <div class="bg-[#f8f8f8] px-4 py-5 sm:p-6">
         #{read_file(filename) |> hide_marked() |> Makeup.highlight()}
       </div>
     </div>
