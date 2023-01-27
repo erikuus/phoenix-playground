@@ -379,7 +379,7 @@ defmodule LivePlaygroundWeb.UiComponent do
     """
   end
 
-  def confirm(%{type: :confirm_go_to} = assigns) do
+  def confirm(%{type: :confirm_proceed} = assigns) do
     ~H"""
     <div class="p-4 sm:p-6 sm:w-full sm:max-w-lg">
       <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
@@ -394,8 +394,32 @@ defmodule LivePlaygroundWeb.UiComponent do
         </div>
       </div>
       <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-        <.button patch={@opts.go_to} color={:primary} class="w-full"><%= @opts.go_text %></.button>
+        <.button patch={@opts.proceed_to} color={:primary} class="w-full"><%= @opts.proceed_text %></.button>
         <.button patch={@opts.return_to} color={:secondary} class="w-full mt-3 sm:mt-0"><%= @opts.return_text %></.button>
+      </div>
+    </div>
+    """
+  end
+
+  def confirm(%{type: :confirm_action} = assigns) do
+    ~H"""
+    <div class="p-4 sm:p-6 sm:w-full sm:max-w-lg">
+      <div class="sm:flex sm:items-start">
+        <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+          <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 10.5v3.75m-9.303 3.376C1.83 19.126 2.914 21 4.645 21h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 4.88c-.866-1.501-3.032-1.501-3.898 0L2.697 17.626zM12 17.25h.007v.008H12v-.008z" />
+          </svg>
+        </div>
+        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+          <h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-title"><%= @opts.title %></h3>
+          <div class="mt-2">
+            <p class="text-sm text-gray-500"><%= @opts.description %></p>
+          </div>
+        </div>
+      </div>
+      <div class="mt-5 sm:mt-4 sm:ml-10 sm:pl-4 sm:flex sm:flex-row-reverse">
+        <.button patch={@opts.return_to} color={:secondary} class="w-full sm:w-auto"><%= @opts.return_text %></.button>
+        <.button patch={@opts.action_to} color={:dangerous} class="w-full sm:w-auto mt-3 sm:mt-0 sm:mr-3"><%= @opts.action_text %></.button>
       </div>
     </div>
     """

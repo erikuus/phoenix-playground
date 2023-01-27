@@ -22,7 +22,7 @@ defmodule LivePlaygroundWeb.DevHelpers do
     String.split(get_lorem_ipsum(), "\n\n", trim: true)
     |> shuffle(random)
     |> Enum.slice(0..(count - 1))
-    |> Enum.join("\n\n")
+    |> Enum.map(&Phoenix.HTML.Tag.content_tag(:p, &1))
   end
 
   defp get_lorem_ipsum() do
@@ -69,10 +69,10 @@ defmodule LivePlaygroundWeb.DevHelpers do
 
   defp hide_marked(code) do
     contains = String.contains?(code, "<!-- start hiding from live code -->")
-    hide_code(code, contains)
+    hide(code, contains)
   end
 
-  defp hide_code(code, true) do
+  defp hide(code, true) do
     code
     |> String.split(["<!-- start hiding from live code -->", "<!-- end hiding from live code -->"])
     |> Enum.take_every(2)
@@ -80,7 +80,7 @@ defmodule LivePlaygroundWeb.DevHelpers do
     |> Enum.join()
   end
 
-  defp hide_code(code, false), do: code
+  defp hide(code, false), do: code
 
   defp apply_template(code, _, _, :router) do
     """

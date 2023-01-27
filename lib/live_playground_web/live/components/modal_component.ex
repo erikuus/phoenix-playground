@@ -46,6 +46,6 @@ defmodule LivePlaygroundWeb.Live.ModalComponent do
   end
 
   defp is_confirm_component(component) do
-    if component in [:confirm_return, :confirm_go_to], do: true, else: false
+    if component in [:confirm_return, :confirm_proceed, :confirm_action], do: true, else: false
   end
 end
