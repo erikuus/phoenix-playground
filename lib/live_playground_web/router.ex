@@ -22,6 +22,7 @@ defmodule LivePlaygroundWeb.Router do
     live "/changes", ChangesLive
     live "/send-interval", SendIntervalLive
     live "/send-after", SendAfterLive
+    live "/search", SearchLive
 
     # modals
     live "/modals", ModalsLive

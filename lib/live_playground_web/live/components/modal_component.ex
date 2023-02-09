@@ -12,7 +12,7 @@ defmodule LivePlaygroundWeb.Live.ModalComponent do
           phx-capture-click="close"
           phx-window-keyup="close"
           phx-key="escape"
-          phx-target={"#{@myself}"}>
+          phx-target={@myself}>
           <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:p-0">
             <div class="absolute top-0 right-0 hidden pt-4 pr-4 sm:block" :if={@close_opts.show_close_btn}>
               <.link patch={@return_to}>

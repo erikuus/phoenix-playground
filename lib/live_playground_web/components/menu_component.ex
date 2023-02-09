@@ -5,23 +5,19 @@ defmodule LivePlaygroundWeb.MenuComponent do
 
   def desktop(assigns) do
     ~H"""
-    <%= for item <- items() do %>
-    <a href={"#{item.path}"} class={"#{bg_class(item.path, @current_path)} text-gray-900 group flex items-center px-2 py-2 text-sm font-medium rounded-md"}>
+    <a :for={item <- items()} href={"#{item.path}"} class={"#{bg_class(item.path, @current_path)} text-gray-900 group flex items-center px-2 py-2 text-sm font-medium rounded-md"}>
       <.icon name={"#{item.icon}"} class="text-gray-500 mr-3 flex-shrink-0 h-6 w-6" />
       <%= item.label %>
     </a>
-    <% end  %>
     """
   end
 
   def mobile(assigns) do
     ~H"""
-    <%= for item <- items() do %>
-    <a href={"#{item.path}"} class={"#{bg_class(item.path, @current_path)} text-gray-600 group flex items-center px-2 py-2 text-base font-medium rounded-md"}>
+    <a :for={item <- items()} href={"#{item.path}"} class={"#{bg_class(item.path, @current_path)} text-gray-600 group flex items-center px-2 py-2 text-base font-medium rounded-md"}>
       <.icon name={"#{item.icon}"} class="text-gray-500 mr-3 flex-shrink-0 h-6 w-6" />
       <%= item.label %>
     </a>
-    <% end  %>
     """
   end
 
@@ -32,6 +28,7 @@ defmodule LivePlaygroundWeb.MenuComponent do
       %{icon: "arrow_path", label: "Changes", path: "/changes"},
       %{icon: "clock", label: "Send Interval", path: "/send-interval"},
       %{icon: "paper_airplane", label: "Send After", path: "/send-after"},
+      %{icon: "magnifying_glass", label: "Search", path: "/search"},
       %{icon: "rectangle_stack", label: "Modals", path: "/modals"},
       %{icon: "arrow_up_tray", label: "Upload", path: "/upload"},
       %{icon: "cloud_arrow_up", label: "Cloud Upload", path: "/upload-cloud"}
