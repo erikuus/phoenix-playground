@@ -111,12 +111,4 @@ defmodule LivePlaygroundWeb.ChangesLive do
       Blue: "blue"
     ]
   end
-
-  defp shape_options do
-    [
-      Circle: "circle",
-      Rectangle: "rectangle",
-      Square: "square"
-    ]
-  end
 end
