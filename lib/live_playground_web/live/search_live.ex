@@ -6,6 +6,10 @@ defmodule LivePlaygroundWeb.SearchLive do
   alias LivePlayground.Countries
 
   def mount(_params, _session, socket) do
+    {:ok, socket}
+  end
+
+  def handle_params(_params, _url, socket) do
     socket =
       assign(socket,
         query: nil,
@@ -13,7 +17,7 @@ defmodule LivePlaygroundWeb.SearchLive do
         loading: false
       )
 
-    {:ok, socket}
+    {:noreply, socket}
   end
 
   def render(assigns) do
@@ -36,13 +40,25 @@ defmodule LivePlaygroundWeb.SearchLive do
         value={@query} 
         readonly={@loading} />
       <.button type="submit">Search</.button>
+      <.button patch={Routes.live_path(@socket, __MODULE__)} color={:secondary}>Clear</.button>
     </form>
     <div :if={@loading} class="my-10 text-lg">
       Loading ...
     </div>
-    <ul class="mb-4 divide-y divide-gray-200">
-      <li :for={country <- @countries} class="py-4"><%= country.name %></li>
-    </ul>     		
+    <.ul :if={@countries != []} class="mb-4">
+      <li :for={country <- @countries} class="p-4 sm:flex sm:items-center sm:justify-between">
+        <p class="w-80 truncate font-medium"><%= country.name %></p>
+        <p class="w-12 text-sm"><%= country.code %></p>
+        <p class="w-12 text-sm"><%= country.code2 %></p>
+        <p class="w-10 text-sm sm:text-right"><%= country.code_number %></p>  
+      </li>
+    </.ul> 
+    <!-- start hiding from live code -->
+    <div class="mt-10 space-y-6">
+      <%= raw(code("lib/live_playground_web/live/search_live.ex")) %>
+      <%= raw(code("lib/live_playground/countries.ex", "# search", "# endsearch")) %>
+    </div>
+    <!-- end hiding from live code -->        		
     """
   end
 

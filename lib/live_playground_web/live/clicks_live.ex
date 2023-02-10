@@ -40,9 +40,9 @@ defmodule LivePlaygroundWeb.ClicksLive do
 
   defp render_action(:show_list, assigns) do
     ~H"""
-    <ul class="mb-4 divide-y divide-gray-200">
-      <li :for={tabular_value <- @tabular_values} class="py-4"><%= tabular_value %></li>
-    </ul>
+    <.ul class="mb-4">
+      <li :for={tabular_value <- @tabular_values} class="p-4"><%= tabular_value %></li>
+    </.ul>
     <.button patch={Routes.live_path(@socket, __MODULE__)}>Reset</.button>
     """
   end
