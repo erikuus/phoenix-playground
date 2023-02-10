@@ -35,7 +35,7 @@ defmodule LivePlaygroundWeb.ModalsLive do
       <%= raw(code("lib/live_playground_web/helpers/live_helpers.ex", "def live_modal", "end")) %>
       <%= raw(code("lib/live_playground_web/live/components/modal_component.ex")) %>
       <%= raw(code("lib/live_playground_web/live/components/text_component.ex")) %>
-      <%= raw(code("lib/live_playground_web/router.ex", "# modals", "#", :router)) %>
+      <%= raw(code("lib/live_playground_web/router.ex", "# modals", "# endmodals", :router)) %>
     </div>
     <!-- end hiding from live code -->
     """

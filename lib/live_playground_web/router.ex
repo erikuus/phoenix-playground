@@ -30,7 +30,7 @@ defmodule LivePlaygroundWeb.Router do
     live "/modals/modal-b", ModalsLive, :modal_b
     live "/modals/modal-c", ModalsLive, :modal_c
     live "/modals/modal-d", ModalsLive, :modal_d
-    #
+    # endmodals
 
     live "/upload", UploadLive
     live "/upload-cloud", UploadCloudLive

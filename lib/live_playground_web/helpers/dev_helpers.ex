@@ -64,7 +64,7 @@ defmodule LivePlaygroundWeb.DevHelpers do
     |> String.split([from, to])
     |> Enum.at(1)
     |> String.trim_trailing(" ")
-    |> apply_template(from, to, tpl)
+    |> apply_template(tpl)
   end
 
   defp hide_marked(code) do
@@ -82,7 +82,7 @@ defmodule LivePlaygroundWeb.DevHelpers do
 
   defp hide(code, false), do: code
 
-  defp apply_template(code, _, _, :router) do
+  defp apply_template(code, :router) do
     """
       scope "/", LivePlaygroundWeb do
         pipe_through :browser
@@ -92,5 +92,5 @@ defmodule LivePlaygroundWeb.DevHelpers do
     """
   end
 
-  defp apply_template(code, from, to, _), do: "#{from}#{code}#{to}"
+  defp apply_template(code, _), do: String.trim(code, "\n")
 end

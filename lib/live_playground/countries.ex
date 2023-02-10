@@ -21,6 +21,7 @@ defmodule LivePlayground.Countries do
     Repo.all(Country)
   end
 
+  # search
   def list_country(query) when query != "" do
     q = "%#{query}%"
 
@@ -33,6 +34,8 @@ defmodule LivePlayground.Countries do
   def list_country(_query) do
     []
   end
+
+  # endsearch
 
   @doc """
   Gets a single country.
