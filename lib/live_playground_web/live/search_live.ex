@@ -2,6 +2,7 @@ defmodule LivePlaygroundWeb.SearchLive do
   use LivePlaygroundWeb, :live_view
 
   import LivePlaygroundWeb.UiComponent
+  import LivePlaygroundWeb.IconComponent
 
   alias LivePlayground.Countries
 
@@ -30,21 +31,23 @@ defmodule LivePlaygroundWeb.SearchLive do
       </:footer>
     </.heading>
     <!-- end hiding from live code -->
-    <form class="mb-4 flex space-x-2 w-96" phx-submit="search">
+    <form class="mb-4 flex space-x-2" phx-submit="search">
       <.input 
         type="text" 
         name="query" 
         autocomplete="off" 
         placeholder="Search Country by Name"
-        class="placeholder-gray-300"
+        class="w-96 placeholder-gray-300"
         value={@query} 
         readonly={@loading} />
-      <.button type="submit">Search</.button>
-      <.button patch={Routes.live_path(@socket, __MODULE__)} color={:secondary}>Clear</.button>
+      <.button type="submit" phx-disable-with="" class="inline-flex">
+        Search<.icon :if={@loading} name="circle" class="animate-spin ml-2 -mr-1 w-5 h-5"/>
+      </.button>
+      <.button patch={Routes.live_path(@socket, __MODULE__)} color={:secondary}>
+        Clear
+      </.button>
     </form>
-    <div :if={@loading} class="my-10 text-lg">
-      Loading ...
-    </div>
+    <%= live_flash(@flash, :no_result) %>
     <.ul :if={@countries != []} class="mb-4">
       <li :for={country <- @countries} class="p-4 sm:flex sm:items-center sm:justify-between">
         <p class="w-80 truncate font-medium"><%= country.name %></p>
@@ -66,7 +69,9 @@ defmodule LivePlaygroundWeb.SearchLive do
     send(self(), {:find, query})
 
     socket =
-      assign(socket,
+      socket
+      |> clear_flash()
+      |> assign(
         query: query,
         countries: [],
         loading: true
@@ -76,11 +81,14 @@ defmodule LivePlaygroundWeb.SearchLive do
   end
 
   def handle_info({:find, query}, socket) do
+    #  For demo we wait a second to show loading
+    Process.sleep(1000)
+
     case Countries.list_country(query) do
       [] ->
         socket =
           socket
-          |> put_flash(:info, "No results for \"#{query}\"")
+          |> put_flash(:no_result, "No results for \"#{query}\"")
           |> assign(
             countries: [],
             loading: false
@@ -90,9 +98,7 @@ defmodule LivePlaygroundWeb.SearchLive do
 
       countries ->
         socket =
-          socket
-          |> clear_flash()
-          |> assign(
+          assign(socket,
             countries: countries,
             loading: false
           )
