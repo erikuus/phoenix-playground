@@ -29,22 +29,35 @@ defmodule LivePlaygroundWeb.UiComponent do
   slot(:icon)
   slot(:inner_block, required: true)
   attr :title, :string
-  attr :color, :atom, default: :warning
+  attr :color, :atom, default: :info
   attr :class, :string, default: nil
+
+  def alert(%{title: _title} = assigns) do
+    ~H"""
+    <div class={alert_classes(@color, @class)}>
+      <div class="flex space-x-2">
+        <%= render_slot(@icon) %>
+        <div class="ml-1">
+          <h3 class="text-sm font-medium"><%= @title %></h3>
+          <div class="mt-1 text-sm opacity-75">
+            <%= render_slot(@inner_block) %>
+          </div>
+        </div>
+      </div>
+    </div>
+    """
+  end
 
   def alert(assigns) do
     ~H"""
     <div class={alert_classes(@color, @class)}>
-      <div class="flex">
+      <div class="flex space-x-2">
         <%= render_slot(@icon) %>
-        <div class="ml-3">
-          <h3 class="text-sm font-medium"><%= @title %></h3>
-          <div class="mt-2 text-sm">
-            <p><%= render_slot(@inner_block) %></p>
-          </div>
+        <div class="ml-1 text-sm">
+          <%= render_slot(@inner_block) %>
         </div>
       </div>
-    </div>    
+    </div>
     """
   end
 
@@ -55,7 +68,8 @@ defmodule LivePlaygroundWeb.UiComponent do
   defp alert_color_classes(color) do
     Keyword.fetch!(
       [
-        warning: "bg-yellow-50 text-yellow-800"
+        info: "bg-blue-50 text-blue-700",
+        warning: "bg-yellow-50 text-yellow-700"
       ],
       color
     )
@@ -67,7 +81,7 @@ defmodule LivePlaygroundWeb.UiComponent do
   def ul(assigns) do
     ~H"""
     <div class={"overflow-hidden bg-white shadow-sm border border-gray-200 sm:rounded-md #{@class}"}>
-      <ul role="list" class="divide-y divide-gray-200">    
+      <ul role="list" class="divide-y divide-gray-200">
         <%= render_slot(@inner_block) %>
       </ul>
     </div>
@@ -79,7 +93,7 @@ defmodule LivePlaygroundWeb.UiComponent do
 
   def card(assigns) do
     ~H"""
-    <div class={"overflow-hidden bg-white shadow-sm border border-gray-200 sm:rounded-md #{@class}"}> 
+    <div class={"overflow-hidden bg-white shadow-sm border border-gray-200 sm:rounded-md #{@class}"}>
       <%= render_slot(@inner_block) %>
     </div>
     """

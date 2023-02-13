@@ -7,10 +7,6 @@ defmodule LivePlaygroundWeb.SearchLive do
   alias LivePlayground.Countries
 
   def mount(_params, _session, socket) do
-    {:ok, socket}
-  end
-
-  def handle_params(_params, _url, socket) do
     socket =
       assign(socket,
         query: nil,
@@ -18,7 +14,7 @@ defmodule LivePlaygroundWeb.SearchLive do
         loading: false
       )
 
-    {:noreply, socket}
+    {:ok, socket}
   end
 
   def render(assigns) do
@@ -32,36 +28,35 @@ defmodule LivePlaygroundWeb.SearchLive do
     </.heading>
     <!-- end hiding from live code -->
     <form class="mb-4 flex space-x-2" phx-submit="search">
-      <.input 
-        type="text" 
-        name="query" 
-        autocomplete="off" 
+      <.input
+        type="text"
+        name="query"
+        autocomplete="off"
         placeholder="Search Country by Name"
         class="w-96 placeholder-gray-300"
-        value={@query} 
+        value={@query}
         readonly={@loading} />
-      <.button type="submit" phx-disable-with="" class="inline-flex">
-        Search<.icon :if={@loading} name="circle" class="animate-spin ml-2 -mr-1 w-5 h-5"/>
-      </.button>
-      <.button patch={Routes.live_path(@socket, __MODULE__)} color={:secondary}>
-        Clear
+      <.button type="submit" class="inline-flex">
+        Search <.icon :if={@loading} name="circle" class="animate-spin ml-2 -mr-1 w-5 h-5"/>
       </.button>
     </form>
-    <%= live_flash(@flash, :no_result) %>
+    <.alert :if={@flash["no_result"]}>
+      <%= live_flash(@flash, :no_result) %>
+    </.alert>
     <.ul :if={@countries != []} class="mb-4">
       <li :for={country <- @countries} class="p-4 sm:flex sm:items-center sm:justify-between">
         <p class="w-80 truncate font-medium"><%= country.name %></p>
         <p class="w-12 text-sm"><%= country.code %></p>
         <p class="w-12 text-sm"><%= country.code2 %></p>
-        <p class="w-10 text-sm sm:text-right"><%= country.code_number %></p>  
+        <p class="w-10 text-sm sm:text-right"><%= country.code_number %></p>
       </li>
-    </.ul> 
+    </.ul>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <%= raw(code("lib/live_playground_web/live/search_live.ex")) %>
       <%= raw(code("lib/live_playground/countries.ex", "# search", "# endsearch")) %>
     </div>
-    <!-- end hiding from live code -->        		
+    <!-- end hiding from live code -->
     """
   end
 
@@ -89,10 +84,7 @@ defmodule LivePlaygroundWeb.SearchLive do
         socket =
           socket
           |> put_flash(:no_result, "No results for \"#{query}\"")
-          |> assign(
-            countries: [],
-            loading: false
-          )
+          |> assign(loading: false)
 
         {:noreply, socket}
 
