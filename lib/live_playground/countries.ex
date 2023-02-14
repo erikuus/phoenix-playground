@@ -31,11 +31,10 @@ defmodule LivePlayground.Countries do
     |> Repo.all()
   end
 
+  # endsearch
   def list_country(_query) do
     []
   end
-
-  # endsearch
 
   @doc """
   Gets a single country.
