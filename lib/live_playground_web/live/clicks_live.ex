@@ -50,8 +50,10 @@ defmodule LivePlaygroundWeb.ClicksLive do
   defp render_action(_, assigns) do
     ~H"""
     <form id="tabular-form" phx-submit="show-list">
-      <div :for={tabular_field <- @tabular_fields} id="tabular-fields" phx-update="append">
-        <%= render_tabular_field(tabular_field) %>
+      <div id="tabular-fields" phx-update="append">
+        <%= for tabular_field <- @tabular_fields do %>
+          <%= render_tabular_field(tabular_field) %>
+        <% end %>
       </div>
       <div class="space-x-2">
         <.button type="button" phx-click="add-input" color={:secondary} :if={@counter < 5}>Add field</.button>
