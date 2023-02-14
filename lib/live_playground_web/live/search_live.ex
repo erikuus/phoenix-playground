@@ -25,6 +25,11 @@ defmodule LivePlaygroundWeb.SearchLive do
       <:footer>
         How to search in live view
       </:footer>
+      <:buttons>
+        <.button href="/search-advanced" color={:secondary}>
+          Try advanced search
+        </.button>
+      </:buttons>
     </.heading>
     <!-- end hiding from live code -->
     <form class="mb-4 flex space-x-2" phx-submit="search">
@@ -60,7 +65,7 @@ defmodule LivePlaygroundWeb.SearchLive do
     """
   end
 
-  def handle_event("search", %{"query" => query}, socket) when is_binary(query) do
+  def handle_event("search", %{"query" => query}, socket) do
     send(self(), {:find, query})
 
     socket =
