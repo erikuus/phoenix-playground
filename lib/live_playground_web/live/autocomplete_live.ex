@@ -15,13 +15,18 @@ defmodule LivePlaygroundWeb.AutocompleteLive do
     <.heading>
       Autocomplete
       <:footer>
-      How to handle autocomplete in live view
+        How to handle autocomplete in live view
       </:footer>
+      <:buttons>
+        <.button href="/autocomplete-advanced" color={:secondary}>
+          Try advanced autocomplete
+        </.button>
+      </:buttons>
     </.heading>
     <!-- end hiding from live code -->
     <form phx-change="suggest">
       <.input
-        phx-debounce="1000"
+        phx-debounce="500"
         type="text"
         name="query"
         list="matches"

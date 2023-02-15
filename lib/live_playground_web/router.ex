@@ -25,6 +25,7 @@ defmodule LivePlaygroundWeb.Router do
     live "/search", SearchLive
     live "/search-advanced", SearchAdvancedLive
     live "/autocomplete", AutocompleteLive
+    live "/autocomplete-advanced", AutocompleteAdvancedLive
 
     # modals
     live "/modals", ModalsLive

@@ -76,6 +76,31 @@ defmodule LivePlaygroundWeb.UiComponent do
   end
 
   slot(:inner_block, required: true)
+  attr :outer_event, :string, default: "close"
+  attr :class, :string, default: nil
+
+  def datalist(assigns) do
+    ~H"""
+    <div class="fixed inset-0" phx-capture-click={@outer_event}></div>
+    <ul class={"absolute z-10 mt-1 overflow-auto rounded-md shadow-lg border border-gray-200 bg-white py-1 #{@class}"}>
+      <%= render_slot(@inner_block) %>
+    </ul>
+    """
+  end
+
+  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :rest, :global
+
+  def option(assigns) do
+    ~H"""
+    <li {@rest} class={"relative cursor-default select-none hover:bg-indigo-700 hover:text-white py-2 pl-3 pr-9 #{@class}"} role="option">
+      <%= render_slot(@inner_block) %>
+    </li>
+    """
+  end
+
+  slot(:inner_block, required: true)
   attr :class, :string, default: nil
 
   def ul(assigns) do
