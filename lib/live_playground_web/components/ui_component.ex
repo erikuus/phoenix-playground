@@ -94,7 +94,7 @@ defmodule LivePlaygroundWeb.UiComponent do
 
   def option(assigns) do
     ~H"""
-    <li {@rest} class={"relative cursor-default select-none hover:bg-indigo-700 hover:text-white py-2 pl-3 pr-9 #{@class}"} role="option">
+    <li {@rest} class={"relative cursor-default select-none hover:bg-indigo-700 hover:text-white py-2 pl-3 pr-9 #{@class}"}>
       <%= render_slot(@inner_block) %>
     </li>
     """
