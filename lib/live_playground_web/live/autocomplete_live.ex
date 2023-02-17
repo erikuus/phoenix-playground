@@ -24,8 +24,9 @@ defmodule LivePlaygroundWeb.AutocompleteLive do
       </:buttons>
     </.heading>
     <!-- end hiding from live code -->
-    <form phx-change="suggest">
+    <form>
       <.input
+        phx-change="suggest"
         phx-debounce="500"
         type="text"
         name="query"

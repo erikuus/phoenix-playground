@@ -25,7 +25,7 @@ defmodule LivePlaygroundWeb.SearchAdvancedLive do
     {:noreply, socket}
   end
 
-  def handle_params(params, _url, socket) do
+  def handle_params(_params, _url, socket) do
     socket =
       assign(socket,
         query: nil,

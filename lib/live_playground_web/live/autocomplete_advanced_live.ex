@@ -23,11 +23,17 @@ defmodule LivePlaygroundWeb.AutocompleteAdvancedLive do
       <:footer>
         How to handle autocomplete in live view using custom datalist
       </:footer>
+      <:buttons>
+        <.button href="/autocomplete" color={:secondary}>
+          Back to simple autocomplete
+        </.button>
+      </:buttons>
     </.heading>
     <!-- end hiding from live code -->
-    <form phx-change="suggest">
+    <form>
       <.input
         value={@query}
+        phx-change="suggest"
         phx-debounce="500"
         type="text"
         name="query"
