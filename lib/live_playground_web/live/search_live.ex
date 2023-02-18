@@ -53,7 +53,6 @@ defmodule LivePlaygroundWeb.SearchLive do
         <p class="w-80 truncate font-medium"><%= country.name %></p>
         <p class="w-12 text-sm"><%= country.code %></p>
         <p class="w-12 text-sm"><%= country.code2 %></p>
-        <p class="w-10 text-sm sm:text-right"><%= country.code_number %></p>
       </li>
     </.ul>
     <!-- start hiding from live code -->
