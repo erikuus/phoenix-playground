@@ -1,17 +1,15 @@
-defmodule LivePlayground.Repo.Migrations.UpdateCountryTable do
+defmodule LivePlayground.Repo.Migrations.CopyCity do
   use Ecto.Migration
 
   alias LivePlayground.Repo
 
   def change do
-    copy("priv/repo/country.csv")
+    copy("priv/repo/city")
   end
 
   def copy(filepath) do
     sql = """
-      COPY country(name,code_number,code,code2,latitude,longitude)
-      FROM STDIN
-      WITH DELIMITER ',' CSV
+      COPY city (id, name, countrycode, district, population) FROM stdin
     """
 
     stream = Ecto.Adapters.SQL.stream(Repo, sql)
