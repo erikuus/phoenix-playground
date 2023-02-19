@@ -6,13 +6,13 @@ defmodule LivePlaygroundWeb.ClicksLive do
   def mount(_params, _session, socket) do
     socket =
       assign(socket,
-        tabular_values: [],
-        tabular_fields: [],
+        tabular_outputs: [],
+        tabular_inputs: [],
         counter: 0,
         index: 0
       )
 
-    {:ok, socket, temporary_assigns: [tabular_fields: []]}
+    {:ok, socket, temporary_assigns: [tabular_inputs: []]}
   end
 
   def handle_params(_params, _url, socket) do
@@ -41,7 +41,7 @@ defmodule LivePlaygroundWeb.ClicksLive do
   defp render_action(:show_list, assigns) do
     ~H"""
     <.ul class="mb-4">
-      <li :for={tabular_value <- @tabular_values} class="p-4"><%= tabular_value %></li>
+      <li :for={value <- @tabular_outputs} class="p-4"><%= value %></li>
     </.ul>
     <.button patch={Routes.live_path(@socket, __MODULE__)}>Reset</.button>
     """
@@ -51,36 +51,34 @@ defmodule LivePlaygroundWeb.ClicksLive do
     ~H"""
     <form id="tabular-form" phx-submit="show-list">
       <div id="tabular-fields" phx-update="append">
-        <%= for tabular_field <- @tabular_fields do %>
-          <%= render_tabular_field(tabular_field) %>
-        <% end %>
+        <.tabular_input :for={input <- @tabular_inputs} index={input.index} action={input.action} />
       </div>
       <div class="space-x-2">
-        <.button type="button" phx-click="add-input" color={:secondary} :if={@counter < 5}>Add field</.button>
-        <.button type="submit" :if={@counter > 0}>Show list</.button>
+        <.button type="button" phx-click="add-input" color={:secondary} :if={@counter < 5}>Add input</.button>
+        <.button type="submit" :if={@counter > 0}>Output values</.button>
       </div>
     </form>
     """
   end
 
-  defp render_tabular_field(%{operation: :add} = assigns) do
+  defp tabular_input(%{action: :add} = assigns) do
     ~H"""
-    <div id={"tabular-field-#{@index}"} class="mb-4 flex space-x-2">
+    <div id={"input-#{@index}"} class="mb-4 flex space-x-2">
       <.input name="texts[]" type="text" value={lorem_ipsum_sentences(1, true)} />
       <.button type="button" color={:secondary} phx-click="remove-input" phx-value-index={@index}>Remove</.button>
     </div>
     """
   end
 
-  defp render_tabular_field(%{operation: :remove} = assigns) do
+  defp tabular_input(%{action: :remove} = assigns) do
     ~H"""
-    <div id={"tabular-field-#{@index}"}></div>
+    <div id={"input-#{@index}"}></div>
     """
   end
 
   def handle_event("add-input", _, socket) do
     index = socket.assigns.index
-    socket = update(socket, :tabular_fields, &[%{index: index, operation: :add} | &1])
+    socket = update(socket, :tabular_inputs, &[%{index: index, action: :add} | &1])
     socket = update(socket, :counter, &(&1 + 1))
     socket = update(socket, :index, &(&1 + 1))
 
@@ -88,7 +86,7 @@ defmodule LivePlaygroundWeb.ClicksLive do
   end
 
   def handle_event("remove-input", %{"index" => index}, socket) do
-    socket = update(socket, :tabular_fields, &[%{index: index, operation: :remove} | &1])
+    socket = update(socket, :tabular_inputs, &[%{index: index, action: :remove} | &1])
     socket = update(socket, :counter, &(&1 - 1))
     {:noreply, socket}
   end
@@ -96,8 +94,8 @@ defmodule LivePlaygroundWeb.ClicksLive do
   def handle_event("show-list", %{"texts" => texts}, socket) do
     socket =
       assign(socket,
-        tabular_values: texts,
-        tabular_fields: [],
+        tabular_outputs: texts,
+        tabular_inputs: [],
         counter: 0,
         index: 0
       )
