@@ -47,13 +47,13 @@ defmodule LivePlaygroundWeb.SearchLive do
     </form>
     <.alert :if={@flash["no_result"]}>
       <%= live_flash(@flash, :no_result) %>
-    </.alert>
+    </.alert>    
     <.ul :if={@countries != []} class="mb-4">
-      <li :for={country <- @countries} class="p-4 sm:flex sm:items-center sm:justify-between">
+      <.li :for={country <- @countries} class="sm:flex sm:items-center sm:justify-between">
         <p class="w-80 truncate font-medium"><%= country.name %></p>
         <p class="w-12 text-sm"><%= country.code %></p>
         <p class="w-12 text-sm"><%= country.code2 %></p>
-      </li>
+      </.li>
     </.ul>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">

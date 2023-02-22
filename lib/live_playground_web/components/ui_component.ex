@@ -12,7 +12,7 @@ defmodule LivePlaygroundWeb.UiComponent do
     <div class="mb-6 md:flex md:items-center md:justify-between">
       <div class="min-w-0 flex-1">
         <%= render_slot(@header) %>
-        <h2 class={heading_classes(@class)}><%= render_slot(@inner_block) %></h2>
+        <h2 class={heading_class(@class)}><%= render_slot(@inner_block) %></h2>
         <%= render_slot(@footer) %>
       </div>
       <div class="mt-4 flex md:mt-0 md:ml-4">
@@ -22,7 +22,7 @@ defmodule LivePlaygroundWeb.UiComponent do
     """
   end
 
-  defp heading_classes(class) do
+  defp heading_class(class) do
     "text-2xl font-bold leading-7 sm:truncate sm:text-3xl sm:tracking-tight #{class}"
   end
 
@@ -34,7 +34,7 @@ defmodule LivePlaygroundWeb.UiComponent do
 
   def alert(%{title: _title} = assigns) do
     ~H"""
-    <div class={alert_classes(@color, @class)}>
+    <div class={alert_class(@color, @class)}>
       <div class="flex space-x-2">
         <%= render_slot(@icon) %>
         <div class="ml-1">
@@ -50,7 +50,7 @@ defmodule LivePlaygroundWeb.UiComponent do
 
   def alert(assigns) do
     ~H"""
-    <div class={alert_classes(@color, @class)}>
+    <div class={alert_class(@color, @class)}>
       <div class="flex space-x-2">
         <%= render_slot(@icon) %>
         <div class="ml-1 text-sm">
@@ -61,11 +61,11 @@ defmodule LivePlaygroundWeb.UiComponent do
     """
   end
 
-  defp alert_classes(color, class) do
-    "rounded-md p-4 #{alert_color_classes(color)} #{class}"
+  defp alert_class(color, class) do
+    "rounded-md p-4 #{alert_color_class(color)} #{class}"
   end
 
-  defp alert_color_classes(color) do
+  defp alert_color_class(color) do
     Keyword.fetch!(
       [
         info: "bg-blue-50 text-blue-700",
@@ -103,13 +103,104 @@ defmodule LivePlaygroundWeb.UiComponent do
   slot(:inner_block, required: true)
   attr :class, :string, default: nil
 
+  def table(assigns) do
+    ~H"""
+    <div class="overflow-x-auto -mx-6 min-w-full sm:px-6">
+      <table class={"min-w-full divide-y divide-gray-300 #{@class}"}>
+        <%= render_slot(@inner_block) %>
+      </table>
+    </div>
+    """
+  end
+
+  slot(:inner_block, required: true)
+  attr :class, :string, default: "text-left"
+  attr :type, :atom
+
+  def th(%{type: :first} = assigns) do
+    ~H"""
+    <th scope="col" class={"py-3.5 pr-3 pl-6 sm:pl-0 font-semibold #{@class}"}>
+      <%= render_slot(@inner_block) %>
+    </th>
+    """
+  end
+
+  def th(%{type: :last} = assigns) do
+    ~H"""
+    <th scope="col" class={"py-3.5 pl-3 pr-6 sm:pr-0 font-semibold #{@class}"}>
+      <%= render_slot(@inner_block) %>
+    </th>
+    """
+  end
+
+  def th(assigns) do
+    ~H"""
+    <th scope="col" class={"py-3.5 px-3 font-semibold #{@class}"}>
+      <%= render_slot(@inner_block) %>
+    </th>
+    """
+  end
+
+  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+
+  def tbody(assigns) do
+    ~H"""
+    <tbody class={"divide-y divide-gray-200 #{@class}"}>
+      <%= render_slot(@inner_block) %>
+    </tbody>
+    """
+  end
+
+  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :type, :atom
+
+  def td(%{type: :first} = assigns) do
+    ~H"""
+    <td class={"whitespace-nowrap py-4 pl-6 pr-3 sm:pl-0 #{@class}"}>
+      <%= render_slot(@inner_block) %>
+    </td>
+    """
+  end
+
+  def td(%{type: :last} = assigns) do
+    ~H"""
+    <td class={"whitespace-nowrap py-4 pl-3 pr-6 sm:pr-0 #{@class}"}>
+      <%= render_slot(@inner_block) %>
+    </td>
+    """
+  end
+
+  def td(assigns) do
+    ~H"""
+    <td class={"whitespace-nowrap py-4 px-3 #{@class}"}>
+      <%= render_slot(@inner_block) %>
+    </td>
+    """
+  end
+
+  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+
   def ul(assigns) do
     ~H"""
-    <div class={"overflow-hidden bg-white shadow-sm border border-gray-200 sm:rounded-md #{@class}"}>
-      <ul role="list" class="divide-y divide-gray-200">
+    <div class="min-w-full -mx-6 sm:px-6">
+      <ul class={"divide-y divide-gray-200 #{@class}"}>
         <%= render_slot(@inner_block) %>
       </ul>
     </div>
+    """
+  end
+
+  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+
+  def li(assigns) do
+    ~H"""
+    <li class={"py-4 px-6 sm:px-0 #{@class}"}>
+      <%= render_slot(@inner_block) %>
+    </li>
     """
   end
 
@@ -157,7 +248,7 @@ defmodule LivePlaygroundWeb.UiComponent do
 
   def button(%{patch: _patch} = assigns) do
     ~H"""
-    <.link {@rest} patch={@patch} class={button_classes(@color, @size, @class)}>
+    <.link {@rest} patch={@patch} class={button_class(@color, @size, @class)}>
       <%= render_slot(@inner_block) %>
     </.link>
     """
@@ -165,7 +256,7 @@ defmodule LivePlaygroundWeb.UiComponent do
 
   def button(%{href: _href} = assigns) do
     ~H"""
-    <.link {@rest} href={@href} class={button_classes(@color, @size, @class)}>
+    <.link {@rest} href={@href} class={button_class(@color, @size, @class)}>
       <%= render_slot(@inner_block) %>
     </.link>
     """
@@ -173,17 +264,17 @@ defmodule LivePlaygroundWeb.UiComponent do
 
   def button(assigns) do
     ~H"""
-    <button {@rest} class={button_classes(@color, @size, @class)}>
+    <button {@rest} class={button_class(@color, @size, @class)}>
       <%= render_slot(@inner_block) %>
     </button>
     """
   end
 
-  defp button_classes(color, size, class) do
-    "inline-flex items-center justify-center border font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 #{button_color_classes(color)} #{button_size_classes(size)} #{class}"
+  defp button_class(color, size, class) do
+    "inline-flex items-center justify-center border font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 #{button_color_class(color)} #{button_size_class(size)} #{class}"
   end
 
-  defp button_color_classes(color) do
+  defp button_color_class(color) do
     Keyword.fetch!(
       [
         primary:
@@ -196,7 +287,7 @@ defmodule LivePlaygroundWeb.UiComponent do
     )
   end
 
-  defp button_size_classes(size) do
+  defp button_size_class(size) do
     Keyword.fetch!(
       [
         xs: "rounded px-2.5 py-1.5 text-xs",
@@ -218,9 +309,9 @@ defmodule LivePlaygroundWeb.UiComponent do
 
   def input(%{id: _id, label: _label, help: _help} = assigns) do
     ~H"""
-    <label for={@id} class={label_classes()}><%= @label %></label>
+    <label for={@id} class={field_label_class()}><%= @label %></label>
     <div class="mt-1">
-      <input {@rest} id={@id} class={input_classes(@class)}>
+      <input {@rest} id={@id} class={field_class(@class)}>
     </div>
     <p class="mt-2 text-sm text-gray-500"><%= @help %></p>
     """
@@ -229,27 +320,27 @@ defmodule LivePlaygroundWeb.UiComponent do
   def input(%{id: _id, label: _label, hint: _hint} = assigns) do
     ~H"""
       <div class="flex justify-between">
-        <label for={@id} class={label_classes()}><%= @label %></label>
+        <label for={@id} class={field_label_class()}><%= @label %></label>
         <span class="text-sm text-gray-500" id="email-optional"><%= @hint %></span>
       </div>
       <div class="mt-1">
-        <input {@rest} id={@id} class={input_classes(@class)}>
+        <input {@rest} id={@id} class={field_class(@class)}>
       </div>
     """
   end
 
   def input(%{id: _id, label: _label} = assigns) do
     ~H"""
-    <label for={@id} class={label_classes()}><%= @label %></label>
+    <label for={@id} class={field_label_class()}><%= @label %></label>
     <div class="mt-1">
-      <input {@rest} id={@id} class={input_classes(@class)}>
+      <input {@rest} id={@id} class={field_class(@class)}>
     </div>
     """
   end
 
   def input(assigns) do
     ~H"""
-    <input {@rest} class={input_classes(@class)}>
+    <input {@rest} class={field_class(@class)}>
     """
   end
 
@@ -262,9 +353,9 @@ defmodule LivePlaygroundWeb.UiComponent do
 
   def select(%{id: _id, label: _label, help: _help} = assigns) do
     ~H"""
-    <label for={@id} class={label_classes()}><%= @label %></label>
+    <label for={@id} class={field_label_class()}><%= @label %></label>
     <div class="mt-1">
-      <select {@rest} id={@id} class={input_classes(@class)}>
+      <select {@rest} id={@id} class={field_class(@class)}>
         <%= render_slot(@inner_block) %>
       </select>
     </div>
@@ -275,11 +366,11 @@ defmodule LivePlaygroundWeb.UiComponent do
   def select(%{id: _id, label: _label, hint: _hint} = assigns) do
     ~H"""
       <div class="flex justify-between">
-        <label for={@id} class={label_classes()}><%= @label %></label>
+        <label for={@id} class={field_label_class()}><%= @label %></label>
         <span class="text-sm text-gray-500" id="email-optional"><%= @hint %></span>
       </div>
       <div class="mt-1">
-        <select {@rest} id={@id} class={input_classes(@class)}>
+        <select {@rest} id={@id} class={field_class(@class)}>
           <%= render_slot(@inner_block) %>
         </select>
       </div>
@@ -288,9 +379,9 @@ defmodule LivePlaygroundWeb.UiComponent do
 
   def select(%{id: _id, label: _label} = assigns) do
     ~H"""
-    <label for={@id} class={label_classes()}><%= @label %></label>
+    <label for={@id} class={field_label_class()}><%= @label %></label>
     <div class="mt-1">
-      <select {@rest} id={@id} class={input_classes(@class)}>
+      <select {@rest} id={@id} class={field_class(@class)}>
         <%= render_slot(@inner_block) %>
       </select>
     </div>
@@ -299,37 +390,63 @@ defmodule LivePlaygroundWeb.UiComponent do
 
   def select(assigns) do
     ~H"""
-    <select {@rest} class={input_classes(@class)}>
+    <select {@rest} class={field_class(@class)}>
       <%= render_slot(@inner_block) %>
     </select>
     """
   end
 
-  defp label_classes() do
-    "block text-sm font-medium text-gray-700"
+  defp field_class(class) do
+    "block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm #{class}"
   end
 
-  defp input_classes(class) do
-    "block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm #{class}"
+  defp field_label_class() do
+    "block text-sm font-medium text-gray-700"
   end
 
   attr :id, :string
   attr :label, :string
-  attr :label_on_right, :string
+  attr :rtl, :boolean
   attr :help, :string
   attr :value, :string, required: true
-  attr :current, :string, default: nil
   attr :class, :string, default: nil
   attr :rest, :global
+
+  def radio(%{id: _id, label: _label, help: _help, rtl: true} = assigns) do
+    ~H"""
+    <div class="relative flex items-start py-2">
+      <div class="min-w-0 flex-1 text-sm">
+        <label for={@id} class={option_button_label_class()}><%= @label %></label>
+        <p class="text-gray-500"><%= @help %></p>
+      </div>
+      <div class="ml-3 flex h-5 items-center">
+        <input type="radio" {@rest} id={@id} value={@value} class={option_button_class(@class)}>
+      </div>
+    </div>
+    """
+  end
+
+  def radio(%{id: _id, label: _label, rtl: true} = assigns) do
+    ~H"""
+    <div class="relative flex items-start py-2">
+      <div class="min-w-0 flex-1 text-sm">
+        <label for={@id} class={option_button_label_class()}><%= @label %></label>
+      </div>
+      <div class="ml-3 flex h-5 items-center">
+        <input type="radio" {@rest} id={@id} value={@value} class={option_button_class(@class)}>
+      </div>
+    </div>
+    """
+  end
 
   def radio(%{id: _id, label: _label, help: _help} = assigns) do
     ~H"""
     <div class="relative flex items-start py-2">
       <div class="flex h-5 items-center">
-        <input type="radio" {@rest} id={@id} value={@value} {get_checked(@value, @current)} class={radio_classes(@class)}>
+        <input type="radio" {@rest} id={@id} value={@value} class={option_button_class(@class)}>
       </div>
       <div class="ml-3 text-sm">
-        <label for={@id} class="font-medium text-gray-700"><%= @label %></label>
+        <label for={@id} class={option_button_label_class()}><%= @label %></label>
         <p class="text-gray-500"><%= @help %></p>
       </div>
     </div>
@@ -339,51 +456,88 @@ defmodule LivePlaygroundWeb.UiComponent do
   def radio(%{id: _id, label: _label} = assigns) do
     ~H"""
     <div class="flex items-center py-2">
-      <input type="radio" {@rest} id={@id} value={@value} checked={get_checked(@value, @current)} class={radio_classes(@class)}>
-      <label for={@id} class="ml-3 block text-sm font-medium text-gray-700"><%= @label %></label>
-    </div>
-    """
-  end
-
-  def radio(%{id: _id, label_on_right: _label, help: _help} = assigns) do
-    ~H"""
-    <div class="relative flex items-start py-2">
-      <div class="min-w-0 flex-1 text-sm">
-        <label for={@id} class="select-none font-medium text-gray-700"><%= @label_on_right %></label>
-        <p class="text-gray-500"><%= @help %></p>
-      </div>
-      <div class="ml-3 flex h-5 items-center">
-        <input type="radio" {@rest} id={@id} value={@value} {get_checked(@value, @current)} class={radio_classes(@class)}>
-      </div>
-    </div>
-    """
-  end
-
-  def radio(%{id: _id, label_on_right: _label} = assigns) do
-    ~H"""
-    <div class="relative flex items-start py-2">
-      <div class="min-w-0 flex-1 text-sm">
-        <label for={@id} class="select-none font-medium text-gray-700"><%= @label_on_right %></label>
-      </div>
-      <div class="ml-3 flex h-5 items-center">
-        <input type="radio" {@rest} id={@id} value={@value} {get_checked(@value, @current)} class={radio_classes(@class)}>
-      </div>
+      <input type="radio" {@rest} id={@id} value={@value} class={option_button_class(@class)}>
+      <label for={@id} class={"ml-3 #{option_button_label_class()}"}><%= @label %></label>
     </div>
     """
   end
 
   def radio(assigns) do
     ~H"""
-    <input type="radio" {@rest} value={@value} {get_checked(@value, @current)} class={radio_classes(@class)}>
+    <input type="radio" {@rest} value={@value} class={option_button_class(@class)}>
     """
   end
 
-  defp radio_classes(class) do
+  attr :id, :string
+  attr :label, :string
+  attr :rtl, :boolean
+  attr :help, :string
+  attr :value, :string, required: true
+  attr :class, :string, default: "rounded"
+  attr :rest, :global
+
+  def checkbox(%{id: _id, label: _label, help: _help, rtl: true} = assigns) do
+    ~H"""
+    <div class="relative flex items-start py-2">
+      <div class="min-w-0 flex-1 text-sm">
+        <label for={@id} class={option_button_label_class()}><%= @label %></label>
+        <p class="text-gray-500"><%= @help %></p>
+      </div>
+      <div class="ml-3 flex h-5 items-center">
+        <input type="checkbox" {@rest} id={@id} value={@value} class={option_button_class(@class)}>
+      </div>
+    </div>
+    """
+  end
+
+  def checkbox(%{id: _id, label: _label, rtl: true} = assigns) do
+    ~H"""
+    <div class="relative flex items-start py-2">
+      <div class="min-w-0 flex-1 text-sm">
+        <label for={@id} class={option_button_label_class()}><%= @label %></label>
+      </div>
+      <div class="ml-3 flex h-5 items-center">
+        <input type="checkbox" {@rest} id={@id} value={@value} class={option_button_class(@class)}>
+      </div>
+    </div>
+    """
+  end
+
+  def checkbox(%{id: _id, label: _label, help: _help} = assigns) do
+    ~H"""
+    <div class="relative flex items-start py-2">
+      <div class="flex h-5 items-center">
+        <input type="checkbox" {@rest} id={@id} value={@value} class={option_button_class(@class)}>
+      </div>
+      <div class="ml-3 text-sm">
+        <label for={@id} class={option_button_label_class()}><%= @label %></label>
+        <p class="text-gray-500"><%= @help %></p>
+      </div>
+    </div>
+    """
+  end
+
+  def checkbox(%{id: _id, label: _label} = assigns) do
+    ~H"""
+    <div class="flex items-center py-2">
+      <input type="checkbox" {@rest} id={@id} value={@value} class={option_button_class(@class)}>
+      <label for={@id} class={"ml-3 #{option_button_label_class()}"}><%= @label %></label>
+    </div>
+    """
+  end
+
+  def checkbox(assigns) do
+    ~H"""
+    <input type="checkbox" {@rest} value={@value} class={option_button_class(@class)}>
+    """
+  end
+
+  defp option_button_class(class) do
     "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500 #{class}"
   end
 
-  defp get_checked(value, current) do
-    if value == current, do: "checked"
+  defp option_button_label_class() do
+    "font-medium text-gray-700"
   end
 
   attr :display, :atom, default: :block
