@@ -22,6 +22,54 @@ defmodule LivePlayground.Cities do
   end
 
   @doc """
+  Returns the list of cities of USA matching the given filter.
+
+  ## Examples
+
+      iex> list_usa_city(%{district: ""})
+      [%City{}, ...]
+
+  """
+  def list_usa_city(filter) when is_map(filter) do
+    from(City)
+    |> where(countrycode: "USA")
+    |> filter_by_name(filter)
+    |> filter_by_district(filter)
+    |> filter_by_sizes(filter)
+    |> Repo.all()
+  end
+
+  defp filter_by_name(query, %{name: ""}), do: query
+
+  defp filter_by_name(query, %{name: name}) do
+    ilike = "%#{name}%"
+    where(query, [c], ilike(c.name, ^ilike))
+  end
+
+  defp filter_by_district(query, %{district: ""}), do: query
+
+  defp filter_by_district(query, %{district: district}) do
+    where(query, district: ^district)
+  end
+
+  defp filter_by_sizes(query, %{sizes: [""]}), do: query
+
+  defp filter_by_sizes(query, %{sizes: _sizes}) do
+    # where(query, district: ^district)
+    query
+  end
+
+  def list_distinct_usa_district() do
+    from(City)
+    |> select([:district])
+    |> where(countrycode: "USA")
+    |> order_by(asc: :district)
+    |> distinct(true)
+    |> Repo.all()
+    |> Enum.map(fn x -> x.district end)
+  end
+
+  @doc """
   Gets a single city.
 
   Raises `Ecto.NoResultsError` if the City does not exist.

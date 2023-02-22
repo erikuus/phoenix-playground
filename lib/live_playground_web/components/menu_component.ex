@@ -31,8 +31,9 @@ defmodule LivePlaygroundWeb.MenuComponent do
       %{icon: "arrow_path", label: "Changes", path: "/changes", badge: nil},
       %{icon: "clock", label: "Send Interval", path: "/send-interval", badge: nil},
       %{icon: "paper_airplane", label: "Send After", path: "/send-after", badge: nil},
-      %{icon: "magnifying_glass", label: "Search", path: "/search", badge: 2},
       %{icon: "queue_list", label: "Autocomplete", path: "/autocomplete", badge: 2},
+      %{icon: "magnifying_glass", label: "Search", path: "/search", badge: 2},
+      %{icon: "funnel", label: "Filter", path: "/filter", badge: nil},
       %{icon: "rectangle_stack", label: "Modals", path: "/modals", badge: nil},
       %{icon: "arrow_up_tray", label: "Upload", path: "/upload", badge: nil},
       %{icon: "cloud_arrow_up", label: "Cloud Upload", path: "/upload-cloud", badge: nil}

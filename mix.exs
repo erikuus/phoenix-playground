@@ -51,7 +51,8 @@ defmodule LivePlayground.MixProject do
       {:tailwind, "~> 0.1", runtime: Mix.env() == :dev},
       {:makeup, "~> 1.1"},
       {:makeup_elixir, "~> 0.16.0"},
-      {:timex, "~> 3.0"}
+      {:timex, "~> 3.0"},
+      {:number, "~> 1.0"}
     ]
   end
 
