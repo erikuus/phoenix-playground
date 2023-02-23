@@ -5,14 +5,16 @@ defmodule LivePlaygroundWeb.FilterLive do
 
   alias LivePlayground.Cities
 
+  @sizes
+
   def mount(_params, _session, socket) do
     filter = %{
       district: "",
       name: "",
-      sizes: []
+      sizes: [""]
     }
 
-    {:ok, assign_filter(socket, filter)}
+    {:ok, assign_filter(socket, filter), temporary_assigns: [cities: []]}
   end
 
   def render(assigns) do
@@ -31,17 +33,19 @@ defmodule LivePlaygroundWeb.FilterLive do
       </div>
       <div class="flex-1">
         <.select id="district" name="district" label="District">
-          <%= options_for_select(district_options(), @filter.district) %>
+          <%= options_for_select(districts(), @filter.district) %>
         </.select>
       </div>
       <div class="flex-1">
         <div class="lg:flex lg:space-x-6">
-          <.checkbox :for={size <- ["Small", "Medium", "Large"]} checked={size in @filter.sizes} name="sizes[]" value={size} id={size} label={size}/>
+          <.checkbox :for={size <- sizes()} checked={size in @filter.sizes} name="sizes[]" value={size} id={size} label={size}/>
           <input type="hidden" name="sizes[]" value="" />
         </div>
       </div>
     </form>
-    <.alert :if={@cities == []}>No results</.alert>
+    <.alert :if={@cities == []}>
+      No results
+    </.alert>
     <.table :if={@cities != []}>
       <thead>
         <tr>
@@ -52,19 +56,18 @@ defmodule LivePlaygroundWeb.FilterLive do
       </thead>
       <.tbody>
         <tr :for={city <- @cities}>
-          <.td type={:first}>
+          <.td class="w-1/3" type={:first}>
             <%= city.name %>
           </.td>
-          <.td>
+          <.td class="w-1/3">
             <%= city.district %>
           </.td>
-          <.td type={:last} class="text-right">
+          <.td class="w-1/3 text-right" type={:last}>
             <%= Number.Delimit.number_to_delimited(city.population, precision: 0, delimiter: " ")  %>
           </.td>
         </tr>
       </.tbody>
     </.table>
-
     """
   end
 
@@ -85,7 +88,11 @@ defmodule LivePlaygroundWeb.FilterLive do
     )
   end
 
-  defp district_options() do
+  defp districts() do
     ["" | Cities.list_distinct_usa_district()]
+  end
+
+  defp sizes() do
+    ["Small", "Medium", "Large"]
   end
 end

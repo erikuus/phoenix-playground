@@ -54,9 +54,23 @@ defmodule LivePlayground.Cities do
 
   defp filter_by_sizes(query, %{sizes: [""]}), do: query
 
-  defp filter_by_sizes(query, %{sizes: _sizes}) do
-    # where(query, district: ^district)
-    query
+  defp filter_by_sizes(query, %{sizes: sizes}) do
+    conditions =
+      sizes
+      |> Enum.reject(&(&1 == ""))
+      |> Enum.reduce(dynamic(false), fn size, dynamic ->
+        dynamic([c], ^condition_by_size(size, dynamic))
+      end)
+
+    where(query, ^conditions)
+  end
+
+  defp condition_by_size(size, dynamic) do
+    %{
+      "Small" => dynamic([c], c.population <= 500_000 or ^dynamic),
+      "Medium" => dynamic([c], (c.population > 500_000 and c.population < 1_000_000) or ^dynamic),
+      "Large" => dynamic([c], c.population >= 1_000_000 or ^dynamic)
+    }[size]
   end
 
   def list_distinct_usa_district() do
