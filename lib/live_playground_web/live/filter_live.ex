@@ -5,8 +5,6 @@ defmodule LivePlaygroundWeb.FilterLive do
 
   alias LivePlayground.Cities
 
-  @sizes
-
   def mount(_params, _session, socket) do
     filter = %{
       district: "",
@@ -14,7 +12,7 @@ defmodule LivePlaygroundWeb.FilterLive do
       sizes: [""]
     }
 
-    {:ok, assign_filter(socket, filter), temporary_assigns: [cities: []]}
+    {:ok, assign_filter(socket, filter)}
   end
 
   def render(assigns) do
@@ -23,8 +21,13 @@ defmodule LivePlaygroundWeb.FilterLive do
     <.heading>
       Filter
       <:footer>
-      How to filter queries in live view
+      How to filter data in live view
       </:footer>
+      <:buttons>
+        <.button href="/filter-advanced" color={:secondary}>
+          Try advanced filter
+        </.button>
+      </:buttons>
     </.heading>
     <!-- end hiding from live code -->
     <form id="filter-form" class="lg:flex lg:items-end lg:space-x-6 space-y-4 mb-6" phx-change="filter">
@@ -49,25 +52,31 @@ defmodule LivePlaygroundWeb.FilterLive do
     <.table :if={@cities != []}>
       <thead>
         <tr>
-          <.th type={:first}>Name</.th>
+          <.th>Name</.th>
           <.th>District</.th>
-          <.th type={:last} class="text-right">Population</.th>
+          <.th class="text-right">Population</.th>
         </tr>
       </thead>
       <.tbody>
         <tr :for={city <- @cities}>
-          <.td class="w-1/3" type={:first}>
+          <.td class="w-1/3">
             <%= city.name %>
           </.td>
           <.td class="w-1/3">
             <%= city.district %>
           </.td>
-          <.td class="w-1/3 text-right" type={:last}>
+          <.td class="w-1/3 text-right">
             <%= Number.Delimit.number_to_delimited(city.population, precision: 0, delimiter: " ")  %>
           </.td>
         </tr>
       </.tbody>
     </.table>
+    <!-- start hiding from live code -->
+    <div class="mt-10 space-y-6">
+      <%= raw(code("lib/live_playground_web/live/filter_live.ex")) %>
+      <%= raw(code("lib/live_playground/cities.ex", "# filter", "# endfilter")) %>
+    </div>
+    <!-- end hiding from live code -->
     """
   end
 
@@ -89,7 +98,7 @@ defmodule LivePlaygroundWeb.FilterLive do
   end
 
   defp districts() do
-    ["" | Cities.list_distinct_usa_district()]
+    ["" | Cities.list_distinct_usa_district() |> Enum.map(fn x -> x.district end)]
   end
 
   defp sizes() do

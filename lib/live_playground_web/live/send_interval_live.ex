@@ -24,6 +24,11 @@ defmodule LivePlaygroundWeb.SendIntervalLive do
       <:footer>
         How to send interval message to live view
       </:footer>
+       <:buttons>
+        <.button href="/send-after" color={:secondary}>
+          Try send after
+        </.button>
+      </:buttons>
     </.heading>
     <!-- end hiding from live code -->
     <.card class="text-2xl text-center text-gray-900 font-semibold p-10">

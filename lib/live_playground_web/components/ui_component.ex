@@ -115,27 +115,10 @@ defmodule LivePlaygroundWeb.UiComponent do
 
   slot(:inner_block, required: true)
   attr :class, :string, default: "text-left"
-  attr :type, :atom
-
-  def th(%{type: :first} = assigns) do
-    ~H"""
-    <th scope="col" class={"py-3.5 pr-3 pl-6 sm:pl-0 font-semibold #{@class}"}>
-      <%= render_slot(@inner_block) %>
-    </th>
-    """
-  end
-
-  def th(%{type: :last} = assigns) do
-    ~H"""
-    <th scope="col" class={"py-3.5 pl-3 pr-6 sm:pr-0 font-semibold #{@class}"}>
-      <%= render_slot(@inner_block) %>
-    </th>
-    """
-  end
 
   def th(assigns) do
     ~H"""
-    <th scope="col" class={"py-3.5 px-3 font-semibold #{@class}"}>
+    <th scope="col" class={"py-3.5 px-3 first:pr-3 first:pl-6 first:sm:pl-0 last:pl-3 last:pr-6 last:sm:pr-0 font-semibold #{@class}"}>
       <%= render_slot(@inner_block) %>
     </th>
     """
@@ -154,27 +137,10 @@ defmodule LivePlaygroundWeb.UiComponent do
 
   slot(:inner_block, required: true)
   attr :class, :string, default: nil
-  attr :type, :atom
-
-  def td(%{type: :first} = assigns) do
-    ~H"""
-    <td class={"whitespace-nowrap py-4 pl-6 pr-3 sm:pl-0 #{@class}"}>
-      <%= render_slot(@inner_block) %>
-    </td>
-    """
-  end
-
-  def td(%{type: :last} = assigns) do
-    ~H"""
-    <td class={"whitespace-nowrap py-4 pl-3 pr-6 sm:pr-0 #{@class}"}>
-      <%= render_slot(@inner_block) %>
-    </td>
-    """
-  end
 
   def td(assigns) do
     ~H"""
-    <td class={"whitespace-nowrap py-4 px-3 #{@class}"}>
+    <td class={"py-4 px-3 first:pl-6 first:pr-3 first:sm:pl-0 last:pl-3 last:pr-6 last:sm:pr-0 #{@class}"}>
       <%= render_slot(@inner_block) %>
     </td>
     """

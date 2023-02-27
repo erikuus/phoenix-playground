@@ -18,6 +18,11 @@ defmodule LivePlaygroundWeb.SendAfterLive do
       <:footer>
         How to send message to live view after process
       </:footer>
+       <:buttons>
+        <.button href="/send-interval" color={:secondary}>
+          Back to send interval
+        </.button>
+      </:buttons>
     </.heading>
     <!-- end hiding from live code -->
     <.statset>

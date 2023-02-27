@@ -21,15 +21,7 @@ defmodule LivePlayground.Cities do
     Repo.all(City)
   end
 
-  @doc """
-  Returns the list of cities of USA matching the given filter.
-
-  ## Examples
-
-      iex> list_usa_city(%{district: ""})
-      [%City{}, ...]
-
-  """
+  # filter
   def list_usa_city(filter) when is_map(filter) do
     from(City)
     |> where(countrycode: "USA")
@@ -80,8 +72,9 @@ defmodule LivePlayground.Cities do
     |> order_by(asc: :district)
     |> distinct(true)
     |> Repo.all()
-    |> Enum.map(fn x -> x.district end)
   end
+
+  # endfilter
 
   @doc """
   Gets a single city.
