@@ -25,7 +25,7 @@ defmodule LivePlaygroundWeb.SendIntervalLive do
         How to send interval message to live view
       </:footer>
        <:buttons>
-        <.button href="/send-after" color={:secondary}>
+        <.button navigate="/send-after" color={:secondary}>
           Try send after
         </.button>
       </:buttons>

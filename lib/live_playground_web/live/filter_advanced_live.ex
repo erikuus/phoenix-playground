@@ -38,7 +38,7 @@ defmodule LivePlaygroundWeb.FilterAdvancedLive do
       How to filter data in live view with url parameters
       </:footer>
       <:buttons>
-        <.button href="/filter" color={:secondary}>
+        <.button navigate="/filter" color={:secondary}>
           Back to simple filter
         </.button>
       </:buttons>

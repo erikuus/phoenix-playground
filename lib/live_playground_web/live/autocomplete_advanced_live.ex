@@ -24,7 +24,7 @@ defmodule LivePlaygroundWeb.AutocompleteAdvancedLive do
         How to handle autocomplete in live view using custom datalist
       </:footer>
       <:buttons>
-        <.button href="/autocomplete" color={:secondary}>
+        <.button navigate="/autocomplete" color={:secondary}>
           Back to simple autocomplete
         </.button>
       </:buttons>

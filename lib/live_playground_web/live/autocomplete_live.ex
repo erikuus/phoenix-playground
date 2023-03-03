@@ -18,7 +18,7 @@ defmodule LivePlaygroundWeb.AutocompleteLive do
         How to handle autocomplete in live view
       </:footer>
       <:buttons>
-        <.button href="/autocomplete-advanced" color={:secondary}>
+        <.button navigate="/autocomplete-advanced" color={:secondary}>
           Try advanced autocomplete
         </.button>
       </:buttons>

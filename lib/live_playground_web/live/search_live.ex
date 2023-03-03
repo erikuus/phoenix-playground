@@ -26,7 +26,7 @@ defmodule LivePlaygroundWeb.SearchLive do
         How to search in live view
       </:footer>
       <:buttons>
-        <.button href="/search-advanced" color={:secondary}>
+        <.button navigate="/search-advanced" color={:secondary}>
           Try advanced search
         </.button>
       </:buttons>
@@ -47,7 +47,7 @@ defmodule LivePlaygroundWeb.SearchLive do
     </form>
     <.alert :if={@flash["no_result"]}>
       <%= live_flash(@flash, :no_result) %>
-    </.alert>    
+    </.alert>
     <.ul :if={@countries != []} class="mb-4">
       <.li :for={country <- @countries} class="sm:flex sm:items-center sm:justify-between">
         <p class="w-80 truncate font-medium"><%= country.name %></p>

@@ -205,24 +205,33 @@ defmodule LivePlaygroundWeb.UiComponent do
     """
   end
 
-  attr :patch, :string
   attr :href, :string
+  attr :patch, :string
+  attr :navigate, :string
   attr :color, :atom, default: :primary
   attr :size, :atom, default: :md
   attr :class, :string, default: nil
   attr :rest, :global
 
-  def button(%{patch: _patch} = assigns) do
+  def button(%{href: _href} = assigns) do
     ~H"""
-    <.link {@rest} patch={@patch} class={button_class(@color, @size, @class)}>
+    <.link {@rest} href={@href} class={button_class(@color, @size, @class)}>
       <%= render_slot(@inner_block) %>
     </.link>
     """
   end
 
-  def button(%{href: _href} = assigns) do
+  def button(%{navigate: _navigate} = assigns) do
     ~H"""
-    <.link {@rest} href={@href} class={button_class(@color, @size, @class)}>
+    <.link {@rest} navigate={@navigate} class={button_class(@color, @size, @class)}>
+      <%= render_slot(@inner_block) %>
+    </.link>
+    """
+  end
+
+  def button(%{patch: _patch} = assigns) do
+    ~H"""
+    <.link {@rest} patch={@patch} class={button_class(@color, @size, @class)}>
       <%= render_slot(@inner_block) %>
     </.link>
     """

@@ -24,7 +24,7 @@ defmodule LivePlaygroundWeb.FilterLive do
       How to filter data in live view
       </:footer>
       <:buttons>
-        <.button href="/filter-advanced" color={:secondary}>
+        <.button navigate="/filter-advanced" color={:secondary}>
           Try advanced filter
         </.button>
       </:buttons>

@@ -32,10 +32,10 @@ defmodule LivePlaygroundWeb.ChangesLive do
       <%= render_partial(:color, @color, assigns) %>
       <div>
         <.fieldset legend="Shapes">
-          <.radio name="shape" value="circle" id="circle" label="Circle" current={@shape} />
-          <.radio name="shape" value="rectangle" id="rectangle" label="Rectangle" current={@shape} />
+          <.radio name="shape" value="circle" id="circle" label="Circle" checked={@shape == "circle"} />
+          <.radio name="shape" value="rectangle" id="rectangle" label="Rectangle" checked={@shape == "rectangle"} />
           <%= render_partial(:rectangle, @shape, assigns) %>
-          <.radio name="shape" value="square" id="square" label="Square" current={@shape} />
+          <.radio name="shape" value="square" id="square" label="Square" checked={@shape == "square"} />
           <%= render_partial(:square, @shape, assigns) %>
         </.fieldset>
       </div>

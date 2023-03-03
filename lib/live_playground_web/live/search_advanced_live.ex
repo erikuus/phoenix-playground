@@ -45,7 +45,7 @@ defmodule LivePlaygroundWeb.SearchAdvancedLive do
         How to search in live view with url parameter
       </:footer>
       <:buttons>
-        <.button href="/search" color={:secondary}>
+        <.button navigate="/search" color={:secondary}>
           Back to simple search
         </.button>
       </:buttons>
