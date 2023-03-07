@@ -5,9 +5,11 @@ defmodule LivePlaygroundWeb.FilterLive do
 
   def mount(_params, _session, socket) do
     filter = %{
-      district: "",
+      dist: "",
       name: "",
-      sizes: [""]
+      sm: "false",
+      md: "false",
+      lg: "false"
     }
 
     {:ok, assign_filter(socket, filter)}
@@ -29,12 +31,11 @@ defmodule LivePlaygroundWeb.FilterLive do
     </.header>
     <!-- end hiding from live code -->
     <form id="filter-form" class="lg:flex lg:items-end lg:space-x-6 space-y-4 mb-6" phx-change="filter">
-      <.input type="text" id="name" name="name" label="Name" value={@filter.name} phx-debounce="500" />
-      <.input type="select" id="district" name="district" label="District" options={districts()} value={@filter.district} />
+      <.input type="text" name="name" label="Name" value={@filter.name} phx-debounce="500" />
+      <.input type="select" name="dist" label="District" options={dist_options()} value={@filter.dist} />
       <div class="lg:flex lg:space-x-6 lg:pb-2.5">
-        <.input :for={size <- sizes()} type="checkbox" name="sizes[]" value={size} id={size} label={size} />
+        <.input :for={size <- size_options()} type="checkbox" label={size.label} name={size.name} value={@filter[size.key]} />
       </div>
-      <input type="hidden" name="sizes[]" value="" />
     </form>
     <UiComponent.alert :if={@cities == []}>
       No results
@@ -57,11 +58,17 @@ defmodule LivePlaygroundWeb.FilterLive do
     """
   end
 
-  def handle_event("filter", %{"name" => name, "district" => district, "sizes" => sizes}, socket) do
+  def handle_event(
+        "filter",
+        %{"name" => name, "dist" => dist, "sm" => sm, "md" => md, "lg" => lg},
+        socket
+      ) do
     filter = %{
-      district: district,
+      dist: dist,
       name: name,
-      sizes: sizes
+      sm: sm,
+      md: md,
+      lg: lg
     }
 
     {:noreply, assign_filter(socket, filter)}
@@ -74,11 +81,19 @@ defmodule LivePlaygroundWeb.FilterLive do
     )
   end
 
-  defp districts() do
-    ["" | Cities.list_distinct_usa_district() |> Enum.map(fn x -> x.district end)]
+  defp dist_options() do
+    districts =
+      Cities.list_distinct_usa_district()
+      |> Enum.map(fn x -> x.district end)
+
+    ["" | districts]
   end
 
-  defp sizes() do
-    ["Small", "Medium", "Large"]
+  defp size_options() do
+    [
+      %{key: :sm, name: "sm", label: "Small"},
+      %{key: :md, name: "md", label: "Medium"},
+      %{key: :lg, name: "lg", label: "Large"}
+    ]
   end
 end

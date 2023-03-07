@@ -27,7 +27,7 @@ defmodule LivePlayground.Cities do
     |> where(countrycode: "USA")
     |> filter_by_name(filter)
     |> filter_by_district(filter)
-    |> filter_by_sizes(filter)
+    |> filter_by_size(filter)
     |> Repo.all()
   end
 
@@ -38,31 +38,40 @@ defmodule LivePlayground.Cities do
     where(query, [c], ilike(c.name, ^ilike))
   end
 
-  defp filter_by_district(query, %{district: ""}), do: query
+  defp filter_by_district(query, %{dist: ""}), do: query
 
-  defp filter_by_district(query, %{district: district}) do
+  defp filter_by_district(query, %{dist: district}) do
     where(query, district: ^district)
   end
 
-  defp filter_by_sizes(query, %{sizes: [""]}), do: query
+  defp filter_by_size(query, %{sm: "false", md: "false", lg: "false"}), do: query
 
-  defp filter_by_sizes(query, %{sizes: sizes}) do
-    conditions =
-      sizes
-      |> Enum.reject(&(&1 == ""))
-      |> Enum.reduce(dynamic(false), fn size, dynamic ->
-        dynamic([c], ^condition_by_size(size, dynamic))
-      end)
+  defp filter_by_size(query, filter) do
+    size_conditions =
+      dynamic(false)
+      |> condition_by_sm(filter)
+      |> condition_by_md(filter)
+      |> condition_by_lg(filter)
 
-    where(query, ^conditions)
+    where(query, ^size_conditions)
   end
 
-  defp condition_by_size(size, dynamic) do
-    %{
-      "Small" => dynamic([c], c.population <= 500_000 or ^dynamic),
-      "Medium" => dynamic([c], (c.population > 500_000 and c.population < 1_000_000) or ^dynamic),
-      "Large" => dynamic([c], c.population >= 1_000_000 or ^dynamic)
-    }[size]
+  defp condition_by_sm(dynamic, %{sm: "false"}), do: dynamic
+
+  defp condition_by_sm(dynamic, %{sm: "true"}) do
+    dynamic([c], c.population <= 500_000 or ^dynamic)
+  end
+
+  defp condition_by_md(dynamic, %{md: "false"}), do: dynamic
+
+  defp condition_by_md(dynamic, %{md: "true"}) do
+    dynamic([c], (c.population > 500_000 and c.population < 1_000_000) or ^dynamic)
+  end
+
+  defp condition_by_lg(dynamic, %{lg: "false"}), do: dynamic
+
+  defp condition_by_lg(dynamic, %{lg: "true"}) do
+    dynamic([c], c.population >= 1_000_000 or ^dynamic)
   end
 
   def list_distinct_usa_district() do
