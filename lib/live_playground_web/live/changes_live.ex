@@ -22,13 +22,13 @@ defmodule LivePlaygroundWeb.ChangesLive do
     </.header>
     <!-- end hiding from live code -->
     <form id="dynamic-form" class="space-y-5" phx-change="refresh">
-      <.input type="select" id="color" label="Color" name="color" options={color_options()} value={@color} />
+      <.input type="select" label="Color" name="color" options={color_options()} value={@color} />
       <%= render_partial(:color, @color, assigns) %>
       <div class="ml-1 space-y-2">
-        <.input type="radio" name="shape" id="circle" label="Circle" value="circle" checked={@shape == "circle"} />
-        <.input type="radio" name="shape" id="rectangle" label="Rectangle" value="rectangle" checked={@shape == "rectangle"} />
+        <.input type="radio" name="shape" label="Circle" value="circle" checked={@shape == "circle"} />
+        <.input type="radio" name="shape" label="Rectangle" value="rectangle" checked={@shape == "rectangle"} />
         <%= render_partial(:rectangle, @shape, assigns) %>
-        <.input type="radio" name="shape" id="square" label="Square" value="square" checked={@shape == "square"} />
+        <.input type="radio" name="shape" label="Square" value="square" checked={@shape == "square"} />
         <%= render_partial(:square, @shape, assigns) %>
       </div>
     </form>
