@@ -1,5 +1,7 @@
 defmodule LivePlaygroundWeb.IconComponent do
-  use LivePlaygroundWeb, :component
+  use Phoenix.Component
+
+  import Phoenix.HTML
 
   attr :name, :string, required: true
   attr :class, :string, default: "w-6 h-6 text-gray-400 hover:text-gray-500"

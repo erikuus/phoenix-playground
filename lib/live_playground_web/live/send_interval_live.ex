@@ -1,8 +1,6 @@
 defmodule LivePlaygroundWeb.SendIntervalLive do
   use LivePlaygroundWeb, :live_view
 
-  import LivePlaygroundWeb.UiComponent
-
   def mount(_params, _session, socket) do
     if connected?(socket), do: :timer.send_interval(1000, self(), :tick)
     expiration_time = Timex.shift(Timex.now(), days: 2)
@@ -19,21 +17,21 @@ defmodule LivePlaygroundWeb.SendIntervalLive do
   def render(assigns) do
     ~H"""
     <!-- start hiding from live code -->
-    <.heading>
+    <.header class="mb-6">
       Send Interval
-      <:footer>
+      <:subtitle>
         How to send interval message to live view
-      </:footer>
-       <:buttons>
-        <.button navigate="/send-after" color={:secondary}>
+      </:subtitle>
+      <:actions>
+        <.link navigate={~p"/send-after"}>
           Try send after
-        </.button>
-      </:buttons>
-    </.heading>
+        </.link>
+      </:actions>
+    </.header>
     <!-- end hiding from live code -->
-    <.card class="text-2xl text-center text-gray-900 font-semibold p-10">
+    <UiComponent.card class="text-2xl text-center text-gray-900 font-semibold p-10">
       <%= format_duration(@seconds_remaining) %>
-    </.card>
+    </UiComponent.card>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <%= raw(code("lib/live_playground_web/live/send_interval_live.ex")) %>

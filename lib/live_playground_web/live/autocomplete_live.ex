@@ -1,8 +1,6 @@
 defmodule LivePlaygroundWeb.AutocompleteLive do
   use LivePlaygroundWeb, :live_view
 
-  import LivePlaygroundWeb.UiComponent
-
   alias LivePlayground.Countries
 
   def mount(_params, _session, socket) do
@@ -12,28 +10,31 @@ defmodule LivePlaygroundWeb.AutocompleteLive do
   def render(assigns) do
     ~H"""
     <!-- start hiding from live code -->
-    <.heading>
+    <.header class="mb-6">
       Autocomplete
-      <:footer>
+      <:subtitle>
         How to handle autocomplete in live view
-      </:footer>
-      <:buttons>
-        <.button navigate="/autocomplete-advanced" color={:secondary}>
+      </:subtitle>
+      <:actions>
+        <.link navigate={~p"/autocomplete-advanced"}>
           Try advanced autocomplete
-        </.button>
-      </:buttons>
-    </.heading>
+        </.link>
+      </:actions>
+    </.header>
     <!-- end hiding from live code -->
     <form>
-      <.input
-        phx-change="suggest"
-        phx-debounce="500"
-        type="text"
-        name="query"
-        list="matches"
-        autocomplete="off"
-        placeholder="Country"
-        class="w-96" />
+      <div class="w-96">
+        <.input
+          phx-change="suggest"
+          phx-debounce="500"
+          type="text"
+          name="query"
+          list="matches"
+          autocomplete="off"
+          placeholder="Country"
+          value=""
+        />
+      </div>
     </form>
     <datalist id="matches">
       <option :for={match <- @matches} value={match.name} />

@@ -1,7 +1,6 @@
 defmodule LivePlaygroundWeb.ModalsLive do
   use LivePlaygroundWeb, :live_view
 
-  import LivePlaygroundWeb.UiComponent
   import LivePlaygroundWeb.LiveHelpers
 
   def mount(_params, _session, socket) do
@@ -15,20 +14,28 @@ defmodule LivePlaygroundWeb.ModalsLive do
   def render(assigns) do
     ~H"""
     <!-- start hiding from live code -->
-    <.heading>
+    <.header class="mb-6">
       Modals
-      <:footer>
-       How to open modals in live view
-      </:footer>
-    </.heading>
+      <:subtitle>
+        How to open modals in live view
+      </:subtitle>
+    </.header>
     <!-- end hiding from live code -->
-    <div class="space-x-0 space-y-3 xl:space-x-3 xl:space-y-0">
-      <.button patch={Routes.modals_path(@socket, :modal_a)} class="w-full xl:w-auto">Confirm Return</.button>
-      <.button patch={Routes.modals_path(@socket, :modal_b)} class="w-full xl:w-auto">Confirm Proceed</.button>
-      <.button patch={Routes.modals_path(@socket, :modal_c)} class="w-full xl:w-auto">Confirm Action</.button>
-      <.button patch={Routes.modals_path(@socket, :modal_d)} class="w-full xl:w-auto">Live Component</.button>
+    <div class="flex flex-col space-x-0 space-y-3 lg:flex-row lg:space-x-3 lg:space-y-0">
+      <.link patch={~p"/modals/modal-a"}>
+        Confirm return
+      </.link>
+      <.link patch={~p"/modals/modal-b"}>
+        Confirm proceed
+      </.link>
+      <.link patch={~p"/modals/modal-c"}>
+        Confirm action
+      </.link>
+      <.link patch={~p"/modals/modal-d"}>
+        Live component
+      </.link>
     </div>
-    <%= show_live_modal(@socket, @live_action) %>
+    <%= show_live_modal(@live_action) %>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <%= raw(code("lib/live_playground_web/live/modals_live.ex")) %>
@@ -41,48 +48,48 @@ defmodule LivePlaygroundWeb.ModalsLive do
     """
   end
 
-  defp show_live_modal(socket, :modal_a) do
+  defp show_live_modal(:modal_a) do
     live_modal(:confirm_return,
       title: "Payment successful",
       description: lorem_ipsum_sentences(2),
       return_text: "Continue shopping",
-      return_to: Routes.live_path(socket, __MODULE__)
+      return_to: ~p"/modals"
     )
   end
 
-  defp show_live_modal(socket, :modal_b) do
+  defp show_live_modal(:modal_b) do
     live_modal(:confirm_proceed,
       title: "Added to Cart",
       description: lorem_ipsum_sentences(4),
       proceed_text: "Proceed to checkout",
-      proceed_to: Routes.modals_path(socket, :modal_c),
+      proceed_to: ~p"/modals/modal-c",
       return_text: "Continue shopping",
-      return_to: Routes.live_path(socket, __MODULE__)
+      return_to: ~p"/modals"
     )
   end
 
-  defp show_live_modal(socket, :modal_c) do
+  defp show_live_modal(:modal_c) do
     live_modal(:confirm_action,
       title: "Deactivate account",
       description: lorem_ipsum_sentences(4),
       action_text: "Deactivate",
-      action_to: Routes.modals_path(socket, :modal_d),
+      action_to: ~p"/modals/modal-d",
       return_text: "Cancel",
-      return_to: Routes.live_path(socket, __MODULE__)
+      return_to: ~p"/modals"
     )
   end
 
-  defp show_live_modal(socket, :modal_d) do
+  defp show_live_modal(:modal_d) do
     live_modal(
       LivePlaygroundWeb.Components.TextComponent,
       [
         heading: "Lorem ipsum",
         content: lorem_ipsum_paragraphs(3),
-        return_to: Routes.live_path(socket, __MODULE__)
+        return_to: ~p"/modals"
       ],
       %{capture_close: false, show_close_btn: true}
     )
   end
 
-  defp show_live_modal(_, _), do: nil
+  defp show_live_modal(_), do: nil
 end

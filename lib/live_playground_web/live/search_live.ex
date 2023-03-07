@@ -1,9 +1,6 @@
 defmodule LivePlaygroundWeb.SearchLive do
   use LivePlaygroundWeb, :live_view
 
-  import LivePlaygroundWeb.UiComponent
-  import LivePlaygroundWeb.IconComponent
-
   alias LivePlayground.Countries
 
   def mount(_params, _session, socket) do
@@ -20,41 +17,44 @@ defmodule LivePlaygroundWeb.SearchLive do
   def render(assigns) do
     ~H"""
     <!-- start hiding from live code -->
-    <.heading>
+    <.header class="mb-6">
       Search
-      <:footer>
+      <:subtitle>
         How to search in live view
-      </:footer>
-      <:buttons>
-        <.button navigate="/search-advanced" color={:secondary}>
+      </:subtitle>
+      <:actions>
+        <.link navigate={~p"/search-advanced"}>
           Try advanced search
-        </.button>
-      </:buttons>
-    </.heading>
+        </.link>
+      </:actions>
+    </.header>
     <!-- end hiding from live code -->
-    <form class="mb-4 flex space-x-2" phx-submit="search">
+    <form class="w-96 mb-4 flex space-x-3" phx-submit="search">
       <.input
         type="text"
         name="query"
         autocomplete="off"
         placeholder="Search Country by Name"
-        class="w-96 placeholder-gray-300"
         value={@query}
-        readonly={@loading} />
-      <.button type="submit" class="inline-flex">
-        Search <.icon :if={@loading} name="circle" class="animate-spin ml-2 -mr-1 w-5 h-5"/>
+        readonly={@loading}
+      />
+      <.button type="submit">
+        Search
       </.button>
     </form>
-    <.alert :if={@flash["no_result"]}>
+    <IconComponent.icon :if={@loading} name="circle" class="animate-spin ml-2 -mr-1 w-5 h-5" />
+    <UiComponent.alert :if={@flash["no_result"]}>
       <%= live_flash(@flash, :no_result) %>
-    </.alert>
-    <.ul :if={@countries != []} class="mb-4">
-      <.li :for={country <- @countries} class="sm:flex sm:items-center sm:justify-between">
-        <p class="w-80 truncate font-medium"><%= country.name %></p>
-        <p class="w-12 text-sm"><%= country.code %></p>
-        <p class="w-12 text-sm"><%= country.code2 %></p>
-      </.li>
-    </.ul>
+    </UiComponent.alert>
+    <.table :if={@countries != []} id="countries" rows={@countries}>
+      <:col :let={country} label="Name"><%= country.name %></:col>
+      <:col :let={country} label="Continent"><%= country.continent %></:col>
+      <:col :let={country} label="Population" class="text-right">
+        <div class="text-right">
+          <%= Number.Delimit.number_to_delimited(country.population, precision: 0, delimiter: " ") %>
+        </div>
+      </:col>
+    </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <%= raw(code("lib/live_playground_web/live/search_live.ex")) %>

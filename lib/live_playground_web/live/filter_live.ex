@@ -1,8 +1,6 @@
 defmodule LivePlaygroundWeb.FilterLive do
   use LivePlaygroundWeb, :live_view
 
-  import LivePlaygroundWeb.UiComponent
-
   alias LivePlayground.Cities
 
   def mount(_params, _session, socket) do
@@ -18,58 +16,37 @@ defmodule LivePlaygroundWeb.FilterLive do
   def render(assigns) do
     ~H"""
     <!-- start hiding from live code -->
-    <.heading>
+    <.header class="mb-6">
       Filter
-      <:footer>
-      How to filter data in live view
-      </:footer>
-      <:buttons>
-        <.button navigate="/filter-advanced" color={:secondary}>
+      <:subtitle>
+        How to filter data in live view
+      </:subtitle>
+      <:actions>
+        <.link navigate={~p"/filter-advanced"}>
           Try advanced filter
-        </.button>
-      </:buttons>
-    </.heading>
+        </.link>
+      </:actions>
+    </.header>
     <!-- end hiding from live code -->
     <form id="filter-form" class="lg:flex lg:items-end lg:space-x-6 space-y-4 mb-6" phx-change="filter">
-      <div class="flex-1">
-        <.input type="text" id="name" name="name" label="Name" value={@filter.name} phx-debounce="500" />
+      <.input type="text" id="name" name="name" label="Name" value={@filter.name} phx-debounce="500" />
+      <.input type="select" id="district" name="district" label="District" options={districts()} value={@filter.district} />
+      <div class="lg:flex lg:space-x-6 lg:pb-2.5">
+        <.input :for={size <- sizes()} type="checkbox" name="sizes[]" value={size} id={size} label={size} />
       </div>
-      <div class="flex-1">
-        <.select id="district" name="district" label="District">
-          <%= options_for_select(districts(), @filter.district) %>
-        </.select>
-      </div>
-      <div class="flex-1">
-        <div class="lg:flex lg:space-x-6">
-          <.checkbox :for={size <- sizes()} checked={size in @filter.sizes} name="sizes[]" value={size} id={size} label={size}/>
-          <input type="hidden" name="sizes[]" value="" />
-        </div>
-      </div>
+      <input type="hidden" name="sizes[]" value="" />
     </form>
-    <.alert :if={@cities == []}>
+    <UiComponent.alert :if={@cities == []}>
       No results
-    </.alert>
-    <.table :if={@cities != []}>
-      <thead>
-        <tr>
-          <.th>Name</.th>
-          <.th>District</.th>
-          <.th class="text-right">Population</.th>
-        </tr>
-      </thead>
-      <.tbody>
-        <tr :for={city <- @cities}>
-          <.td class="w-1/3">
-            <%= city.name %>
-          </.td>
-          <.td class="w-1/3">
-            <%= city.district %>
-          </.td>
-          <.td class="w-1/3 text-right">
-            <%= Number.Delimit.number_to_delimited(city.population, precision: 0, delimiter: " ")  %>
-          </.td>
-        </tr>
-      </.tbody>
+    </UiComponent.alert>
+    <.table :if={@cities != []} id="cities" rows={@cities}>
+      <:col :let={city} label="Name"><%= city.name %></:col>
+      <:col :let={city} label="District"><%= city.district %></:col>
+      <:col :let={city} label="Population" class="text-right">
+        <div class="text-right">
+          <%= Number.Delimit.number_to_delimited(city.population, precision: 0, delimiter: " ") %>
+        </div>
+      </:col>
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">

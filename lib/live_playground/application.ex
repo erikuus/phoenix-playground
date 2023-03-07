@@ -8,12 +8,14 @@ defmodule LivePlayground.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Start the Ecto repository
-      LivePlayground.Repo,
       # Start the Telemetry supervisor
       LivePlaygroundWeb.Telemetry,
+      # Start the Ecto repository
+      LivePlayground.Repo,
       # Start the PubSub system
       {Phoenix.PubSub, name: LivePlayground.PubSub},
+      # Start Finch
+      {Finch, name: LivePlayground.Finch},
       # Start the Endpoint (http/https)
       LivePlaygroundWeb.Endpoint
       # Start a worker by calling: LivePlayground.Worker.start_link(arg)

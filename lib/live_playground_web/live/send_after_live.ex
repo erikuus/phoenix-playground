@@ -1,8 +1,6 @@
 defmodule LivePlaygroundWeb.SendAfterLive do
   use LivePlaygroundWeb, :live_view
 
-  import LivePlaygroundWeb.UiComponent
-
   alias LivePlayground.Sales
 
   def mount(_params, _session, socket) do
@@ -13,29 +11,29 @@ defmodule LivePlaygroundWeb.SendAfterLive do
   def render(assigns) do
     ~H"""
     <!-- start hiding from live code -->
-    <.heading>
+    <.header class="mb-6">
       Send After
-      <:footer>
+      <:subtitle>
         How to send message to live view after process
-      </:footer>
-       <:buttons>
-        <.button navigate="/send-interval" color={:secondary}>
+      </:subtitle>
+      <:actions>
+        <.link navigate={~p"/send-interval"} color={:secondary}>
           Back to send interval
-        </.button>
-      </:buttons>
-    </.heading>
+        </.link>
+      </:actions>
+    </.header>
     <!-- end hiding from live code -->
-    <.statset>
-      <.stat label="Orders">
+    <UiComponent.statset>
+      <UiComponent.stat label="Orders">
         <%= @orders %>
-      </.stat>
-      <.stat label="Amount">
+      </UiComponent.stat>
+      <UiComponent.stat label="Amount">
         <%= @amount %>
-      </.stat>
-      <.stat label="Satisfaction">
+      </UiComponent.stat>
+      <UiComponent.stat label="Satisfaction">
         <%= @satisfaction %>
-      </.stat>
-    </.statset>
+      </UiComponent.stat>
+    </UiComponent.statset>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <%= raw(code("lib/live_playground_web/live/send_after_live.ex")) %>

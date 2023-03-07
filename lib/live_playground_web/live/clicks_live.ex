@@ -1,8 +1,6 @@
 defmodule LivePlaygroundWeb.ClicksLive do
   use LivePlaygroundWeb, :live_view
 
-  import LivePlaygroundWeb.UiComponent
-
   def mount(_params, _session, socket) do
     socket =
       assign(socket,
@@ -22,12 +20,12 @@ defmodule LivePlaygroundWeb.ClicksLive do
   def render(assigns) do
     ~H"""
     <!-- start hiding from live code -->
-    <.heading>
+    <.header class="mb-6">
       Clicks
-      <:footer>
-      How to handle clicks in live view
-      </:footer>
-    </.heading>
+      <:subtitle>
+        How to handle clicks in live view
+      </:subtitle>
+    </.header>
     <!-- end hiding from live code -->
     <%= render_action(@live_action, assigns) %>
     <!-- start hiding from live code -->
@@ -40,10 +38,12 @@ defmodule LivePlaygroundWeb.ClicksLive do
 
   defp render_action(:show_list, assigns) do
     ~H"""
-    <.ul class="my-4">
-      <.li :for={value <- @tabular_outputs}><%= value %></.li>
-    </.ul>
-    <.button patch={Routes.live_path(@socket, __MODULE__)}>Reset</.button>
+    <UiComponent.ul class="my-4">
+      <UiComponent.li :for={value <- @tabular_outputs}><%= value %></UiComponent.li>
+    </UiComponent.ul>
+    <.link patch={~p"/clicks"}>
+      Reset
+    </.link>
     """
   end
 
@@ -54,8 +54,10 @@ defmodule LivePlaygroundWeb.ClicksLive do
         <.tabular_input :for={input <- @tabular_inputs} index={input.index} action={input.action} />
       </div>
       <div class="space-x-2">
-        <.button type="button" phx-click="add-input" color={:secondary} :if={@counter < 5}>Add input</.button>
-        <.button type="submit" :if={@counter > 0}>Output values</.button>
+        <.button :if={@counter < 5} type="button" phx-click="add-input">
+          Add input
+        </.button>
+        <.button :if={@counter > 0} type="submit">Output values</.button>
       </div>
     </form>
     """
@@ -64,8 +66,10 @@ defmodule LivePlaygroundWeb.ClicksLive do
   defp tabular_input(%{action: :add} = assigns) do
     ~H"""
     <div id={"input-#{@index}"} class="mb-4 flex space-x-2">
-      <.input name="texts[]" type="text" value={lorem_ipsum_sentences(1, true)} />
-      <.button type="button" color={:secondary} phx-click="remove-input" phx-value-index={@index}>Remove</.button>
+      <.input name="texts[]" value={lorem_ipsum_sentences(1, true)} />
+      <.button type="button" phx-click="remove-input" phx-value-index={@index}>
+        Remove
+      </.button>
     </div>
     """
   end
@@ -100,6 +104,6 @@ defmodule LivePlaygroundWeb.ClicksLive do
         index: 0
       )
 
-    {:noreply, push_patch(socket, to: Routes.clicks_path(socket, :show_list))}
+    {:noreply, push_patch(socket, to: ~p"/clicks/show-list")}
   end
 end

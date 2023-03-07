@@ -19,15 +19,15 @@ defmodule LivePlaygroundWeb.ConnCase do
 
   using do
     quote do
+      # The default endpoint for testing
+      @endpoint LivePlaygroundWeb.Endpoint
+
+      use LivePlaygroundWeb, :verified_routes
+
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
       import LivePlaygroundWeb.ConnCase
-
-      alias LivePlaygroundWeb.Router.Helpers, as: Routes
-
-      # The default endpoint for testing
-      @endpoint LivePlaygroundWeb.Endpoint
     end
   end
 

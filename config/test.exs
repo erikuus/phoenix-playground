@@ -17,14 +17,17 @@ config :live_playground, LivePlayground.Repo,
 # you can enable the server option below.
 config :live_playground, LivePlaygroundWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
-  secret_key_base: "u+nLzkw7m+Q5Vx2H3kYYeia2ETW8/FrXvUeGgTluT6nVS0gKWkuQ40JIUk5bwByu",
+  secret_key_base: "ZYd2Hoo+xU2QoDv/korjUEZJRovE0PNiKavwY0zwu6C/N83eoHpeOPIsJ461TVCy",
   server: false
 
 # In test we don't send emails.
 config :live_playground, LivePlayground.Mailer, adapter: Swoosh.Adapters.Test
 
+# Disable swoosh api client as it is only required for production adapters.
+config :swoosh, :api_client, false
+
 # Print only warnings and errors during test
-config :logger, level: :warn
+config :logger, level: :warning
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime

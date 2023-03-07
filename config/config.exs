@@ -13,9 +13,12 @@ config :live_playground,
 # Configures the endpoint
 config :live_playground, LivePlaygroundWeb.Endpoint,
   url: [host: "localhost"],
-  render_errors: [view: LivePlaygroundWeb.ErrorView, accepts: ~w(html json), layout: false],
+  render_errors: [
+    formats: [html: LivePlaygroundWeb.ErrorHTML, json: LivePlaygroundWeb.ErrorJSON],
+    layout: false
+  ],
   pubsub_server: LivePlayground.PubSub,
-  live_view: [signing_salt: "73dLBwS5"]
+  live_view: [signing_salt: "wD1HHY8C"]
 
 # Configures the mailer
 #
@@ -26,12 +29,9 @@ config :live_playground, LivePlaygroundWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :live_playground, LivePlayground.Mailer, adapter: Swoosh.Adapters.Local
 
-# Swoosh API client is needed for adapters other than SMTP.
-config :swoosh, :api_client, false
-
 # Configure esbuild (the version is required)
 config :esbuild,
-  version: "0.14.29",
+  version: "0.14.41",
   default: [
     args:
       ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
@@ -39,15 +39,15 @@ config :esbuild,
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
 
-# Configure tailwind
+# Configure tailwind (the version is required)
 config :tailwind,
   version: "3.2.4",
   default: [
     args: ~w(
-    --config=tailwind.config.js
-    --input=css/app.css
-    --output=../priv/static/assets/app.css
-  ),
+      --config=tailwind.config.js
+      --input=css/app.css
+      --output=../priv/static/assets/app.css
+    ),
     cd: Path.expand("../assets", __DIR__)
   ]
 
