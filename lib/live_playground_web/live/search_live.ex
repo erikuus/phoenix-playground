@@ -29,23 +29,17 @@ defmodule LivePlaygroundWeb.SearchLive do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <form class="w-96 mb-4 flex space-x-3" phx-submit="search">
-      <.input
-        type="text"
-        name="query"
-        autocomplete="off"
-        placeholder="Search Country by Name"
-        value={@query}
-        readonly={@loading}
-      />
+    <form class="mb-4 flex space-x-3" phx-submit="search">
+      <div class="w-72">
+        <.input type="text" name="query" autocomplete="off" placeholder="Country" value={@query} readonly={@loading} />
+      </div>
       <.button type="submit">
-        Search
+        Search <.loading :if={@loading} class="ml-2 -mr-2 w-5 h-5" />
       </.button>
     </form>
-    <IconComponent.icon :if={@loading} name="circle" class="animate-spin ml-2 -mr-1 w-5 h-5" />
-    <UiComponent.alert :if={@flash["no_result"]}>
+    <.alert :if={@flash["no_result"]}>
       <%= live_flash(@flash, :no_result) %>
-    </UiComponent.alert>
+    </.alert>
     <.table :if={@countries != []} id="countries" rows={@countries}>
       <:col :let={country} label="Name"><%= country.name %></:col>
       <:col :let={country} label="Continent"><%= country.continent %></:col>

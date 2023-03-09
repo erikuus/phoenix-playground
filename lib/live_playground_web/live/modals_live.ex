@@ -22,18 +22,18 @@ defmodule LivePlaygroundWeb.ModalsLive do
     </.header>
     <!-- end hiding from live code -->
     <div class="flex flex-col space-x-0 space-y-3 lg:flex-row lg:space-x-3 lg:space-y-0">
-      <.link patch={~p"/modals/modal-a"}>
+      <.button_link patch={~p"/modals/modal-a"}>
         Confirm return
-      </.link>
-      <.link patch={~p"/modals/modal-b"}>
+      </.button_link>
+      <.button_link patch={~p"/modals/modal-b"}>
         Confirm proceed
-      </.link>
-      <.link patch={~p"/modals/modal-c"}>
+      </.button_link>
+      <.button_link patch={~p"/modals/modal-c"}>
         Confirm action
-      </.link>
-      <.link patch={~p"/modals/modal-d"}>
+      </.button_link>
+      <.button_link patch={~p"/modals/modal-d"}>
         Live component
-      </.link>
+      </.button_link>
     </div>
     <%= show_live_modal(@live_action) %>
     <!-- start hiding from live code -->

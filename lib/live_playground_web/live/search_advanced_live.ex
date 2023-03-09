@@ -48,26 +48,19 @@ defmodule LivePlaygroundWeb.SearchAdvancedLive do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <form class="w-96 mb-4 flex space-x-3 items-center" phx-submit="search">
-      <.input
-        type="text"
-        name="query"
-        autocomplete="off"
-        placeholder="Search Country by Name"
-        value={@query}
-        readonly={@loading}
-      />
+    <form class="w-96 mb-4 flex space-x-2 items-center" phx-submit="search">
+      <.input type="text" name="query" autocomplete="off" placeholder="Country" value={@query} readonly={@loading} />
       <.button type="submit">
         Search
       </.button>
-      <.link patch={~p"/search-advanced"}>
+      <.button_link type="secondary" patch={~p"/search-advanced"}>
         Clear
-      </.link>
+      </.button_link>
     </form>
-    <IconComponent.icon :if={@loading} name="circle" class="animate-spin ml-2 -mr-1 w-5 h-5" />
-    <UiComponent.alert :if={@flash["no_result"]}>
+    <.loading :if={@loading} />
+    <.alert :if={@flash["no_result"]}>
       <%= live_flash(@flash, :no_result) %>
-    </UiComponent.alert>
+    </.alert>
     <.table :if={@countries != []} id="countries" rows={@countries}>
       <:col :let={country} label="Name"><%= country.name %></:col>
       <:col :let={country} label="Continent"><%= country.continent %></:col>

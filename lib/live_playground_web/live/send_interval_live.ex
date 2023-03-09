@@ -29,9 +29,9 @@ defmodule LivePlaygroundWeb.SendIntervalLive do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <UiComponent.card class="text-2xl text-center text-gray-900 font-semibold p-10">
+    <.card class="text-2xl text-center text-gray-900 font-semibold p-10">
       <%= format_duration(@seconds_remaining) %>
-    </UiComponent.card>
+    </.card>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <%= raw(code("lib/live_playground_web/live/send_interval_live.ex")) %>

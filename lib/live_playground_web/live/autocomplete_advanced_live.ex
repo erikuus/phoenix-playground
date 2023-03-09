@@ -30,26 +30,18 @@ defmodule LivePlaygroundWeb.AutocompleteAdvancedLive do
     <!-- end hiding from live code -->
     <form>
       <div class="w-96">
-        <.input
-          phx-change="suggest"
-          phx-debounce="500"
-          type="text"
-          name="query"
-          autocomplete="off"
-          placeholder="Country"
-          value={@query}
-        />
+        <.input phx-change="suggest" phx-debounce="500" type="text" name="query" autocomplete="off" placeholder="Country" value={@query} />
       </div>
     </form>
-    <UiComponent.datalist :if={@matches != []} class="max-h-64 w-96">
-      <UiComponent.option :for={match <- @matches} phx-click="select" phx-value-name={match.name}>
+    <.dropdown :if={@matches != []} class="max-h-64 w-96">
+      <.option :for={match <- @matches} phx-click="select" phx-value-name={match.name}>
         <div class="flex justify-between items-center">
           <span class="w-56 truncate font-medium"><%= match.name %></span>
           <span class="text-xs"><%= match.code %></span>
           <span class="text-xs"><%= match.code2 %></span>
         </div>
-      </UiComponent.option>
-    </UiComponent.datalist>
+      </.option>
+    </.dropdown>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <%= raw(code("lib/live_playground_web/live/autocomplete_advanced_live.ex")) %>

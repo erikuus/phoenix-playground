@@ -83,12 +83,11 @@ defmodule LivePlaygroundWeb do
     quote do
       # HTML escaping functionality
       import Phoenix.HTML
-      # UI components, icons and translation
+      # Core UI components,icons and translation
       import LivePlaygroundWeb.CoreComponents
       import LivePlaygroundWeb.Gettext
-
-      alias LivePlaygroundWeb.IconComponent
-      alias LivePlaygroundWeb.UiComponent
+      # More UI components
+      import LivePlaygroundWeb.MoreComponents
 
       # Application specific helpers
       import LivePlaygroundWeb.DemoHelpers

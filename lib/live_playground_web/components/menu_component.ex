@@ -1,7 +1,7 @@
 defmodule LivePlaygroundWeb.MenuComponent do
   use Phoenix.Component
 
-  import LivePlaygroundWeb.IconComponent
+  import LivePlaygroundWeb.CoreComponents
 
   def desktop(assigns) do
     ~H"""
@@ -12,10 +12,7 @@ defmodule LivePlaygroundWeb.MenuComponent do
     >
       <.icon name={"#{item.icon}"} class="text-gray-500 mr-3 flex-shrink-0 h-6 w-6" />
       <span class="flex-1"><%= item.label %></span>
-      <span
-        :if={item.badge}
-        class={"#{badge_bg_class(item.path, @current_path)} ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full"}
-      >
+      <span :if={item.badge} class={"#{badge_bg_class(item.path, @current_path)} ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full"}>
         <%= item.badge %>
       </span>
     </.link>
@@ -31,10 +28,7 @@ defmodule LivePlaygroundWeb.MenuComponent do
     >
       <.icon name={"#{item.icon}"} class="text-gray-500 mr-3 flex-shrink-0 h-6 w-6" />
       <span class="flex-1"><%= item.label %></span>
-      <span
-        :if={item.badge}
-        class={"#{badge_bg_class(item.path, @current_path)} ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full"}
-      >
+      <span :if={item.badge} class={"#{badge_bg_class(item.path, @current_path)} ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full"}>
         <%= item.badge %>
       </span>
     </.link>
@@ -43,16 +37,15 @@ defmodule LivePlaygroundWeb.MenuComponent do
 
   defp items() do
     [
-      %{icon: "home", label: "Home", path: "/", badge: nil},
-      %{icon: "cursor_arrow_ripple", label: "Clicks", path: "/clicks", badge: nil},
-      %{icon: "arrow_path", label: "Changes", path: "/changes", badge: nil},
-      %{icon: "paper_airplane", label: "Send", path: "/send-interval", badge: 2},
-      %{icon: "queue_list", label: "Autocomplete", path: "/autocomplete", badge: 2},
-      %{icon: "magnifying_glass", label: "Search", path: "/search", badge: 2},
-      %{icon: "funnel", label: "Filter", path: "/filter", badge: 2},
-      %{icon: "rectangle_stack", label: "Modals", path: "/modals", badge: nil},
-      %{icon: "arrow_up_tray", label: "Upload", path: "/upload", badge: nil},
-      %{icon: "cloud_arrow_up", label: "Cloud Upload", path: "/upload-cloud", badge: nil}
+      %{icon: "hero-home", label: "Home", path: "/", badge: nil},
+      %{icon: "hero-cursor-arrow-ripple", label: "Clicks", path: "/clicks", badge: nil},
+      %{icon: "hero-arrow-path", label: "Changes", path: "/changes", badge: nil},
+      %{icon: "hero-paper-airplane", label: "Send", path: "/send-interval", badge: 2},
+      %{icon: "hero-queue-list", label: "Autocomplete", path: "/autocomplete", badge: 2},
+      %{icon: "hero-magnifying-glass", label: "Search", path: "/search", badge: 2},
+      %{icon: "hero-funnel", label: "Filter", path: "/filter", badge: 2},
+      %{icon: "hero-rectangle-stack", label: "Modals", path: "/modals", badge: nil},
+      %{icon: "hero-arrow-up-tray", label: "Upload", path: "/upload", badge: nil}
     ]
   end
 

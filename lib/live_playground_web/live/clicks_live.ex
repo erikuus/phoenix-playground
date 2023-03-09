@@ -38,12 +38,12 @@ defmodule LivePlaygroundWeb.ClicksLive do
 
   defp render_action(:show_list, assigns) do
     ~H"""
-    <UiComponent.ul class="my-4">
-      <UiComponent.li :for={value <- @tabular_outputs}><%= value %></UiComponent.li>
-    </UiComponent.ul>
-    <.link patch={~p"/clicks"}>
+    <.simple_list class="mb-4">
+      <:item :for={value <- @tabular_outputs}><%= value %></:item>
+    </.simple_list>
+    <.button_link type="secondary" patch={~p"/clicks"}>
       Reset
-    </.link>
+    </.button_link>
     """
   end
 
@@ -57,7 +57,9 @@ defmodule LivePlaygroundWeb.ClicksLive do
         <.button :if={@counter < 5} type="button" phx-click="add-input">
           Add input
         </.button>
-        <.button :if={@counter > 0} type="submit">Output values</.button>
+        <.button :if={@counter > 0} type="submit">
+          Output values
+        </.button>
       </div>
     </form>
     """

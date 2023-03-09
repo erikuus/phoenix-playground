@@ -87,13 +87,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
                 </header>
                 <%= render_slot(@inner_block) %>
                 <div :if={@confirm != [] or @cancel != []} class="ml-6 mb-4 flex items-center gap-5">
-                  <.button
-                    :for={confirm <- @confirm}
-                    id={"#{@id}-confirm"}
-                    phx-click={@on_confirm}
-                    phx-disable-with
-                    class="py-2 px-3"
-                  >
+                  <.button :for={confirm <- @confirm} id={"#{@id}-confirm"} phx-click={@on_confirm} phx-disable-with class="py-2 px-3">
                     <%= render_slot(confirm) %>
                   </.button>
                   <.link
@@ -243,8 +237,9 @@ defmodule LivePlaygroundWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
-        "text-sm font-semibold leading-6 text-white active:text-white/80",
+        "phx-submit-loading:opacity-75",
+        "inline-flex inline-flex items-center justify-center rounded-lg py-2 px-5 ring-inset",
+        "text-sm font-semibold leading-6 bg-zinc-900 hover:bg-zinc-700 text-white active:text-white/80",
         @class
       ]}
       {@rest}

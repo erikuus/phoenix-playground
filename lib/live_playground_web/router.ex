@@ -38,7 +38,6 @@ defmodule LivePlaygroundWeb.Router do
     # endmodals
 
     live "/upload", UploadLive
-    live "/upload-cloud", UploadCloudLive
 
     get "/", PageController, :home
   end

@@ -17,23 +17,23 @@ defmodule LivePlaygroundWeb.SendAfterLive do
         How to send message to live view after process
       </:subtitle>
       <:actions>
-        <.link navigate={~p"/send-interval"} color={:secondary}>
+        <.link navigate={~p"/send-interval"}>
           Back to send interval
         </.link>
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <UiComponent.statset>
-      <UiComponent.stat label="Orders">
+    <.stat>
+      <:item title="Orders">
         <%= @orders %>
-      </UiComponent.stat>
-      <UiComponent.stat label="Amount">
+      </:item>
+      <:item title="Amount">
         <%= @amount %>
-      </UiComponent.stat>
-      <UiComponent.stat label="Satisfaction">
+      </:item>
+      <:item title="Satisfaction">
         <%= @satisfaction %>
-      </UiComponent.stat>
-    </UiComponent.statset>
+      </:item>
+    </.stat>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <%= raw(code("lib/live_playground_web/live/send_after_live.ex")) %>
