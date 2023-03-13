@@ -25,10 +25,10 @@ defmodule LivePlaygroundWeb.ChangesLive do
       <.input type="select" label="Color" name="color" options={color_options()} value={@color} />
       <%= render_partial(:color, @color, assigns) %>
       <div class="ml-1 space-y-2">
-        <.input type="radio" name="shape" label="Circle" value="circle" checked={@shape == "circle"} />
-        <.input type="radio" name="shape" label="Rectangle" value="rectangle" checked={@shape == "rectangle"} />
+        <.input type="radio" name="shape" label="Circle" id="circle" value="circle" checked={@shape == "circle"} />
+        <.input type="radio" name="shape" label="Rectangle" id="rectangle" value="rectangle" checked={@shape == "rectangle"} />
         <%= render_partial(:rectangle, @shape, assigns) %>
-        <.input type="radio" name="shape" label="Square" value="square" checked={@shape == "square"} />
+        <.input type="radio" name="shape" label="Square" id="square" value="square" checked={@shape == "square"} />
         <%= render_partial(:square, @shape, assigns) %>
       </div>
     </form>

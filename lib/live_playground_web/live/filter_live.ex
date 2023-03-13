@@ -37,9 +37,9 @@ defmodule LivePlaygroundWeb.FilterLive do
         <.input :for={size <- size_options()} type="checkbox" label={size.label} name={size.name} value={@filter[size.key]} />
       </div>
     </form>
-    <UiComponent.alert :if={@cities == []}>
+    <.alert :if={@cities == []}>
       No results
-    </UiComponent.alert>
+    </.alert>
     <.table :if={@cities != []} id="cities" rows={@cities}>
       <:col :let={city} label="Name"><%= city.name %></:col>
       <:col :let={city} label="District"><%= city.district %></:col>
