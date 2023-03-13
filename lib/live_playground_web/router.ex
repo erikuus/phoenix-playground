@@ -29,12 +29,12 @@ defmodule LivePlaygroundWeb.Router do
     live "/filter", FilterLive
     live "/filter-advanced", FilterAdvancedLive
 
-    # modals
     live "/modals", ModalsLive
-    live "/modals/modal-a", ModalsLive, :modal_a
-    live "/modals/modal-b", ModalsLive, :modal_b
-    live "/modals/modal-c", ModalsLive, :modal_c
-    live "/modals/modal-d", ModalsLive, :modal_d
+    # modals
+    live "/modals-advanced", ModalsAdvancedLive
+    live "/modals-advanced/text", ModalsAdvancedLive, :text
+    live "/modals-advanced/math", ModalsAdvancedLive, :math
+    live "/modals-advanced/image", ModalsAdvancedLive, :image
     # endmodals
 
     live "/upload", UploadLive

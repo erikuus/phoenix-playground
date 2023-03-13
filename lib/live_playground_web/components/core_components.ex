@@ -39,15 +39,20 @@ defmodule LivePlaygroundWeb.CoreComponents do
   attr :on_confirm, JS, default: %JS{}
 
   slot :inner_block, required: true
+  slot :icon
   slot :title
   slot :subtitle
-  slot :confirm
+
+  slot :confirm do
+    attr :class, :string
+  end
+
   slot :cancel
 
   def modal(assigns) do
     ~H"""
     <div id={@id} phx-mounted={@show && show_modal(@id)} phx-remove={hide_modal(@id)} class="relative z-50 hidden">
-      <div id={"#{@id}-bg"} class="fixed inset-0 bg-zinc-50/90 transition-opacity" aria-hidden="true" />
+      <div id={"#{@id}-bg"} class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" />
       <div
         class="fixed inset-0 overflow-y-auto"
         aria-labelledby={"#{@id}-title"}
@@ -56,47 +61,64 @@ defmodule LivePlaygroundWeb.CoreComponents do
         aria-modal="true"
         tabindex="0"
       >
-        <div class="flex min-h-full items-center justify-center">
-          <div class="w-full max-w-3xl p-4 sm:p-6 lg:py-8">
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+          <div class="relative overflow-hidden rounded-lg bg-white text-left shadow-xl sm:p-0">
             <.focus_wrap
               id={"#{@id}-container"}
               phx-mounted={@show && show_modal(@id)}
               phx-window-keydown={hide_modal(@on_cancel, @id)}
               phx-key="escape"
               phx-click-away={hide_modal(@on_cancel, @id)}
-              class="hidden relative rounded-2xl bg-white p-14 shadow-lg shadow-zinc-700/10 ring-1 ring-zinc-700/10 transition"
             >
-              <div class="absolute top-6 right-5">
-                <button
-                  phx-click={hide_modal(@on_cancel, @id)}
-                  type="button"
-                  class="-m-3 flex-none p-3 opacity-20 hover:opacity-40"
-                  aria-label={gettext("close")}
-                >
-                  <.icon name="hero-x-mark-solid" class="w-5 h-5" />
-                </button>
+              <div class="absolute top-0 right-0 hidden pt-4 pr-4 sm:block">
+                <.link phx-click={hide_modal(@on_cancel, @id)}>
+                  <.icon name="hero-x-mark-solid" class="w-6 h-6 text-gray-400 hover:text-gray-500" />
+                </.link>
               </div>
               <div id={"#{@id}-content"}>
-                <header :if={@title != []}>
-                  <h1 id={"#{@id}-title"} class="text-lg font-semibold leading-8 text-zinc-800">
-                    <%= render_slot(@title) %>
-                  </h1>
-                  <p :if={@subtitle != []} id={"#{@id}-description"} class="mt-2 text-sm leading-6 text-zinc-600">
-                    <%= render_slot(@subtitle) %>
-                  </p>
-                </header>
-                <%= render_slot(@inner_block) %>
-                <div :if={@confirm != [] or @cancel != []} class="ml-6 mb-4 flex items-center gap-5">
-                  <.button :for={confirm <- @confirm} id={"#{@id}-confirm"} phx-click={@on_confirm} phx-disable-with class="py-2 px-3">
-                    <%= render_slot(confirm) %>
-                  </.button>
-                  <.link
-                    :for={cancel <- @cancel}
-                    phx-click={hide_modal(@on_cancel, @id)}
-                    class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
-                  >
-                    <%= render_slot(cancel) %>
-                  </.link>
+                <div class="p-4 sm:p-6 sm:w-full sm:max-w-lg sm:min-w-[400px]">
+                  <div class="sm:flex sm:items-start">
+                    <div :if={@icon != []} class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center sm:mx-0 sm:h-10 sm:w-10">
+                      <%= render_slot(@icon) %>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                      <header :if={@title != []}>
+                        <h3 id={"#{@id}-title"} class="text-lg font-medium leading-6 text-gray-900">
+                          <%= render_slot(@title) %>
+                        </h3>
+                        <p :if={@subtitle != []} id={"#{@id}-subtitle"} class="mt-2 text-base leading-6 text-zinc-600">
+                          <%= render_slot(@subtitle) %>
+                        </p>
+                      </header>
+                      <div class="mt-2">
+                        <p class="text-sm text-gray-500">
+                          <%= render_slot(@inner_block) %>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div :if={@confirm != [] or @cancel != []} class="mt-5 sm:mt-4 sm:ml-10 sm:pl-4 sm:flex sm:flex-row-reverse">
+                    <.link
+                      :for={cancel <- @cancel}
+                      phx-click={hide_modal(@on_cancel, @id)}
+                      class={[
+                        "inline-flex items-center justify-center rounded-lg border border-zinc-200 bg-zinc-100 hover:bg-zinc-200",
+                        "py-2 px-5 text-sm font-semibold leading-6 text-gray-700 active:text-gray-800",
+                        "w-full sm:w-auto sm:ml-3"
+                      ]}
+                    >
+                      <%= render_slot(cancel) %>
+                    </.link>
+                    <.button
+                      :for={confirm <- @confirm}
+                      phx-click={@on_confirm}
+                      id={"#{@id}-confirm"}
+                      phx-disable-with
+                      class={"w-full sm:w-auto mt-3 sm:mt-0 #{Map.get(confirm, :class, nil)}"}
+                    >
+                      <%= render_slot(confirm) %>
+                    </.button>
+                  </div>
                 </div>
               </div>
             </.focus_wrap>
@@ -516,48 +538,46 @@ defmodule LivePlaygroundWeb.CoreComponents do
       end
 
     ~H"""
-    <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
-      <table class="mt-11 w-[40rem] sm:w-full">
-        <thead class="text-left text-[0.8125rem] leading-6 text-zinc-500">
-          <tr>
-            <th :for={col <- @col} class={["p-0 pb-4 pr-6 font-normal", col[:class]]}>
-              <%= col[:label] %>
-            </th>
-            <th class="relative p-0 pb-4">
-              <span class="sr-only"><%= gettext("Actions") %></span>
-            </th>
-          </tr>
-        </thead>
-        <tbody
-          id={@id}
-          phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
-          class="relative divide-y divide-zinc-100 border-t border-zinc-200 text-sm leading-6 text-zinc-700"
-        >
-          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-50">
-            <td
-              :for={{col, i} <- Enum.with_index(@col)}
-              phx-click={@row_click && @row_click.(row)}
-              class={["relative p-0", @row_click && "hover:cursor-pointer"]}
-            >
-              <div class="block py-4 pr-6">
-                <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
-                <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
-                  <%= render_slot(col, @row_item.(row)) %>
-                </span>
-              </div>
-            </td>
-            <td :if={@action != []} class="relative p-0 w-14">
-              <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
-                <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 sm:rounded-r-xl" />
-                <span :for={action <- @action} class="relative ml-4 font-semibold leading-6 text-zinc-900 hover:text-zinc-700">
-                  <%= render_slot(action, @row_item.(row)) %>
-                </span>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <table class="mt-11 w-full">
+      <thead class="text-left text-[0.8125rem] leading-6 text-zinc-500">
+        <tr>
+          <th :for={col <- @col} class={["p-0 pb-4 pr-6 font-normal", col[:class]]}>
+            <%= col[:label] %>
+          </th>
+          <th class="relative p-0 pb-4">
+            <span class="sr-only"><%= gettext("Actions") %></span>
+          </th>
+        </tr>
+      </thead>
+      <tbody
+        id={@id}
+        phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
+        class="relative divide-y divide-zinc-100 border-t border-zinc-200 text-sm leading-6 text-zinc-700"
+      >
+        <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-50">
+          <td
+            :for={{col, i} <- Enum.with_index(@col)}
+            phx-click={@row_click && @row_click.(row)}
+            class={["relative p-0", @row_click && "hover:cursor-pointer"]}
+          >
+            <div class="block py-4 pr-6">
+              <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
+              <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
+                <%= render_slot(col, @row_item.(row)) %>
+              </span>
+            </div>
+          </td>
+          <td :if={@action != []} class="relative p-0 w-14">
+            <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
+              <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 sm:rounded-r-xl" />
+              <span :for={action <- @action} class="relative ml-4 font-semibold leading-6 text-zinc-900 hover:text-zinc-700">
+                <%= render_slot(action, @row_item.(row)) %>
+              </span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
     """
   end
 
@@ -645,10 +665,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
   def show(js \\ %JS{}, selector) do
     JS.show(js,
       to: selector,
-      transition:
-        {"transition-all transform ease-out duration-300",
-         "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
-         "opacity-100 translate-y-0 sm:scale-100"}
+      transition: {"transition-all transform ease-out duration-75", "opacity-0", "opacity-100"}
     )
   end
 
@@ -656,10 +673,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
     JS.hide(js,
       to: selector,
       time: 200,
-      transition:
-        {"transition-all transform ease-in duration-200",
-         "opacity-100 translate-y-0 sm:scale-100",
-         "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"}
+      transition: {"transition-all transform ease-in duration-75", "opacity-100", "opacity-0"}
     )
   end
 

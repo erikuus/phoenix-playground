@@ -44,7 +44,7 @@ defmodule LivePlaygroundWeb.MenuComponent do
       %{icon: "hero-queue-list", label: "Autocomplete", path: "/autocomplete", badge: 2},
       %{icon: "hero-magnifying-glass", label: "Search", path: "/search", badge: 2},
       %{icon: "hero-funnel", label: "Filter", path: "/filter", badge: 2},
-      %{icon: "hero-rectangle-stack", label: "Modals", path: "/modals", badge: nil},
+      %{icon: "hero-rectangle-stack", label: "Modals", path: "/modals", badge: 2},
       %{icon: "hero-arrow-up-tray", label: "Upload", path: "/upload", badge: nil}
     ]
   end

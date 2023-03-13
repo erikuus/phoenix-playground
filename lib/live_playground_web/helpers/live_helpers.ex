@@ -1,7 +1,7 @@
 defmodule LivePlaygroundWeb.LiveHelpers do
   import Phoenix.LiveView.Helpers
 
-  def live_modal(component, opts, close_opts \\ %{capture_close: true, show_close_btn: false}) do
+  def live_modal(component, opts, close_opts \\ %{capture_close: true, show_close_btn: true}) do
     live_component(
       LivePlaygroundWeb.Live.ModalComponent,
       id: :modal,
