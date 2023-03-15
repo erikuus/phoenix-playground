@@ -21,10 +21,38 @@ defmodule LivePlaygroundWeb.Components.ImageComponent do
       <div class="my-6 space-y-3">
         <img src={"/images/#{Enum.at(@images, @current)}"} class="w-full" />
       </div>
-      <div class="flex flex-col space-y-3 lg:flex-row lg:space-y-0">
-        <.button_link patch={@return_to} type="secondary"><%= @return_text %></.button_link>
+      <div class="flex justify-between">
+        <div class="flex space-x-1">
+          <.button phx-click="prev" phx-target={@myself}><.icon name="hero-arrow-left-circle" class="h-6 w-6" /></.button>
+          <.button phx-click="next" phx-target={@myself}><.icon name="hero-arrow-right-circle" class="h-6 w-6" /></.button>
+        </div>
+        <div>
+          <.button_link patch={@return_to} type="secondary"><%= @return_text %></.button_link>
+        </div>
       </div>
     </div>
     """
+  end
+
+  def handle_event("prev", _, socket) do
+    {:noreply, assign(socket, current: prev(socket))}
+  end
+
+  def handle_event("next", _, socket) do
+    {:noreply, assign(socket, current: next(socket))}
+  end
+
+  defp next(socket) do
+    rem(
+      socket.assigns.current + 1,
+      Enum.count(socket.assigns.images)
+    )
+  end
+
+  defp prev(socket) do
+    rem(
+      socket.assigns.current - 1 + Enum.count(socket.assigns.images),
+      Enum.count(socket.assigns.images)
+    )
   end
 end
