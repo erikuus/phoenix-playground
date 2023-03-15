@@ -62,7 +62,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
         tabindex="0"
       >
         <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-          <div class="relative overflow-hidden rounded-lg bg-white text-left shadow-xl sm:p-0">
+          <div class="relative overflow-hidden rounded-lg bg-white text-left shadow-xl sm:my-8 sm:p-0">
             <.focus_wrap
               id={"#{@id}-container"}
               phx-mounted={@show && show_modal(@id)}
@@ -665,7 +665,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
   def show(js \\ %JS{}, selector) do
     JS.show(js,
       to: selector,
-      transition: {"transition-all transform ease-out duration-75", "opacity-0", "opacity-100"}
+      transition: {"transition-all transform ease-out duration-300", "opacity-0", "opacity-100"}
     )
   end
 
@@ -673,7 +673,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
     JS.hide(js,
       to: selector,
       time: 200,
-      transition: {"transition-all transform ease-in duration-75", "opacity-100", "opacity-0"}
+      transition: {"transition-all transform ease-in duration-200", "opacity-100", "opacity-0"}
     )
   end
 

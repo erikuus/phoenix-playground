@@ -78,12 +78,13 @@ defmodule LivePlaygroundWeb.ModalsAdvancedLive do
     live_modal(
       Components.ImageComponent,
       [
-        heading: "Lorem ipsum",
-        content: lorem_ipsum_paragraphs(3),
+        id: :image,
+        title: "Image Component",
+        images: ["DSC02232.jpg", "DSC02234.jpg", "DSC02235.jpg"],
         return_text: "Close",
         return_to: ~p"/modals-advanced"
       ],
-      %{capture_close: false, show_close_btn: true}
+      %{capture_close: false, show_close_btn: false}
     )
   end
 

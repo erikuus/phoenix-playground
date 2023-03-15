@@ -13,7 +13,7 @@ defmodule LivePlaygroundWeb.Components.MathComponent do
       </h1>
       <form phx-submit="add" phx-target={@myself}>
         <div class="mb-3 font-bold">Current value is <%= @value %></div>
-        <.input type="text" label="Value to add" name="add" class="w-96" autocomplete="off" value="" />
+        <.input type="text" label="Value to add" name="add" autocomplete="off" value="" />
         <div class="flex flex-col space-y-3 lg:flex-row-reverse lg:space-y-0 mt-3">
           <.button_link patch={@proceed_to} type="secondary"><%= @proceed_text %></.button_link>
           <.button type="submit" class="mr-3">Add</.button>

@@ -7,7 +7,7 @@ defmodule LivePlaygroundWeb.Components.TextComponent do
 
   def render(assigns) do
     ~H"""
-    <div class="p-6 container mx-auto xl:max-w-6xl">
+    <div class="p-6 mx-auto max-w-5xl">
       <h1 class="text-2xl font-bold leading-7">
         <%= @title %>
       </h1>
