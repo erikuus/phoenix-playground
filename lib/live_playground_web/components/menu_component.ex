@@ -7,10 +7,10 @@ defmodule LivePlaygroundWeb.MenuComponent do
     ~H"""
     <.link
       :for={item <- items()}
-      navigate={"#{item.path}"}
+      href={item.path}
       class={"#{item_bg_class(item.path, @current_path)} text-gray-900 group flex items-center px-2 py-2 text-sm font-medium rounded-md"}
     >
-      <.icon name={"#{item.icon}"} class="text-gray-500 mr-3 flex-shrink-0 h-6 w-6" />
+      <.icon name={item.icon} class="text-gray-500 mr-3 flex-shrink-0 h-6 w-6" />
       <span class="flex-1"><%= item.label %></span>
       <span :if={item.badge} class={"#{badge_bg_class(item.path, @current_path)} ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full"}>
         <%= item.badge %>
@@ -23,10 +23,10 @@ defmodule LivePlaygroundWeb.MenuComponent do
     ~H"""
     <.link
       :for={item <- items()}
-      navigate={"#{item.path}"}
+      href={item.path}
       class={"#{item_bg_class(item.path, @current_path)} text-gray-600 group flex items-center px-2 py-2 text-base font-medium rounded-md"}
     >
-      <.icon name={"#{item.icon}"} class="text-gray-500 mr-3 flex-shrink-0 h-6 w-6" />
+      <.icon name={item.icon} class="text-gray-500 mr-3 flex-shrink-0 h-6 w-6" />
       <span class="flex-1"><%= item.label %></span>
       <span :if={item.badge} class={"#{badge_bg_class(item.path, @current_path)} ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full"}>
         <%= item.badge %>
