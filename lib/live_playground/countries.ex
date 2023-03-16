@@ -25,9 +25,8 @@ defmodule LivePlayground.Countries do
   def list_country(query) when query != "" do
     q = "%#{query}%"
 
-    from(c in Country,
-      where: ilike(c.name, ^q)
-    )
+    from(Country)
+    |> where([c], ilike(c.name, ^q))
     |> Repo.all()
   end
 
