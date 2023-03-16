@@ -48,7 +48,6 @@ defmodule LivePlaygroundWeb.ModalsAdvancedLive do
       <%= raw(code("lib/live_playground_web/live/components/text_component.ex")) %>
       <%= raw(code("lib/live_playground_web/live/components/math_component.ex")) %>
       <%= raw(code("lib/live_playground_web/live/components/image_component.ex")) %>
-      <%= raw(code("lib/live_playground_web/router.ex", "# modals", "# endmodals", :router)) %>
     </div>
     <!-- end hiding from live code -->
     """

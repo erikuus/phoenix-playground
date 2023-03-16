@@ -33,14 +33,14 @@ defmodule LivePlaygroundWeb.DemoHelpers do
 
   defp shuffle(list, false), do: list
 
-  def code(filename, from, to, tpl \\ nil) do
+  def code(filename, from, to) do
     """
     <div class="overflow-auto overscroll-auto rounded-lg bg-white border border-gray-200">
       <div class="px-4 py-5 sm:px-6 text-gray-400 font-mono">
         #{filename}
       </div>
       <div class="bg-[#f8f8f8] px-4 py-5 sm:p-6">
-        #{read_file(filename) |> show_marked(from, to, tpl) |> hide_marked() |> Makeup.highlight()}
+        #{read_file(filename) |> show_marked(from, to) |> hide_marked() |> Makeup.highlight()}
       </div>
     </div>
     """
@@ -59,12 +59,11 @@ defmodule LivePlaygroundWeb.DemoHelpers do
     """
   end
 
-  defp show_marked(code, from, to, tpl) do
+  defp show_marked(code, from, to) do
     code
     |> String.split([from, to])
     |> Enum.at(1)
     |> String.trim_trailing(" ")
-    |> apply_template(tpl)
   end
 
   defp hide_marked(code) do
@@ -81,16 +80,4 @@ defmodule LivePlaygroundWeb.DemoHelpers do
   end
 
   defp hide(code, false), do: code
-
-  defp apply_template(code, :router) do
-    """
-      scope "/", LivePlaygroundWeb do
-        pipe_through :browser
-
-    #{String.trim(code, "\n")}
-      end
-    """
-  end
-
-  defp apply_template(code, _), do: String.trim(code, "\n")
 end
