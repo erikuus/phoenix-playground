@@ -35,6 +35,16 @@ defmodule LivePlayground.Countries do
     []
   end
 
+  # navigate
+  def list_nordic_country() do
+    from(Country)
+    |> where(region: "Nordic Countries")
+    |> where([c], c.population >= 100_000)
+    |> Repo.all()
+  end
+
+  # endnavigate
+
   @doc """
   Gets a single country.
 

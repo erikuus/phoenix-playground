@@ -21,6 +21,12 @@ defmodule LivePlayground.Cities do
     Repo.all(City)
   end
 
+  def list_est_city() do
+    from(City)
+    |> where(countrycode: "EST")
+    |> Repo.all()
+  end
+
   # filter
   def list_usa_city(filter) when is_map(filter) do
     from(City)

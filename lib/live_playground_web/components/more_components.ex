@@ -109,24 +109,62 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   ## Examples
 
-      <.simple_list>
-        <:item><%= @post.title %></:item>
-        <:item><%= @post.views %></:item>
+      <.simple_list :if={@items != []}>
+        <:item :for={item <- @items}><%= item.name %></:item>
       </.simple_list>
   """
   attr :class, :string, default: nil
-  slot :item, required: true
+
+  slot :item, required: true do
+    attr :class, :string
+  end
 
   def simple_list(assigns) do
     ~H"""
     <div class={@class}>
       <dl class="divide-y divide-zinc-100">
-        <div :for={item <- @item} class="flex gap-4 py-4 sm:gap-8">
+        <div :for={item <- @item} class={["flex gap-4 py-4 sm:gap-8", Map.get(item, :class)]}>
           <%= render_slot(item) %>
         </div>
       </dl>
     </div>
     """
+  end
+
+  @doc """
+  Renders tabs.
+
+  ## Examples
+
+      <.tabs>
+        <:item :for={item <- @items} patch={~p"/route?#{}"}><%= item.name %></:item>
+      </.tabs>
+  """
+  attr :class, :string, default: nil
+
+  slot :item, required: true do
+    attr :patch, :any, required: true
+    attr :active, :boolean
+  end
+
+  def tabs(assigns) do
+    ~H"""
+    <div class="border-b border-gray-200">
+      <nav class="-mb-px flex space-x-8">
+        <.link :for={item <- @item} patch={item[:patch]} class={tab_class(item[:active])}>
+          <%= render_slot(item) %>
+        </.link>
+      </nav>
+    </div>
+    """
+  end
+
+  defp tab_class(false) do
+    "border-transparent text-zinc-400 hover:border-zinc-300 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
+  end
+
+  defp tab_class(true) do
+    "border-zinc-500 text-zinc-600 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
   end
 
   @doc """

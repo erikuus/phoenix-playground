@@ -16,6 +16,7 @@ defmodule LivePlaygroundWeb.InitLive do
       %{
         "/clicks" => "Clicks",
         "/changes" => "Changes",
+        "/navigate" => "Navigate",
         "/send-interval" => "Send",
         "/autocomplete" => "Autocomplete",
         "/search" => "Search",

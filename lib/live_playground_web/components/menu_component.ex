@@ -40,6 +40,7 @@ defmodule LivePlaygroundWeb.MenuComponent do
       %{icon: "hero-home", label: "Home", path: "/", badge: nil},
       %{icon: "hero-cursor-arrow-ripple", label: "Clicks", path: "/clicks", badge: nil},
       %{icon: "hero-arrow-path", label: "Changes", path: "/changes", badge: nil},
+      %{icon: "hero-link", label: "Navigate", path: "/navigate", badge: nil},
       %{icon: "hero-paper-airplane", label: "Send", path: "/send-interval", badge: 2},
       %{icon: "hero-queue-list", label: "Autocomplete", path: "/autocomplete", badge: 2},
       %{icon: "hero-magnifying-glass", label: "Search", path: "/search", badge: 2},
