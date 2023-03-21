@@ -21,6 +21,7 @@ defmodule LivePlaygroundWeb.InitLive do
         "/autocomplete" => "Autocomplete",
         "/search" => "Search",
         "/filter" => "Filter",
+        "/sort" => "Sorting",
         "/modals" => "Modals",
         "/upload" => "Upload"
       },

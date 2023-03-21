@@ -30,6 +30,7 @@ defmodule LivePlaygroundWeb.Router do
       live "/autocomplete-advanced", AutocompleteAdvancedLive
       live "/filter", FilterLive
       live "/filter-advanced", FilterAdvancedLive
+      live "/sort", SortLive
       live "/modals", ModalsLive
       live "/modals-advanced", ModalsAdvancedLive
       live "/modals-advanced/text", ModalsAdvancedLive, :text
