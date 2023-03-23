@@ -37,12 +37,14 @@ defmodule LivePlaygroundWeb.SortLive do
 
   def render(assigns) do
     ~H"""
+    <!-- start hiding from live code -->
     <.header class="mb-6">
       Sorting
       <:subtitle>
         How to sort data within live view
       </:subtitle>
     </.header>
+    <!-- end hiding from live code -->
     <.table :if={@cities != []} id="cities" rows={@cities}>
       <:col :let={city} label={sort_link("Name", :name, @options)}>
         <%= city.name %>
@@ -59,10 +61,12 @@ defmodule LivePlaygroundWeb.SortLive do
         </div>
       </:col>
     </.table>
+    <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <%= raw(code("lib/live_playground_web/live/sort_live.ex")) %>
       <%= raw(code("lib/live_playground/cities.ex", "# sort", "# endsort")) %>
     </div>
+    <!-- end hiding from live code -->
     """
   end
 
