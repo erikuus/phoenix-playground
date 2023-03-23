@@ -47,9 +47,9 @@ defmodule LivePlaygroundWeb.NavigateLive do
     </.header>
     <!-- end hiding from live code -->
     <.tabs :if={@countries != []}>
-      <:item :for={country <- @countries} patch={~p"/navigate?#{[id: country.id]}"} active={country == @selected_country}>
+      <:tab :for={country <- @countries} patch={~p"/navigate?#{[id: country.id]}"} active={country == @selected_country}>
         <%= country.name %>
-      </:item>
+      </:tab>
     </.tabs>
     <.list class="mt-6 mb-16">
       <:item title="Name"><%= @selected_country.name %></:item>
