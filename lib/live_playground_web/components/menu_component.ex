@@ -41,12 +41,13 @@ defmodule LivePlaygroundWeb.MenuComponent do
       %{icon: "hero-cursor-arrow-ripple", label: "Clicks", path: "/clicks", badge: nil},
       %{icon: "hero-arrow-path", label: "Changes", path: "/changes", badge: nil},
       %{icon: "hero-link", label: "Navigate", path: "/navigate", badge: nil},
+      %{icon: "hero-rectangle-stack", label: "Modals", path: "/modals", badge: 2},
       %{icon: "hero-paper-airplane", label: "Send", path: "/send-interval", badge: 2},
       %{icon: "hero-queue-list", label: "Autocomplete", path: "/autocomplete", badge: 2},
       %{icon: "hero-magnifying-glass", label: "Search", path: "/search", badge: 2},
       %{icon: "hero-funnel", label: "Filter", path: "/filter", badge: 2},
-      %{icon: "hero-bars-arrow-down", label: "Sorting", path: "/sort", badge: nil},
-      %{icon: "hero-rectangle-stack", label: "Modals", path: "/modals", badge: 2},
+      %{icon: "hero-arrows-up-down", label: "Sorting", path: "/sort", badge: nil},
+      %{icon: "hero-arrows-right-left", label: "Pagination", path: "/paginate", badge: nil},
       %{icon: "hero-arrow-up-tray", label: "Upload", path: "/upload", badge: nil}
     ]
   end

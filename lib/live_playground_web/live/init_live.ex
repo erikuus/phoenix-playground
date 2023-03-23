@@ -17,12 +17,13 @@ defmodule LivePlaygroundWeb.InitLive do
         "/clicks" => "Clicks",
         "/changes" => "Changes",
         "/navigate" => "Navigate",
+        "/modals" => "Modals",
         "/send-interval" => "Send",
         "/autocomplete" => "Autocomplete",
         "/search" => "Search",
         "/filter" => "Filter",
         "/sort" => "Sorting",
-        "/modals" => "Modals",
+        "/paginate" => "Pagination",
         "/upload" => "Upload"
       },
       path

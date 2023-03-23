@@ -8,18 +8,49 @@ defmodule LivePlayground.Cities do
 
   alias LivePlayground.Cities.City
 
-  @doc """
-  Returns the list of city.
+  # paginate
+  def count_city do
+    Repo.aggregate(City, :count, :id)
+  end
 
-  ## Examples
+  def list_city(options) when is_map(options) do
+    from(City)
+    |> paginate(options)
+    |> order_by({:desc, :population})
+    |> Repo.all()
+  end
 
-      iex> list_city()
-      [%City{}, ...]
+  defp paginate(query, %{page: page, per_page: per_page}) do
+    offset = max((page - 1) * per_page, 0)
 
-  """
+    query
+    |> limit(^per_page)
+    |> offset(^offset)
+  end
+
+  defp paginate(query, _options), do: query
+
   def list_city do
     Repo.all(City)
   end
+
+  # endpaginate
+
+  # sort
+  def list_ita_city(options) when is_map(options) do
+    from(City)
+    |> where(countrycode: "ITA")
+    |> sort(options)
+    |> Repo.all()
+  end
+
+  defp sort(query, %{sort_by: sort_by, sort_order: sort_order}) do
+    order_by(query, {^sort_order, ^sort_by})
+  end
+
+  defp sort(query, _options), do: query
+
+  # endsort
 
   # filter
   def list_usa_city(filter) when is_map(filter) do
@@ -84,22 +115,6 @@ defmodule LivePlayground.Cities do
   end
 
   # endfilter
-
-  # sort
-  def list_ita_city(options) when is_map(options) do
-    from(City)
-    |> where(countrycode: "ITA")
-    |> sort(options)
-    |> Repo.all()
-  end
-
-  defp sort(query, %{sort_by: sort_by, sort_order: sort_order}) do
-    order_by(query, {^sort_order, ^sort_by})
-  end
-
-  defp sort(query, _options), do: query
-
-  # endsort
 
   @doc """
   Gets a single city.

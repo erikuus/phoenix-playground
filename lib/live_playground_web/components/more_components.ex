@@ -137,22 +137,29 @@ defmodule LivePlaygroundWeb.MoreComponents do
   ## Examples
 
       <.tabs>
-        <:item :for={item <- @items} patch={~p"/route?#{}"}><%= item.name %></:item>
+        <:tab :for={tab <- @tabs} patch={~p"/route?#{}"} active={tab == @tab}><%= tab.name %></:tab>
       </.tabs>
   """
   attr :class, :string, default: nil
 
-  slot :item, required: true do
+  slot :tab, required: true do
     attr :patch, :any, required: true
     attr :active, :boolean
   end
 
   def tabs(assigns) do
     ~H"""
-    <div class="border-b border-gray-200">
+    <div class={["border-b border-gray-200", @class]}>
       <nav class="-mb-px flex space-x-8">
-        <.link :for={item <- @item} patch={item[:patch]} class={tab_class(item[:active])}>
-          <%= render_slot(item) %>
+        <.link
+          :for={tab <- @tab}
+          patch={tab[:patch]}
+          class={[
+            "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium",
+            tab_class(tab[:active])
+          ]}
+        >
+          <%= render_slot(tab) %>
         </.link>
       </nav>
     </div>
@@ -160,11 +167,79 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   defp tab_class(false) do
-    "border-transparent text-zinc-400 hover:border-zinc-300 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
+    "border-transparent text-zinc-400 hover:border-zinc-300"
   end
 
   defp tab_class(true) do
-    "border-zinc-500 text-zinc-600 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
+    "border-zinc-500 text-zinc-600"
+  end
+
+  @doc """
+  Renders pagination.
+
+  ## Examples
+
+      <.pages>
+        <:prev></:prev>
+        <:page :for={page <- @pages} patch={~p"/route?#{}"} active={page == @page}>
+          <%= page.number %>
+        </:page>
+        <:next></:next>
+      </.pages>
+  """
+  attr :class, :string, default: nil
+
+  slot :prev_icon
+
+  slot :prev do
+    attr :patch, :any, required: true
+  end
+
+  slot :next_icon
+
+  slot :next do
+    attr :patch, :any, required: true
+  end
+
+  slot :page do
+    attr :patch, :any, required: true
+    attr :active, :boolean
+  end
+
+  def pages(assigns) do
+    ~H"""
+    <nav class={["flex items-center justify-between border-t border-gray-200 px-4 sm:px-0", @class]}>
+      <div class="-mt-px flex w-0 flex-1">
+        <.link :for={prev <- @prev} :if={prev != []} patch={prev[:patch]} class={["pr-4", page_class(:base), page_class(false)]}>
+          <%= render_slot(@prev_icon) %>
+          <%= render_slot(prev) %>
+        </.link>
+      </div>
+      <div class="hidden lg:-mt-px lg:flex">
+        <.link :for={page <- @page} patch={page[:patch]} class={["px-4", page_class(:base), page_class(page[:active])]}>
+          <%= render_slot(page) %>
+        </.link>
+      </div>
+      <div class="-mt-px flex w-0 flex-1 justify-end">
+        <.link :for={next <- @next} :if={next != []} patch={next[:patch]} class={["pl-4", page_class(:base), page_class(false)]}>
+          <%= render_slot(next) %>
+          <%= render_slot(@next_icon) %>
+        </.link>
+      </div>
+    </nav>
+    """
+  end
+
+  defp page_class(:base) do
+    "inline-flex items-center border-t-2 pt-4 text-sm font-medium"
+  end
+
+  defp page_class(false) do
+    "border-transparent text-zinc-400 hover:border-zinc-300"
+  end
+
+  defp page_class(true) do
+    "border-zinc-500 text-zinc-600"
   end
 
   @doc """
