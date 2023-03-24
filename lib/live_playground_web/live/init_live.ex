@@ -24,6 +24,7 @@ defmodule LivePlaygroundWeb.InitLive do
         "/filter" => "Filter",
         "/sort" => "Sorting",
         "/paginate" => "Pagination",
+        "/form" => "Form",
         "/upload" => "Upload"
       },
       path

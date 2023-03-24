@@ -62,8 +62,11 @@ defmodule LivePlaygroundWeb.DemoHelpers do
   defp show_marked(code, from, to) do
     code
     |> String.split([from, to])
-    |> Enum.at(1)
-    |> String.trim_trailing(" ")
+    |> tl()
+    |> Enum.take_every(2)
+    |> Enum.map(&String.trim_trailing/1)
+    |> Enum.join("\n")
+    |> String.trim_leading("\n")
   end
 
   defp hide_marked(code) do

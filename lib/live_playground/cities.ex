@@ -36,6 +36,15 @@ defmodule LivePlayground.Cities do
 
   # endpaginate
 
+  # form
+  def list_est_city() do
+    from(City)
+    |> where(countrycode: "EST")
+    |> Repo.all()
+  end
+
+  # endform
+
   # sort
   def list_ita_city(options) when is_map(options) do
     from(City)
@@ -144,11 +153,14 @@ defmodule LivePlayground.Cities do
       {:error, %Ecto.Changeset{}}
 
   """
+  # form
   def create_city(attrs \\ %{}) do
     %City{}
     |> City.changeset(attrs)
     |> Repo.insert()
   end
+
+  # endform
 
   @doc """
   Updates a city.
@@ -193,7 +205,10 @@ defmodule LivePlayground.Cities do
       %Ecto.Changeset{data: %City{}}
 
   """
+  # form
   def change_city(%City{} = city, attrs \\ %{}) do
     City.changeset(city, attrs)
   end
+
+  # endform
 end

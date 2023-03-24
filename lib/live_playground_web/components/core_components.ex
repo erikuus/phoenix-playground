@@ -288,6 +288,8 @@ defmodule LivePlaygroundWeb.CoreComponents do
   attr :label, :string
   attr :value, :any
 
+  attr :class, :string, default: nil, doc: "the class name for container div"
+
   attr :type, :string,
     default: "text",
     values: ~w(checkbox color date datetime-local email file hidden month number password
@@ -303,6 +305,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
   attr :rest, :global, include: ~w(autocomplete cols disabled form max maxlength min minlength
                                    pattern placeholder readonly required rows size step list)
+
   slot :inner_block
 
   def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
@@ -319,7 +322,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
       assign_new(assigns, :checked, fn -> Phoenix.HTML.Form.normalize_value("checkbox", value) end)
 
     ~H"""
-    <div phx-feedback-for={@name}>
+    <div phx-feedback-for={@name} class={@class}>
       <label class="flex items-center gap-4 text-sm leading-6 text-zinc-600">
         <input type="hidden" name={@name} value="false" />
         <input
@@ -340,7 +343,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <div phx-feedback-for={@name}>
+    <div phx-feedback-for={@name} class={@class}>
       <.label for={@id}><%= @label %></.label>
       <select
         id={@id}
@@ -366,7 +369,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
 
   def input(%{type: "textarea"} = assigns) do
     ~H"""
-    <div phx-feedback-for={@name}>
+    <div phx-feedback-for={@name} class={@class}>
       <.label for={@id}><%= @label %></.label>
       <textarea
         id={@id || @name}
@@ -388,7 +391,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
 
   def input(%{type: "radio"} = assigns) do
     ~H"""
-    <div phx-feedback-for={@name}>
+    <div phx-feedback-for={@name} class={@class}>
       <label class="flex items-center gap-4 text-sm leading-6 text-zinc-600">
         <input
           type="radio"
@@ -408,7 +411,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
 
   def input(%{label: label} = assigns) do
     ~H"""
-    <div phx-feedback-for={@name}>
+    <div phx-feedback-for={@name} class={@class}>
       <.label for={@id}><%= label %></.label>
       <input
         type={@type}
@@ -561,7 +564,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
             class={["relative p-0", @row_click && "hover:cursor-pointer"]}
           >
             <div class="block py-4 pr-6">
-              <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
+              <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50" />
               <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
                 <%= render_slot(col, @row_item.(row)) %>
               </span>
@@ -569,7 +572,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
           </td>
           <td :if={@action != []} class="relative p-0 w-14">
             <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
-              <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 sm:rounded-r-xl" />
+              <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50" />
               <span :for={action <- @action} class="relative ml-4 font-semibold leading-6 text-zinc-900 hover:text-zinc-700">
                 <%= render_slot(action, @row_item.(row)) %>
               </span>
