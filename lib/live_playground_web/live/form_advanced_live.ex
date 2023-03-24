@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.FormLive do
+defmodule LivePlaygroundWeb.FormAdvancedLive do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Cities
@@ -18,21 +18,21 @@ defmodule LivePlaygroundWeb.FormLive do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Form
+      Advanced Form
       <:subtitle>
-        How to save data within live view
+        How to live validate form
       </:subtitle>
       <:actions>
-        <.link navigate={~p"/form-advanced"}>
-          Try live validation
+        <.link navigate={~p"/form"}>
+          Back to simple form
         </.link>
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <.form for={@form} phx-submit="save" class="flex flex-col space-x-0 space-y-4 lg:flex-row lg:space-x-4 lg:space-y-0">
-      <.input field={@form[:name]} label="Name" class="flex-auto" />
-      <.input field={@form[:district]} label="District" class="flex-auto" />
-      <.input field={@form[:population]} label="Population" class="flex-auto" />
+    <.form for={@form} phx-change="validate" phx-submit="save" class="flex flex-col space-x-0 space-y-4 lg:flex-row lg:space-x-4 lg:space-y-0">
+      <.input field={@form[:name]} phx-debounce="2000" label="Name" class="flex-auto" />
+      <.input field={@form[:district]} phx-debounce="2000" label="District" class="flex-auto" />
+      <.input field={@form[:population]} phx-debounce="2000" label="Population" class="flex-auto" />
       <div>
         <.button phx-disable-with="Saving ..." class="lg:mt-8">Save</.button>
       </div>
@@ -55,11 +55,24 @@ defmodule LivePlaygroundWeb.FormLive do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/form_live.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/form_advanced_live.ex")) %>
       <%= raw(code("lib/live_playground/cities.ex", "# form", "# endform")) %>
     </div>
     <!-- end hiding from live code -->
     """
+  end
+
+  def handle_event("validate", %{"city" => params}, socket) do
+    params = Map.put(params, "countrycode", "EST")
+
+    form =
+      %City{}
+      |> Cities.change_city(params)
+      |> Map.put(:action, :validate)
+      |> to_form()
+
+    socket = assign(socket, :form, form)
+    {:noreply, socket}
   end
 
   def handle_event("save", %{"city" => params}, socket) do

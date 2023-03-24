@@ -48,7 +48,7 @@ defmodule LivePlaygroundWeb.MenuComponent do
       %{icon: "hero-funnel", label: "Filter", path: "/filter", badge: 2},
       %{icon: "hero-arrows-up-down", label: "Sorting", path: "/sort", badge: nil},
       %{icon: "hero-arrows-right-left", label: "Pagination", path: "/paginate", badge: nil},
-      %{icon: "hero-pencil-square", label: "Form", path: "/form", badge: nil},
+      %{icon: "hero-pencil-square", label: "Form", path: "/form", badge: 2},
       %{icon: "hero-arrow-up-tray", label: "Upload", path: "/upload", badge: nil}
     ]
   end

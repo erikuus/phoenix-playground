@@ -24,15 +24,15 @@ defmodule LivePlaygroundWeb.SendAfterLive do
     </.header>
     <!-- end hiding from live code -->
     <.stat>
-      <:item title="Orders">
+      <:card title="Orders">
         <%= @orders %>
-      </:item>
-      <:item title="Amount">
+      </:card>
+      <:card title="Amount">
         <%= @amount %>
-      </:item>
-      <:item title="Satisfaction">
+      </:card>
+      <:card title="Satisfaction">
         <%= @satisfaction %>
-      </:item>
+      </:card>
     </.stat>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">

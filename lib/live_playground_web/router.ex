@@ -38,6 +38,7 @@ defmodule LivePlaygroundWeb.Router do
       live "/modals-advanced/math", ModalsAdvancedLive, :math
       live "/modals-advanced/image", ModalsAdvancedLive, :image
       live "/form", FormLive
+      live "/form-advanced", FormAdvancedLive
       live "/upload", UploadLive
     end
   end

@@ -248,30 +248,30 @@ defmodule LivePlaygroundWeb.MoreComponents do
   ## Examples
 
       <.stat>
-        <:item title="Orders">
+        <:card title="Orders">
           <%= @orders %>
-        </:item>
-        <:item title="Amount">
+        </:card>
+        <:card title="Amount">
           <%= @amount %>
-        </:item>
-        <:item title="Satisfaction">
+        </:card>
+        <:card title="Satisfaction">
           <%= @satisfaction %>
-        </:item>
+        </:card>
       </.stat>
   """
   attr :class, :string, default: nil
 
-  slot :item, required: true do
+  slot :card, required: true do
     attr :title, :string, required: true
   end
 
   def stat(assigns) do
     ~H"""
     <dl class={["grid grid-cols-1 gap-5 sm:grid-cols-3", @class]}>
-      <div :for={item <- @item} class="relative overflow-hidden rounded-lg shadow-sm border border-gray-200 bg-white px-4 py-5 sm:p-6">
-        <dt class="truncate text-sm font-medium text-gray-500"><%= item.title %></dt>
+      <div :for={card <- @card} class="relative overflow-hidden rounded-lg shadow-sm border border-gray-200 bg-white px-4 py-5 sm:p-6">
+        <dt class="truncate text-sm font-medium text-gray-500"><%= card.title %></dt>
         <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900">
-          <%= render_slot(item) %>
+          <%= render_slot(card) %>
         </dd>
       </div>
     </dl>
@@ -307,8 +307,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
   ## Examples
 
       <.dropdown :if={@open} class="max-h-64 w-96">
-        <.option :for={item <- @items} phx-click="select" phx-value-id={item.id}>
-          <%= item.name %>
+        <.option :for={option <- @options} phx-click="select" phx-value-id={option.id}>
+          <%= option.name %>
         </.option>
       </.dropdown>
   """
