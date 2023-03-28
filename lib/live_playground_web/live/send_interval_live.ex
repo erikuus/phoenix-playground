@@ -24,7 +24,7 @@ defmodule LivePlaygroundWeb.SendIntervalLive do
       </:subtitle>
       <:actions>
         <.link navigate={~p"/send-after"}>
-          Try send after
+          Try send after <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
         </.link>
       </:actions>
     </.header>

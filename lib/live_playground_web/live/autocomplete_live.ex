@@ -17,23 +17,14 @@ defmodule LivePlaygroundWeb.AutocompleteLive do
       </:subtitle>
       <:actions>
         <.link navigate={~p"/autocomplete-advanced"}>
-          Try advanced autocomplete
+          Try advanced autocomplete <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
         </.link>
       </:actions>
     </.header>
     <!-- end hiding from live code -->
     <form>
       <div class="w-96">
-        <.input
-          phx-change="suggest"
-          phx-debounce="500"
-          type="text"
-          name="query"
-          list="matches"
-          autocomplete="off"
-          placeholder="Country"
-          value=""
-        />
+        <.input phx-change="suggest" phx-debounce="500" type="text" name="query" list="matches" autocomplete="off" placeholder="Country" value="" />
       </div>
     </form>
     <datalist id="matches">

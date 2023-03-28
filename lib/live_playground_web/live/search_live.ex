@@ -24,7 +24,7 @@ defmodule LivePlaygroundWeb.SearchLive do
       </:subtitle>
       <:actions>
         <.link navigate={~p"/search-advanced"}>
-          Try advanced search
+          Try advanced search <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
         </.link>
       </:actions>
     </.header>

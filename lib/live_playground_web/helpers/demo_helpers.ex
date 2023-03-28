@@ -35,7 +35,7 @@ defmodule LivePlaygroundWeb.DemoHelpers do
 
   def code(filename, from, to) do
     """
-    <div class="overflow-auto overscroll-auto rounded-lg bg-white border border-gray-200">
+    <div class="overflow-auto overscroll-auto rounded-lg bg-white border border-gray-200 hidden sm:block">
       <div class="px-4 py-5 sm:px-6 text-gray-400 font-mono">
         #{filename}
       </div>
@@ -48,7 +48,7 @@ defmodule LivePlaygroundWeb.DemoHelpers do
 
   def code(filename) do
     """
-    <div class="overflow-auto overscroll-auto rounded-lg bg-white border border-gray-200">
+    <div class="overflow-auto overscroll-auto rounded-lg bg-white border border-gray-200 hidden sm:block">
       <div class="px-4 py-5 sm:px-6 text-gray-400 font-mono">
         #{filename}
       </div>

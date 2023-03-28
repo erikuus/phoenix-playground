@@ -492,18 +492,20 @@ defmodule LivePlaygroundWeb.CoreComponents do
   def header(assigns) do
     ~H"""
     <header class={[
-      @actions != [] && "flex items-center justify-between gap-6",
+      @actions != [] && "md:flex md:items-center md:justify-between",
       @class
     ]}>
-      <div>
-        <h1 class="text-xl font-semibold leading-8 text-zinc-800">
+      <div class="min-w-0 flex-1">
+        <h1 class="text-2xl font-semibold leading-8 text-zinc-800">
           <%= render_slot(@inner_block) %>
         </h1>
-        <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
+        <p :if={@subtitle != []} class="mt-2 mr-4 text-sm leading-6 text-zinc-600">
           <%= render_slot(@subtitle) %>
         </p>
       </div>
-      <div class="flex-none"><%= render_slot(@actions) %></div>
+      <div :if={@actions != []} class="mt-4 flex md:mt-0 md:ml-4 self-start">
+        <%= render_slot(@actions) %>
+      </div>
     </header>
     """
   end

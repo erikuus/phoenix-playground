@@ -179,13 +179,15 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   ## Examples
 
-      <.pages>
-        <:prev></:prev>
-        <:page :for={page <- @pages} patch={~p"/route?#{}"} active={page == @page}>
-          <%= page.number %>
-        </:page>
-        <:next></:next>
-      </.pages>
+    <.pages>
+      <:prev_icon><.icon name="hero-arrow-long-left" class="mr-3 h-5 w-5 text-gray-400" /></:prev_icon>
+      <:prev :if={@page > 1} patch={~p"/demo?\#{[page: @page - 1]]}"}>Previous</:prev>
+      <:page :for={page <- get_pages(@options, @count)} patch={~p"/demo?\#{[page: @page]]}"} active={@page == page}>
+        <%= page %>
+      </:page>
+      <:next :if={@page * @per_page < @count} patch={~p"/demo?\#{[page: @page + 1]]}"}>Next</:next>
+      <:next_icon><.icon name="hero-arrow-long-right" class="ml-3 h-5 w-5 text-gray-400" /></:next_icon>
+    </.pages>
   """
   attr :class, :string, default: nil
 

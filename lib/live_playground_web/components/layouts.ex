@@ -1,7 +1,7 @@
 defmodule LivePlaygroundWeb.Layouts do
   use LivePlaygroundWeb, :html
 
-  import LivePlaygroundWeb.MenuComponent
+  alias LivePlaygroundWeb.MenuComponent
 
   embed_templates "layouts/*"
 end

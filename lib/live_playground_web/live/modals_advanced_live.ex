@@ -23,7 +23,7 @@ defmodule LivePlaygroundWeb.ModalsAdvancedLive do
       </:subtitle>
       <:actions>
         <.link navigate={~p"/modals"}>
-          Back to core modals
+          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to core modals
         </.link>
       </:actions>
     </.header>

@@ -25,7 +25,7 @@ defmodule LivePlaygroundWeb.FilterLive do
       </:subtitle>
       <:actions>
         <.link navigate={~p"/filter-advanced"}>
-          Try advanced filter
+          Try advanced filter <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
         </.link>
       </:actions>
     </.header>

@@ -1,36 +1,58 @@
-<.header class="mb-6">
-  Phoenix LiveView
-  <:actions>
-    <.link href={~p"/dev/dashboard"}>
-      Dashboard
-    </.link>
-  </:actions>
-</.header>
-
-<h2 class="text-lg font-semibold mb-4">
-  What Is Phoenix LiveView?
-</h2>
-
-<iframe
-  class="w-full aspect-video rounded-lg shadow-lg"
-  src="https://www.youtube.com/embed/k4mSbCoBTPI"
-  title="YouTube video player"
-  frameborder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  allowfullscreen
->
-</iframe>
-
-<h2 class="text-lg font-semibold mb-4">
-  Phoenix LiveView Life Cycle
-</h2>
-
-<iframe
-  class="w-full aspect-video rounded-lg shadow-lg"
-  src="https://www.youtube.com/embed/te9sp2IblLs"
-  title="YouTube video player"
-  frameborder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  allowfullscreen
->
-</iframe>
+<section class="text-center px-8 mt-10 md:mt-20">
+  <h2 class="text-slate-900 text-4xl tracking-tight font-extrabold sm:text-5xl">
+    What is this Playground?
+  </h2>
+  <figure class="mt-12">
+    <blockquote>
+      <p class="max-w-3xl mx-auto text-xl">
+        This playground is for you if you're familiar with
+        <a target="_blank" href="https://elixir-lang.org/" class="font-semibold">
+          Elixir,
+        </a>
+        <a target="_blank" href="https://www.phoenixframework.org/" class="font-semibold">
+          Phoenix
+        </a>
+        and official
+        <a target="_blank" href="https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html" class="font-semibold">
+          LiveView documentation.
+        </a>
+        It covers important LiveView concepts and provides live examples that will help you develop faster.
+        The playground consists of individual recipes. You are free to read them in any order as there is
+        no dependency between them.
+        <a href="/clicks" class="font-semibold">
+          Get started <.icon name="hero-arrow-long-right" class="ml-1 h-6 w-6" />
+        </a>
+      </p>
+    </blockquote>
+    <figcaption class="my-10 flex items-center justify-center space-x-4 text-left">
+      <img src="/images/erik_uus.jpg" alt="" class="w-14 h-14 rounded-full ring-4 ring-zinc-100" loading="lazy" decoding="async" />
+      <div>
+        <div class="text-slate-900 font-semibold dark:text-white">Erik Uus</div>
+        <div class="w-44 mt-0.5 text-sm leading-6">Creator of Playground</div>
+      </div>
+    </figcaption>
+  </figure>
+</section>
+<section class="text-center px-8 mb-20 mt-12 md:mt-16">
+  <h2 class="text-slate-900 text-xl tracking-tight font-extrabold sm:text-3xl">
+    What is Phoenix LiveView?
+  </h2>
+  <figure class="mt-6">
+    <blockquote>
+      <p class="max-w-3xl mx-auto">
+        <a target="_blank" href="https://fly.io/blog/how-we-got-to-liveview/" class="font-semibold">LiveView</a>
+        strips away layers of abstraction, because it solves both the client and server in a single abstraction.
+        HTTP almost entirely falls away. No more REST. No more JSON. No GraphQL APIs, controllers, serializers, or resolvers.
+        You just write HTML templates, and a stateful process synchronizes it with the browser, updating it only when needed.
+        And there's no JavaScript to write.
+      </p>
+    </blockquote>
+    <figcaption class="my-6 flex items-center justify-center space-x-4 text-left">
+      <img src="/images/chris_mccord.jpg" alt="" class="w-14 h-14 rounded-full ring-4 ring-zinc-100" loading="lazy" decoding="async" />
+      <div>
+        <div class="text-slate-900 font-semibold dark:text-white">Chris McCord</div>
+        <div class="w-44 mt-0.5 text-sm leading-6">Creator of Phoenix LiveView</div>
+      </div>
+    </figcaption>
+  </figure>
+</section>

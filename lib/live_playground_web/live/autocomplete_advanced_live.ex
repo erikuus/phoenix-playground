@@ -23,7 +23,7 @@ defmodule LivePlaygroundWeb.AutocompleteAdvancedLive do
       </:subtitle>
       <:actions>
         <.link navigate={~p"/autocomplete"}>
-          Back to simple autocomplete
+          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to simple autocomplete
         </.link>
       </:actions>
     </.header>

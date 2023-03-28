@@ -43,7 +43,7 @@ defmodule LivePlaygroundWeb.SearchAdvancedLive do
       </:subtitle>
       <:actions>
         <.link navigate={~p"/search"}>
-          Back to simple search
+          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to simple search
         </.link>
       </:actions>
     </.header>

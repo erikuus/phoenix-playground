@@ -5,30 +5,10 @@ defmodule LivePlaygroundWeb.InitLive do
     socket =
       attach_hook(socket, :set_current_path, :handle_params, fn
         _params, url, socket ->
-          {:cont, assign(socket, page_title: page_title(URI.parse(url).path))}
+          {:cont, assign(socket, current_path: URI.parse(url).path)}
       end)
 
     {:cont, socket}
-  end
-
-  defp page_title(path) do
-    Map.get(
-      %{
-        "/clicks" => "Clicks",
-        "/changes" => "Changes",
-        "/navigate" => "Navigate",
-        "/modals" => "Modals",
-        "/send-interval" => "Send",
-        "/autocomplete" => "Autocomplete",
-        "/search" => "Search",
-        "/filter" => "Filter",
-        "/sort" => "Sorting",
-        "/paginate" => "Pagination",
-        "/form" => "Form",
-        "/upload" => "Upload"
-      },
-      path
-    )
   end
 
   def render(assigns) do

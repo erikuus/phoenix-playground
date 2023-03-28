@@ -15,7 +15,7 @@ defmodule LivePlaygroundWeb.ModalsLive do
       </:subtitle>
       <:actions>
         <.link navigate={~p"/modals-advanced"}>
-          Try advanced modals
+          Try advanced modals <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
         </.link>
       </:actions>
     </.header>

@@ -18,7 +18,7 @@ defmodule LivePlaygroundWeb.SendAfterLive do
       </:subtitle>
       <:actions>
         <.link navigate={~p"/send-interval"}>
-          Back to send interval
+          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to send interval
         </.link>
       </:actions>
     </.header>

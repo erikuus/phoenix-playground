@@ -45,7 +45,7 @@ defmodule LivePlaygroundWeb.PaginateLive do
       </:subtitle>
     </.header>
     <!-- end hiding from live code -->
-    <form phx-change="select-per-page" class="flex flex-row-reverse -mt-24">
+    <form phx-change="select-per-page" class="flex md:flex-row-reverse md:-mt-24">
       <.input type="select" name="per_page" label="Cities per page" options={[5, 10, 20, 50, 100]} value={@options.per_page} />
     </form>
     <.table :if={@cities != []} id="cities" rows={@cities}>

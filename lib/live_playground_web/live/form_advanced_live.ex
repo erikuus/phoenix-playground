@@ -24,12 +24,17 @@ defmodule LivePlaygroundWeb.FormAdvancedLive do
       </:subtitle>
       <:actions>
         <.link navigate={~p"/form"}>
-          Back to simple form
+          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to simple form
         </.link>
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <.form for={@form} phx-change="validate" phx-submit="save" class="flex flex-col space-x-0 space-y-4 lg:flex-row lg:space-x-4 lg:space-y-0">
+    <.form
+      for={@form}
+      phx-change="validate"
+      phx-submit="save"
+      class="flex flex-col space-x-0 space-y-4 lg:flex-row lg:space-x-4 lg:space-y-0"
+    >
       <.input field={@form[:name]} phx-debounce="2000" label="Name" class="flex-auto" />
       <.input field={@form[:district]} phx-debounce="2000" label="District" class="flex-auto" />
       <.input field={@form[:population]} phx-debounce="2000" label="Population" class="flex-auto" />
@@ -82,7 +87,6 @@ defmodule LivePlaygroundWeb.FormAdvancedLive do
       {:ok, city} ->
         socket = update(socket, :cities, &[city | &1])
         socket = assign(socket, :form, get_empty_form())
-
         {:noreply, socket}
 
       {:error, changeset} ->
