@@ -30,7 +30,15 @@ defmodule LivePlaygroundWeb.AutocompleteAdvancedLive do
     <!-- end hiding from live code -->
     <form>
       <div class="w-96">
-        <.input phx-change="suggest" phx-debounce="500" type="text" name="query" autocomplete="off" placeholder="Country" value={@query} />
+        <.input
+          phx-change="suggest"
+          phx-debounce="500"
+          type="text"
+          name="query"
+          autocomplete="off"
+          placeholder="Country"
+          value={@query}
+        />
       </div>
     </form>
     <.dropdown :if={@matches != []} class="max-h-64 w-96">
