@@ -20,20 +20,8 @@
 
   <body class="font-sans antialiased text-gray-600 min-h-full flex flex-col" scroll-region>
     <!-- Icon sidebar -->
-    <div class="fixed inset-y-0 flex flex-col w-20 pl-1 pr-1.5 py-1.5 items-center overflow-y-auto bg-zinc-700">
-      <!-- Current: "bg-zinc-800 text-white", Default: "text-zinc-100 hover:bg-zinc-800 hover:text-white" -->
-      <a href="/" class="text-zinc-100 hover:bg-zinc-800 hover:text-white group flex w-full flex-col items-center rounded-md p-3 text-xs font-medium">
-        <!-- Current: "text-white", Default: "text-zinc-300 group-hover:text-white" -->
-        <.icon name="hero-home" class="text-zinc-300 group-hover:text-white h-6 w-6" />
-        <span class="mt-1">Home</span>
-      </a>
-      <a
-        href="/clicks"
-        class="text-zinc-100 hover:bg-zinc-800 hover:text-white group flex w-full flex-col items-center rounded-md p-3 text-xs font-medium"
-      >
-        <.icon name="hero-book-open" class="text-zinc-300 group-hover:text-white h-6 w-6" />
-        <span class="mt-1">Recipes</span>
-      </a>
+    <div class="fixed inset-y-0 flex flex-col w-20 pl-1 pr-1.5 py-1.5 space-y-1.5 items-center overflow-y-auto bg-zinc-700">
+      <MainMenu.sidebar current_path={Phoenix.Controller.current_path(@conn)} />
     </div>
     <!-- Alpine container -->
     <div x-data="{ open: false }" @keydown.window.escape="open = false" class="pl-20">
@@ -54,7 +42,7 @@
             </div>
             <div class="h-0 flex-1 overflow-y-auto pt-5 pb-4">
               <nav @click="open = false" class="mt-5 space-y-1 px-2">
-                <MenuComponent.mobile />
+                <RecipesMenu.mobile />
               </nav>
             </div>
           </div>
@@ -63,7 +51,7 @@
           </div>
         </div>
       </div>
-      <!-- Template content -->
+      <!-- Template or page content -->
       <%= @inner_content %>
     </div>
   </body>

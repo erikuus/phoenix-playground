@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.MenuComponent do
+defmodule LivePlaygroundWeb.RecipesMenu do
   use Phoenix.Component
 
   import LivePlaygroundWeb.CoreComponents
@@ -12,7 +12,10 @@ defmodule LivePlaygroundWeb.MenuComponent do
     >
       <.icon name={item.icon} class="text-gray-500 mr-3 flex-shrink-0 h-6 w-6" />
       <span class="flex-1"><%= item.label %></span>
-      <span :if={item.badge} class="bg-gray-100 group-hover:bg-gray-200 ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full">
+      <span
+        :if={item.badge}
+        class="bg-gray-100 group-hover:bg-gray-200 ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full"
+      >
         <%= item.badge %>
       </span>
     </.link>
@@ -30,7 +33,10 @@ defmodule LivePlaygroundWeb.MenuComponent do
     >
       <.icon name={item.icon} class="text-gray-500 mr-3 flex-shrink-0 h-6 w-6" />
       <span class="flex-1"><%= item.label %></span>
-      <span :if={item.badge} class={"#{badge_bg_class(@current_path, item.paths)} ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full"}>
+      <span
+        :if={item.badge}
+        class={"#{badge_bg_class(@current_path, item.paths)} ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full"}
+      >
         <%= item.badge %>
       </span>
     </.link>
