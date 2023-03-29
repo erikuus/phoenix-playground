@@ -35,11 +35,11 @@ defmodule LivePlaygroundWeb.DemoHelpers do
 
   def code(filename, from, to) do
     """
-    <div class="overflow-auto overscroll-auto rounded-lg bg-white border border-gray-200 hidden sm:block">
-      <div class="px-4 py-5 sm:px-6 text-gray-400 font-mono">
+    <div class="rounded-lg bg-white border border-gray-200 text-sm lg:text-base">
+      <div class="overflow-hidden text-ellipsis px-4 py-5 sm:px-6 text-gray-400 font-mono">
         #{filename}
       </div>
-      <div class="bg-[#f8f8f8] px-4 py-5 sm:p-6">
+      <div class="overflow-auto overscroll-auto bg-[#f8f8f8] px-4 py-5 sm:p-6">
         #{read_file(filename) |> show_marked(from, to) |> hide_marked() |> Makeup.highlight()}
       </div>
     </div>
@@ -48,11 +48,11 @@ defmodule LivePlaygroundWeb.DemoHelpers do
 
   def code(filename) do
     """
-    <div class="overflow-auto overscroll-auto rounded-lg bg-white border border-gray-200 hidden sm:block">
-      <div class="px-4 py-5 sm:px-6 text-gray-400 font-mono">
+    <div class="rounded-lg bg-white border border-gray-200 text-sm lg:text-base">
+      <div class="overflow-hidden text-ellipsis px-4 py-5 sm:px-6 text-gray-400 font-mono">
         #{filename}
       </div>
-      <div class="bg-[#f8f8f8] px-4 py-5 sm:p-6">
+      <div class="overflow-auto overscroll-auto bg-[#f8f8f8] px-4 py-5 sm:p-6">
         #{read_file(filename) |> hide_marked() |> Makeup.highlight()}
       </div>
     </div>
@@ -60,6 +60,11 @@ defmodule LivePlaygroundWeb.DemoHelpers do
   end
 
   defp show_marked(code, from, to) do
+    contains = String.contains?(code, from)
+    show(code, from, to, contains)
+  end
+
+  defp show(code, from, to, true) do
     code
     |> String.split([from, to])
     |> tl()
@@ -68,6 +73,8 @@ defmodule LivePlaygroundWeb.DemoHelpers do
     |> Enum.join("\n")
     |> String.trim_leading("\n")
   end
+
+  defp show(code, _, _, false), do: code
 
   defp hide_marked(code) do
     contains = String.contains?(code, "<!-- start hiding from live code -->")

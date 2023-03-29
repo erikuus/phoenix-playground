@@ -15,7 +15,7 @@ defmodule LivePlaygroundWeb.MainMenu do
       class=""
     >
       <.icon name={item.icon} class="text-zinc-300 group-hover:text-white h-6 w-6" />
-      <span class="mt-1"><%= item.label %></span>
+      <span class="mt-1 hidden md:block"><%= item.label %></span>
     </a>
     """
   end

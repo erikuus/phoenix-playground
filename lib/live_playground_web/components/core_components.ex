@@ -78,7 +78,10 @@ defmodule LivePlaygroundWeb.CoreComponents do
               <div id={"#{@id}-content"}>
                 <div class="p-4 sm:p-6 sm:w-full sm:max-w-lg sm:min-w-[400px]">
                   <div class="sm:flex sm:items-start">
-                    <div :if={@icon != []} class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center sm:mx-0 sm:h-10 sm:w-10">
+                    <div
+                      :if={@icon != []}
+                      class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center sm:mx-0 sm:h-10 sm:w-10"
+                    >
                       <%= render_slot(@icon) %>
                     </div>
                     <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
@@ -496,7 +499,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
       @class
     ]}>
       <div class="min-w-0 flex-1">
-        <h1 class="text-2xl font-semibold leading-8 text-zinc-800">
+        <h1 class="text-3xl font-bold leading-8 text-zinc-800">
           <%= render_slot(@inner_block) %>
         </h1>
         <p :if={@subtitle != []} class="mt-2 mr-4 text-sm leading-6 text-zinc-600">
@@ -692,7 +695,6 @@ defmodule LivePlaygroundWeb.CoreComponents do
       transition: {"transition-all transform ease-out duration-300", "opacity-0", "opacity-100"}
     )
     |> show("##{id}-container")
-    |> JS.add_class("overflow-hidden", to: "body")
     |> JS.focus_first(to: "##{id}-content")
   end
 
@@ -704,7 +706,6 @@ defmodule LivePlaygroundWeb.CoreComponents do
     )
     |> hide("##{id}-container")
     |> JS.hide(to: "##{id}", transition: {"block", "block", "hidden"})
-    |> JS.remove_class("overflow-hidden", to: "body")
     |> JS.pop_focus()
   end
 
