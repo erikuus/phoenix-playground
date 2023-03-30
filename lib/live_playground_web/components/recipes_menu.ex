@@ -131,6 +131,13 @@ defmodule LivePlaygroundWeb.RecipesMenu do
         paths: ["/form", "/form-advanced"]
       },
       %{
+        icon: "hero-signal",
+        label: "Stream",
+        path: "/stream",
+        badge: 2,
+        paths: ["/stream", "/stream-advanced"]
+      },
+      %{
         icon: "hero-arrow-up-tray",
         label: "Upload",
         path: "/upload",
