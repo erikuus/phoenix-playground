@@ -21,7 +21,7 @@ defmodule LivePlaygroundWeb.Router do
       live "/clicks", ClicksLive
       live "/clicks/show-list", ClicksLive, :show_list
       live "/changes", ChangesLive
-      live "/navigate", NavigateLive
+      live "/params", ParamsLive
       live "/send-interval", SendIntervalLive
       live "/send-after", SendAfterLive
       live "/search", SearchLive

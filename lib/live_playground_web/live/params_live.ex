@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.NavigateLive do
+defmodule LivePlaygroundWeb.ParamsLive do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Countries
@@ -40,14 +40,14 @@ defmodule LivePlaygroundWeb.NavigateLive do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Navigate
+      Parameters
       <:subtitle>
-        How to navigate within live view
+        How to handle url parameteres within live view
       </:subtitle>
     </.header>
     <!-- end hiding from live code -->
     <.tabs :if={@countries != []}>
-      <:tab :for={country <- @countries} patch={~p"/navigate?#{[id: country.id]}"} active={country == @selected_country}>
+      <:tab :for={country <- @countries} patch={~p"/params?#{[id: country.id]}"} active={country == @selected_country}>
         <%= country.name %>
       </:tab>
     </.tabs>
@@ -71,8 +71,8 @@ defmodule LivePlaygroundWeb.NavigateLive do
     </.list>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/navigate_live.ex")) %>
-      <%= raw(code("lib/live_playground/countries.ex", "# navigate", "# endnavigate")) %>
+      <%= raw(code("lib/live_playground_web/live/params_live.ex")) %>
+      <%= raw(code("lib/live_playground/countries.ex", "# params", "# endparams")) %>
     </div>
     <!-- end hiding from live code -->
     """

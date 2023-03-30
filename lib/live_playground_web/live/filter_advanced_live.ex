@@ -50,10 +50,10 @@ defmodule LivePlaygroundWeb.FilterAdvancedLive do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <form id="filter-form" class="lg:flex lg:items-end lg:space-x-6 space-y-4 mb-6" phx-change="filter">
+    <form id="filter-form" class="md:flex md:items-end md:space-x-6 space-y-4 mb-6" phx-change="filter">
       <.input type="text" name="name" label="Name" value={@filter.name} phx-debounce="500" />
       <.input type="select" name="dist" label="District" options={dist_options()} value={@filter.dist} />
-      <div class="lg:flex lg:space-x-6 lg:pb-2.5">
+      <div class="md:flex md:space-x-6 md:pb-2.5">
         <.input :for={size <- size_options()} type="checkbox" label={size.label} name={size.name} value={@filter[size.key]} />
       </div>
     </form>
@@ -61,15 +61,19 @@ defmodule LivePlaygroundWeb.FilterAdvancedLive do
       No results
     </.alert>
     <.table :if={@cities != []} id="cities" rows={@cities}>
-      <:col :let={city} label="Name"><%= city.name %></:col>
-      <:col :let={city} label="District"><%= city.district %></:col>
+      <:col :let={city} label="Name">
+        <%= city.name %>
+        <dl class="font-normal md:hidden">
+          <dt class="sr-only">District</dt>
+          <dd class="mt-1 truncate text-gray-700"><%= city.district %></dd>
+        </dl>
+      </:col>
+      <:col :let={city} label="District" class="hidden md:table-cell"><%= city.district %></:col>
       <:col :let={city} label="Population" class="text-right">
-        <div class="text-right">
-          <%= Number.Delimit.number_to_delimited(city.population,
-            precision: 0,
-            delimiter: " "
-          ) %>
-        </div>
+        <%= Number.Delimit.number_to_delimited(city.population,
+          precision: 0,
+          delimiter: " "
+        ) %>
       </:col>
     </.table>
     <!-- start hiding from live code -->

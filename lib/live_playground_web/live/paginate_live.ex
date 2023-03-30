@@ -49,19 +49,19 @@ defmodule LivePlaygroundWeb.PaginateLive do
       <.input type="select" name="per_page" label="Cities per page" options={[5, 10, 20, 50, 100]} value={@options.per_page} />
     </form>
     <.table :if={@cities != []} id="cities" rows={@cities}>
-      <:col :let={city} label="Name" class="w-1/3">
+      <:col :let={city} label="Name">
         <%= city.name %>
+        <dl class="font-normal md:hidden">
+          <dt class="sr-only">District</dt>
+          <dd class="mt-1 truncate text-gray-700"><%= city.district %></dd>
+        </dl>
       </:col>
-      <:col :let={city} label="District" class="w-1/3">
-        <%= city.district %>
-      </:col>
-      <:col :let={city} label="Population" class="w-1/3 text-right">
-        <div class="text-right">
-          <%= Number.Delimit.number_to_delimited(city.population,
-            precision: 0,
-            delimiter: " "
-          ) %>
-        </div>
+      <:col :let={city} label="District" class="hidden md:table-cell"><%= city.district %></:col>
+      <:col :let={city} label="Population" class="text-right">
+        <%= Number.Delimit.number_to_delimited(city.population,
+          precision: 0,
+          delimiter: " "
+        ) %>
       </:col>
     </.table>
     <.pages>

@@ -20,7 +20,7 @@ defmodule LivePlaygroundWeb.ModalsLive do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <div class="flex flex-col space-x-0 space-y-3 lg:flex-row lg:space-x-3 lg:space-y-0">
+    <div class="flex flex-col space-x-0 space-y-3 xl:flex-row xl:space-x-3 xl:space-y-0">
       <.button_link phx-click={show_modal("basic")}>
         Basic
       </.button_link>

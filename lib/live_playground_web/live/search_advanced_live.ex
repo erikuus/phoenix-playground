@@ -48,7 +48,7 @@ defmodule LivePlaygroundWeb.SearchAdvancedLive do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <form class="w-96 mb-4 flex space-x-2 items-center" phx-submit="search">
+    <form phx-submit="search" class="flex flex-col space-x-0 space-y-4 md:flex-row md:space-x-4 md:space-y-0 md:w-96 mb-6">
       <.input type="text" name="query" autocomplete="off" placeholder="Country" value={@query} readonly={@loading} />
       <.button type="submit">
         Search

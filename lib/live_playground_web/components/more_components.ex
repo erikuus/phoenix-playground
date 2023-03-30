@@ -150,7 +150,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   def tabs(assigns) do
     ~H"""
     <div class={["border-b border-gray-200", @class]}>
-      <nav class="-mb-px flex space-x-8">
+      <nav class="-mb-px flex space-x-8 flex-wrap md:flex-nowrap">
         <.link
           :for={tab <- @tab}
           patch={tab[:patch]}

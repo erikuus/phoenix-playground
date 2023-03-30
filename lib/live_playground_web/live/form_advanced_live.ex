@@ -33,29 +33,26 @@ defmodule LivePlaygroundWeb.FormAdvancedLive do
       for={@form}
       phx-change="validate"
       phx-submit="save"
-      class="flex flex-col space-x-0 space-y-4 lg:flex-row lg:space-x-4 lg:space-y-0"
+      class="flex flex-col space-x-0 space-y-4 md:flex-row md:space-x-4 md:space-y-0"
     >
       <.input field={@form[:name]} phx-debounce="2000" label="Name" class="flex-auto" />
       <.input field={@form[:district]} phx-debounce="2000" label="District" class="flex-auto" />
       <.input field={@form[:population]} phx-debounce="2000" label="Population" class="flex-auto" />
       <div>
-        <.button phx-disable-with="Saving ..." class="lg:mt-8">Save</.button>
+        <.button phx-disable-with="Saving ..." class="md:mt-8">Save</.button>
       </div>
     </.form>
     <.table :if={@cities != []} id="cities" rows={@cities}>
       <:col :let={city} label="Name">
         <%= city.name %>
+        <dl class="font-normal md:hidden">
+          <dt class="sr-only">District</dt>
+          <dd class="mt-1 truncate text-gray-700"><%= city.district %></dd>
+        </dl>
       </:col>
-      <:col :let={city} label="District">
-        <%= city.district %>
-      </:col>
+      <:col :let={city} label="District" class="hidden md:table-cell"><%= city.district %></:col>
       <:col :let={city} label="Population" class="text-right">
-        <div class="text-right">
-          <%= Number.Delimit.number_to_delimited(city.population,
-            precision: 0,
-            delimiter: " "
-          ) %>
-        </div>
+        <%= Number.Delimit.number_to_delimited(city.population, precision: 0, delimiter: " ") %>
       </:col>
     </.table>
     <!-- start hiding from live code -->

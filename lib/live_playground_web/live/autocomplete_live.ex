@@ -23,7 +23,7 @@ defmodule LivePlaygroundWeb.AutocompleteLive do
     </.header>
     <!-- end hiding from live code -->
     <form>
-      <div class="w-96">
+      <div class="md:w-96">
         <.input
           phx-change="suggest"
           phx-debounce="500"

@@ -37,7 +37,7 @@ defmodule LivePlaygroundWeb.DemoHelpers do
     """
     <div class="rounded-lg bg-white border border-gray-200 text-sm lg:text-base">
       <div class="overflow-hidden text-ellipsis px-4 py-5 sm:px-6 text-gray-400 font-mono">
-        #{filename}
+        #{format_filename(filename)}
       </div>
       <div class="overflow-auto overscroll-auto bg-[#f8f8f8] px-4 py-5 sm:p-6">
         #{read_file(filename) |> show_marked(from, to) |> hide_marked() |> Makeup.highlight()}
@@ -50,12 +50,21 @@ defmodule LivePlaygroundWeb.DemoHelpers do
     """
     <div class="rounded-lg bg-white border border-gray-200 text-sm lg:text-base">
       <div class="overflow-hidden text-ellipsis px-4 py-5 sm:px-6 text-gray-400 font-mono">
-        #{filename}
+        #{format_filename(filename)}
       </div>
       <div class="overflow-auto overscroll-auto bg-[#f8f8f8] px-4 py-5 sm:p-6">
         #{read_file(filename) |> hide_marked() |> Makeup.highlight()}
       </div>
     </div>
+    """
+  end
+
+  defp format_filename(filename) do
+    dirname = Path.dirname(filename)
+    basename = Path.basename(filename)
+
+    """
+    <span class="hidden md:inline">#{dirname}/</span>#{basename}
     """
   end
 

@@ -29,7 +29,7 @@ defmodule LivePlaygroundWeb.AutocompleteAdvancedLive do
     </.header>
     <!-- end hiding from live code -->
     <form>
-      <div class="w-96">
+      <div class="md:w-96">
         <.input
           phx-change="suggest"
           phx-debounce="500"
@@ -41,12 +41,12 @@ defmodule LivePlaygroundWeb.AutocompleteAdvancedLive do
         />
       </div>
     </form>
-    <.dropdown :if={@matches != []} class="max-h-64 w-96">
+    <.dropdown :if={@matches != []} class="max-h-64 md:w-96">
       <.option :for={match <- @matches} phx-click="select" phx-value-name={match.name}>
         <div class="flex justify-between items-center">
           <span class="w-56 truncate font-medium"><%= match.name %></span>
-          <span class="text-xs"><%= match.code %></span>
-          <span class="text-xs"><%= match.code2 %></span>
+          <span class="hidden md:inline text-xs"><%= match.code %></span>
+          <span class="hidden md:inline text-xs"><%= match.code2 %></span>
         </div>
       </.option>
     </.dropdown>

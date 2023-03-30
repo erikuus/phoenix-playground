@@ -53,12 +53,10 @@ defmodule LivePlaygroundWeb.SortLive do
         <%= city.district %>
       </:col>
       <:col :let={city} label={sort_link("Population", :population, @options)} class="text-right">
-        <div class="text-right">
-          <%= Number.Delimit.number_to_delimited(city.population,
-            precision: 0,
-            delimiter: " "
-          ) %>
-        </div>
+        <%= Number.Delimit.number_to_delimited(city.population,
+          precision: 0,
+          delimiter: " "
+        ) %>
       </:col>
     </.table>
     <!-- start hiding from live code -->

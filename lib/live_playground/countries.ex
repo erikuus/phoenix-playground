@@ -35,7 +35,7 @@ defmodule LivePlayground.Countries do
     []
   end
 
-  # navigate
+  # params
   def list_nordic_country() do
     from(Country)
     |> where(region: "Nordic Countries")
@@ -43,7 +43,7 @@ defmodule LivePlayground.Countries do
     |> Repo.all()
   end
 
-  # endnavigate
+  # endparams
 
   @doc """
   Gets a single country.

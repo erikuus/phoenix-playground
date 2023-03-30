@@ -69,13 +69,13 @@ defmodule LivePlaygroundWeb.RecipesMenu do
       },
       %{
         icon: "hero-link",
-        label: "Navigate",
-        path: "/navigate",
+        label: "Parameters",
+        path: "/params",
         badge: nil,
-        paths: ["/navigate"]
+        paths: ["/params"]
       },
       %{
-        icon: "hero-rectangle-stack",
+        icon: "hero-arrow-top-right-on-square",
         label: "Modals",
         path: "/modals",
         badge: 2,
