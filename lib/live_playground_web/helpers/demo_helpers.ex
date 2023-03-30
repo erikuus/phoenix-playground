@@ -35,7 +35,7 @@ defmodule LivePlaygroundWeb.DemoHelpers do
 
   def code(filename, from, to) do
     """
-    <div class="rounded-lg bg-white border border-gray-200 text-sm lg:text-base">
+    <div class="rounded-lg bg-white border border-gray-200 text-sm xl:text-base">
       <div class="overflow-hidden text-ellipsis px-4 py-5 sm:px-6 text-gray-400 font-mono">
         #{format_filename(filename)}
       </div>
@@ -48,7 +48,7 @@ defmodule LivePlaygroundWeb.DemoHelpers do
 
   def code(filename) do
     """
-    <div class="rounded-lg bg-white border border-gray-200 text-sm lg:text-base">
+    <div class="rounded-lg bg-white border border-gray-200 text-sm xl:text-base">
       <div class="overflow-hidden text-ellipsis px-4 py-5 sm:px-6 text-gray-400 font-mono">
         #{format_filename(filename)}
       </div>
