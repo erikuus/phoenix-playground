@@ -40,6 +40,7 @@ defmodule LivePlaygroundWeb.Router do
       live "/form", FormLive
       live "/form-advanced", FormAdvancedLive
       live "/stream", StreamLive
+      live "/stream-advanced", StreamAdvancedLive
       live "/upload", UploadLive
     end
   end

@@ -288,7 +288,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
   """
   attr :id, :any, default: nil
   attr :name, :any
-  attr :label, :string
+  attr :label, :string, default: nil
   attr :value, :any
 
   attr :class, :string, default: nil, doc: "the class name for container div"
@@ -352,7 +352,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
         id={@id}
         name={@name}
         class={[
-          "mt-2 block w-full rounded-lg border-zinc-300 py-2 pl-3 pr-8",
+          "block w-full rounded-lg border-zinc-300 py-2 pl-3 pr-8",
           "text-zinc-900 focus:outline-none focus:ring-4 sm:text-sm sm:leading-6",
           "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400 phx-no-feedback:focus:ring-zinc-800/5",
           "border-zinc-300 focus:border-zinc-400 focus:ring-zinc-800/5",
@@ -373,12 +373,12 @@ defmodule LivePlaygroundWeb.CoreComponents do
   def input(%{type: "textarea"} = assigns) do
     ~H"""
     <div phx-feedback-for={@name} class={@class}>
-      <.label for={@id}><%= @label %></.label>
+      <.label :if={@label} for={@id}><%= @label %></.label>
       <textarea
         id={@id || @name}
         name={@name}
         class={[
-          "mt-2 block min-h-[6rem] w-full rounded-lg border-zinc-300 py-2 px-3",
+          "block min-h-[6rem] w-full rounded-lg border-zinc-300 py-2 px-3",
           "text-zinc-900 focus:border-zinc-400 focus:outline-none focus:ring-4 focus:ring-zinc-800/5 sm:text-sm sm:leading-6",
           "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400 phx-no-feedback:focus:ring-zinc-800/5",
           "border-zinc-300 focus:border-zinc-400 focus:ring-zinc-800/5",
@@ -412,17 +412,17 @@ defmodule LivePlaygroundWeb.CoreComponents do
     """
   end
 
-  def input(%{label: label} = assigns) do
+  def input(assigns) do
     ~H"""
     <div phx-feedback-for={@name} class={@class}>
-      <.label for={@id}><%= label %></.label>
+      <.label :if={@label} for={@id}><%= @label %></.label>
       <input
         type={@type}
         name={@name}
         id={@id || @name}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "mt-2 block w-full rounded-lg border-zinc-300 py-2 px-3",
+          "block w-full rounded-lg border-zinc-300 py-2 px-3",
           "text-zinc-900 focus:outline-none focus:ring-4 sm:text-sm sm:leading-6",
           "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400 phx-no-feedback:focus:ring-zinc-800/5",
           "border-zinc-300 focus:border-zinc-400 focus:ring-zinc-800/5",
@@ -436,25 +436,6 @@ defmodule LivePlaygroundWeb.CoreComponents do
     """
   end
 
-  def input(assigns) do
-    ~H"""
-    <input
-      type={@type}
-      name={@name}
-      value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-      class={[
-        "block w-full rounded-lg border-zinc-300 py-2 px-3",
-        "text-zinc-900 focus:outline-none focus:ring-4 sm:text-sm sm:leading-6",
-        "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400 phx-no-feedback:focus:ring-zinc-800/5",
-        "border-zinc-300 focus:border-zinc-400 focus:ring-zinc-800/5",
-        @errors != [] &&
-          "border-rose-400 focus:border-rose-400 focus:ring-rose-400/10"
-      ]}
-      {@rest}
-    />
-    """
-  end
-
   @doc """
   Renders a label.
   """
@@ -463,7 +444,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="block text-sm font-semibold leading-6 text-zinc-800">
+    <label for={@for} class="block text-sm font-semibold leading-6 text-zinc-800 mb-2">
       <%= render_slot(@inner_block) %>
     </label>
     """

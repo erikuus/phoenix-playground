@@ -22,8 +22,8 @@ defmodule LivePlaygroundWeb.StreamLive do
         How to work with large collections of items without keeping them all in memory on the server
       </:subtitle>
       <:actions>
-        <.link navigate={~p"/form-advanced"}>
-          Try live validation <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
+        <.link navigate={~p"/stream-advanced"}>
+          Try ... <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
         </.link>
       </:actions>
     </.header>
