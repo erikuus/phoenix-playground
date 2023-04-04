@@ -18,13 +18,13 @@ defmodule LivePlaygroundWeb.SendIntervalLive do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Send Interval
+      Send Repeatedly
       <:subtitle>
-        How to send interval message to live view
+        How to send message repeatedly in live view after given milliseconds
       </:subtitle>
       <:actions>
         <.link navigate={~p"/send-after"}>
-          Try send after <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
+          See also: Send After <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
         </.link>
       </:actions>
     </.header>

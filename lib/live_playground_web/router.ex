@@ -18,16 +18,15 @@ defmodule LivePlaygroundWeb.Router do
     scope "/", LivePlaygroundWeb do
       pipe_through :browser
 
-      live "/clicks", ClicksLive
-      live "/clicks/show-list", ClicksLive, :show_list
-      live "/changes", ChangesLive
-      live "/params", ParamsLive
+      live "/click-buttons", ClickButtonsLive
+      live "/handle-params", HandleParamsLive
+      live "/dynamic-form", DynamicFormLive
       live "/send-interval", SendIntervalLive
       live "/send-after", SendAfterLive
       live "/search", SearchLive
       live "/search-advanced", SearchAdvancedLive
       live "/autocomplete", AutocompleteLive
-      live "/autocomplete-advanced", AutocompleteAdvancedLive
+      live "/autocomplete-custom", AutocompleteCustomLive
       live "/filter", FilterLive
       live "/filter-advanced", FilterAdvancedLive
       live "/sort", SortLive

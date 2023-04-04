@@ -36,7 +36,7 @@ defmodule LivePlaygroundWeb.MainMenu do
       %{
         icon: "hero-book-open",
         label: "Recipes",
-        path: "/clicks"
+        path: "/click-buttons"
       }
     ]
   end

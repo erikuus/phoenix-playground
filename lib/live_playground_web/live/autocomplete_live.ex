@@ -11,13 +11,13 @@ defmodule LivePlaygroundWeb.AutocompleteLive do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Autocomplete
+      Native Autocomplete
       <:subtitle>
-        How to handle autocomplete in live view
+        How to create autocomplete field in live view using native HTML5 input list attribute and datalist element
       </:subtitle>
       <:actions>
-        <.link navigate={~p"/autocomplete-advanced"}>
-          Try advanced autocomplete <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
+        <.link navigate={~p"/autocomplete-custom"}>
+          See also: Custom Autocomplete <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
         </.link>
       </:actions>
     </.header>

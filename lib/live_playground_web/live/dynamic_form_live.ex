@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.ChangesLive do
+defmodule LivePlaygroundWeb.DynamicFormLive do
   use LivePlaygroundWeb, :live_view
 
   def mount(_params, _session, socket) do
@@ -15,7 +15,7 @@ defmodule LivePlaygroundWeb.ChangesLive do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Changes
+      Dynamic Form
       <:subtitle>
         How to handle form changes in live view
       </:subtitle>
@@ -34,7 +34,7 @@ defmodule LivePlaygroundWeb.ChangesLive do
     </form>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/changes_live.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/dynamic_form_live.ex")) %>
     </div>
     <!-- end hiding from live code -->
     """

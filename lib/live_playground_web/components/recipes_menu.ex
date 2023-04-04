@@ -55,24 +55,24 @@ defmodule LivePlaygroundWeb.RecipesMenu do
     [
       %{
         icon: "hero-cursor-arrow-ripple",
-        label: "Clicks",
-        path: "/clicks",
+        label: "Click Buttons",
+        path: "/click-buttons",
         badge: nil,
         paths: ["/clicks"]
       },
       %{
-        icon: "hero-arrow-path",
-        label: "Changes",
-        path: "/changes",
-        badge: nil,
-        paths: ["/changes"]
-      },
-      %{
         icon: "hero-link",
-        label: "Parameters",
-        path: "/params",
+        label: "Handle Params",
+        path: "/handle-params",
         badge: nil,
         paths: ["/params"]
+      },
+      %{
+        icon: "hero-arrow-path",
+        label: "Dynamic Form",
+        path: "/dynamic-form",
+        badge: nil,
+        paths: ["/changes"]
       },
       %{
         icon: "hero-arrow-top-right-on-square",
@@ -83,7 +83,7 @@ defmodule LivePlaygroundWeb.RecipesMenu do
       },
       %{
         icon: "hero-paper-airplane",
-        label: "Send",
+        label: "Send Messages",
         path: "/send-interval",
         badge: 2,
         paths: ["/send-interval", "/send-after"]
@@ -104,7 +104,7 @@ defmodule LivePlaygroundWeb.RecipesMenu do
       },
       %{
         icon: "hero-funnel",
-        label: "Filter",
+        label: "Filtering",
         path: "/filter",
         badge: 2,
         paths: ["/filter", "/filter-advanced"]
@@ -125,7 +125,7 @@ defmodule LivePlaygroundWeb.RecipesMenu do
       },
       %{
         icon: "hero-pencil-square",
-        label: "Form",
+        label: "Insert Form",
         path: "/form",
         badge: 2,
         paths: ["/form", "/form-advanced"]

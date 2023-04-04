@@ -14,11 +14,11 @@ defmodule LivePlaygroundWeb.SendAfterLive do
     <.header class="mb-6">
       Send After
       <:subtitle>
-        How to send message to live view after process
+        How to send message in live view after given milliseconds
       </:subtitle>
       <:actions>
         <.link navigate={~p"/send-interval"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to send interval
+          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Send Repeatedly
         </.link>
       </:actions>
     </.header>
@@ -37,6 +37,7 @@ defmodule LivePlaygroundWeb.SendAfterLive do
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <%= raw(code("lib/live_playground_web/live/send_after_live.ex")) %>
+      <%= raw(code("lib/live_playground/sales.ex")) %>
     </div>
     <!-- end hiding from live code -->
     """

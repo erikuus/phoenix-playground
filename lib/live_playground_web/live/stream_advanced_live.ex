@@ -78,16 +78,24 @@ defmodule LivePlaygroundWeb.StreamAdvancedLive do
     {:noreply, socket}
   end
 
-  def handle_event("validate", %{"city" => params}, socket) do
-    params = Map.put(params, "countrycode", "EST")
+  def handle_event("validate", %{"city" => tabular_params}, socket) do
+    for params <- tabular_params do
+      params = Map.put(params, "countrycode", "EST")
 
-    form =
-      %City{}
-      |> Cities.change_city(params)
-      |> Map.put(:action, :validate)
-      |> to_form()
+      form =
+        %City{}
+        |> Cities.change_city(params)
+        |> Map.put(:action, :validate)
+        |> to_form()
 
-    socket = assign(socket, :form, form)
+      tabular_input = %{
+        id: socket.assigns.tabular_index,
+        form: form
+      }
+
+      socket = stream_insert(socket, :tabular_inputs, tabular_input)
+    end
+
     {:noreply, socket}
   end
 

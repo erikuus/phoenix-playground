@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.AutocompleteAdvancedLive do
+defmodule LivePlaygroundWeb.AutocompleteCustomLive do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Countries
@@ -17,13 +17,13 @@ defmodule LivePlaygroundWeb.AutocompleteAdvancedLive do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Advanced Autocomplete
+      Custom Autocomplete
       <:subtitle>
-        How to handle autocomplete in live view using custom datalist
+        How to create autocomplete field in live view using custom dropdown and option components
       </:subtitle>
       <:actions>
         <.link navigate={~p"/autocomplete"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to simple autocomplete
+          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Native Autocomplete
         </.link>
       </:actions>
     </.header>
@@ -52,7 +52,7 @@ defmodule LivePlaygroundWeb.AutocompleteAdvancedLive do
     </.dropdown>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/autocomplete_advanced_live.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/autocomplete_custom_live.ex")) %>
       <%= raw(code("lib/live_playground/countries.ex", "# search", "# endsearch")) %>
     </div>
     <!-- end hiding from live code -->
