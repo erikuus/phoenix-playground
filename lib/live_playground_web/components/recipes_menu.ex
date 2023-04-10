@@ -93,21 +93,21 @@ defmodule LivePlaygroundWeb.RecipesMenu do
         label: "Autocomplete",
         path: "/autocomplete",
         badge: 2,
-        paths: ["/autocomplete", "/autocomplete-advanced"]
+        paths: ["/autocomplete", "/autocomplete-custom"]
       },
       %{
         icon: "hero-magnifying-glass",
         label: "Search",
         path: "/search",
         badge: 2,
-        paths: ["/search", "/search-advanced"]
+        paths: ["/search", "/search-param"]
       },
       %{
         icon: "hero-funnel",
         label: "Filtering",
         path: "/filter",
         badge: 2,
-        paths: ["/filter", "/filter-advanced"]
+        paths: ["/filter", "/filter-params"]
       },
       %{
         icon: "hero-arrows-up-down",
@@ -125,10 +125,10 @@ defmodule LivePlaygroundWeb.RecipesMenu do
       },
       %{
         icon: "hero-pencil-square",
-        label: "Insert Form",
-        path: "/form",
+        label: "Form",
+        path: "/form-insert",
         badge: 2,
-        paths: ["/form", "/form-advanced"]
+        paths: ["/form-insert", "/form-insert-validate", "/form-update"]
       },
       %{
         icon: "hero-signal",

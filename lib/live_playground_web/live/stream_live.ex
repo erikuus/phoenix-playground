@@ -33,7 +33,7 @@ defmodule LivePlaygroundWeb.StreamLive do
       <.input field={@form[:district]} label="District" class="flex-auto" />
       <.input field={@form[:population]} label="Population" class="flex-auto" />
       <div>
-        <.button phx-disable-with="Saving ..." class="md:mt-8">Save</.button>
+        <.button phx-disable-with="" class="md:mt-8">Save</.button>
       </div>
     </.form>
     <.table id="cities" rows={@streams.cities}>

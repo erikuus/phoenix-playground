@@ -40,6 +40,7 @@ defmodule LivePlayground.Cities do
   def list_est_city() do
     from(City)
     |> where(countrycode: "EST")
+    |> order_by(:name)
     |> Repo.all()
   end
 

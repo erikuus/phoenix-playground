@@ -24,11 +24,11 @@ defmodule LivePlaygroundWeb.Router do
       live "/send-interval", SendIntervalLive
       live "/send-after", SendAfterLive
       live "/search", SearchLive
-      live "/search-advanced", SearchAdvancedLive
+      live "/search-param", SearchParamLive
       live "/autocomplete", AutocompleteLive
       live "/autocomplete-custom", AutocompleteCustomLive
       live "/filter", FilterLive
-      live "/filter-advanced", FilterAdvancedLive
+      live "/filter-params", FilterParamsLive
       live "/sort", SortLive
       live "/paginate", PaginateLive
       live "/modals", ModalsLive
@@ -36,8 +36,9 @@ defmodule LivePlaygroundWeb.Router do
       live "/modals-advanced/text", ModalsAdvancedLive, :text
       live "/modals-advanced/math", ModalsAdvancedLive, :math
       live "/modals-advanced/image", ModalsAdvancedLive, :image
-      live "/form", FormLive
-      live "/form-advanced", FormAdvancedLive
+      live "/form-insert", FormInsertLive
+      live "/form-insert-validate", FormInsertValidateLive
+      live "/form-update-validate", FormUpdateValidateLive
       live "/stream", StreamLive
       live "/stream-advanced", StreamAdvancedLive
       live "/upload", UploadLive

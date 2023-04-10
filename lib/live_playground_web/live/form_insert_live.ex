@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.FormLive do
+defmodule LivePlaygroundWeb.FormInsertLive do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Cities
@@ -18,13 +18,13 @@ defmodule LivePlaygroundWeb.FormLive do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Form
+      Insert Form
       <:subtitle>
-        How to save data within live view
+        How to create insert form that validates on submit
       </:subtitle>
       <:actions>
-        <.link navigate={~p"/form-advanced"}>
-          Try live validation <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
+        <.link navigate={~p"/form-insert-validate"}>
+          See also: Validate on Change <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
         </.link>
       </:actions>
     </.header>
@@ -34,7 +34,7 @@ defmodule LivePlaygroundWeb.FormLive do
       <.input field={@form[:district]} label="District" class="flex-auto" />
       <.input field={@form[:population]} label="Population" class="flex-auto" />
       <div>
-        <.button phx-disable-with="Saving ..." class="md:mt-8">Save</.button>
+        <.button phx-disable-with="" class="md:mt-8">Save</.button>
       </div>
     </.form>
     <.table :if={@cities != []} id="cities" rows={@cities}>
@@ -52,7 +52,7 @@ defmodule LivePlaygroundWeb.FormLive do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/form_live.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/form_insert_live.ex")) %>
       <%= raw(code("lib/live_playground/cities.ex", "# form", "# endform")) %>
     </div>
     <!-- end hiding from live code -->

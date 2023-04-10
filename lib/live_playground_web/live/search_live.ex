@@ -20,11 +20,11 @@ defmodule LivePlaygroundWeb.SearchLive do
     <.header class="mb-6">
       Search
       <:subtitle>
-        How to search in live view
+        How to create a search interface in live view
       </:subtitle>
       <:actions>
-        <.link navigate={~p"/search-advanced"}>
-          Try search with url parameter <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
+        <.link navigate={~p"/search-param"}>
+          See also: Search with URL Parameter <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
         </.link>
       </:actions>
     </.header>

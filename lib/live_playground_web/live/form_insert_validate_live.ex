@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.FormAdvancedLive do
+defmodule LivePlaygroundWeb.FormInsertValidateLive do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Cities
@@ -18,13 +18,13 @@ defmodule LivePlaygroundWeb.FormAdvancedLive do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Advanced Form
+      Validate on Change
       <:subtitle>
-        How to live validate form
+        How to create insert form that validates on change
       </:subtitle>
       <:actions>
-        <.link navigate={~p"/form"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to simple form
+        <.link navigate={~p"/form-insert"}>
+          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Insert Form
         </.link>
       </:actions>
     </.header>
@@ -39,7 +39,7 @@ defmodule LivePlaygroundWeb.FormAdvancedLive do
       <.input field={@form[:district]} phx-debounce="2000" label="District" class="flex-auto" />
       <.input field={@form[:population]} phx-debounce="2000" label="Population" class="flex-auto" />
       <div>
-        <.button phx-disable-with="Saving ..." class="md:mt-8">Save</.button>
+        <.button phx-disable-with="" class="md:mt-8">Save</.button>
       </div>
     </.form>
     <.table :if={@cities != []} id="cities" rows={@cities}>
@@ -57,7 +57,7 @@ defmodule LivePlaygroundWeb.FormAdvancedLive do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/form_advanced_live.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/form_insert_validate_live.ex")) %>
       <%= raw(code("lib/live_playground/cities.ex", "# form", "# endform")) %>
     </div>
     <!-- end hiding from live code -->

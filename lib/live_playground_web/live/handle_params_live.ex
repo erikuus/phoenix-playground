@@ -42,7 +42,7 @@ defmodule LivePlaygroundWeb.HandleParamsLive do
     <.header class="mb-6">
       Handle Parameters
       <:subtitle>
-        How to handle url parameteres within live view
+        How to handle url parameteres in live view
       </:subtitle>
     </.header>
     <!-- end hiding from live code -->

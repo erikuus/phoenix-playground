@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.SearchAdvancedLive do
+defmodule LivePlaygroundWeb.SearchParamLive do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Countries
@@ -37,13 +37,13 @@ defmodule LivePlaygroundWeb.SearchAdvancedLive do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Advanced Search
+      Search with URL Parameter
       <:subtitle>
-        How to search in live view with url parameter
+        How to handle query parameter in live view
       </:subtitle>
       <:actions>
         <.link navigate={~p"/search"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to simple search
+          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Search
         </.link>
       </:actions>
     </.header>
@@ -72,7 +72,7 @@ defmodule LivePlaygroundWeb.SearchAdvancedLive do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/search_advanced_live.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/search_param_live.ex")) %>
       <%= raw(code("lib/live_playground/countries.ex", "# search", "# endsearch")) %>
     </div>
     <!-- end hiding from live code -->

@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.FilterAdvancedLive do
+defmodule LivePlaygroundWeb.FilterParamsLive do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Cities
@@ -39,13 +39,13 @@ defmodule LivePlaygroundWeb.FilterAdvancedLive do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Advanced Filter
+      Filter with URL Parameters
       <:subtitle>
-        How to filter data in live view with url parameters
+        How to handle filter parameters in live view
       </:subtitle>
       <:actions>
         <.link navigate={~p"/filter"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to simple filter
+          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Filter
         </.link>
       </:actions>
     </.header>
@@ -78,7 +78,7 @@ defmodule LivePlaygroundWeb.FilterAdvancedLive do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/filter_advanced_live.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/filter_params_live.ex")) %>
       <%= raw(code("lib/live_playground/cities.ex", "# filter", "# endfilter")) %>
     </div>
     <!-- end hiding from live code -->

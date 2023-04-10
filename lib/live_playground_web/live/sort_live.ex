@@ -41,7 +41,7 @@ defmodule LivePlaygroundWeb.SortLive do
     <.header class="mb-6">
       Sorting
       <:subtitle>
-        How to sort data within live view
+        How to sort data in live view
       </:subtitle>
     </.header>
     <!-- end hiding from live code -->
