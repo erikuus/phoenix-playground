@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.StreamAdvancedLive do
+defmodule LivePlaygroundWeb.StreamInsertTabularLive do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Cities

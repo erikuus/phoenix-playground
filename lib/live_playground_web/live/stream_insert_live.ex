@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.StreamLive do
+defmodule LivePlaygroundWeb.StreamInsertLive do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Cities
@@ -17,13 +17,13 @@ defmodule LivePlaygroundWeb.StreamLive do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Streams
+      Stream Insert
       <:subtitle>
-        How to work with large collections of items without keeping them all in memory on the server
+        How to insert items into large collections without keeping them in memory on the server
       </:subtitle>
       <:actions>
-        <.link navigate={~p"/stream-advanced"}>
-          Try ... <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
+        <.link navigate={~p"/stream-update"}>
+          See also: Stream Update <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
         </.link>
       </:actions>
     </.header>
@@ -51,7 +51,7 @@ defmodule LivePlaygroundWeb.StreamLive do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/stream_live.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/stream_insert_live.ex")) %>
       <%= raw(code("lib/live_playground/cities.ex", "# form", "# endform")) %>
     </div>
     <!-- end hiding from live code -->

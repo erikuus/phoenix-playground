@@ -39,8 +39,9 @@ defmodule LivePlaygroundWeb.Router do
       live "/form-insert", FormInsertLive
       live "/form-insert-validate", FormInsertValidateLive
       live "/form-update-validate", FormUpdateValidateLive
-      live "/stream", StreamLive
-      live "/stream-advanced", StreamAdvancedLive
+      live "/stream-insert", StreamInsertLive
+      live "/stream-update", StreamUpdateLive
+      live "/stream-insert-tabular", StreamInsertTabularLive
       live "/upload", UploadLive
     end
   end

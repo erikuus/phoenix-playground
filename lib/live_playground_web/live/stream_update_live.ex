@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.FormUpdateValidateLive do
+defmodule LivePlaygroundWeb.StreamUpdateLive do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Cities
@@ -33,24 +33,18 @@ defmodule LivePlaygroundWeb.FormUpdateValidateLive do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Update Form
+      Stream Update
       <:subtitle>
-        How to create update form that validates on change
+        How to update items in large collections without keeping them in memory on the server
       </:subtitle>
       <:actions>
-        <.link navigate={~p"/form-insert"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Insert Form
+        <.link navigate={~p"/stream-insert"}>
+          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Stream Insert
         </.link>
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <.form
-      :if={@form}
-      for={@form}
-      phx-change="validate"
-      phx-submit="save"
-      class="flex flex-col space-x-0 space-y-4 md:flex-row md:space-x-4 md:space-y-0"
-    >
+    <.form :if={@form} for={@form} phx-submit="save" class="flex flex-col space-x-0 space-y-4 md:flex-row md:space-x-4 md:space-y-0">
       <.input field={@form[:name]} phx-debounce="2000" label="Name" class="flex-auto" />
       <.input field={@form[:district]} phx-debounce="2000" label="District" class="flex-auto" />
       <.input field={@form[:population]} phx-debounce="2000" label="Population" class="flex-auto" />
@@ -58,7 +52,7 @@ defmodule LivePlaygroundWeb.FormUpdateValidateLive do
         <.button phx-disable-with="" class="w-full md:mt-8">Save</.button>
       </div>
       <div>
-        <.button_link type="secondary" patch={~p"/form-update-validate"} class="w-full md:mt-8">
+        <.button_link type="secondary" patch={~p"/stream-update"} class="w-full md:mt-8">
           Cancel
         </.button_link>
       </div>
@@ -76,40 +70,25 @@ defmodule LivePlaygroundWeb.FormUpdateValidateLive do
         <%= Number.Delimit.number_to_delimited(city.population, precision: 0, delimiter: " ") %>
       </:col>
       <:action :let={city}>
-        <.link patch={~p"/form-update-validate?#{[id: city.id]}"}>update</.link>
+        <.link patch={~p"/stream-update?#{[id: city.id]}"}>update</.link>
       </:action>
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/form_update_validate_live.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/stream_update_live.ex")) %>
       <%= raw(code("lib/live_playground/cities.ex", "# form", "# endform")) %>
     </div>
     <!-- end hiding from live code -->
     """
   end
 
-  def handle_event("validate", %{"city" => params}, socket) do
-    params = Map.put(params, "countrycode", "EST")
-
-    form =
-      %City{}
-      |> Cities.change_city(params)
-      |> Map.put(:action, :validate)
-      |> to_form()
-
-    socket = assign(socket, :form, form)
-    {:noreply, socket}
-  end
-
   def handle_event("save", %{"city" => params}, socket) do
     case Cities.update_city(socket.assigns.city, params) do
       {:ok, city} ->
-        socket = update(socket, :cities, &[city | &1])
-
         socket =
-          push_patch(socket,
-            to: ~p"/form-update-validate"
-          )
+          socket
+          |> stream_insert(:cities, city)
+          |> push_patch(to: ~p"/stream-update")
 
         {:noreply, socket}
 

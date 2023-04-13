@@ -133,9 +133,9 @@ defmodule LivePlaygroundWeb.RecipesMenu do
       %{
         icon: "hero-signal",
         label: "Stream",
-        path: "/stream",
+        path: "/stream-insert",
         badge: 2,
-        paths: ["/stream", "/stream-advanced"]
+        paths: ["/stream-insert", "/stream-update"]
       },
       %{
         icon: "hero-arrow-up-tray",
