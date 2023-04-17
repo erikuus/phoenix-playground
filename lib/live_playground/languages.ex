@@ -15,9 +15,8 @@ defmodule LivePlayground.Languages do
 
       iex> list_language()
       [%Language{}, ...]
-
   """
-  def list_language do
+  def list_languages do
     Repo.all(Language)
   end
 

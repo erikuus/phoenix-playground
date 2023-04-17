@@ -2,15 +2,9 @@ defmodule LivePlaygroundWeb.StreamUpdateLive do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Cities
-  alias LivePlayground.Cities.City
 
   def mount(_params, _session, socket) do
-    socket =
-      assign(socket,
-        cities: Cities.list_est_city()
-      )
-
-    {:ok, socket}
+    {:ok, stream(socket, :cities, Cities.list_est_city())}
   end
 
   def handle_params(%{"id" => id}, _url, socket) do
@@ -57,19 +51,19 @@ defmodule LivePlaygroundWeb.StreamUpdateLive do
         </.button_link>
       </div>
     </.form>
-    <.table :if={@cities != []} id="cities" rows={@cities} row_id={&get_city_id/1}>
-      <:col :let={city} label="Name">
+    <.table id="cities" rows={@streams.cities}>
+      <:col :let={{_id, city}} label="Name">
         <%= city.name %>
         <dl class="font-normal md:hidden">
           <dt class="sr-only">District</dt>
           <dd class="mt-1 truncate text-gray-700"><%= city.district %></dd>
         </dl>
       </:col>
-      <:col :let={city} label="District" class="hidden md:table-cell"><%= city.district %></:col>
-      <:col :let={city} label="Population" class="text-right md:pr-10">
+      <:col :let={{_id, city}} label="District" class="hidden md:table-cell"><%= city.district %></:col>
+      <:col :let={{_id, city}} label="Population" class="text-right md:pr-10">
         <%= Number.Delimit.number_to_delimited(city.population, precision: 0, delimiter: " ") %>
       </:col>
-      <:action :let={city}>
+      <:action :let={{_id, city}}>
         <.link patch={~p"/stream-update?#{[id: city.id]}"}>update</.link>
       </:action>
     </.table>
@@ -102,9 +96,5 @@ defmodule LivePlaygroundWeb.StreamUpdateLive do
     city
     |> Cities.change_city()
     |> to_form()
-  end
-
-  defp get_city_id(city) do
-    "city-#{city.id}"
   end
 end

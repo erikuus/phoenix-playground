@@ -43,6 +43,11 @@ defmodule LivePlaygroundWeb.Router do
       live "/stream-update", StreamUpdateLive
       live "/stream-insert-tabular", StreamInsertTabularLive
       live "/upload", UploadLive
+      live "/languages", LanguageLive.Index, :index
+      live "/languages/new", LanguageLive.Index, :new
+      live "/languages/:id/edit", LanguageLive.Index, :edit
+      live "/languages/:id", LanguageLive.Show, :show
+      live "/languages/:id/show/edit", LanguageLive.Show, :edit
     end
   end
 

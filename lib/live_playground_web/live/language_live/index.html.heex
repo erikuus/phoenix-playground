@@ -1,0 +1,49 @@
+<.header>
+  Listing Languages
+  <:actions>
+    <.link patch={~p"/languages/new"}>
+      <.button>New Language</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="languages"
+  rows={@streams.languages}
+  row_click={fn {_id, language} -> JS.navigate(~p"/languages/#{language}") end}
+>
+  <:col :let={{_id, language}} label="Countrycode"><%= language.countrycode %></:col>
+  <:col :let={{_id, language}} label="Isofficial"><%= language.isofficial %></:col>
+  <:col :let={{_id, language}} label="Language"><%= language.language %></:col>
+  <:col :let={{_id, language}} label="Percentage"><%= language.percentage %></:col>
+  <:action :let={{_id, language}}>
+    <div class="sr-only">
+      <.link navigate={~p"/languages/#{language}"}>Show</.link>
+    </div>
+    <.link patch={~p"/languages/#{language}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, language}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: language.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="language-modal"
+  show
+  on_cancel={JS.navigate(~p"/languages")}
+>
+  <.live_component
+    module={LivePlaygroundWeb.LanguageLive.FormComponent}
+    id={@language.id || :new}
+    title={@page_title}
+    action={@live_action}
+    language={@language}
+    patch={~p"/languages"}
+  />
+</.modal>
