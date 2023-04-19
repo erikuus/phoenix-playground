@@ -558,7 +558,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
             </div>
           </td>
           <td :if={@action != []} class="relative p-0 w-14">
-            <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
+            <div class="block whitespace-nowrap py-4 text-right text-sm font-medium">
               <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 sm:rounded-r-xl" />
               <span :for={action <- @action} class="relative ml-4 font-semibold leading-6 text-zinc-900 hover:text-zinc-700">
                 <%= render_slot(action, @row_item.(row)) %>

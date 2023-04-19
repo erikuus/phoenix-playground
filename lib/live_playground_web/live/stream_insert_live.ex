@@ -41,13 +41,19 @@ defmodule LivePlaygroundWeb.StreamInsertLive do
         <%= city.name %>
         <dl class="font-normal md:hidden">
           <dt class="sr-only">District</dt>
-          <dd class="mt-1 truncate text-gray-700"><%= city.district %></dd>
+          <dd class="mt-1 truncate text-zinc-700"><%= city.district %></dd>
         </dl>
       </:col>
       <:col :let={{_id, city}} label="District" class="hidden md:table-cell"><%= city.district %></:col>
-      <:col :let={{_id, city}} label="Population" class="text-right">
+      <:col :let={{_id, city}} label="Population" class="text-right md:pr-10">
         <%= Number.Delimit.number_to_delimited(city.population, precision: 0, delimiter: " ") %>
       </:col>
+      <:action :let={{id, city}}>
+        <.link phx-click={JS.push("delete", value: %{id: city.id}) |> hide("##{id}")} data-confirm="Are you sure?">
+          <span class="hidden md:inline">Delete</span>
+          <.icon name="hero-trash-mini" class="md:hidden" />
+        </.link>
+      </:action>
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
@@ -72,6 +78,13 @@ defmodule LivePlaygroundWeb.StreamInsertLive do
         socket = assign(socket, :form, to_form(changeset))
         {:noreply, socket}
     end
+  end
+
+  def handle_event("delete", %{"id" => id}, socket) do
+    city = Cities.get_city!(id)
+    {:ok, _} = Cities.delete_city(city)
+
+    {:noreply, stream_delete(socket, :cities, city)}
   end
 
   defp get_empty_form() do

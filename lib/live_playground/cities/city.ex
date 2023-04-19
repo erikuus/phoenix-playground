@@ -13,7 +13,7 @@ defmodule LivePlayground.Cities.City do
   def changeset(city, attrs) do
     city
     |> cast(attrs, [:name, :countrycode, :district, :population])
-    |> validate_required([:name, :countrycode, :population])
+    |> validate_required([:name, :countrycode, :district, :population])
     |> validate_length(:name, min: 3, max: 50)
     |> validate_length(:district, min: 3, max: 100)
     |> validate_length(:countrycode, is: 3)

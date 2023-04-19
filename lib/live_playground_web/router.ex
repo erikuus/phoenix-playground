@@ -40,7 +40,8 @@ defmodule LivePlaygroundWeb.Router do
       live "/form-insert-validate", FormInsertValidateLive
       live "/form-update-validate", FormUpdateValidateLive
       live "/stream-insert", StreamInsertLive
-      live "/stream-update", StreamUpdateLive
+      live "/stream-update", StreamUpdateLive, :index
+      live "/stream-edit", StreamUpdateLive, :edit
       live "/stream-insert-tabular", StreamInsertTabularLive
       live "/upload", UploadLive
       live "/languages", LanguageLive.Index, :index

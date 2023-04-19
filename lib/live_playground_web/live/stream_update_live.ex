@@ -7,20 +7,21 @@ defmodule LivePlaygroundWeb.StreamUpdateLive do
     {:ok, stream(socket, :cities, Cities.list_est_city())}
   end
 
-  def handle_params(%{"id" => id}, _url, socket) do
-    city = Cities.get_city!(id)
-
-    socket =
-      assign(socket,
-        city: city,
-        form: get_city_form(city)
-      )
-
-    {:noreply, socket}
+  def handle_params(params, _url, socket) do
+    {:noreply, apply_action(params, socket.assigns.live_action, socket)}
   end
 
-  def handle_params(_params, _url, socket) do
-    {:noreply, assign(socket, city: nil, form: nil)}
+  defp apply_action(_params, :index, socket) do
+    assign(socket, city: nil, form: nil)
+  end
+
+  defp apply_action(%{"id" => id}, :edit, socket) do
+    city = Cities.get_city!(id)
+
+    assign(socket,
+      city: city,
+      form: get_city_form(city)
+    )
   end
 
   def render(assigns) do
@@ -38,7 +39,15 @@ defmodule LivePlaygroundWeb.StreamUpdateLive do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <.form :if={@form} for={@form} phx-submit="save" class="flex flex-col space-x-0 space-y-4 md:flex-row md:space-x-4 md:space-y-0">
+    <.form
+      :if={@form}
+      for={@form}
+      phx-submit="save"
+      class={[
+        "sticky top-2 z-10 -mx-4 px-4 pt-3 pb-5 bg-zinc-50 sm:rounded-lg shadow-xl",
+        " flex flex-col space-x-0 space-y-4 md:flex-row md:space-x-4 md:space-y-0"
+      ]}
+    >
       <.input field={@form[:name]} phx-debounce="2000" label="Name" class="flex-auto" />
       <.input field={@form[:district]} phx-debounce="2000" label="District" class="flex-auto" />
       <.input field={@form[:population]} phx-debounce="2000" label="Population" class="flex-auto" />
@@ -64,7 +73,10 @@ defmodule LivePlaygroundWeb.StreamUpdateLive do
         <%= Number.Delimit.number_to_delimited(city.population, precision: 0, delimiter: " ") %>
       </:col>
       <:action :let={{_id, city}}>
-        <.link patch={~p"/stream-update?#{[id: city.id]}"}>update</.link>
+        <.link patch={~p"/stream-edit?#{[id: city.id]}"}>
+          <span class="hidden md:inline">Edit</span>
+          <.icon name="hero-pencil-square-mini" class="md:hidden h-6 w-6" />
+        </.link>
       </:action>
     </.table>
     <!-- start hiding from live code -->
