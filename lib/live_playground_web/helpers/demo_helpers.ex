@@ -81,9 +81,16 @@ defmodule LivePlaygroundWeb.DemoHelpers do
     |> Enum.map(&String.trim_trailing/1)
     |> Enum.join("\n")
     |> String.trim_leading("\n")
+    |> hide_comment()
   end
 
   defp show(code, _, _, false), do: code
+
+  defp hide_comment(code_string) do
+    code_string
+    |> Code.string_to_quoted!()
+    |> Macro.to_string()
+  end
 
   defp hide_marked(code) do
     contains = String.contains?(code, "<!-- start hiding from live code -->")

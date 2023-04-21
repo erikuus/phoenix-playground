@@ -39,15 +39,7 @@ defmodule LivePlaygroundWeb.StreamUpdateLive do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <.form
-      :if={@form}
-      for={@form}
-      phx-submit="save"
-      class={[
-        "sticky top-2 z-10 -mx-4 px-4 pt-3 pb-5 bg-zinc-50 sm:rounded-lg shadow-xl",
-        " flex flex-col space-x-0 space-y-4 md:flex-row md:space-x-4 md:space-y-0"
-      ]}
-    >
+    <.form :if={@form} for={@form} phx-submit="save" class="flex flex-col space-x-0 space-y-4 md:flex-row md:space-x-4 md:space-y-0">
       <.input field={@form[:name]} phx-debounce="2000" label="Name" class="flex-auto" />
       <.input field={@form[:district]} phx-debounce="2000" label="District" class="flex-auto" />
       <.input field={@form[:population]} phx-debounce="2000" label="Population" class="flex-auto" />
@@ -73,7 +65,7 @@ defmodule LivePlaygroundWeb.StreamUpdateLive do
         <%= Number.Delimit.number_to_delimited(city.population, precision: 0, delimiter: " ") %>
       </:col>
       <:action :let={{_id, city}}>
-        <.link patch={~p"/stream-edit?#{[id: city.id]}"}>
+        <.link patch={~p"/stream-update/edit?#{[id: city.id]}"}>
           <span class="hidden md:inline">Edit</span>
           <.icon name="hero-pencil-square-mini" class="md:hidden h-6 w-6" />
         </.link>
@@ -82,7 +74,7 @@ defmodule LivePlaygroundWeb.StreamUpdateLive do
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <%= raw(code("lib/live_playground_web/live/stream_update_live.ex")) %>
-      <%= raw(code("lib/live_playground/cities.ex", "# form", "# endform")) %>
+      <%= raw(code("lib/live_playground/cities.ex", "# streamupdate", "# endstreamupdate")) %>
     </div>
     <!-- end hiding from live code -->
     """

@@ -58,7 +58,7 @@ defmodule LivePlaygroundWeb.StreamInsertLive do
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <%= raw(code("lib/live_playground_web/live/stream_insert_live.ex")) %>
-      <%= raw(code("lib/live_playground/cities.ex", "# form", "# endform")) %>
+      <%= raw(code("lib/live_playground/cities.ex", "# streaminsert", "# endstreaminsert")) %>
     </div>
     <!-- end hiding from live code -->
     """
