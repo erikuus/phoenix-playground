@@ -5,19 +5,18 @@ defmodule LivePlaygroundWeb.ModalsLive do
     {:ok, assign(socket, :modal, nil)}
   end
 
+  def handle_params(_params, _url, socket) do
+    {:noreply, socket}
+  end
+
   def render(assigns) do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
       Modals
       <:subtitle>
-        How to display confirmation dialog using core modal component
+        How to use core modal component
       </:subtitle>
-      <:actions>
-        <.link navigate={~p"/modals-advanced"}>
-          Try advanced modals <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
-        </.link>
-      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <div class="flex flex-col space-x-0 space-y-3 xl:flex-row xl:space-x-3 xl:space-y-0">
@@ -35,6 +34,9 @@ defmodule LivePlaygroundWeb.ModalsLive do
       </.button_link>
       <.button_link phx-click={show_modal("with-navigate-button")}>
         With navigate button
+      </.button_link>
+      <.button_link patch={~p"/modals/image"}>
+        With live component
       </.button_link>
     </div>
 
@@ -76,11 +78,20 @@ defmodule LivePlaygroundWeb.ModalsLive do
       <:confirm class="bg-red-600 hover:bg-red-700">OK</:confirm>
       <:cancel>Cancel</:cancel>
     </.modal>
-
-    <.modal id="with-navigate-button" on_confirm={JS.navigate(~p"/modals-advanced")}>
+    <.modal id="with-navigate-button" on_confirm={JS.navigate(~p"/click-buttons")}>
       <:title>With navigate button</:title>
-      Try advanced modals?
-      <:confirm>Take me there!</:confirm>
+      Recipes
+      <:confirm>Get started</:confirm>
+    </.modal>
+    <.modal :if={@live_action == :image} id="image-modal" show on_cancel={JS.navigate(~p"/modals")} content_class="max-w-5xl">
+      <.live_component
+        module={LivePlaygroundWeb.Components.ImageComponent}
+        id={:image}
+        title="Image Component"
+        images={["DSC02232.jpg", "DSC02234.jpg", "DSC02235.jpg"]}
+        return_text="Close"
+        return_to={~p"/modals"}
+      />
     </.modal>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">

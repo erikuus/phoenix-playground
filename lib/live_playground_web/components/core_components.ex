@@ -37,6 +37,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
   attr :show, :boolean, default: false
   attr :on_cancel, JS, default: %JS{}
   attr :on_confirm, JS, default: %JS{}
+  attr :content_class, :string, default: "sm:max-w-lg"
 
   slot :inner_block, required: true
   slot :icon
@@ -76,15 +77,15 @@ defmodule LivePlaygroundWeb.CoreComponents do
                 </.link>
               </div>
               <div id={"#{@id}-content"}>
-                <div class="p-4 sm:p-6 sm:w-full sm:max-w-lg sm:min-w-[400px]">
+                <div class={["p-4 sm:p-6 sm:w-full sm:min-w-[400px]", @content_class]}>
                   <div class="sm:flex sm:items-start">
                     <div
                       :if={@icon != []}
-                      class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center sm:mx-0 sm:h-10 sm:w-10"
+                      class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center sm:mx-0 sm:h-10 sm:w-10 sm:mr-4"
                     >
                       <%= render_slot(@icon) %>
                     </div>
-                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                    <div class="mt-3 text-center sm:mt-0 sm:text-left">
                       <header :if={@title != []}>
                         <h3 id={"#{@id}-title"} class="text-lg font-medium leading-6 text-gray-900">
                           <%= render_slot(@title) %>

@@ -14,7 +14,7 @@ defmodule LivePlaygroundWeb.Components.ImageComponent do
 
   def render(assigns) do
     ~H"""
-    <div class="p-6 mx-auto max-w-4xl">
+    <div>
       <h1 class="text-2xl font-bold leading-7">
         <%= @title %>
       </h1>
