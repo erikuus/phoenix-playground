@@ -78,8 +78,8 @@ defmodule LivePlaygroundWeb.RecipesMenu do
         icon: "hero-arrow-top-right-on-square",
         label: "Modals",
         path: "/modals",
-        badge: 2,
-        paths: ["/modals", "/modals-advanced"]
+        badge: nil,
+        paths: ["/modals"]
       },
       %{
         icon: "hero-paper-airplane",
