@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.StreamPubSubLive do
+defmodule LivePlaygroundWeb.BroadcastStreamLive do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Cities
@@ -16,8 +16,7 @@ defmodule LivePlaygroundWeb.StreamPubSubLive do
 
   defp apply_action(_params, :index, socket) do
     assign(socket,
-      city: nil,
-      form: get_empty_form()
+      form: get_city_form(%City{})
     )
   end
 
@@ -39,8 +38,8 @@ defmodule LivePlaygroundWeb.StreamPubSubLive do
         How to broadcast real-time updates with streams in live view
       </:subtitle>
       <:actions>
-        <.link navigate={~p"/stream-update"}>
-          See also: Stream Update <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
+        <.link navigate={~p"/broadcast"}>
+          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Real-Time Updates
         </.link>
       </:actions>
     </.header>
@@ -71,7 +70,7 @@ defmodule LivePlaygroundWeb.StreamPubSubLive do
         <.button phx-disable-with="" class="w-full md:mt-8">Save</.button>
       </div>
       <div>
-        <.button_link type="secondary" patch={~p"/stream-pubsub"} class="w-full md:mt-8">
+        <.button_link type="secondary" patch={~p"/broadcast-stream"} class="w-full md:mt-8">
           Cancel
         </.button_link>
       </div>
@@ -89,7 +88,7 @@ defmodule LivePlaygroundWeb.StreamPubSubLive do
         <%= Number.Delimit.number_to_delimited(city.population, precision: 0, delimiter: " ") %>
       </:col>
       <:action :let={{id, city}}>
-        <.link patch={~p"/stream-pubsub/edit?#{[id: city.id]}"} class="md:pr-4">
+        <.link patch={~p"/broadcast-stream/edit?#{[id: city.id]}"} class="md:mr-4">
           <span class="hidden md:inline">Edit</span>
           <.icon name="hero-pencil-square-mini" class="md:hidden h-6 w-6" />
         </.link>
@@ -101,7 +100,7 @@ defmodule LivePlaygroundWeb.StreamPubSubLive do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/stream_pubsub_live.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/broadcast_stream_live.ex")) %>
       <%= raw(code("lib/live_playground/cities.ex", "# broadcast", "# endbroadcast")) %>
     </div>
     <!-- end hiding from live code -->
@@ -113,7 +112,7 @@ defmodule LivePlaygroundWeb.StreamPubSubLive do
 
     case Cities.create_city_broadcast(params) do
       {:ok, _city} ->
-        {:noreply, assign(socket, :form, get_empty_form())}
+        {:noreply, assign(socket, :form, get_city_form(%City{}))}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :form, to_form(changeset))}
@@ -123,7 +122,7 @@ defmodule LivePlaygroundWeb.StreamPubSubLive do
   def handle_event("update", %{"city" => params}, socket) do
     case Cities.update_city_broadcast(socket.assigns.city, params) do
       {:ok, _city} ->
-        {:noreply, push_patch(socket, to: ~p"/stream-pubsub")}
+        {:noreply, push_patch(socket, to: ~p"/broadcast-stream")}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :form, to_form(changeset))}
@@ -147,12 +146,6 @@ defmodule LivePlaygroundWeb.StreamPubSubLive do
 
   def handle_info({:delete_city, city}, socket) do
     {:noreply, stream_delete(socket, :cities, city)}
-  end
-
-  defp get_empty_form() do
-    %City{}
-    |> Cities.change_city()
-    |> to_form()
   end
 
   defp get_city_form(city) do
