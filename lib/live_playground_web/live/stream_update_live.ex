@@ -2,6 +2,7 @@ defmodule LivePlaygroundWeb.StreamUpdateLive do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Cities
+  alias LivePlayground.Cities.City
 
   def mount(_params, _session, socket) do
     {:ok, stream(socket, :cities, Cities.list_est_city())}
@@ -12,7 +13,7 @@ defmodule LivePlaygroundWeb.StreamUpdateLive do
   end
 
   defp apply_action(_params, :index, socket) do
-    assign(socket, city: nil, form: nil)
+    socket
   end
 
   defp apply_action(%{"id" => id}, :edit, socket) do
@@ -39,7 +40,12 @@ defmodule LivePlaygroundWeb.StreamUpdateLive do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <.form :if={@form} for={@form} phx-submit="save" class="flex flex-col space-x-0 space-y-4 md:flex-row md:space-x-4 md:space-y-0">
+    <.form
+      :if={@live_action == :edit}
+      for={@form}
+      phx-submit="save"
+      class="flex flex-col space-x-0 space-y-4 md:flex-row md:space-x-4 md:space-y-0"
+    >
       <.input field={@form[:name]} phx-debounce="2000" label="Name" class="flex-auto" />
       <.input field={@form[:district]} phx-debounce="2000" label="District" class="flex-auto" />
       <.input field={@form[:population]} phx-debounce="2000" label="Population" class="flex-auto" />

@@ -8,7 +8,7 @@ defmodule LivePlaygroundWeb.StreamInsertLive do
     socket =
       socket
       |> stream(:cities, Cities.list_est_city())
-      |> assign(form: get_empty_form())
+      |> assign(:form, get_empty_form())
 
     {:ok, socket}
   end
