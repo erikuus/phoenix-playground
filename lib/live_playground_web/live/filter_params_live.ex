@@ -92,7 +92,7 @@ defmodule LivePlaygroundWeb.FilterParamsLive do
       ) do
     socket =
       push_patch(socket,
-        to: ~p"/filter-advanced?#{[name: name, dist: dist, sm: sm, md: md, lg: lg]}"
+        to: ~p"/filter-params?#{[name: name, dist: dist, sm: sm, md: md, lg: lg]}"
       )
 
     {:noreply, socket}
