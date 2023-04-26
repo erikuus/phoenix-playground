@@ -411,10 +411,10 @@ defmodule LivePlaygroundWeb.MoreComponents do
     >
       <%= render_slot(@input_block) %>
       <div>
-        <.button phx-disable-with="">Save</.button>
+        <.button class="w-full md:w-auto" phx-disable-with="">Save</.button>
       </div>
       <div>
-        <.button_link type="secondary" phx-click={@cancel_event}>Cancel</.button_link>
+        <.button_link type="secondary" class="w-full md:w-auto" phx-click={@cancel_event}>Cancel</.button_link>
       </div>
     </.form>
     """
