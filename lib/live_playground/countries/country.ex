@@ -57,5 +57,9 @@ defmodule LivePlayground.Countries.Country do
       :capital,
       :code2
     ])
+    |> validate_length(:headofstate, min: 2, max: 100)
+    |> validate_number(:population, greater_than: 1, less_than: 2_000_000_000)
+    |> validate_number(:gnp, greater_than: 1, less_than: 10_000_000)
+    |> validate_number(:lifeexpectancy, greater_than: 10, less_than: 100)
   end
 end

@@ -140,9 +140,9 @@ defmodule LivePlaygroundWeb.RecipesMenu do
       %{
         icon: "hero-signal",
         label: "Broadcast",
-        path: "/stream-pubsub",
-        badge: nil,
-        paths: ["/stream-pubsub"]
+        path: "/broadcast",
+        badge: 2,
+        paths: ["/broadcast", "/broadcast-stream"]
       },
       %{
         icon: "hero-arrow-up-tray",

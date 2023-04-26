@@ -76,6 +76,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
                   <.icon name="hero-x-mark-solid" class="w-6 h-6 text-gray-400 hover:text-gray-500" />
                 </.link>
               </div>
+
               <div id={"#{@id}-content"}>
                 <div class={["p-4 sm:p-6 sm:w-full sm:min-w-[400px]", @content_class]}>
                   <div class="sm:flex sm:items-start">
@@ -85,15 +86,18 @@ defmodule LivePlaygroundWeb.CoreComponents do
                     >
                       <%= render_slot(@icon) %>
                     </div>
+
                     <div class="mt-3 text-center sm:mt-0 sm:text-left">
                       <header :if={@title != []}>
                         <h3 id={"#{@id}-title"} class="text-lg font-medium leading-6 text-gray-900">
                           <%= render_slot(@title) %>
                         </h3>
+
                         <p :if={@subtitle != []} id={"#{@id}-subtitle"} class="mt-2 text-base leading-6 text-zinc-600">
                           <%= render_slot(@subtitle) %>
                         </p>
                       </header>
+
                       <div class="mt-2">
                         <p class="text-sm text-gray-500">
                           <%= render_slot(@inner_block) %>
@@ -101,6 +105,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
                       </div>
                     </div>
                   </div>
+
                   <div :if={@confirm != [] or @cancel != []} class="mt-5 sm:mt-4 sm:ml-10 sm:pl-4 sm:flex sm:flex-row-reverse">
                     <.link
                       :for={cancel <- @cancel}
@@ -113,6 +118,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
                     >
                       <%= render_slot(cancel) %>
                     </.link>
+
                     <.button
                       :for={confirm <- @confirm}
                       phx-click={@on_confirm}
@@ -170,10 +176,11 @@ defmodule LivePlaygroundWeb.CoreComponents do
     >
       <p :if={@title} class="flex items-center gap-1.5 text-[0.8125rem] font-semibold leading-6">
         <.icon :if={@kind == :info} name="hero-information-circle-mini" class="w-4 h-4" />
-        <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="w-4 h-4" />
-        <%= @title %>
+        <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="w-4 h-4" /> <%= @title %>
       </p>
+
       <p class="mt-2 text-[0.8125rem] leading-5"><%= msg %></p>
+
       <button :if={@close} type="button" class="group absolute top-2 right-1 p-2" aria-label={gettext("close")}>
         <.icon name="hero-x-mark-solid" class="w-5 h-5 opacity-40 group-hover:opacity-70" />
       </button>
@@ -192,8 +199,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
 
   def flash_group(assigns) do
     ~H"""
-    <.flash kind={:info} title="Success!" flash={@flash} />
-    <.flash kind={:error} title="Error!" flash={@flash} />
+    <.flash kind={:info} title="Success!" flash={@flash} /> <.flash kind={:error} title="Error!" flash={@flash} />
     <.flash
       id="disconnected"
       kind={:error}
@@ -337,9 +343,9 @@ defmodule LivePlaygroundWeb.CoreComponents do
           checked={@checked}
           class="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900"
           {@rest}
-        />
-        <%= @label %>
+        /> <%= @label %>
       </label>
+
       <.error :for={msg <- @errors}><%= msg %></.error>
     </div>
     """
@@ -349,6 +355,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
     ~H"""
     <div phx-feedback-for={@name} class={@class}>
       <.label for={@id}><%= @label %></.label>
+
       <select
         id={@id}
         name={@name}
@@ -366,6 +373,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
         <option :if={@prompt} value=""><%= @prompt %></option>
         <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
       </select>
+
       <.error :for={msg <- @errors}><%= msg %></.error>
     </div>
     """
@@ -405,9 +413,9 @@ defmodule LivePlaygroundWeb.CoreComponents do
           checked={@checked}
           class="border-zinc-300 text-zinc-900 focus:ring-zinc-900"
           {@rest}
-        />
-        <%= @label %>
+        /> <%= @label %>
       </label>
+
       <.error :for={msg <- @errors}><%= msg %></.error>
     </div>
     """
@@ -417,6 +425,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
     ~H"""
     <div phx-feedback-for={@name} class={@class}>
       <.label :if={@label} for={@id}><%= @label %></.label>
+
       <input
         type={@type}
         name={@name}
@@ -459,8 +468,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
   def error(assigns) do
     ~H"""
     <p class="phx-no-feedback:hidden mt-3 flex gap-3 text-sm leading-6 text-rose-600">
-      <.icon name="hero-exclamation-circle-mini" class="mt-0.5 w-5 h-5 flex-none" />
-      <%= render_slot(@inner_block) %>
+      <.icon name="hero-exclamation-circle-mini" class="mt-0.5 w-5 h-5 flex-none" /> <%= render_slot(@inner_block) %>
     </p>
     """
   end
@@ -484,10 +492,12 @@ defmodule LivePlaygroundWeb.CoreComponents do
         <h1 class="text-3xl font-bold leading-8 text-zinc-800">
           <%= render_slot(@inner_block) %>
         </h1>
+
         <p :if={@subtitle != []} class="mt-2 mr-4 text-sm leading-6 text-zinc-600">
           <%= render_slot(@subtitle) %>
         </p>
       </div>
+
       <div :if={@actions != []} class="mt-4 flex md:mt-0 md:ml-4 self-start">
         <%= render_slot(@actions) %>
       </div>
@@ -534,11 +544,13 @@ defmodule LivePlaygroundWeb.CoreComponents do
           <th :for={col <- @col} class={["p-0 pb-4 font-normal", col[:class]]}>
             <%= col[:label] %>
           </th>
+
           <th class="relative p-0 pb-4">
             <span class="sr-only"><%= gettext("Actions") %></span>
           </th>
         </tr>
       </thead>
+
       <tbody
         id={@id}
         phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
@@ -558,6 +570,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
               </span>
             </div>
           </td>
+
           <td :if={@action != []} class="relative p-0 w-14">
             <div class="block whitespace-nowrap py-4 text-right text-sm font-medium">
               <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 sm:rounded-r-xl" />
@@ -592,11 +605,11 @@ defmodule LivePlaygroundWeb.CoreComponents do
     ~H"""
     <div class={@class}>
       <dl class="-my-4 divide-y divide-zinc-100">
-        <div :for={item <- @item} class="flex gap-4 py-4 sm:gap-8">
-          <dt class="w-1/4 flex-none text-[0.8125rem] leading-6 text-zinc-500">
+        <div :for={item <- @item} class="md:flex py-4 sm:gap-8">
+          <dt class="md:w-1/4 md:flex-none text-[0.8125rem] leading-6 text-zinc-500">
             <%= item.title %>
           </dt>
-          <dd class="text-sm leading-6 text-zinc-700"><%= render_slot(item) %></dd>
+          <dd class="text-sm leading-6 text-zinc-700 w-full"><%= render_slot(item) %></dd>
         </div>
       </dl>
     </div>
@@ -617,8 +630,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
     ~H"""
     <div class="mt-16">
       <.link navigate={@navigate} class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700">
-        <.icon name="hero-arrow-left-solid" class="w-3 h-3" />
-        <%= render_slot(@inner_block) %>
+        <.icon name="hero-arrow-left-solid" class="w-3 h-3" /> <%= render_slot(@inner_block) %>
       </.link>
     </div>
     """

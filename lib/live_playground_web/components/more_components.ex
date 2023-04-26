@@ -8,6 +8,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
   """
   use Phoenix.Component
 
+  import LivePlaygroundWeb.CoreComponents
+
   @doc """
   Renders an alert box.
 
@@ -213,19 +215,19 @@ defmodule LivePlaygroundWeb.MoreComponents do
     <nav class={["flex items-center justify-between border-t border-gray-200 px-4 sm:px-0", @class]}>
       <div class="-mt-px flex w-0 flex-1">
         <.link :for={prev <- @prev} :if={prev != []} patch={prev[:patch]} class={["pr-4", page_class(:base), page_class(false)]}>
-          <%= render_slot(@prev_icon) %>
-          <%= render_slot(prev) %>
+          <%= render_slot(@prev_icon) %> <%= render_slot(prev) %>
         </.link>
       </div>
+
       <div class="hidden lg:-mt-px lg:flex">
         <.link :for={page <- @page} patch={page[:patch]} class={["px-4", page_class(:base), page_class(page[:active])]}>
           <%= render_slot(page) %>
         </.link>
       </div>
+
       <div class="-mt-px flex w-0 flex-1 justify-end">
         <.link :for={next <- @next} :if={next != []} patch={next[:patch]} class={["pl-4", page_class(:base), page_class(false)]}>
-          <%= render_slot(next) %>
-          <%= render_slot(@next_icon) %>
+          <%= render_slot(next) %> <%= render_slot(@next_icon) %>
         </.link>
       </div>
     </nav>
@@ -272,6 +274,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
     <dl class={["grid grid-cols-1 gap-5 sm:grid-cols-3", @class]}>
       <div :for={card <- @card} class="relative overflow-hidden rounded-lg shadow-sm border border-gray-200 bg-white px-4 py-5 sm:p-6">
         <dt class="truncate text-sm font-medium text-gray-500"><%= card.title %></dt>
+
         <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900">
           <%= render_slot(card) %>
         </dd>
@@ -297,6 +300,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   def dropdown(assigns) do
     ~H"""
     <div class="fixed inset-0" phx-capture-click={@outer_event}></div>
+
     <ul class={"absolute z-10 mt-1 overflow-auto rounded-md shadow-lg border border-gray-200 bg-white py-1 #{@class}"}>
       <%= render_slot(@inner_block) %>
     </ul>
@@ -343,6 +347,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
     ~H"""
     <svg class={["animate-spin", @class]} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+
       <path
         class="opacity-75"
         fill="currentColor"
@@ -350,6 +355,68 @@ defmodule LivePlaygroundWeb.MoreComponents do
       >
       </path>
     </svg>
+    """
+  end
+
+  @doc """
+  Renders an editable content.
+
+  Editable field has two blocks: (1) inner block content with edit link
+  and (2) input field(s) block with save and cancel buttons. Edit link,
+  save and cancel buttons are pointing to events that must be defined in
+  liveview that renders this component.
+
+  ## Examples
+
+      <div id="country" phx-update="replace">
+        <.list class="mt-6 mb-16 ml-1">
+          <:item title="Name"><%= @user.name %></:item>
+          <:item title="Email">
+            <.editable id="email" form={@form} edit={@edit_field == "email"}>
+              <%= @user.email %>
+              <:input_block>
+                <.input field={@form[:email]} type="email" />
+              </:input_block>
+            </.editable>
+          </:item>
+        </.list>
+      </div>
+  """
+  attr :id, :string, required: true
+  attr :form, :map, required: true
+  attr :edit, :boolean, required: true
+  attr :save_event, :string, default: "save"
+  attr :edit_event, :string, default: "edit"
+  attr :cancel_event, :string, default: "cancel"
+
+  slot :inner_block, required: true
+  slot :input_block, required: true
+
+  def editable(assigns) do
+    ~H"""
+    <div :if={!@edit} class="w-full flex items-center justify-between">
+      <div id={@id}>
+        <%= render_slot(@inner_block) %>
+      </div>
+      <.link phx-click={@edit_event} phx-value-field={@id}>
+        <span class="hidden md:inline font-bold">Edit</span>
+        <.icon name="hero-pencil-square-mini" class="md:hidden h-6 w-6" />
+      </.link>
+    </div>
+    <.form
+      :if={@edit}
+      for={@form}
+      phx-submit={@save_event}
+      class="flex flex-col space-x-0 space-y-2 md:flex-row md:space-x-2 md:space-y-0"
+    >
+      <%= render_slot(@input_block) %>
+      <div>
+        <.button phx-disable-with="">Save</.button>
+      </div>
+      <div>
+        <.button_link type="secondary" phx-click={@cancel_event}>Cancel</.button_link>
+      </div>
+    </.form>
     """
   end
 end

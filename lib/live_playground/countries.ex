@@ -8,6 +8,26 @@ defmodule LivePlayground.Countries do
 
   alias LivePlayground.Countries.Country
 
+  # broadcast
+  @pubsub LivePlayground.PubSub
+  @topic inspect(__MODULE__)
+
+  def subscribe do
+    Phoenix.PubSub.subscribe(@pubsub, @topic)
+  end
+
+  def broadcast({:ok, country}, event) do
+    Phoenix.PubSub.broadcast(@pubsub, @topic, {event, country})
+
+    {:ok, country}
+  end
+
+  def broadcast({:error, changeset}, _event) do
+    {:error, changeset}
+  end
+
+  # endbroadcast
+
   @doc """
   Returns the list of country.
 
@@ -59,7 +79,10 @@ defmodule LivePlayground.Countries do
       ** (Ecto.NoResultsError)
 
   """
+  # broadcast
   def get_country!(id), do: Repo.get!(Country, id)
+
+  # endbroadcast
 
   @doc """
   Creates a country.
@@ -97,6 +120,16 @@ defmodule LivePlayground.Countries do
     |> Repo.update()
   end
 
+  # broadcast
+  def update_country_broadcast(%Country{} = country, attrs) do
+    country
+    |> Country.changeset(attrs)
+    |> Repo.update()
+    |> broadcast(:update_country)
+  end
+
+  # endbroadcast
+
   @doc """
   Deletes a country.
 
@@ -122,7 +155,10 @@ defmodule LivePlayground.Countries do
       %Ecto.Changeset{data: %Country{}}
 
   """
+  # broadcast
   def change_country(%Country{} = country, attrs \\ %{}) do
     Country.changeset(country, attrs)
   end
+
+  # endbroadcast
 end
