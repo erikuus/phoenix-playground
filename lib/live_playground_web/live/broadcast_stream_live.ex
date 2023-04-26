@@ -101,7 +101,7 @@ defmodule LivePlaygroundWeb.BroadcastStreamLive do
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <%= raw(code("lib/live_playground_web/live/broadcast_stream_live.ex")) %>
-      <%= raw(code("lib/live_playground/cities.ex", "# broadcast", "# endbroadcast")) %>
+      <%= raw(code("lib/live_playground/cities.ex", "# broadcaststream", "# endbroadcaststream")) %>
     </div>
     <!-- end hiding from live code -->
     """
