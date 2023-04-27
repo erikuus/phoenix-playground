@@ -114,7 +114,7 @@ defmodule LivePlaygroundWeb.RecipesMenu do
         label: "Sorting",
         path: "/sort",
         badge: 2,
-        paths: ["/sort", "sort-params"]
+        paths: ["/sort", "/sort-params"]
       },
       %{
         icon: "hero-arrows-right-left",
