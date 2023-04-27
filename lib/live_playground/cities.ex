@@ -67,9 +67,9 @@ defmodule LivePlayground.Cities do
   # endform # endstreaminsert  # endstreamupdate # endbroadcaststream
 
   # sort
-  def list_ita_city(options) when is_map(options) do
+  def list_est_city(options) when is_map(options) do
     from(City)
-    |> where(countrycode: "ITA")
+    |> where(countrycode: "EST")
     |> sort(options)
     |> Repo.all()
   end
