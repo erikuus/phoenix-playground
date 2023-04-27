@@ -22,7 +22,7 @@ defmodule LivePlaygroundWeb.BroadcastLive do
     <.header class="mb-6">
       Real-Time Updates
       <:subtitle>
-        How to broadcast real-time updates in live view
+        How to broadcast real-time updates in LiveView
       </:subtitle>
       <:actions>
         <.link navigate={~p"/broadcast-stream"}>

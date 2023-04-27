@@ -35,7 +35,7 @@ defmodule LivePlaygroundWeb.BroadcastStreamLive do
     <.header class="mb-6">
       Real-Time Updates with Streams
       <:subtitle>
-        How to broadcast real-time updates with streams in live view
+        How to broadcast real-time updates with streams in LiveView
       </:subtitle>
       <:actions>
         <.link navigate={~p"/broadcast"}>

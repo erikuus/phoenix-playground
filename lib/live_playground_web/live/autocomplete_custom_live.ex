@@ -19,7 +19,7 @@ defmodule LivePlaygroundWeb.AutocompleteCustomLive do
     <.header class="mb-6">
       Custom Autocomplete
       <:subtitle>
-        How to create autocomplete field in live view using custom dropdown and option components
+        How to create autocomplete field in LiveView using custom dropdown and option components
       </:subtitle>
       <:actions>
         <.link navigate={~p"/autocomplete"}>

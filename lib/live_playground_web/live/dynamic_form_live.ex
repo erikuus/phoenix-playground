@@ -17,7 +17,7 @@ defmodule LivePlaygroundWeb.DynamicFormLive do
     <.header class="mb-6">
       Dynamic Form
       <:subtitle>
-        How to handle form changes in live view
+        How to handle form changes in LiveView
       </:subtitle>
     </.header>
     <!-- end hiding from live code -->

@@ -20,7 +20,7 @@ defmodule LivePlaygroundWeb.SendIntervalLive do
     <.header class="mb-6">
       Send Repeatedly
       <:subtitle>
-        How to send message repeatedly in live view after given milliseconds
+        How to send message repeatedly in LiveView after given milliseconds
       </:subtitle>
       <:actions>
         <.link navigate={~p"/send-after"}>

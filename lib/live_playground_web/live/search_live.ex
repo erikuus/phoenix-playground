@@ -20,7 +20,7 @@ defmodule LivePlaygroundWeb.SearchLive do
     <.header class="mb-6">
       Search
       <:subtitle>
-        How to create a search interface in live view
+        How to create a search interface in LiveView
       </:subtitle>
       <:actions>
         <.link navigate={~p"/search-param"}>

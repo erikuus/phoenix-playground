@@ -41,7 +41,7 @@ defmodule LivePlaygroundWeb.PaginateLive do
     <.header class="mb-6">
       Pagination
       <:subtitle>
-        How to paginate data in live view
+        How to paginate data in LiveView
       </:subtitle>
     </.header>
     <!-- end hiding from live code -->

@@ -39,7 +39,7 @@ defmodule LivePlaygroundWeb.SearchParamLive do
     <.header class="mb-6">
       Search with URL Parameter
       <:subtitle>
-        How to handle query parameter in live view
+        How to handle query parameter in LiveView
       </:subtitle>
       <:actions>
         <.link navigate={~p"/search"}>

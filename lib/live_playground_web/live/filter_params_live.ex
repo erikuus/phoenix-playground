@@ -41,7 +41,7 @@ defmodule LivePlaygroundWeb.FilterParamsLive do
     <.header class="mb-6">
       Filter with URL Parameters
       <:subtitle>
-        How to handle filter parameters in live view
+        How to handle filter parameters in LiveView
       </:subtitle>
       <:actions>
         <.link navigate={~p"/filter"}>

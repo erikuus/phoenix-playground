@@ -13,7 +13,7 @@ defmodule LivePlaygroundWeb.AutocompleteLive do
     <.header class="mb-6">
       Native Autocomplete
       <:subtitle>
-        How to create autocomplete field in live view using native HTML5 input list attribute and datalist element
+        How to create autocomplete field in LiveView using native HTML5 input list attribute and datalist element
       </:subtitle>
       <:actions>
         <.link navigate={~p"/autocomplete-custom"}>

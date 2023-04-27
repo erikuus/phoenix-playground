@@ -21,7 +21,7 @@ defmodule LivePlaygroundWeb.FilterLive do
     <.header class="mb-6">
       Filter
       <:subtitle>
-        How to filter data in live view
+        How to filter data in LiveView
       </:subtitle>
       <:actions>
         <.link navigate={~p"/filter-params"}>

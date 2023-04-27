@@ -14,7 +14,7 @@ defmodule LivePlaygroundWeb.SendAfterLive do
     <.header class="mb-6">
       Send After
       <:subtitle>
-        How to send message in live view after given milliseconds
+        How to send message in LiveView after given milliseconds
       </:subtitle>
       <:actions>
         <.link navigate={~p"/send-interval"}>
