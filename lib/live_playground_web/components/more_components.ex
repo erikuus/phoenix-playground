@@ -177,7 +177,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
-  Renders pagination.
+  Renders pagination container.
 
   ## Examples
 
@@ -193,46 +193,54 @@ defmodule LivePlaygroundWeb.MoreComponents do
   """
   attr :class, :string, default: nil
 
-  slot :prev_icon
+  slot :prev
+  slot :next
+  slot :pages
 
-  slot :prev do
-    attr :patch, :any, required: true
-  end
-
-  slot :next_icon
-
-  slot :next do
-    attr :patch, :any, required: true
-  end
-
-  slot :page do
-    attr :patch, :any, required: true
-    attr :active, :boolean
-  end
-
-  def pages(assigns) do
+  def pagination(assigns) do
     ~H"""
     <nav class={["flex items-center justify-between border-t border-gray-200 px-4 sm:px-0", @class]}>
       <div class="-mt-px flex w-0 flex-1">
-        <.link :for={prev <- @prev} :if={prev != []} patch={prev[:patch]} class={["pr-4", page_class(:base), page_class(false)]}>
-          <%= render_slot(@prev_icon) %> <%= render_slot(prev) %>
-        </.link>
+        <%= render_slot(@prev) %>
       </div>
-
       <div class="hidden lg:-mt-px lg:flex">
-        <.link :for={page <- @page} patch={page[:patch]} class={["px-4", page_class(:base), page_class(page[:active])]}>
-          <%= render_slot(page) %>
-        </.link>
+        <%= render_slot(@pages) %>
       </div>
-
       <div class="-mt-px flex w-0 flex-1 justify-end">
-        <.link :for={next <- @next} :if={next != []} patch={next[:patch]} class={["pl-4", page_class(:base), page_class(false)]}>
-          <%= render_slot(next) %> <%= render_slot(@next_icon) %>
-        </.link>
+        <%= render_slot(@next) %>
       </div>
     </nav>
     """
   end
+
+  @doc """
+  Renders pagination link.
+  """
+  attr :type, :string, default: "page"
+  attr :active, :boolean, default: false
+  attr :patch, :any
+  attr :event, :string
+  attr :page, :integer
+
+  slot :inner_block, required: true
+
+  def page_link(%{patch: _} = assigns) do
+    ~H"""
+    <.link patch={@patch} class={[page_class(:base), page_class(@type), page_class(@active)]}>
+      <%= render_slot(@inner_block) %>
+    </.link>
+    """
+  end
+
+  def page_link(%{event: _, page: _} = assigns) do
+    ~H"""
+    <.link phx-click={@event} phx-value-page={@page} class={[page_class(:base), page_class(@type), page_class(@active)]}>
+      <%= render_slot(@inner_block) %>
+    </.link>
+    """
+  end
+
+  def page_link(_assigns), do: nil
 
   defp page_class(:base) do
     "inline-flex items-center border-t-2 pt-4 text-sm font-medium"
@@ -245,6 +253,12 @@ defmodule LivePlaygroundWeb.MoreComponents do
   defp page_class(true) do
     "border-zinc-500 text-zinc-600"
   end
+
+  defp page_class("prev"), do: "pr-4"
+
+  defp page_class("page"), do: "px-4"
+
+  defp page_class("next"), do: "pl-4"
 
   @doc """
   Renders a data list.

@@ -32,6 +32,7 @@ defmodule LivePlaygroundWeb.Router do
       live "/sort", SortLive
       live "/sort-params", SortParamsLive
       live "/paginate", PaginateLive
+      live "/paginate-params", PaginateParamsLive
       live "/modals", ModalsLive
       live "/modals/image", ModalsLive, :image
       live "/modals-advanced/text", ModalsAdvancedLive, :text

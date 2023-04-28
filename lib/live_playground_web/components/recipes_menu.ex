@@ -120,8 +120,8 @@ defmodule LivePlaygroundWeb.RecipesMenu do
         icon: "hero-arrows-right-left",
         label: "Pagination",
         path: "/paginate",
-        badge: nil,
-        paths: ["/paginate"]
+        badge: 2,
+        paths: ["/paginate", "paginate-params"]
       },
       %{
         icon: "hero-pencil-square",
