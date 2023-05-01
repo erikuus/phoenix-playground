@@ -121,7 +121,7 @@ defmodule LivePlaygroundWeb.RecipesMenu do
         label: "Pagination",
         path: "/paginate",
         badge: 2,
-        paths: ["/paginate", "paginate-params"]
+        paths: ["/paginate", "/paginate-params"]
       },
       %{
         icon: "hero-pencil-square",
