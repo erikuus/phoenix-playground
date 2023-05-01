@@ -79,24 +79,28 @@ defmodule LivePlaygroundWeb.StreamInsertTabularLive do
   end
 
   def handle_event("validate", %{"city" => tabular_params}, socket) do
-    for params <- tabular_params do
-      params = Map.put(params, "countrycode", "EST")
+    IO.inspect(tabular_params)
 
+    for x <- [0, 1] do
       form =
         %City{}
-        |> Cities.change_city(params)
+        |> Cities.change_city(%{})
         |> Map.put(:action, :validate)
         |> to_form()
 
       tabular_input = %{
-        id: socket.assigns.tabular_index,
+        id: x,
         form: form
       }
 
-      socket = stream_insert(socket, :tabular_inputs, tabular_input)
+      send(self(), {:stream_tabular_input, tabular_input})
     end
 
     {:noreply, socket}
+  end
+
+  def handle_info({:stream_tabular_input, tabular_input}, socket) do
+    {:noreply, stream_insert(socket, :tabular_inputs, tabular_input)}
   end
 
   defp get_empty_form() do
