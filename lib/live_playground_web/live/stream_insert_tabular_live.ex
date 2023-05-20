@@ -8,7 +8,7 @@ defmodule LivePlaygroundWeb.StreamInsertTabularLive do
     socket =
       socket
       |> stream(:tabular_inputs, [])
-      |> assign(tabular_index: 0, tabular_counter: 0)
+      |> assign(:tabular_input_ids, [])
 
     {:ok, socket}
   end
@@ -37,34 +37,39 @@ defmodule LivePlaygroundWeb.StreamInsertTabularLive do
             placeholder="Population"
             class="flex-auto"
           />
-          <.button type="button" phx-click="remove-tabular-input" phx-value-id={id}>
-            Remove
-          </.button>
+          <div>
+            <.button type="button" phx-click="remove-tabular-input" phx-value-id={tabular_input.id}>
+              Remove
+            </.button>
+          </div>
         </div>
       </div>
       <div class="space-x-2">
-        <.button :if={@tabular_counter < 5} type="button" phx-click="add-tabular-input">
+        <.button :if={Enum.count(@tabular_input_ids) < 5} type="button" phx-click="add-tabular-input">
           Add
         </.button>
-        <.button :if={@tabular_counter > 0} type="submit">
+        <.button :if={Enum.count(@tabular_input_ids) > 0} type="submit">
           Save
         </.button>
+        <%= inspect(@tabular_input_ids) %>
       </div>
     </form>
     """
   end
 
   def handle_event("add-tabular-input", _, socket) do
+    last_id = List.last(socket.assigns.tabular_input_ids, 0)
+    new_id = last_id + 1
+
     tabular_input = %{
-      id: socket.assigns.tabular_index,
+      id: new_id,
       form: get_empty_form()
     }
 
     socket =
       socket
       |> stream_insert(:tabular_inputs, tabular_input)
-      |> update(:tabular_index, &(&1 + 1))
-      |> update(:tabular_counter, &(&1 + 1))
+      |> update(:tabular_input_ids, &(&1 ++ [new_id]))
 
     {:noreply, socket}
   end
@@ -72,35 +77,49 @@ defmodule LivePlaygroundWeb.StreamInsertTabularLive do
   def handle_event("remove-tabular-input", %{"id" => id}, socket) do
     socket =
       socket
-      |> stream_delete_by_dom_id(:tabular_inputs, id)
-      |> update(:tabular_counter, &(&1 - 1))
+      |> stream_delete(:tabular_inputs, %{id: id})
+      |> update(:tabular_input_ids, &List.delete(&1, String.to_integer(id)))
 
     {:noreply, socket}
   end
 
   def handle_event("validate", %{"city" => tabular_params}, socket) do
-    IO.inspect(tabular_params)
+    valid =
+      for {id, index} <- Enum.with_index(socket.assigns.tabular_input_ids) do
+        params =
+          get_params(tabular_params, index)
+          |> Map.put("countrycode", "EST")
 
-    for x <- [0, 1] do
-      form =
-        %City{}
-        |> Cities.change_city(%{})
-        |> Map.put(:action, :validate)
-        |> to_form()
+        changeset =
+          %City{}
+          |> Cities.change_city(params)
+          |> Map.put(:action, :validate)
 
-      tabular_input = %{
-        id: x,
-        form: form
-      }
+        tabular_input = %{
+          id: id,
+          form: to_form(changeset)
+        }
 
-      send(self(), {:stream_tabular_input, tabular_input})
-    end
+        send(self(), {:stream_tabular_input, tabular_input})
+
+        changeset.valid?
+      end
+
+    if Enum.all?(valid), do: send(self(), {:save_tabular_params, tabular_params})
 
     {:noreply, socket}
   end
 
   def handle_info({:stream_tabular_input, tabular_input}, socket) do
     {:noreply, stream_insert(socket, :tabular_inputs, tabular_input)}
+  end
+
+  def handle_info({:save_tabular_params, _tabular_params}, socket) do
+    {:noreply, push_patch(socket, to: ~p"/stream-insert-tabular")}
+  end
+
+  defp get_params(tabular_params, index) do
+    Enum.reduce(tabular_params, %{}, fn {k, v}, acc -> Map.put(acc, k, Enum.at(v, index)) end)
   end
 
   defp get_empty_form() do
