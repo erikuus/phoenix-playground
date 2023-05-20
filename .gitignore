@@ -35,3 +35,4 @@ live_playground-*.tar
 npm-debug.log
 /assets/node_modules/
 
+live_playground.sublime-workspace
