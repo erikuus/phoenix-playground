@@ -53,7 +53,7 @@ defmodule LivePlaygroundWeb.SearchParamLive do
       <.button type="submit">
         Search
       </.button>
-      <.button_link type="secondary" patch={~p"/search-advanced"}>
+      <.button_link type="secondary" patch={~p"/search-param"}>
         Clear
       </.button_link>
     </form>
