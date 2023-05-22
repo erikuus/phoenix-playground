@@ -44,7 +44,7 @@ defmodule LivePlaygroundWeb.Router do
       live "/stream-insert", StreamInsertLive
       live "/stream-update", StreamUpdateLive, :index
       live "/stream-update/edit", StreamUpdateLive, :edit
-      live "/stream-insert-tabular", StreamInsertTabularLive
+      live "/tabular-insert", TabularInsertLive
       live "/broadcast", BroadcastLive
       live "/broadcast-stream", BroadcastStreamLive, :index
       live "/broadcast-stream/edit", BroadcastStreamLive, :edit

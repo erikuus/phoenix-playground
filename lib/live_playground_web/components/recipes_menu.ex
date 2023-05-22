@@ -131,7 +131,7 @@ defmodule LivePlaygroundWeb.RecipesMenu do
         paths: ["/form-insert", "/form-insert-validate", "/form-update"]
       },
       %{
-        icon: "hero-squares-plus",
+        icon: "hero-rss",
         label: "Stream",
         path: "/stream-insert",
         badge: 2,
@@ -143,6 +143,13 @@ defmodule LivePlaygroundWeb.RecipesMenu do
         path: "/broadcast",
         badge: 2,
         paths: ["/broadcast", "/broadcast-stream"]
+      },
+      %{
+        icon: "hero-squares-plus",
+        label: "Tabular Insert",
+        path: "/tabular-insert",
+        badge: nil,
+        paths: ["/tabular-insert"]
       },
       %{
         icon: "hero-arrow-up-tray",

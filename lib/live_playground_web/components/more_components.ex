@@ -78,7 +78,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   defp button_color_class(type) do
     Map.get(
       %{
-        "primary" => "bg-zinc-700 hover:bg-zinc-900 text-white active:text-white/80",
+        "primary" => "bg-zinc-900 hover:bg-zinc-700 text-white active:text-white/80",
         "secondary" =>
           "border border-zinc-200 bg-zinc-100 hover:bg-zinc-200 text-gray-700 active:text-gray-800",
         "dangerous" => "bg-red-600 hover:bg-red-700 text-white active:text-white/80"

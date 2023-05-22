@@ -8,7 +8,7 @@ defmodule LivePlayground.Cities do
 
   alias LivePlayground.Cities.City
 
-  # broadcaststream
+  # broadcaststream # tabularinsert
   @pubsub LivePlayground.PubSub
   @topic inspect(__MODULE__)
 
@@ -26,7 +26,7 @@ defmodule LivePlayground.Cities do
     {:error, changeset}
   end
 
-  # endbroadcaststream
+  # endbroadcaststream # endtabularinsert
 
   # paginate
   def count_city do
@@ -56,7 +56,7 @@ defmodule LivePlayground.Cities do
 
   # endpaginate
 
-  # form # streaminsert # streamupdate # broadcaststream
+  # form # streaminsert # streamupdate # broadcaststream # tabularinsert
   def list_est_city() do
     from(City)
     |> where(countrycode: "EST")
@@ -64,7 +64,7 @@ defmodule LivePlayground.Cities do
     |> Repo.all()
   end
 
-  # endform # endstreaminsert  # endstreamupdate # endbroadcaststream
+  # endform # endstreaminsert  # endstreamupdate # endbroadcaststream # endtabularinsert
 
   # sort
   def list_est_city(options) when is_map(options) do
@@ -160,9 +160,9 @@ defmodule LivePlayground.Cities do
       ** (Ecto.NoResultsError)
 
   """
-  # streamupdate # broadcaststream
+  # streamupdate # broadcaststream # tabularinsert
   def get_city!(id), do: Repo.get!(City, id)
-  # streamupdate # endbroadcaststream
+  # streamupdate # endbroadcaststream # endtabularinsert
 
   @doc """
   Creates a city.
@@ -185,7 +185,7 @@ defmodule LivePlayground.Cities do
 
   # endform # endstreaminsert
 
-  # broadcaststream
+  # broadcaststream # tabularinsert
   def create_city_broadcast(attrs \\ %{}) do
     %City{}
     |> City.changeset(attrs)
@@ -193,7 +193,7 @@ defmodule LivePlayground.Cities do
     |> broadcast(:create_city)
   end
 
-  # endbroadcaststream
+  # endbroadcaststream # endtabularinsert
 
   @doc """
   Updates a city.
@@ -245,13 +245,13 @@ defmodule LivePlayground.Cities do
 
   # endstreaminsert
 
-  # broadcaststream
-  def delete_city_broadcaststream(%City{} = city) do
+  # broadcaststream # tabularinsert
+  def delete_city_broadcast(%City{} = city) do
     Repo.delete(city)
     |> broadcast(:delete_city)
   end
 
-  # endbroadcaststream
+  # endbroadcaststream # endtabularinsert
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking city changes.
@@ -262,10 +262,10 @@ defmodule LivePlayground.Cities do
       %Ecto.Changeset{data: %City{}}
 
   """
-  # form # streaminsert # streamupdate # broadcaststream
+  # form # streaminsert # streamupdate # broadcaststream # tabularinsert
   def change_city(%City{} = city, attrs \\ %{}) do
     City.changeset(city, attrs)
   end
 
-  # endform # endstreaminsert # endstreamupdate # endbroadcaststream
+  # endform # endstreaminsert # endstreamupdate # endbroadcaststream # endtabularinsert
 end
