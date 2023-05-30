@@ -48,6 +48,7 @@ defmodule LivePlaygroundWeb.Router do
       live "/broadcast", BroadcastLive
       live "/broadcast-stream", BroadcastStreamLive, :index
       live "/broadcast-stream/edit", BroadcastStreamLive, :edit
+      live "/key-events", KeyEventsLive
       live "/upload", UploadLive
       live "/languages", LanguageLive.Index, :index
       live "/languages/new", LanguageLive.Index, :new

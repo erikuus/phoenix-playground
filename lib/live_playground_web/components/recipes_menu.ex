@@ -68,7 +68,7 @@ defmodule LivePlaygroundWeb.RecipesMenu do
         paths: ["/params"]
       },
       %{
-        icon: "hero-arrow-path",
+        icon: "hero-arrow-path-rounded-square",
         label: "Dynamic Form",
         path: "/dynamic-form",
         badge: nil,
@@ -80,6 +80,13 @@ defmodule LivePlaygroundWeb.RecipesMenu do
         path: "/modals",
         badge: nil,
         paths: ["/modals"]
+      },
+      %{
+        icon: "hero-rectangle-group",
+        label: "Key Events",
+        path: "/key-events",
+        badge: nil,
+        paths: ["/key-events"]
       },
       %{
         icon: "hero-paper-airplane",
