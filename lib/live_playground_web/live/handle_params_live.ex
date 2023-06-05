@@ -54,25 +54,25 @@ defmodule LivePlaygroundWeb.HandleParamsLive do
 
     <.list class="mt-6 mb-16">
       <:item title="Code"><%= @selected_country.code %></:item>
-      
+
       <:item title="Continent"><%= @selected_country.continent %></:item>
-      
+
       <:item title="Region"><%= @selected_country.region %></:item>
-      
+
       <:item title="The year of independence"><%= @selected_country.indepyear %></:item>
-      
+
       <:item title="The form of government"><%= @selected_country.governmentform %></:item>
-      
+
       <:item title="The head of state"><%= @selected_country.headofstate %></:item>
-      
+
       <:item title="Population">
         <%= Number.Delimit.number_to_delimited(@selected_country.population, precision: 0, delimiter: " ") %>
       </:item>
-      
+
       <:item title="GNP">
         <%= Number.Delimit.number_to_delimited(@selected_country.gnp, precision: 0, delimiter: " ") %>
       </:item>
-      
+
       <:item title="Life expectancy">
         <%= Number.Delimit.number_to_delimited(@selected_country.lifeexpectancy, precision: 2) %>
       </:item>
