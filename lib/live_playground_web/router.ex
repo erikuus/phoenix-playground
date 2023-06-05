@@ -35,9 +35,6 @@ defmodule LivePlaygroundWeb.Router do
       live "/paginate-params", PaginateParamsLive
       live "/modals", ModalsLive
       live "/modals/image", ModalsLive, :image
-      live "/modals-advanced/text", ModalsAdvancedLive, :text
-      live "/modals-advanced/math", ModalsAdvancedLive, :math
-      live "/modals-advanced/image", ModalsAdvancedLive, :image
       live "/form-insert", FormInsertLive
       live "/form-insert-validate", FormInsertValidateLive
       live "/form-update-validate", FormUpdateValidateLive
@@ -49,6 +46,8 @@ defmodule LivePlaygroundWeb.Router do
       live "/broadcast-stream", BroadcastStreamLive, :index
       live "/broadcast-stream/edit", BroadcastStreamLive, :edit
       live "/key-events", KeyEventsLive
+      live "/js-commands", JsCommandsLive
+      live "/js-commands-real", JsCommandsRealLive
       live "/upload", UploadLive
       live "/languages", LanguageLive.Index, :index
       live "/languages/new", LanguageLive.Index, :new

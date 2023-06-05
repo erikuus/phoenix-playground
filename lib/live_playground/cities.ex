@@ -56,7 +56,7 @@ defmodule LivePlayground.Cities do
 
   # endpaginate
 
-  # form # streaminsert # streamupdate # broadcaststream # tabularinsert
+  # form # streaminsert # streamupdate # broadcaststream # tabularinsert # jscommands
   def list_est_city() do
     from(City)
     |> where(countrycode: "EST")
@@ -64,7 +64,7 @@ defmodule LivePlayground.Cities do
     |> Repo.all()
   end
 
-  # endform # endstreaminsert  # endstreamupdate # endbroadcaststream # endtabularinsert
+  # endform # endstreaminsert # endstreamupdate # endbroadcaststream # endtabularinsert # endjscommands
 
   # sort
   def list_est_city(options) when is_map(options) do

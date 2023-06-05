@@ -159,6 +159,13 @@ defmodule LivePlaygroundWeb.RecipesMenu do
         paths: ["/tabular-insert"]
       },
       %{
+        icon: "hero-command-line",
+        label: "JS Commands",
+        path: "/js-commands",
+        badge: 2,
+        paths: ["/js-commands"]
+      },
+      %{
         icon: "hero-arrow-up-tray",
         label: "Upload",
         path: "/upload",
