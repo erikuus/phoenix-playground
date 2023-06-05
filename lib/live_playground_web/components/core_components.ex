@@ -701,7 +701,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
     |> JS.show(to: "##{id}")
     |> JS.show(
       to: "##{id}-bg",
-      transition: {"transition-all transform ease-out duration-300", "opacity-0", "opacity-100"}
+      transition: "fade-in"
     )
     |> show("##{id}-container")
     |> JS.focus_first(to: "##{id}-content")
@@ -711,7 +711,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
     js
     |> JS.hide(
       to: "##{id}-bg",
-      transition: {"transition-all transform ease-in duration-200", "opacity-100", "opacity-0"}
+      transition: "fade-out"
     )
     |> hide("##{id}-container")
     |> JS.hide(to: "##{id}", transition: {"block", "block", "hidden"})
