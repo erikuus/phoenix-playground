@@ -13,11 +13,6 @@ defmodule LivePlaygroundWeb.JsCommandsLive do
       <:subtitle>
         How to toggle slideover panel with javascript commands in LiveView
       </:subtitle>
-      <:actions>
-        <.link navigate={~p"/js-commands-form"}>
-          See also: Dynamic Form with JS Commands <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
-        </.link>
-      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <.button phx-click={show_panel()}>
