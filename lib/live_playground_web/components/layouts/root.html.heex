@@ -18,7 +18,7 @@
     </style>
   </head>
 
-  <body class="font-sans antialiased text-gray-600 min-h-full flex flex-col" scroll-region>
+  <body id="root-body" class="font-sans antialiased text-gray-600 min-h-full flex flex-col" scroll-region>
     <!-- Icon sidebar -->
     <div class="fixed inset-y-0 flex flex-col pl-1.5 pr-1.5 py-1.5 space-y-1 items-center overflow-y-auto bg-zinc-700 w-14 md:w-20 z-20">
       <MainMenu.sidebar current_path={Phoenix.Controller.current_path(@conn)} />
