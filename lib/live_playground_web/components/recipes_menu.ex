@@ -89,6 +89,13 @@ defmodule LivePlaygroundWeb.RecipesMenu do
         paths: ["/key-events"]
       },
       %{
+        icon: "hero-command-line",
+        label: "JS Commands",
+        path: "/js-commands",
+        badge: nil,
+        paths: ["/js-commands"]
+      },
+      %{
         icon: "hero-paper-airplane",
         label: "Send Messages",
         path: "/send-interval",
@@ -157,13 +164,6 @@ defmodule LivePlaygroundWeb.RecipesMenu do
         path: "/tabular-insert",
         badge: nil,
         paths: ["/tabular-insert"]
-      },
-      %{
-        icon: "hero-command-line",
-        label: "JS Commands",
-        path: "/js-commands",
-        badge: 2,
-        paths: ["/js-commands"]
       },
       %{
         icon: "hero-arrow-up-tray",
