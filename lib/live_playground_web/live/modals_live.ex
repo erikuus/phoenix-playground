@@ -13,9 +13,9 @@ defmodule LivePlaygroundWeb.ModalsLive do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Modals
+      Modal
       <:subtitle>
-        How to use core modal component
+        How to use modal component
       </:subtitle>
     </.header>
     <!-- end hiding from live code -->
@@ -83,7 +83,7 @@ defmodule LivePlaygroundWeb.ModalsLive do
       Recipes
       <:confirm>Get started</:confirm>
     </.modal>
-    <.modal :if={@live_action == :image} id="image-modal" show on_cancel={JS.navigate(~p"/modals")} content_class="max-w-5xl">
+    <.modal :if={@live_action == :image} id="image-modal" show on_cancel={JS.navigate(~p"/modals")} width_class="max-w-5xl">
       <.live_component
         module={LivePlaygroundWeb.Components.ImageComponent}
         id={:image}
@@ -102,7 +102,7 @@ defmodule LivePlaygroundWeb.ModalsLive do
   end
 
   def handle_event("ok", %{"modal" => modal}, socket) do
-    Process.send_after(self(), :reset, 1000)
+    Process.send_after(self(), :reset, 2000)
     {:noreply, assign(socket, :modal, modal)}
   end
 

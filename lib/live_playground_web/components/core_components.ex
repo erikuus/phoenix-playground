@@ -37,7 +37,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
   attr :show, :boolean, default: false
   attr :on_cancel, JS, default: %JS{}
   attr :on_confirm, JS, default: %JS{}
-  attr :content_class, :string, default: "sm:max-w-lg"
+  attr :width_class, :string, default: "sm:max-w-lg"
 
   slot :inner_block, required: true
   slot :icon
@@ -78,7 +78,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
               </div>
 
               <div id={"#{@id}-content"}>
-                <div class={["p-4 sm:p-6 sm:w-full sm:min-w-[400px]", @content_class]}>
+                <div class={["p-4 sm:p-6 sm:w-full sm:min-w-[400px]", @width_class]}>
                   <div class="sm:flex sm:items-start">
                     <div
                       :if={@icon != []}
