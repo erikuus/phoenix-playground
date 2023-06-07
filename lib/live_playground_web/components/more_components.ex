@@ -8,6 +8,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
   """
   use Phoenix.Component
 
+  alias Phoenix.LiveView.JS
+
   import LivePlaygroundWeb.CoreComponents
 
   @doc """
@@ -203,9 +205,11 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <div class="-mt-px flex w-0 flex-1">
         <%= render_slot(@prev) %>
       </div>
+
       <div class="hidden lg:-mt-px lg:flex">
         <%= render_slot(@pages) %>
       </div>
+
       <div class="-mt-px flex w-0 flex-1 justify-end">
         <%= render_slot(@next) %>
       </div>
@@ -313,9 +317,10 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   def dropdown(assigns) do
     ~H"""
-    <div class="fixed inset-0" phx-capture-click={@outer_event}></div>
-
-    <ul class={"absolute z-10 mt-1 overflow-auto rounded-md shadow-lg border border-gray-200 bg-white py-1 #{@class}"}>
+    <ul
+      phx-click-away={@outer_event}
+      class={"absolute z-10 mt-1 overflow-auto rounded-md shadow-lg border border-gray-200 bg-white py-1 #{@class}"}
+    >
       <%= render_slot(@inner_block) %>
     </ul>
     """
@@ -412,11 +417,12 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <div id={@id}>
         <%= render_slot(@inner_block) %>
       </div>
+
       <.link phx-click={@edit_event} phx-value-field={@id}>
-        <span class="hidden md:inline font-bold">Edit</span>
-        <.icon name="hero-pencil-square-mini" class="md:hidden h-6 w-6" />
+        <span class="hidden md:inline font-bold">Edit</span> <.icon name="hero-pencil-square-mini" class="md:hidden h-6 w-6" />
       </.link>
     </div>
+
     <.form
       :if={@edit}
       for={@form}
@@ -427,10 +433,165 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <div>
         <.button class="w-full md:w-auto" phx-disable-with="">Save</.button>
       </div>
+
       <div>
         <.button_link type="secondary" class="w-full md:w-auto" phx-click={@cancel_event}>Cancel</.button_link>
       </div>
     </.form>
     """
+  end
+
+  @doc """
+  Renders a slideover.
+
+  ## Examples
+
+      <.slideover id="menu">
+        ...
+      </.slideover>
+
+  JS commands may be passed to the `:on_cancel` and `on_confirm` attributes
+  for the caller to react to each button press, for example:
+
+      <.slideover id="confirm" on_confirm={JS.push("delete")} on_cancel={JS.navigate(~p"/items")}>
+        Are you sure to delete these items?
+        ...
+        <:confirm>OK</:confirm>
+        <:cancel>Cancel</:cancel>
+      </.slideover>
+  """
+  attr :id, :string, required: true
+  attr :show, :boolean, default: false
+  attr :on_cancel, JS, default: %JS{}
+  attr :on_confirm, JS, default: %JS{}
+  attr :width_class, :string, default: "max-w-md"
+
+  slot :inner_block, required: true
+  slot :title
+  slot :subtitle
+
+  slot :confirm do
+    attr :class, :string
+  end
+
+  slot :cancel
+
+  def slideover(assigns) do
+    ~H"""
+    <div
+      class="relative z-50"
+      aria-labelledby={"#{@id}-title"}
+      aria-describedby={"#{@id}-description"}
+      role="dialog"
+      aria-modal="true"
+      tabindex="0"
+    >
+      <div id={"#{@id}-bg"} class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity hidden" />
+      <div
+        id={@id}
+        phx-mounted={@show && show_slideover(@id)}
+        phx-remove={hide_slideover(@id)}
+        class="fixed inset-0 overflow-hidden hidden"
+      >
+        <div class="absolute inset-0 overflow-hidden">
+          <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+            <div class={["pointer-events-auto w-screen", @width_class]}>
+              <.focus_wrap
+                id={"#{@id}-container"}
+                phx-mounted={@show && show_slideover(@id)}
+                phx-window-keydown={hide_slideover(@on_cancel, @id)}
+                phx-key="escape"
+                phx-click-away={hide_slideover(@on_cancel, @id)}
+                class="flex h-full flex-col bg-white py-6 shadow-xl px-4 sm:px-6"
+              >
+                <div class="flex items-start justify-between">
+                  <header>
+                    <h3 id={"#{@id}-title"} class="text-lg font-medium leading-6 text-gray-900">
+                      <%= render_slot(@title) %>
+                    </h3>
+                    <p :if={@subtitle != []} id={"#{@id}-subtitle"} class="mt-2 text-base leading-6 text-zinc-600">
+                      <%= render_slot(@subtitle) %>
+                    </p>
+                  </header>
+                  <div class="ml-3 flex h-7">
+                    <.link phx-click={hide_slideover(@on_cancel, @id)}>
+                      <.icon name="hero-x-mark-solid" class="w-6 h-6 text-gray-400 hover:text-gray-500" />
+                    </.link>
+                  </div>
+                </div>
+                <div class="relative mt-6 flex-1 overflow-y-auto">
+                  <%= render_slot(@inner_block) %>
+                </div>
+                <div :if={@confirm != [] or @cancel != []} class="border-t border-zinc-200 pt-4 sm:pl-4 sm:flex sm:flex-row-reverse">
+                  <.link
+                    :for={cancel <- @cancel}
+                    phx-click={hide_slideover(@on_cancel, @id)}
+                    class={[
+                      "inline-flex items-center justify-center rounded-lg border border-zinc-200 bg-zinc-100 hover:bg-zinc-200",
+                      "py-2 px-5 text-sm font-semibold leading-6 text-gray-700 active:text-gray-800",
+                      "w-full sm:w-auto sm:ml-3"
+                    ]}
+                  >
+                    <%= render_slot(cancel) %>
+                  </.link>
+                  <.button
+                    :for={confirm <- @confirm}
+                    phx-click={@on_confirm}
+                    id={"#{@id}-confirm"}
+                    phx-disable-with
+                    class={"w-full sm:w-auto mt-3 sm:mt-0 #{Map.get(confirm, :class, nil)}"}
+                  >
+                    <%= render_slot(confirm) %>
+                  </.button>
+                </div>
+              </.focus_wrap>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  def show_slideover(js \\ %JS{}, id) when is_binary(id) do
+    js
+    |> JS.show(
+      to: "##{id}",
+      transition: {
+        "ease-in-out duration-500 sm:duration-700",
+        "translate-x-full",
+        "translate-x-0"
+      }
+    )
+    |> JS.show(
+      to: "##{id}-bg",
+      transition: "fade-in"
+    )
+    |> JS.add_class(
+      "overflow-y-hidden",
+      to: "#root-body"
+    )
+    |> JS.focus_first(to: "##{id}-container")
+  end
+
+  def hide_slideover(js \\ %JS{}, id) do
+    js
+    |> JS.hide(
+      to: "##{id}-bg",
+      transition: "fade-out"
+    )
+    |> JS.hide(
+      to: "##{id}",
+      transition: {
+        "ease-in-out duration-500 sm:duration-700",
+        "translate-x-0",
+        "translate-x-full"
+      }
+    )
+    |> JS.remove_class(
+      "overflow-y-hidden",
+      to: "#root-body"
+    )
+    |> JS.pop_focus()
   end
 end
