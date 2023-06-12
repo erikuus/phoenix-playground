@@ -89,7 +89,7 @@ defmodule LivePlaygroundWeb.RecipesMenu do
         paths: ["/key-events"]
       },
       %{
-        icon: "hero-command-line",
+        icon: "hero-arrow-left-on-rectangle",
         label: "JS Commands",
         path: "/js-commands",
         badge: nil,
@@ -159,7 +159,7 @@ defmodule LivePlaygroundWeb.RecipesMenu do
         paths: ["/broadcast", "/broadcast-stream"]
       },
       %{
-        icon: "hero-squares-plus",
+        icon: "hero-table-cells",
         label: "Tabular Insert",
         path: "/tabular-insert",
         badge: nil,
