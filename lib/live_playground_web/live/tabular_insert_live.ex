@@ -18,12 +18,14 @@ defmodule LivePlaygroundWeb.TabularInsertLive do
 
   def render(assigns) do
     ~H"""
+    <!-- start hiding from live code -->
     <.header class="mb-6">
       Tabular Insert
       <:subtitle>
         How to insert multiple items using streams and broadcast in LiveView
       </:subtitle>
     </.header>
+    <!-- end hiding from live code -->
     <form phx-submit="save" class="space-y-6 md:space-y-4">
       <div id="tabular_inputs" phx-update="stream" class="space-y-4">
         <div
