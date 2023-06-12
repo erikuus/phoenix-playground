@@ -46,16 +46,9 @@ defmodule LivePlaygroundWeb.JsCommandsLive do
                   Panel content
                 </div>
                 <div class="border-t border-zinc-200 pt-4 sm:pl-4 sm:flex sm:flex-row-reverse">
-                  <.link
-                    phx-click={hide_panel()}
-                    class={[
-                      "inline-flex items-center justify-center rounded-lg border border-zinc-200 bg-zinc-100 hover:bg-zinc-200",
-                      "py-2 px-5 text-sm font-semibold leading-6 text-gray-700 active:text-gray-800",
-                      "w-full sm:w-auto sm:ml-3"
-                    ]}
-                  >
+                  <.button phx-click={hide_panel()} look="secondary" class="w-full sm:w-auto ml-0 sm:ml-2">
                     Cancel
-                  </.link>
+                  </.button>
                   <.button phx-click={JS.push("confirm", value: %{btn: "OK"}) |> hide_panel()} class="w-full sm:w-auto mt-3 sm:mt-0">
                     OK
                   </.button>
