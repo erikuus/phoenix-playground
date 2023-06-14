@@ -14,7 +14,9 @@ defmodule LivePlaygroundWeb.Router do
     plug :accepts, ["json"]
   end
 
-  live_session :default, on_mount: LivePlaygroundWeb.InitLive do
+  live_session :recipes,
+    layout: {LivePlaygroundWeb.Layouts, :recipes},
+    on_mount: LivePlaygroundWeb.InitLive do
     scope "/", LivePlaygroundWeb do
       pipe_through :browser
 
@@ -33,10 +35,6 @@ defmodule LivePlaygroundWeb.Router do
       live "/sort-params", SortParamsLive
       live "/paginate", PaginateLive
       live "/paginate-params", PaginateParamsLive
-      live "/modals", ModalsLive
-      live "/modals/image", ModalsLive, :image
-      live "/slideover", SlideoverLive
-      live "/slideover/image", SlideoverLive, :image
       live "/form-insert", FormInsertLive
       live "/form-insert-validate", FormInsertValidateLive
       live "/form-update-validate", FormUpdateValidateLive
@@ -55,6 +53,19 @@ defmodule LivePlaygroundWeb.Router do
       live "/languages/:id/edit", LanguageLive.Index, :edit
       live "/languages/:id", LanguageLive.Show, :show
       live "/languages/:id/show/edit", LanguageLive.Show, :edit
+    end
+  end
+
+  live_session :comps,
+    layout: {LivePlaygroundWeb.Layouts, :comps},
+    on_mount: LivePlaygroundWeb.InitLive do
+    scope "/", LivePlaygroundWeb do
+      pipe_through :browser
+
+      live "/modals", ModalsLive
+      live "/modals/image", ModalsLive, :image
+      live "/slideover", SlideoverLive
+      live "/slideover/image", SlideoverLive, :image
     end
   end
 

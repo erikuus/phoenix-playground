@@ -1,0 +1,13 @@
+<.flash_group flash={@flash} />
+<.multi_column_layout>
+  <:narrow_sidebar>
+    <Sidebar.menu current_layout={:comps} />
+  </:narrow_sidebar>
+  <:mobile_menu>
+    <Comps.menu current_path={@current_path} text_class="text-base" />
+  </:mobile_menu>
+  <:static_menu>
+    <Comps.menu current_path={@current_path} />
+  </:static_menu>
+  <%= @inner_content %>
+</.multi_column_layout>

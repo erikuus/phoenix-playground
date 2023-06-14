@@ -9,50 +9,11 @@
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
-
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js">
-    </script>
-
     <style>
       <%= Makeup.stylesheet() %>
     </style>
   </head>
-
   <body id="root-body" class="font-sans antialiased text-gray-600 min-h-full flex flex-col" scroll-region>
-    <!-- Icon sidebar -->
-    <div class="fixed inset-y-0 flex flex-col pl-1.5 pr-1.5 py-1.5 space-y-1 items-center overflow-y-auto bg-zinc-700 w-14 md:w-20 z-20">
-      <MainMenu.sidebar current_path={Phoenix.Controller.current_path(@conn)} />
-    </div>
-    <!-- Alpine container -->
-    <div x-data="{ open: false }" @keydown.window.escape="open = false" class="pl-14 md:pl-20">
-      <!-- Mobile sidebar -->
-      <div x-show="open" class="relative z-40 lg:hidden" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-gray-600 bg-opacity-75 cursor-text"></div>
-        <div class="fixed inset-0 z-40 flex">
-          <div class="relative flex w-full max-w-xs flex-1 flex-col bg-white">
-            <div class="absolute top-0 right-0 -mr-12 pt-2">
-              <button
-                @click="open = false"
-                type="button"
-                class="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-              >
-                <span class="sr-only">Close sidebar</span>
-                <.icon name="hero-x-mark" class="h-6 w-6 text-white" />
-              </button>
-            </div>
-            <div class="h-0 flex-1 overflow-y-auto pt-5 pb-4">
-              <nav @click="open = false" class="mt-5 space-y-1 px-2">
-                <RecipesMenu.mobile />
-              </nav>
-            </div>
-          </div>
-          <div class="w-14 flex-shrink-0">
-            <!-- Force sidebar to shrink to fit close icon -->
-          </div>
-        </div>
-      </div>
-      <!-- Template or page content -->
-      <%= @inner_content %>
-    </div>
+    <%= @inner_content %>
   </body>
 </html>
