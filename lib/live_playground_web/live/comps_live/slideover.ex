@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.SlideoverLive do
+defmodule LivePlaygroundWeb.CompsLive.Slideover do
   use LivePlaygroundWeb, :live_view
 
   def mount(_params, _session, socket) do
@@ -19,24 +19,26 @@ defmodule LivePlaygroundWeb.SlideoverLive do
       </:subtitle>
     </.header>
     <!-- end hiding from live code -->
-    <.button_link phx-click={show_slideover("basic")}>
-      Basic
-    </.button_link>
-    <.button_link phx-click={show_slideover("with-subtitle")}>
-      With subtitle
-    </.button_link>
-    <.button_link phx-click={show_slideover("with-scrollbar")}>
-      With scrollbar
-    </.button_link>
-    <.button_link phx-click={show_slideover("with-red-button")}>
-      With red button
-    </.button_link>
-    <.button_link phx-click={show_slideover("with-navigate-button")}>
-      With navigate button
-    </.button_link>
-    <.button_link patch={~p"/slideover/image"}>
-      With live component
-    </.button_link>
+    <div class="flex flex-col space-x-0 space-y-3 xl:flex-row xl:space-x-3 xl:space-y-0">
+      <.button_link phx-click={show_slideover("basic")}>
+        Basic
+      </.button_link>
+      <.button_link phx-click={show_slideover("with-subtitle")}>
+        With subtitle
+      </.button_link>
+      <.button_link phx-click={show_slideover("with-scrollbar")}>
+        With scrollbar
+      </.button_link>
+      <.button_link phx-click={show_slideover("with-red-button")}>
+        With red button
+      </.button_link>
+      <.button_link phx-click={show_slideover("with-navigate-button")}>
+        With navigate button
+      </.button_link>
+      <.button_link patch={~p"/slideover/image"}>
+        With live component
+      </.button_link>
+    </div>
 
     <.alert :if={@slideover} class="mt-6">
       Slideover "<%= @slideover %>" confirmed!
@@ -78,10 +80,10 @@ defmodule LivePlaygroundWeb.SlideoverLive do
       <:confirm class="bg-red-600 hover:bg-red-700">OK</:confirm>
       <:cancel>Cancel</:cancel>
     </.slideover>
-    <.slideover id="with-navigate-button" on_confirm={JS.navigate(~p"/click-buttons")}>
+    <.slideover id="with-navigate-button" on_confirm={JS.navigate(~p"/modal")}>
       <:title>With navigate button</:title>
-      Recipes
-      <:confirm>Get started</:confirm>
+      Navigate to modal
+      <:confirm>Go</:confirm>
     </.slideover>
     <.slideover :if={@live_action == :image} id="image-slideover" show on_cancel={JS.navigate(~p"/slideover")} width_class="max-w-5xl">
       <.live_component

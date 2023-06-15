@@ -62,10 +62,10 @@ defmodule LivePlaygroundWeb.Router do
     scope "/", LivePlaygroundWeb do
       pipe_through :browser
 
-      live "/modals", ModalsLive
-      live "/modals/image", ModalsLive, :image
-      live "/slideover", SlideoverLive
-      live "/slideover/image", SlideoverLive, :image
+      live "/modal", CompsLive.Modals
+      live "/modal/image", CompsLive.Modals, :image
+      live "/slideover", CompsLive.Slideover
+      live "/slideover/image", CompsLive.Slideover, :image
     end
   end
 

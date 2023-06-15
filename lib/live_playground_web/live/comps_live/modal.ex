@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.ModalsLive do
+defmodule LivePlaygroundWeb.CompsLive.Modals do
   use LivePlaygroundWeb, :live_view
 
   def mount(_params, _session, socket) do
@@ -35,7 +35,7 @@ defmodule LivePlaygroundWeb.ModalsLive do
       <.button_link phx-click={show_modal("with-navigate-button")}>
         With navigate button
       </.button_link>
-      <.button_link patch={~p"/modals/image"}>
+      <.button_link patch={~p"/modal/image"}>
         With live component
       </.button_link>
     </div>
@@ -78,24 +78,24 @@ defmodule LivePlaygroundWeb.ModalsLive do
       <:confirm class="bg-red-600 hover:bg-red-700">OK</:confirm>
       <:cancel>Cancel</:cancel>
     </.modal>
-    <.modal id="with-navigate-button" on_confirm={JS.navigate(~p"/click-buttons")}>
+    <.modal id="with-navigate-button" on_confirm={JS.navigate(~p"/slideover")}>
       <:title>With navigate button</:title>
-      Recipes
-      <:confirm>Get started</:confirm>
+      Navigate to slideover
+      <:confirm>Go</:confirm>
     </.modal>
-    <.modal :if={@live_action == :image} id="image-modal" show on_cancel={JS.navigate(~p"/modals")} width_class="max-w-5xl">
+    <.modal :if={@live_action == :image} id="image-modal" show on_cancel={JS.navigate(~p"/modal")} width_class="max-w-5xl">
       <.live_component
         module={LivePlaygroundWeb.Components.ImageComponent}
         id={:image}
         title="Image Component"
         images={["DSC02232.jpg", "DSC02234.jpg", "DSC02235.jpg"]}
         return_text="Close"
-        return_to={~p"/modals"}
+        return_to={~p"/modal"}
       />
     </.modal>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/comps_live/modals_live.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/comps_live/modal.ex")) %>
     </div>
     <!-- end hiding from live code -->
     """

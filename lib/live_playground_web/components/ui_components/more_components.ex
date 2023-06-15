@@ -15,6 +15,44 @@ defmodule LivePlaygroundWeb.MoreComponents do
   @doc """
   Renders a multi-column layout with left-fixed narrow sidebar, mobile menu for small
   and static menu for larger displays.
+
+  ## Examples
+
+      <.multi_column_layout>
+        <:narrow_sidebar>
+          <.narrow_sidebar items={[
+            %{
+              icon: "hero-home",
+              label: "Home",
+              path: "/",
+              active: true
+            }
+          ]} />
+        </:narrow_sidebar>
+        <:mobile_menu>
+          <.vertical_navigation text_class="text-base" items={[
+            %{
+              icon: "hero-home",
+              label: "Home",
+              path: "/",
+              badge: 2,
+              active: true
+            }
+          ]} />
+        </:mobile_menu>
+        <:static_menu>
+          <.vertical_navigation items={[
+            %{
+              icon: "hero-home",
+              label: "Home",
+              path: "/",
+              badge: 2,
+              active: true
+            }
+          ]} />
+        </:static_menu>
+        <%= @inner_content %>
+      </.multi_column_layout>
   """
   slot :narrow_sidebar, required: true
   slot :mobile_menu
@@ -89,38 +127,103 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
-  Renders an alert box.
+  Renders a list of links for narrow sidebar.
 
   ## Examples
 
-      <.alert>Info</.alert>
-      <.alert type="warning">Warning</.alert>
-      <.alert type="error">Error</.alert>
+      <.narrow_sidebar items={[
+        %{
+          icon: "hero-home",
+          label: "Home",
+          path: "/",
+          active: true
+        }
+      ]} />
   """
-  attr :type, :string, default: "info"
-  attr :class, :string, default: "text-sm"
+  attr :items, :list, required: true
 
-  slot :inner_block, required: true
-
-  def alert(assigns) do
+  def narrow_sidebar(assigns) do
     ~H"""
-    <div class={["rounded-md p-4", alert_color_class(@type), @class]}>
-      <div class="flex space-x-2">
-        <%= render_slot(@inner_block) %>
-      </div>
-    </div>
+    <.link
+      :for={item <- @items}
+      navigate={item.path}
+      class={[
+        "group flex w-full flex-col items-center rounded-md p-3 text-xs font-medium",
+        sidebar_item_bg_class(item.active)
+      ]}
+    >
+      <.icon :if={item.icon} name={item.icon} class="text-zinc-300 group-hover:text-white h-6 w-6" />
+      <span class="mt-1 hidden md:block"><%= item.label %></span>
+    </.link>
     """
   end
 
-  defp alert_color_class(type) do
-    Map.get(
-      %{
-        "info" => "bg-blue-50 text-blue-700",
-        "warning" => "bg-yellow-50 text-yellow-700",
-        "error" => "bg-red-50 text-red-700"
-      },
-      type
-    )
+  defp sidebar_item_bg_class(true) do
+    "bg-zinc-600 bg-opacity-50 text-white"
+  end
+
+  defp sidebar_item_bg_class(false) do
+    "text-zinc-100 hover:bg-zinc-600 hover:bg-opacity-50 hover:text-white"
+  end
+
+  @doc """
+  Renders a list of links for vertical navigation.
+
+  ## Examples
+
+      <.vertical_navigation items={[
+        %{
+          icon: "hero-home",
+          label: "Home",
+          path: "/",
+          badge: 2,
+          active: true
+        }
+      ]} />
+  """
+  attr :items, :list, required: true
+  attr :text_class, :string, default: "text-sm"
+
+  def vertical_navigation(assigns) do
+    ~H"""
+    <.link
+      :for={item <- @items}
+      navigate={item.path}
+      class={[
+        "text-gray-900 group flex items-center px-2 py-2 font-medium rounded-md",
+        nav_item_bg_class(item.active),
+        @text_class
+      ]}
+    >
+      <.icon :if={item.icon} name={item.icon} class="text-gray-500 mr-3 flex-shrink-0 h-6 w-6" />
+      <span class="flex-1"><%= item.label %></span>
+      <span
+        :if={item.badge}
+        class={[
+          "ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full",
+          nav_badge_bg_class(item.active)
+        ]}
+      >
+        <%= item.badge %>
+      </span>
+    </.link>
+    """
+  end
+
+  defp nav_item_bg_class(true) do
+    "bg-gray-100"
+  end
+
+  defp nav_item_bg_class(false) do
+    "hover:bg-gray-100"
+  end
+
+  defp nav_badge_bg_class(true) do
+    "bg-gray-200"
+  end
+
+  defp nav_badge_bg_class(false) do
+    "bg-gray-100 group-hover:bg-gray-200"
   end
 
   @doc """
@@ -160,6 +263,41 @@ defmodule LivePlaygroundWeb.MoreComponents do
         "secondary" =>
           "border border-zinc-200 bg-zinc-100 hover:bg-zinc-200 text-gray-700 active:text-gray-800",
         "dangerous" => "bg-red-600 hover:bg-red-700 text-white active:text-white/80"
+      },
+      type
+    )
+  end
+
+  @doc """
+  Renders an alert box.
+
+  ## Examples
+
+      <.alert>Info</.alert>
+      <.alert type="warning">Warning</.alert>
+      <.alert type="error">Error</.alert>
+  """
+  attr :type, :string, default: "info"
+  attr :class, :string, default: "text-sm"
+
+  slot :inner_block, required: true
+
+  def alert(assigns) do
+    ~H"""
+    <div class={["rounded-md p-4", alert_color_class(@type), @class]}>
+      <div class="flex space-x-2">
+        <%= render_slot(@inner_block) %>
+      </div>
+    </div>
+    """
+  end
+
+  defp alert_color_class(type) do
+    Map.get(
+      %{
+        "info" => "bg-blue-50 text-blue-700",
+        "warning" => "bg-yellow-50 text-yellow-700",
+        "error" => "bg-red-50 text-red-700"
       },
       type
     )
