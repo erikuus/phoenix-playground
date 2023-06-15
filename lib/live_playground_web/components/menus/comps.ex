@@ -13,7 +13,10 @@ defmodule LivePlaygroundWeb.Comps do
   end
 
   defp items(current_path) do
-    items() |> Enum.map(&Map.put(&1, :active, is_active?(current_path, &1)))
+    items()
+    |> Enum.map(&Map.put(&1, :active, is_active?(current_path, &1)))
+    |> Enum.map(&Map.put(&1, :icon, nil))
+    |> Enum.map(&Map.put(&1, :badge, nil))
   end
 
   defp is_active?(current_path, item) do
@@ -23,17 +26,13 @@ defmodule LivePlaygroundWeb.Comps do
   defp items() do
     [
       %{
-        icon: "hero-arrow-top-right-on-square",
         label: "Modal",
         path: "/modal",
-        badge: nil,
         paths: ["/modal"]
       },
       %{
-        icon: "hero-arrow-up-tray",
         label: "Slideover",
         path: "/slideover",
-        badge: nil,
         paths: ["/slideover"]
       }
     ]
