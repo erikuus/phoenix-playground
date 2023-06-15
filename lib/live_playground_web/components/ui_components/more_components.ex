@@ -195,8 +195,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
         @text_class
       ]}
     >
-      <.icon :if={item.icon} name={item.icon} class="text-gray-500 mr-3 flex-shrink-0 h-6 w-6" />
-      <span class="flex-1"><%= item.label %></span>
+      <.icon :if={item.icon} name={item.icon} class="text-gray-500 mr-1 flex-shrink-0 h-5 w-5" />
+      <span class="flex-1 ml-2"><%= item.label %></span>
       <span
         :if={item.badge}
         class={[
