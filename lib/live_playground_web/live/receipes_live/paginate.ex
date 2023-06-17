@@ -55,12 +55,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.Paginate do
         ) %>
       </:col>
     </.table>
-    <.pagination
-      page={@options.page}
-      per_page={@options.per_page}
-      count_all={@count}
-      pages={get_pages(@options.page, @options.per_page, @count)}
-    />
+    <.pagination event="select-page" page={@options.page} per_page={@options.per_page} count_all={@count} />
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <%= raw(code("lib/live_playground_web/live/receipes_live/paginate.ex")) %>
@@ -89,15 +84,6 @@ defmodule LivePlaygroundWeb.ReceipesLive.Paginate do
       cities: Cities.list_city(options),
       options: options
     )
-  end
-
-  defp get_pages(page, per_page, count) do
-    page_count = ceil(count / per_page)
-
-    for page_number <- (page - 5)..(page + 5),
-        page_number > 0 and page_number <= page_count do
-      page_number
-    end
   end
 
   defp get_safe_page(page, per_page, count) do

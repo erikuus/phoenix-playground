@@ -62,12 +62,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.JsCommandsReal do
         </.link>
       </:action>
     </.table>
-    <.pagination
-      page={@options.page}
-      per_page={@options.per_page}
-      count_all={@count}
-      pages={get_pages(@options.page, @options.per_page, @count)}
-    />
+    <.pagination event="select-page" page={@options.page} per_page={@options.per_page} count_all={@count} />
     <.simple_list :if={@selected_cities != []} class="text-sm">
       <:item :for={selected_city <- @selected_cities} class="flex justify-between items-center">
         <span><%= selected_city.name %></span>
@@ -106,14 +101,5 @@ defmodule LivePlaygroundWeb.ReceipesLive.JsCommandsReal do
       cities: Cities.list_city(options),
       options: options
     )
-  end
-
-  defp get_pages(page, per_page, count) do
-    page_count = ceil(count / per_page)
-
-    for page_number <- (page - 5)..(page + 5),
-        page_number > 0 and page_number <= page_count do
-      page_number
-    end
   end
 end

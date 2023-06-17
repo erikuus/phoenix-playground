@@ -330,72 +330,6 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
-  Renders pagination.
-
-  ## Examples
-
-      <.pagination
-        page={@page}
-        per_page={@per_page}
-        count_all={@count}
-        pages={get_pages(@page, @per_page, @count)}
-      />
-  """
-  attr :class, :string, default: nil
-  attr :event, :string, default: "select-page"
-  attr :page, :integer, required: true
-  attr :per_page, :integer, required: true
-  attr :count_all, :integer, required: true
-  attr :pages, :list, required: true
-
-  def pagination(assigns) do
-    ~H"""
-    <nav class={["flex items-center justify-between border-t border-gray-200 px-4 sm:px-0", @class]}>
-      <div class="-mt-px flex w-0 flex-1">
-        <.link
-          :if={@page > 1}
-          phx-click={@event}
-          phx-value-page={@page - 1}
-          class={[
-            "inline-flex items-center border-t-2 pt-4 text-sm font-medium pr-4",
-            "border-transparent text-zinc-400 hover:border-zinc-300"
-          ]}
-        >
-          <.icon name="hero-arrow-long-left" class="mr-3 h-5 w-5 text-gray-400" /> Previous
-        </.link>
-      </div>
-      <div class="hidden lg:-mt-px lg:flex">
-        <.link
-          :for={page <- @pages}
-          phx-click={@event}
-          phx-value-page={page}
-          class={[
-            "inline-flex items-center border-t-2 pt-4 text-sm font-medium px-4",
-            @page != page && "border-transparent text-zinc-400 hover:border-zinc-300",
-            @page == page && "border-zinc-500 text-zinc-600"
-          ]}
-        >
-          <%= page %>
-        </.link>
-      </div>
-      <div class="-mt-px flex w-0 flex-1 justify-end">
-        <.link
-          :if={@page * @per_page < @count_all}
-          phx-click={@event}
-          phx-value-page={@page + 1}
-          class={[
-            "inline-flex items-center border-t-2 pt-4 text-sm font-medium pl-4",
-            "border-transparent text-zinc-400 hover:border-zinc-300"
-          ]}
-        >
-          Next <.icon name="hero-arrow-long-right" class="ml-3 h-5 w-5 text-gray-400" />
-        </.link>
-      </div>
-    </nav>
-    """
-  end
-
-  @doc """
   Renders a card for statistics.
 
   ## Examples
@@ -506,6 +440,80 @@ defmodule LivePlaygroundWeb.MoreComponents do
       </path>
     </svg>
     """
+  end
+
+  @doc """
+  Renders pagination.
+
+  ## Examples
+
+      <.pagination
+        page={@page}
+        per_page={@per_page}
+        count_all={@count}
+      />
+  """
+  attr :class, :string, default: nil
+  attr :event, :string, required: true
+  attr :page, :integer, required: true
+  attr :per_page, :integer, required: true
+  attr :count_all, :integer, required: true
+  attr :limit, :integer, default: 5
+
+  def pagination(assigns) do
+    ~H"""
+    <nav class={["flex items-center justify-between border-t border-gray-200 px-4 sm:px-0", @class]}>
+      <div class="-mt-px flex w-0 flex-1">
+        <.link
+          :if={@page > 1}
+          phx-click={@event}
+          phx-value-page={@page - 1}
+          class={[
+            "inline-flex items-center border-t-2 pt-4 text-sm font-medium pr-4",
+            "border-transparent text-zinc-400 hover:border-zinc-300"
+          ]}
+        >
+          <.icon name="hero-arrow-long-left" class="mr-3 h-5 w-5 text-gray-400" /> Previous
+        </.link>
+      </div>
+      <div class="hidden lg:-mt-px lg:flex">
+        <.link
+          :for={page <- get_pages(@page, @per_page, @count_all, @limit)}
+          phx-click={@event}
+          phx-value-page={page}
+          class={[
+            "inline-flex items-center border-t-2 pt-4 text-sm font-medium px-4",
+            @page != page && "border-transparent text-zinc-400 hover:border-zinc-300",
+            @page == page && "border-zinc-500 text-zinc-600"
+          ]}
+        >
+          <%= page %>
+        </.link>
+      </div>
+      <div class="-mt-px flex w-0 flex-1 justify-end">
+        <.link
+          :if={@page * @per_page < @count_all}
+          phx-click={@event}
+          phx-value-page={@page + 1}
+          class={[
+            "inline-flex items-center border-t-2 pt-4 text-sm font-medium pl-4",
+            "border-transparent text-zinc-400 hover:border-zinc-300"
+          ]}
+        >
+          Next <.icon name="hero-arrow-long-right" class="ml-3 h-5 w-5 text-gray-400" />
+        </.link>
+      </div>
+    </nav>
+    """
+  end
+
+  def get_pages(page, per_page, count_all, limit) do
+    page_count = ceil(count_all / per_page)
+
+    for page_number <- (page - limit)..(page + limit),
+        page_number > 0 and page_number <= page_count do
+      page_number
+    end
   end
 
   @doc """
