@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.Recipes do
+defmodule LivePlaygroundWeb.Menus.Recipes do
   use Phoenix.Component
 
   import LivePlaygroundWeb.MoreComponents
@@ -44,7 +44,7 @@ defmodule LivePlaygroundWeb.Recipes do
         paths: ["/dynamic-form"]
       },
       %{
-        icon: "hero-finger-print",
+        icon: "hero-cube",
         label: "Key Events",
         path: "/key-events",
         badge: nil,

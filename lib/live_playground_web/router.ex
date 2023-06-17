@@ -20,39 +20,34 @@ defmodule LivePlaygroundWeb.Router do
     scope "/", LivePlaygroundWeb do
       pipe_through :browser
 
-      live "/click-buttons", ClickButtonsLive
-      live "/handle-params", HandleParamsLive
-      live "/dynamic-form", DynamicFormLive
-      live "/send-interval", SendIntervalLive
-      live "/send-after", SendAfterLive
-      live "/search", SearchLive
-      live "/search-param", SearchParamLive
-      live "/autocomplete", AutocompleteLive
-      live "/autocomplete-custom", AutocompleteCustomLive
-      live "/filter", FilterLive
-      live "/filter-params", FilterParamsLive
-      live "/sort", SortLive
-      live "/sort-params", SortParamsLive
-      live "/paginate", PaginateLive
-      live "/paginate-params", PaginateParamsLive
-      live "/form-insert", FormInsertLive
-      live "/form-insert-validate", FormInsertValidateLive
-      live "/form-update-validate", FormUpdateValidateLive
-      live "/stream-insert", StreamInsertLive
-      live "/stream-update", StreamUpdateLive, :index
-      live "/stream-update/edit", StreamUpdateLive, :edit
-      live "/tabular-insert", TabularInsertLive
-      live "/broadcast", BroadcastLive
-      live "/broadcast-stream", BroadcastStreamLive, :index
-      live "/broadcast-stream/edit", BroadcastStreamLive, :edit
-      live "/key-events", KeyEventsLive
-      live "/js-commands", JsCommandsLive
-      live "/upload", UploadLive
-      live "/languages", LanguageLive.Index, :index
-      live "/languages/new", LanguageLive.Index, :new
-      live "/languages/:id/edit", LanguageLive.Index, :edit
-      live "/languages/:id", LanguageLive.Show, :show
-      live "/languages/:id/show/edit", LanguageLive.Show, :edit
+      live "/click-buttons", ReceipesLive.ClickButtons
+      live "/handle-params", ReceipesLive.HandleParams
+      live "/dynamic-form", ReceipesLive.DynamicForm
+      live "/send-interval", ReceipesLive.SendInterval
+      live "/send-after", ReceipesLive.SendAfter
+      live "/search", ReceipesLive.Search
+      live "/search-param", ReceipesLive.SearchParam
+      live "/autocomplete", ReceipesLive.Autocomplete
+      live "/autocomplete-custom", ReceipesLive.AutocompleteCustom
+      live "/filter", ReceipesLive.Filter
+      live "/filter-params", ReceipesLive.FilterParams
+      live "/sort", ReceipesLive.Sort
+      live "/sort-params", ReceipesLive.SortParams
+      live "/paginate", ReceipesLive.Paginate
+      live "/paginate-params", ReceipesLive.PaginateParams
+      live "/form-insert", ReceipesLive.FormInsert
+      live "/form-insert-validate", ReceipesLive.FormInsertValidate
+      live "/form-update-validate", ReceipesLive.FormUpdateValidate
+      live "/stream-insert", ReceipesLive.StreamInsert
+      live "/stream-update", ReceipesLive.StreamUpdate, :index
+      live "/stream-update/edit", ReceipesLive.StreamUpdate, :edit
+      live "/tabular-insert", ReceipesLive.TabularInsert
+      live "/broadcast", ReceipesLive.Broadcast
+      live "/broadcast-stream", ReceipesLive.BroadcastStream, :index
+      live "/broadcast-stream/edit", ReceipesLive.BroadcastStream, :edit
+      live "/key-events", ReceipesLive.KeyEvents
+      live "/js-commands", ReceipesLive.JsCommands
+      live "/upload", ReceipesLive.Upload
     end
   end
 
@@ -66,6 +61,20 @@ defmodule LivePlaygroundWeb.Router do
       live "/modal/image", CompsLive.Modals, :image
       live "/slideover", CompsLive.Slideover
       live "/slideover/image", CompsLive.Slideover, :image
+    end
+  end
+
+  live_session :steps,
+    layout: {LivePlaygroundWeb.Layouts, :steps},
+    on_mount: LivePlaygroundWeb.InitLive do
+    scope "/", LivePlaygroundWeb do
+      pipe_through :browser
+
+      live "/languages", LanguageLive.Index, :index
+      live "/languages/new", LanguageLive.Index, :new
+      live "/languages/:id/edit", LanguageLive.Index, :edit
+      live "/languages/:id", LanguageLive.Show, :show
+      live "/languages/:id/show/edit", LanguageLive.Show, :edit
     end
   end
 

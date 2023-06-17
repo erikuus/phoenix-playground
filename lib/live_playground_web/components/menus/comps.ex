@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.Comps do
+defmodule LivePlaygroundWeb.Menus.Comps do
   use Phoenix.Component
 
   import LivePlaygroundWeb.MoreComponents
@@ -26,9 +26,19 @@ defmodule LivePlaygroundWeb.Comps do
   defp items() do
     [
       %{
+        label: "Core components",
+        path: nil,
+        paths: []
+      },
+      %{
         label: "Modal",
         path: "/modal",
         paths: ["/modal"]
+      },
+      %{
+        label: "More components",
+        path: nil,
+        paths: []
       },
       %{
         label: "Slideover",

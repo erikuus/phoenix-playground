@@ -1,35 +1,43 @@
-defmodule LivePlaygroundWeb.PaginateLive do
+defmodule LivePlaygroundWeb.ReceipesLive.PaginateParams do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Cities
 
   def mount(_params, _session, socket) do
-    count = Cities.count_city()
+    {:ok, assign(socket, :count, Cities.count_city())}
+  end
+
+  def handle_params(params, _url, socket) do
+    page = params["page"] |> to_integer(1)
+    per_page = params["per_page"] |> to_integer(10)
+
+    page = get_safe_page(page, per_page, socket.assigns.count)
 
     options = %{
-      page: 1,
-      per_page: 10
+      page: page,
+      per_page: per_page
     }
 
     socket =
-      socket
-      |> assign(:count, count)
-      |> assign_pagination_options(options)
+      assign(socket,
+        cities: Cities.list_city(options),
+        options: options
+      )
 
-    {:ok, socket}
+    {:noreply, socket}
   end
 
   def render(assigns) do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Pagination
+      Pagination with URL Parameters
       <:subtitle>
-        How to paginate data in LiveView
+        How to handle pagination parameters in LiveView
       </:subtitle>
       <:actions>
-        <.link navigate={~p"/paginate-params"}>
-          See also: Pagination with URL Parameters <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
+        <.link navigate={~p"/paginate"}>
+          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Pagination
         </.link>
       </:actions>
     </.header>
@@ -57,29 +65,28 @@ defmodule LivePlaygroundWeb.PaginateLive do
     </.table>
     <.pagination>
       <:prev>
-        <.page_link :if={@options.page > 1} type="prev" event="select-page" page={@options.page - 1}>
+        <.page_link :if={@options.page > 1} type="prev" patch={get_page_patch(@options.page - 1, @options)}>
           <.icon name="hero-arrow-long-left" class="mr-3 h-5 w-5 text-gray-400" /> Previous
         </.page_link>
       </:prev>
       <:pages>
         <.page_link
           :for={page <- get_pages(@options.page, @options.per_page, @count)}
-          event="select-page"
-          page={page}
+          patch={get_page_patch(page, @options)}
           active={@options.page == page}
         >
           <%= page %>
         </.page_link>
       </:pages>
       <:next>
-        <.page_link :if={@options.page * @options.per_page < @count} type="next" event="select-page" page={@options.page + 1}>
+        <.page_link :if={@options.page * @options.per_page < @count} type="next" patch={get_page_patch(@options.page + 1, @options)}>
           Next <.icon name="hero-arrow-long-right" class="ml-3 h-5 w-5 text-gray-400" />
         </.page_link>
       </:next>
     </.pagination>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/paginate_live.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/receipes_live/paginate_params.ex")) %>
       <%= raw(code("lib/live_playground/cities.ex", "# paginate", "# endpaginate")) %>
     </div>
     <!-- end hiding from live code -->
@@ -87,24 +94,15 @@ defmodule LivePlaygroundWeb.PaginateLive do
   end
 
   def handle_event("select-per-page", %{"per_page" => per_page}, socket) do
-    per_page = String.to_integer(per_page)
-    page = get_safe_page(socket.assigns.options.page, per_page, socket.assigns.count)
-    options = %{socket.assigns.options | per_page: per_page, page: page}
+    params = %{socket.assigns.options | per_page: per_page}
 
-    {:noreply, assign_pagination_options(socket, options)}
+    socket = push_patch(socket, to: ~p"/paginate-params?#{params}")
+    {:noreply, socket}
   end
 
-  def handle_event("select-page", %{"page" => page}, socket) do
-    page = String.to_integer(page)
-    options = %{socket.assigns.options | page: page}
-    {:noreply, assign_pagination_options(socket, options)}
-  end
-
-  defp assign_pagination_options(socket, options) do
-    assign(socket,
-      cities: Cities.list_city(options),
-      options: options
-    )
+  defp get_page_patch(page, options) do
+    params = %{options | page: page}
+    ~p"/paginate-params?#{params}"
   end
 
   defp get_pages(page, per_page, count) do
@@ -121,6 +119,15 @@ defmodule LivePlaygroundWeb.PaginateLive do
       ceil(count / per_page)
     else
       page
+    end
+  end
+
+  defp to_integer(nil, default_value), do: default_value
+
+  defp to_integer(value, default_value) do
+    case Integer.parse(value) do
+      {i, _} -> i
+      :error -> default_value
     end
   end
 end

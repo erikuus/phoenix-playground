@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.SendAfterLive do
+defmodule LivePlaygroundWeb.ReceipesLive.SendAfter do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Sales
@@ -36,7 +36,7 @@ defmodule LivePlaygroundWeb.SendAfterLive do
     </.stat>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/send_after_live.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/receipes_live/send_after.ex")) %>
       <%= raw(code("lib/live_playground/sales.ex")) %>
     </div>
     <!-- end hiding from live code -->

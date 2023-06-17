@@ -98,7 +98,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <div class="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
         <div class="flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white">
           <div class="flex flex-1 flex-col overflow-y-auto">
-            <nav class="mt-4 flex-1 space-y-1 bg-white px-2">
+            <nav class="mt-4 flex-1 space-y-1 bg-white px-3">
               <%= render_slot(@static_menu) %>
             </nav>
           </div>
@@ -173,6 +173,10 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
       <.vertical_navigation items={[
         %{
+          label: "Group name",
+          path: nil
+        },
+        %{
           icon: "hero-home",
           label: "Home",
           path: "/",
@@ -186,27 +190,32 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   def vertical_navigation(assigns) do
     ~H"""
-    <.link
-      :for={item <- @items}
-      navigate={item.path}
-      class={[
-        "text-gray-900 group flex items-center px-2 py-2 font-medium rounded-md",
-        nav_item_bg_class(item.active),
-        @text_class
-      ]}
-    >
-      <.icon :if={item.icon} name={item.icon} class="text-gray-500 mr-1 flex-shrink-0 h-5 w-5" />
-      <span class="flex-1 ml-2"><%= item.label %></span>
-      <span
-        :if={item.badge}
+    <div :for={item <- @items}>
+      <div :if={!item.path} class="ml-1 font-semibold leading-6 text-gray-400 text-xs">
+        <%= item.label %>
+      </div>
+      <.link
+        :if={item.path}
+        navigate={item.path}
         class={[
-          "ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full",
-          nav_badge_bg_class(item.active)
+          "text-gray-900 group flex items-center px-2 py-2 font-medium rounded-md",
+          nav_item_bg_class(item.active),
+          @text_class
         ]}
       >
-        <%= item.badge %>
-      </span>
-    </.link>
+        <.icon :if={item.icon} name={item.icon} class="text-gray-500 mr-1 flex-shrink-0 h-5 w-5" />
+        <span class="flex-1 ml-2"><%= item.label %></span>
+        <span
+          :if={item.badge}
+          class={[
+            "ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full",
+            nav_badge_bg_class(item.active)
+          ]}
+        >
+          <%= item.badge %>
+        </span>
+      </.link>
+    </div>
     """
   end
 

@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.TabularInsertLive do
+defmodule LivePlaygroundWeb.ReceipesLive.TabularInsert do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Cities
@@ -85,7 +85,7 @@ defmodule LivePlaygroundWeb.TabularInsertLive do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/tabular_insert_live.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/receipes_live/tabular_insert.ex")) %>
       <%= raw(code("lib/live_playground/cities.ex", "# tabularinsert", "# endtabularinsert")) %>
     </div>
     <!-- end hiding from live code -->

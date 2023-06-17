@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.SearchParamLive do
+defmodule LivePlaygroundWeb.ReceipesLive.SearchParam do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Countries
@@ -72,7 +72,7 @@ defmodule LivePlaygroundWeb.SearchParamLive do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/search_param_live.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/receipes_live/search_param.ex")) %>
       <%= raw(code("lib/live_playground/countries.ex", "# search", "# endsearch")) %>
     </div>
     <!-- end hiding from live code -->

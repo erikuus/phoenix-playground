@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.AutocompleteLive do
+defmodule LivePlaygroundWeb.ReceipesLive.Autocomplete do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Countries
@@ -41,7 +41,7 @@ defmodule LivePlaygroundWeb.AutocompleteLive do
     </datalist>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/autocomplete_live.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/receipes_live/autocomplete.ex")) %>
       <%= raw(code("lib/live_playground/countries.ex", "# search", "# endsearch")) %>
     </div>
     <!-- end hiding from live code -->

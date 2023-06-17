@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.FilterLive do
+defmodule LivePlaygroundWeb.ReceipesLive.Filter do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Cities
@@ -55,7 +55,7 @@ defmodule LivePlaygroundWeb.FilterLive do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/filter_live.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/receipes_live/filter.ex")) %>
       <%= raw(code("lib/live_playground/cities.ex", "# filter", "# endfilter")) %>
     </div>
     <!-- end hiding from live code -->

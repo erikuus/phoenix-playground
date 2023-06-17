@@ -1,38 +1,21 @@
-defmodule LivePlaygroundWeb.HandleParamsLive do
+defmodule LivePlaygroundWeb.ReceipesLive.ClickButtons do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Countries
 
   def mount(_params, _session, socket) do
+    countries = Countries.list_nordic_country()
+
     socket =
       assign(socket,
-        countries: Countries.list_nordic_country()
+        countries: countries,
+        selected_country: hd(countries)
       )
 
     {:ok, socket}
   end
 
-  def handle_params(%{"id" => id}, _url, socket) do
-    country = Countries.get_country!(id)
-
-    socket =
-      assign(socket,
-        selected_country: country,
-        page_title: country.name
-      )
-
-    {:noreply, socket}
-  end
-
   def handle_params(_params, _url, socket) do
-    country = hd(socket.assigns.countries)
-
-    socket =
-      assign(socket,
-        selected_country: country,
-        page_title: country.name
-      )
-
     {:noreply, socket}
   end
 
@@ -40,19 +23,24 @@ defmodule LivePlaygroundWeb.HandleParamsLive do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Handle Parameters
+      Click Buttons
       <:subtitle>
-        How to handle url parameteres in LiveView
+        How to handle click events in LiveView
       </:subtitle>
     </.header>
     <!-- end hiding from live code -->
-    <.tabs :if={@countries != []}>
-      <:tab :for={country <- @countries} patch={~p"/handle-params?#{[id: country.id]}"} active={country == @selected_country}>
+    <div class="flex flex-col space-x-0 space-y-3 md:flex-row md:space-x-3 md:space-y-0">
+      <.button_link
+        :for={country <- @countries}
+        phx-click="select-country"
+        phx-value-id={country.id}
+        type={get_button_type(country, @selected_country)}
+      >
         <%= country.name %>
-      </:tab>
-    </.tabs>
+      </.button_link>
+    </div>
 
-    <.list class="mt-6 mb-16">
+    <.list class="mt-6 mb-16 ml-1">
       <:item title="Code"><%= @selected_country.code %></:item>
 
       <:item title="Continent"><%= @selected_country.continent %></:item>
@@ -79,11 +67,20 @@ defmodule LivePlaygroundWeb.HandleParamsLive do
     </.list>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/handle_params_live.ex")) %> <%= raw(
+      <%= raw(code("lib/live_playground_web/live/receipes_live/click_buttons.ex")) %> <%= raw(
         code("lib/live_playground/countries.ex", "# listnordiccountry", "# endlistnordiccountry")
       ) %>
     </div>
     <!-- end hiding from live code -->
     """
+  end
+
+  def handle_event("select-country", %{"id" => id}, socket) do
+    socket = assign(socket, :selected_country, Countries.get_country!(id))
+    {:noreply, socket}
+  end
+
+  def get_button_type(country, selected_country) do
+    if country == selected_country, do: "primary", else: "secondary"
   end
 end

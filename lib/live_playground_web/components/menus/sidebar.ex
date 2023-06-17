@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.Sidebar do
+defmodule LivePlaygroundWeb.Menus.Sidebar do
   use Phoenix.Component
 
   import LivePlaygroundWeb.MoreComponents
@@ -24,7 +24,7 @@ defmodule LivePlaygroundWeb.Sidebar do
         layout: :home
       },
       %{
-        icon: "hero-square-3-stack-3d",
+        icon: "hero-book-open",
         label: "Recipes",
         path: "/click-buttons",
         layout: :recipes
@@ -34,6 +34,12 @@ defmodule LivePlaygroundWeb.Sidebar do
         label: "Comps",
         path: "/modal",
         layout: :comps
+      },
+      %{
+        icon: "hero-square-3-stack-3d",
+        label: "Steps",
+        path: "/languages",
+        layout: :steps
       }
     ]
   end

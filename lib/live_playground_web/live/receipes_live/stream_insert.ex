@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.StreamInsertLive do
+defmodule LivePlaygroundWeb.ReceipesLive.StreamInsert do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Cities
@@ -57,7 +57,7 @@ defmodule LivePlaygroundWeb.StreamInsertLive do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/stream_insert_live.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/receipes_live/stream_insert.ex")) %>
       <%= raw(code("lib/live_playground/cities.ex", "# streaminsert", "# endstreaminsert")) %>
     </div>
     <!-- end hiding from live code -->

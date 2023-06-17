@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.BroadcastLive do
+defmodule LivePlaygroundWeb.ReceipesLive.Broadcast do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Countries
@@ -75,7 +75,7 @@ defmodule LivePlaygroundWeb.BroadcastLive do
     </div>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/broadcast_live.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/receipes_live/broadcast.ex")) %>
       <%= raw(code("lib/live_playground/countries.ex", "# broadcast", "# endbroadcast")) %>
     </div>
     <!-- end hiding from live code -->
