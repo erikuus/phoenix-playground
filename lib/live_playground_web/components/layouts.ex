@@ -1,9 +1,9 @@
 defmodule LivePlaygroundWeb.Layouts do
   use LivePlaygroundWeb, :html
 
-  alias LivePlaygroundWeb.Sidebar
-  alias LivePlaygroundWeb.Recipes
-  alias LivePlaygroundWeb.Comps
+  alias LivePlaygroundWeb.Menus.Sidebar
+  alias LivePlaygroundWeb.Menus.Recipes
+  alias LivePlaygroundWeb.Menus.Comps
 
   embed_templates "layouts/*"
 end

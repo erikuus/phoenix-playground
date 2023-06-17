@@ -19,38 +19,9 @@ defmodule LivePlaygroundWeb.MoreComponents do
   ## Examples
 
       <.multi_column_layout>
-        <:narrow_sidebar>
-          <.narrow_sidebar items={[
-            %{
-              icon: "hero-home",
-              label: "Home",
-              path: "/",
-              active: true
-            }
-          ]} />
-        </:narrow_sidebar>
-        <:mobile_menu>
-          <.vertical_navigation text_class="text-base" items={[
-            %{
-              icon: "hero-home",
-              label: "Home",
-              path: "/",
-              badge: 2,
-              active: true
-            }
-          ]} />
-        </:mobile_menu>
-        <:static_menu>
-          <.vertical_navigation items={[
-            %{
-              icon: "hero-home",
-              label: "Home",
-              path: "/",
-              badge: 2,
-              active: true
-            }
-          ]} />
-        </:static_menu>
+        <:narrow_sidebar></:narrow_sidebar>
+        <:mobile_menu></:mobile_menu>
+        <:static_menu></:static_menu>
         <%= @inner_content %>
       </.multi_column_layout>
   """
@@ -149,21 +120,14 @@ defmodule LivePlaygroundWeb.MoreComponents do
       navigate={item.path}
       class={[
         "group flex w-full flex-col items-center rounded-md p-3 text-xs font-medium",
-        sidebar_item_bg_class(item.active)
+        item.active == true && "bg-zinc-600 bg-opacity-50 text-white",
+        item.active == false && "text-zinc-100 hover:bg-zinc-600 hover:bg-opacity-50 hover:text-white"
       ]}
     >
       <.icon :if={item.icon} name={item.icon} class="text-zinc-300 group-hover:text-white h-6 w-6" />
       <span class="mt-1 hidden md:block"><%= item.label %></span>
     </.link>
     """
-  end
-
-  defp sidebar_item_bg_class(true) do
-    "bg-zinc-600 bg-opacity-50 text-white"
-  end
-
-  defp sidebar_item_bg_class(false) do
-    "text-zinc-100 hover:bg-zinc-600 hover:bg-opacity-50 hover:text-white"
   end
 
   @doc """
@@ -199,7 +163,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
         navigate={item.path}
         class={[
           "text-gray-900 group flex items-center px-2 py-2 font-medium rounded-md",
-          nav_item_bg_class(item.active),
+          item.active == true && "bg-gray-100",
+          item.active == false && "hover:bg-gray-100",
           @text_class
         ]}
       >
@@ -209,7 +174,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
           :if={item.badge}
           class={[
             "ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full",
-            nav_badge_bg_class(item.active)
+            item.active == true && "bg-gray-200",
+            item.active == false && "bg-gray-100 group-hover:bg-gray-200"
           ]}
         >
           <%= item.badge %>
@@ -217,22 +183,6 @@ defmodule LivePlaygroundWeb.MoreComponents do
       </.link>
     </div>
     """
-  end
-
-  defp nav_item_bg_class(true) do
-    "bg-gray-100"
-  end
-
-  defp nav_item_bg_class(false) do
-    "hover:bg-gray-100"
-  end
-
-  defp nav_badge_bg_class(true) do
-    "bg-gray-200"
-  end
-
-  defp nav_badge_bg_class(false) do
-    "bg-gray-100 group-hover:bg-gray-200"
   end
 
   @doc """
@@ -243,7 +193,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <.button_link navigate={~p"/page"}>Go</.button_link>
       <.button_link patch={~p"/page"} type="secondary">Refresh</.button_link>
   """
-  attr :type, :string, default: "primary"
+  attr :look, :string, default: "primary"
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(href navigate patch)
 
@@ -255,7 +205,9 @@ defmodule LivePlaygroundWeb.MoreComponents do
       class={[
         "inline-flex items-center justify-center rounded-lg py-2 px-5",
         "text-sm font-semibold leading-6",
-        button_color_class(@type),
+        @look == "primary" && "bg-zinc-900 hover:bg-zinc-700 text-white active:text-white/80",
+        @look == "secondary" && "border border-zinc-200 bg-zinc-100 hover:bg-zinc-200 text-gray-700 active:text-gray-800",
+        @look == "dangerous" && "bg-red-600 hover:bg-red-700 text-white active:text-white/80",
         @class
       ]}
       {@rest}
@@ -263,18 +215,6 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <%= render_slot(@inner_block) %>
     </.link>
     """
-  end
-
-  defp button_color_class(type) do
-    Map.get(
-      %{
-        "primary" => "bg-zinc-900 hover:bg-zinc-700 text-white active:text-white/80",
-        "secondary" =>
-          "border border-zinc-200 bg-zinc-100 hover:bg-zinc-200 text-gray-700 active:text-gray-800",
-        "dangerous" => "bg-red-600 hover:bg-red-700 text-white active:text-white/80"
-      },
-      type
-    )
   end
 
   @doc """
@@ -286,30 +226,25 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <.alert type="warning">Warning</.alert>
       <.alert type="error">Error</.alert>
   """
-  attr :type, :string, default: "info"
+  attr :look, :string, default: "info"
   attr :class, :string, default: "text-sm"
 
   slot :inner_block, required: true
 
   def alert(assigns) do
     ~H"""
-    <div class={["rounded-md p-4", alert_color_class(@type), @class]}>
+    <div class={[
+      "rounded-md p-4",
+      @look == "info" && "bg-blue-50 text-blue-700",
+      @look == "warning" && "bg-yellow-50 text-yellow-700",
+      @look == "error" && "bg-red-50 text-red-700",
+      @class
+    ]}>
       <div class="flex space-x-2">
         <%= render_slot(@inner_block) %>
       </div>
     </div>
     """
-  end
-
-  defp alert_color_class(type) do
-    Map.get(
-      %{
-        "info" => "bg-blue-50 text-blue-700",
-        "warning" => "bg-yellow-50 text-yellow-700",
-        "error" => "bg-red-50 text-red-700"
-      },
-      type
-    )
   end
 
   @doc """
@@ -383,7 +318,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
           patch={tab[:patch]}
           class={[
             "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium",
-            tab_class(tab[:active])
+            tab[:active] == false && "border-transparent text-zinc-400 hover:border-zinc-300",
+            tab[:active] == true && "border-zinc-500 text-zinc-600"
           ]}
         >
           <%= render_slot(tab) %>
@@ -393,102 +329,74 @@ defmodule LivePlaygroundWeb.MoreComponents do
     """
   end
 
-  defp tab_class(false) do
-    "border-transparent text-zinc-400 hover:border-zinc-300"
-  end
-
-  defp tab_class(true) do
-    "border-zinc-500 text-zinc-600"
-  end
-
   @doc """
-  Renders pagination container.
+  Renders pagination.
 
   ## Examples
 
-    <.pages>
-      <:prev_icon><.icon name="hero-arrow-long-left" class="mr-3 h-5 w-5 text-gray-400" /></:prev_icon>
-      <:prev :if={@page > 1} patch={~p"/demo?\#{[page: @page - 1]]}"}>Previous</:prev>
-      <:page :for={page <- get_pages(@options, @count)} patch={~p"/demo?\#{[page: @page]]}"} active={@page == page}>
-        <%= page %>
-      </:page>
-      <:next :if={@page * @per_page < @count} patch={~p"/demo?\#{[page: @page + 1]]}"}>Next</:next>
-      <:next_icon><.icon name="hero-arrow-long-right" class="ml-3 h-5 w-5 text-gray-400" /></:next_icon>
-    </.pages>
+      <.pagination
+        page={@page}
+        per_page={@per_page}
+        count_all={@count}
+        pages={get_pages(@page, @per_page, @count)}
+      />
   """
   attr :class, :string, default: nil
-
-  slot :prev
-  slot :next
-  slot :pages
+  attr :event, :string, default: "select-page"
+  attr :page, :integer, required: true
+  attr :per_page, :integer, required: true
+  attr :count_all, :integer, required: true
+  attr :pages, :list, required: true
 
   def pagination(assigns) do
     ~H"""
     <nav class={["flex items-center justify-between border-t border-gray-200 px-4 sm:px-0", @class]}>
       <div class="-mt-px flex w-0 flex-1">
-        <%= render_slot(@prev) %>
+        <.link
+          :if={@page > 1}
+          phx-click={@event}
+          phx-value-page={@page - 1}
+          class={[
+            "inline-flex items-center border-t-2 pt-4 text-sm font-medium pr-4",
+            "border-transparent text-zinc-400 hover:border-zinc-300"
+          ]}
+        >
+          <.icon name="hero-arrow-long-left" class="mr-3 h-5 w-5 text-gray-400" /> Previous
+        </.link>
       </div>
-
       <div class="hidden lg:-mt-px lg:flex">
-        <%= render_slot(@pages) %>
+        <.link
+          :for={page <- @pages}
+          phx-click={@event}
+          phx-value-page={page}
+          class={[
+            "inline-flex items-center border-t-2 pt-4 text-sm font-medium px-4",
+            @page != page && "border-transparent text-zinc-400 hover:border-zinc-300",
+            @page == page && "border-zinc-500 text-zinc-600"
+          ]}
+        >
+          <%= page %>
+        </.link>
       </div>
-
       <div class="-mt-px flex w-0 flex-1 justify-end">
-        <%= render_slot(@next) %>
+        <.link
+          :if={@page * @per_page < @count_all}
+          phx-click={@event}
+          phx-value-page={@page + 1}
+          class={[
+            "inline-flex items-center border-t-2 pt-4 text-sm font-medium pl-4",
+            "border-transparent text-zinc-400 hover:border-zinc-300"
+          ]}
+        >
+          Next <.icon name="hero-arrow-long-right" class="ml-3 h-5 w-5 text-gray-400" />
+        </.link>
       </div>
     </nav>
     """
   end
 
   @doc """
-  Renders pagination link.
-  """
-  attr :type, :string, default: "page"
-  attr :active, :boolean, default: false
-  attr :patch, :any
-  attr :event, :string
-  attr :page, :integer
-
-  slot :inner_block, required: true
-
-  def page_link(%{patch: _} = assigns) do
-    ~H"""
-    <.link patch={@patch} class={[page_class(:base), page_class(@type), page_class(@active)]}>
-      <%= render_slot(@inner_block) %>
-    </.link>
-    """
-  end
-
-  def page_link(%{event: _, page: _} = assigns) do
-    ~H"""
-    <.link phx-click={@event} phx-value-page={@page} class={[page_class(:base), page_class(@type), page_class(@active)]}>
-      <%= render_slot(@inner_block) %>
-    </.link>
-    """
-  end
-
-  def page_link(_assigns), do: nil
-
-  defp page_class(:base) do
-    "inline-flex items-center border-t-2 pt-4 text-sm font-medium"
-  end
-
-  defp page_class(false) do
-    "border-transparent text-zinc-400 hover:border-zinc-300"
-  end
-
-  defp page_class(true) do
-    "border-zinc-500 text-zinc-600"
-  end
-
-  defp page_class("prev"), do: "pr-4"
-
-  defp page_class("page"), do: "px-4"
-
-  defp page_class("next"), do: "pl-4"
-
-  @doc """
-  Renders a data list.
+  Renders a card for statistics.
 
   ## Examples
 

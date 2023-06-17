@@ -63,27 +63,12 @@ defmodule LivePlaygroundWeb.ReceipesLive.PaginateParams do
         ) %>
       </:col>
     </.table>
-    <.pagination>
-      <:prev>
-        <.page_link :if={@options.page > 1} type="prev" patch={get_page_patch(@options.page - 1, @options)}>
-          <.icon name="hero-arrow-long-left" class="mr-3 h-5 w-5 text-gray-400" /> Previous
-        </.page_link>
-      </:prev>
-      <:pages>
-        <.page_link
-          :for={page <- get_pages(@options.page, @options.per_page, @count)}
-          patch={get_page_patch(page, @options)}
-          active={@options.page == page}
-        >
-          <%= page %>
-        </.page_link>
-      </:pages>
-      <:next>
-        <.page_link :if={@options.page * @options.per_page < @count} type="next" patch={get_page_patch(@options.page + 1, @options)}>
-          Next <.icon name="hero-arrow-long-right" class="ml-3 h-5 w-5 text-gray-400" />
-        </.page_link>
-      </:next>
-    </.pagination>
+    <.pagination
+      page={@options.page}
+      per_page={@options.per_page}
+      count_all={@count}
+      pages={get_pages(@options.page, @options.per_page, @count)}
+    />
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <%= raw(code("lib/live_playground_web/live/receipes_live/paginate_params.ex")) %>
@@ -100,9 +85,11 @@ defmodule LivePlaygroundWeb.ReceipesLive.PaginateParams do
     {:noreply, socket}
   end
 
-  defp get_page_patch(page, options) do
-    params = %{options | page: page}
-    ~p"/paginate-params?#{params}"
+  def handle_event("select-page", %{"page" => page}, socket) do
+    params = %{socket.assigns.options | page: page}
+
+    socket = push_patch(socket, to: ~p"/paginate-params?#{params}")
+    {:noreply, socket}
   end
 
   defp get_pages(page, per_page, count) do

@@ -55,28 +55,12 @@ defmodule LivePlaygroundWeb.ReceipesLive.Paginate do
         ) %>
       </:col>
     </.table>
-    <.pagination>
-      <:prev>
-        <.page_link :if={@options.page > 1} type="prev" event="select-page" page={@options.page - 1}>
-          <.icon name="hero-arrow-long-left" class="mr-3 h-5 w-5 text-gray-400" /> Previous
-        </.page_link>
-      </:prev>
-      <:pages>
-        <.page_link
-          :for={page <- get_pages(@options.page, @options.per_page, @count)}
-          event="select-page"
-          page={page}
-          active={@options.page == page}
-        >
-          <%= page %>
-        </.page_link>
-      </:pages>
-      <:next>
-        <.page_link :if={@options.page * @options.per_page < @count} type="next" event="select-page" page={@options.page + 1}>
-          Next <.icon name="hero-arrow-long-right" class="ml-3 h-5 w-5 text-gray-400" />
-        </.page_link>
-      </:next>
-    </.pagination>
+    <.pagination
+      page={@options.page}
+      per_page={@options.per_page}
+      count_all={@count}
+      pages={get_pages(@options.page, @options.per_page, @count)}
+    />
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <%= raw(code("lib/live_playground_web/live/receipes_live/paginate.ex")) %>

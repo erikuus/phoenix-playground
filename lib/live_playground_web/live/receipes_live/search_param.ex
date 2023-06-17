@@ -53,7 +53,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.SearchParam do
       <.button type="submit">
         Search
       </.button>
-      <.button_link type="secondary" patch={~p"/search-param"}>
+      <.button_link look="secondary" patch={~p"/search-param"}>
         Clear
       </.button_link>
     </form>

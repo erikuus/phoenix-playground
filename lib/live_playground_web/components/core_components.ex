@@ -273,7 +273,9 @@ defmodule LivePlaygroundWeb.CoreComponents do
         "phx-submit-loading:opacity-75",
         "inline-flex inline-flex items-center justify-center rounded-lg py-2 px-5 ring-inset",
         "text-sm font-semibold leading-6",
-        button_color_class(@look),
+        @look == "primary" && "bg-zinc-900 hover:bg-zinc-700 text-white active:text-white/80",
+        @look == "secondary" && "border border-zinc-200 bg-zinc-100 hover:bg-zinc-200 text-gray-700 active:text-gray-800",
+        @look == "dangerous" && "bg-red-600 hover:bg-red-700 text-white active:text-white/80",
         @class
       ]}
       {@rest}
@@ -281,18 +283,6 @@ defmodule LivePlaygroundWeb.CoreComponents do
       <%= render_slot(@inner_block) %>
     </button>
     """
-  end
-
-  defp button_color_class(look) do
-    Map.get(
-      %{
-        "primary" => "bg-zinc-900 hover:bg-zinc-700 text-white active:text-white/80",
-        "secondary" =>
-          "border border-zinc-200 bg-zinc-100 hover:bg-zinc-200 text-gray-700 active:text-gray-800",
-        "dangerous" => "bg-red-600 hover:bg-red-700 text-white active:text-white/80"
-      },
-      look
-    )
   end
 
   @doc """
