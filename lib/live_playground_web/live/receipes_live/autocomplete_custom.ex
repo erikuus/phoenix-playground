@@ -31,6 +31,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.AutocompleteCustom do
     <form>
       <div class="md:w-96">
         <.input
+          id="autocomplete-field"
           phx-change="suggest"
           phx-debounce="500"
           type="text"
@@ -41,15 +42,25 @@ defmodule LivePlaygroundWeb.ReceipesLive.AutocompleteCustom do
         />
       </div>
     </form>
-    <.dropdown :if={@matches != []} class="max-h-64 md:w-96">
-      <.option :for={match <- @matches} phx-click="select" phx-value-name={match.name}>
+
+    <ul
+      :if={@matches != []}
+      phx-click-away="close"
+      class="absolute z-10 mt-1 overflow-auto rounded-md shadow-lg border border-gray-200 bg-white py-1 block max-h-64 md:w-96"
+    >
+      <li
+        :for={match <- @matches}
+        phx-click="select"
+        phx-value-name={match.name}
+        class="relative cursor-default select-none hover:bg-zinc-700 hover:text-white py-2 pl-3 pr-9"
+      >
         <div class="flex justify-between items-center">
           <span class="w-56 truncate font-medium"><%= match.name %></span>
           <span class="hidden md:inline text-xs"><%= match.code %></span>
           <span class="hidden md:inline text-xs"><%= match.code2 %></span>
         </div>
-      </.option>
-    </.dropdown>
+      </li>
+    </ul>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <%= raw(code("lib/live_playground_web/live/receipes_live/autocomplete_custom.ex")) %>
