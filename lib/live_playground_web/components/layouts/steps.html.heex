@@ -3,77 +3,11 @@
   <:narrow_sidebar>
     <Sidebar.menu current_layout={:steps} />
   </:narrow_sidebar>
-  <:mobile_menu></:mobile_menu>
+  <:mobile_menu>
+    <Steps.menu current_path={@current_path} />
+  </:mobile_menu>
   <:static_menu>
-    <ul role="list" class="space-y-6">
-      <li class="relative flex gap-x-4">
-        <div class="absolute left-0 top-0 flex w-6 justify-center -bottom-6">
-          <div class="w-px bg-gray-200"></div>
-        </div>
-        <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-white">
-          <div class="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300"></div>
-        </div>
-        <div class="flex-auto py-0.5 leading-5">
-          <p class="text-sm text-gray-900 font-medium">
-            Generate
-          </p>
-          <p class="text-xs text-gray-500">
-            Run
-            <a href="https://hexdocs.pm/phoenix/Mix.Tasks.Phx.Gen.Live.html" class="font-mono font-semibold">mix phx.gen.live</a>
-            command to generate LiveViews, components, and context for a resource.
-          </p>
-        </div>
-      </li>
-      <li class="relative flex gap-x-4">
-        <div class="absolute left-0 top-0 flex w-6 justify-center -bottom-6">
-          <div class="w-px bg-gray-200"></div>
-        </div>
-        <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-white">
-          <div class="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300"></div>
-        </div>
-        <div class="flex-auto py-0.5 leading-5">
-          <p class="text-sm text-gray-900 font-medium">
-            Chelsea Hagon
-          </p>
-          <p class="text-xs text-gray-500">
-            created the invoice.
-          </p>
-        </div>
-      </li>
-      <li class="relative flex gap-x-4">
-        <div class="absolute left-0 top-0 flex w-6 justify-center -bottom-6">
-          <div class="w-px bg-gray-200"></div>
-        </div>
-        <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-white">
-          <div class="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300"></div>
-        </div>
-        <div class="flex-auto py-0.5 leading-5">
-          <p class="text-sm text-gray-900 font-medium">
-            Chelsea Hagon
-          </p>
-          <p class="text-xs text-gray-500">
-            created the invoice.
-          </p>
-        </div>
-      </li>
-      <li class="relative flex gap-x-4">
-        <div class="absolute left-0 top-0 flex w-6 justify-center h-6">
-          <div class="w-px bg-gray-200"></div>
-        </div>
-        <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-white">
-          <svg class="h-6 w-6 text-indigo-600" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path
-              fill-rule="evenodd"
-              d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </div>
-        <p class="text-sm text-gray-900 font-medium">
-          Chelsea Hagon
-        </p>
-      </li>
-    </ul>
+    <Steps.menu current_path={@current_path} />
   </:static_menu>
   <%= @inner_content %>
 </.multi_column_layout>

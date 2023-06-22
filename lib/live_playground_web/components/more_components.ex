@@ -49,13 +49,13 @@ defmodule LivePlaygroundWeb.MoreComponents do
                 <span class="sr-only">Close sidebar</span> <.icon name="hero-x-mark" class="h-6 w-6 text-white" />
               </button>
             </div>
-            <div class="h-0 flex-1 overflow-y-auto pt-5 pb-4">
+            <div class="h-0 flex-1 overflow-y-auto py-3">
               <.focus_wrap
                 id="mobile-sidebar-container"
                 phx-window-keydown={JS.hide(to: "#mobile-menu")}
                 phx-key="escape"
                 phx-click-away={JS.hide(to: "#mobile-menu")}
-                class="mt-5 space-y-1 px-2"
+                class="space-y-1 px-2"
               >
                 <%= render_slot(@mobile_menu) %>
               </.focus_wrap>
@@ -267,11 +267,11 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
-  Renders a simple data list.
+  Renders a simple list.
 
   ## Examples
 
-      <.simple_list :if={@items != []}>
+      <.simple_list>
         <:item :for={item <- @items}><%= item.name %></:item>
       </.simple_list>
   """
@@ -294,12 +294,59 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
+  Renders a list of steps.
+
+  ## Examples
+
+      <.steps>
+        <:step :for={step <- @steps} patch={step.patch} active={step.active}>
+          <%= step.name %>
+        </:step>
+      </.steps>
+  """
+  attr :class, :string, default: nil
+
+  slot :step, required: true do
+    attr :patch, :any, required: true
+    attr :active, :boolean
+  end
+
+  def steps(assigns) do
+    assigns = assign(assigns, :last_step, List.last(assigns.step))
+
+    ~H"""
+    <ul role="list" class={@class}>
+      <li :for={step <- @step} class="relative flex gap-x-2">
+        <div class={[
+          "absolute mt-2 left-0 top-0 flex w-6 justify-center",
+          step == @last_step && "h-6",
+          step != @last_step && "-bottom-6"
+        ]}>
+          <div class="w-px bg-gray-200"></div>
+        </div>
+        <div class="relative flex mt-2 h-6 w-6 flex-none items-center justify-center bg-white">
+          <div :if={step.active == false} class="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300"></div>
+          <.icon :if={step.active == true} name="hero-check-circle" class="h-6 w-6 text-gray-400" />
+        </div>
+        <div class="flex-auto leading-5">
+          <.link navigate={step.path} class="block p-2 -mt-4 rounded-md hover:bg-gray-100">
+            <%= render_slot(step) %>
+          </.link>
+        </div>
+      </li>
+    </ul>
+    """
+  end
+
+  @doc """
   Renders tabs.
 
   ## Examples
 
       <.tabs>
-        <:tab :for={tab <- @tabs} patch={~p"/route?#{}"} active={tab == @tab}><%= tab.name %></:tab>
+        <:tab :for={tab <- @tabs} patch={tab.patch} active={tab.active}>
+          <%= tab.name %>
+        </:tab>
       </.tabs>
   """
   attr :class, :string, default: nil
@@ -315,11 +362,11 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <nav class="-mb-px flex space-x-8 flex-wrap md:flex-nowrap">
         <.link
           :for={tab <- @tab}
-          patch={tab[:patch]}
+          patch={tab.patch}
           class={[
             "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium",
-            tab[:active] == false && "border-transparent text-zinc-400 hover:border-zinc-300",
-            tab[:active] == true && "border-zinc-500 text-zinc-600"
+            tab.active == false && "border-transparent text-zinc-400 hover:border-zinc-300",
+            tab.active == true && "border-zinc-500 text-zinc-600"
           ]}
         >
           <%= render_slot(tab) %>
@@ -363,55 +410,6 @@ defmodule LivePlaygroundWeb.MoreComponents do
         </dd>
       </div>
     </dl>
-    """
-  end
-
-  @doc """
-  Renders a dropdown area.
-
-  ## Examples
-
-      <.dropdown :if={@open} class="max-h-64 w-96">
-        ...
-      </.dropdown>
-  """
-  attr :outer_event, :string, default: "close"
-  attr :class, :string, default: nil
-
-  slot :inner_block, required: true
-
-  def dropdown(assigns) do
-    ~H"""
-    <ul
-      phx-click-away={@outer_event}
-      class={"absolute z-10 mt-1 overflow-auto rounded-md shadow-lg border border-gray-200 bg-white py-1 #{@class}"}
-    >
-      <%= render_slot(@inner_block) %>
-    </ul>
-    """
-  end
-
-  @doc """
-  Renders a dropdown option.
-
-  ## Examples
-
-      <.dropdown :if={@open} class="max-h-64 w-96">
-        <.option :for={option <- @options} phx-click="select" phx-value-id={option.id}>
-          <%= option.name %>
-        </.option>
-      </.dropdown>
-  """
-  attr :class, :string, default: nil
-  attr :rest, :global
-
-  slot :inner_block, required: true
-
-  def option(assigns) do
-    ~H"""
-    <li {@rest} class={"relative cursor-default select-none hover:bg-zinc-700 hover:text-white py-2 pl-3 pr-9 #{@class}"}>
-      <%= render_slot(@inner_block) %>
-    </li>
     """
   end
 
