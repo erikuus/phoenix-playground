@@ -7,15 +7,15 @@ defmodule LivePlaygroundWeb.Menus.Sidebar do
 
   def menu(assigns) do
     ~H"""
-    <.narrow_sidebar items={items(@current_layout)} />
+    <.narrow_sidebar items={get_items(@current_layout)} />
     """
   end
 
-  defp items(current_layout) do
-    items() |> Enum.map(&Map.put(&1, :active, is_active?(current_layout, &1)))
+  defp get_items(current_layout) do
+    get_items() |> Enum.map(&Map.put(&1, :active, is_active?(current_layout, &1)))
   end
 
-  defp items() do
+  defp get_items() do
     [
       %{
         icon: "hero-home",

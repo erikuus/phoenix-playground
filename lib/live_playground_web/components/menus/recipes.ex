@@ -8,19 +8,19 @@ defmodule LivePlaygroundWeb.Menus.Recipes do
 
   def menu(assigns) do
     ~H"""
-    <.vertical_navigation items={items(@current_path)} text_class={@text_class} />
+    <.vertical_navigation items={get_items(@current_path)} text_class={@text_class} />
     """
   end
 
-  defp items(current_path) do
-    items() |> Enum.map(&Map.put(&1, :active, is_active?(current_path, &1)))
+  defp get_items(current_path) do
+    get_items() |> Enum.map(&Map.put(&1, :active, is_active?(current_path, &1)))
   end
 
   defp is_active?(current_path, item) do
     if current_path in item.paths, do: true, else: false
   end
 
-  defp items() do
+  defp get_items() do
     [
       %{
         icon: "hero-cursor-arrow-ripple",
