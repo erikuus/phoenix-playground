@@ -4,136 +4,125 @@ defmodule LivePlaygroundWeb.Menus.Recipes do
   import LivePlaygroundWeb.MoreComponents
 
   attr :current_path, :string
-  attr :text_class, :string, default: "text-sm"
 
   def menu(assigns) do
     ~H"""
-    <.vertical_navigation items={get_items(@current_path)} text_class={@text_class} />
+    <.vertical_navigation items={get_items(@current_path)} />
     """
   end
 
   defp get_items(current_path) do
-    get_items() |> Enum.map(&Map.put(&1, :active, is_active?(current_path, &1)))
-  end
-
-  defp is_active?(current_path, item) do
-    if current_path in item.paths, do: true, else: false
-  end
-
-  defp get_items() do
     [
       %{
         icon: "hero-cursor-arrow-ripple",
         label: "Click Buttons",
         path: "/click-buttons",
-        badge: nil,
-        paths: ["/click-buttons"]
+        active: is_active?(current_path, ["/click-buttons"])
       },
       %{
         icon: "hero-link",
         label: "Handle Params",
         path: "/handle-params",
-        badge: nil,
-        paths: ["/handle-params"]
+        active: is_active?(current_path, ["/handle-params"])
       },
       %{
         icon: "hero-arrow-path-rounded-square",
         label: "Dynamic Form",
         path: "/dynamic-form",
-        badge: nil,
-        paths: ["/dynamic-form"]
+        active: is_active?(current_path, ["/dynamic-form"])
       },
       %{
         icon: "hero-cube",
         label: "Key Events",
         path: "/key-events",
-        badge: nil,
-        paths: ["/key-events"]
+        active: is_active?(current_path, ["/key-events"])
       },
       %{
         icon: "hero-command-line",
         label: "JS Commands",
         path: "/js-commands",
-        badge: nil,
-        paths: ["/js-commands"]
+        active: is_active?(current_path, ["/js-commands"])
       },
       %{
         icon: "hero-paper-airplane",
         label: "Send Messages",
         path: "/send-interval",
         badge: 2,
-        paths: ["/send-interval", "/send-after"]
+        active: is_active?(current_path, ["/send-interval", "/send-after"])
       },
       %{
         icon: "hero-queue-list",
         label: "Autocomplete",
         path: "/autocomplete",
         badge: 2,
-        paths: ["/autocomplete", "/autocomplete-custom"]
+        active: is_active?(current_path, ["/autocomplete", "/autocomplete-custom"])
       },
       %{
         icon: "hero-magnifying-glass",
         label: "Search",
         path: "/search",
         badge: 2,
-        paths: ["/search", "/search-param"]
+        active: is_active?(current_path, ["/search", "/search-param"])
       },
       %{
         icon: "hero-funnel",
         label: "Filtering",
         path: "/filter",
         badge: 2,
-        paths: ["/filter", "/filter-params"]
+        active: is_active?(current_path, ["/filter", "/filter-params"])
       },
       %{
         icon: "hero-arrows-up-down",
         label: "Sorting",
         path: "/sort",
         badge: 2,
-        paths: ["/sort", "/sort-params"]
+        active: is_active?(current_path, ["/sort", "/sort-params"])
       },
       %{
         icon: "hero-arrows-right-left",
         label: "Pagination",
         path: "/paginate",
         badge: 2,
-        paths: ["/paginate", "/paginate-params"]
+        active: is_active?(current_path, ["/paginate", "/paginate-params"])
       },
       %{
         icon: "hero-pencil-square",
         label: "Form",
         path: "/form-insert",
         badge: 2,
-        paths: ["/form-insert", "/form-insert-validate", "/form-update"]
+        active:
+          is_active?(current_path, ["/form-insert", "/form-insert-validate", "/form-update"])
       },
       %{
         icon: "hero-rss",
         label: "Stream",
         path: "/stream-insert",
         badge: 2,
-        paths: ["/stream-insert", "/stream-update"]
+        active: is_active?(current_path, ["/stream-insert", "/stream-update"])
       },
       %{
         icon: "hero-signal",
         label: "Broadcast",
         path: "/broadcast",
         badge: 2,
-        paths: ["/broadcast", "/broadcast-stream"]
+        active: is_active?(current_path, ["/broadcast", "/broadcast-stream"])
       },
       %{
         icon: "hero-table-cells",
         label: "Tabular Insert",
         path: "/tabular-insert",
-        badge: nil,
-        paths: ["/tabular-insert"]
+        active: is_active?(current_path, ["/tabular-insert"])
       },
       %{
         icon: "hero-arrow-up-tray",
         label: "Upload",
         path: "/upload",
-        badge: nil,
-        paths: ["/upload"]
+        active: is_active?(current_path, ["/upload"])
       }
     ]
+  end
+
+  defp is_active?(current_path, paths) do
+    if current_path in paths, do: true, else: false
   end
 end

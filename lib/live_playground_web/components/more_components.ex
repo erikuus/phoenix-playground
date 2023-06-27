@@ -1,7 +1,7 @@
 defmodule LivePlaygroundWeb.MoreComponents do
   @moduledoc """
   Provides UI components in addition to core components.
-  
+
   The components in this module use Tailwind CSS, a utility-first CSS framework.
   See the [Tailwind CSS documentation](https://tailwindcss.com) to learn how to
   customize the generated components in this module.
@@ -15,9 +15,9 @@ defmodule LivePlaygroundWeb.MoreComponents do
   @doc """
   Renders a multi-column layout with left-fixed narrow sidebar, mobile menu for small
   and static menu for larger displays.
-  
+
   ## Examples
-  
+
       <.multi_column_layout>
         <:narrow_sidebar></:narrow_sidebar>
         <:mobile_menu></:mobile_menu>
@@ -39,7 +39,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
     <div :if={@mobile_menu != [] && @static_menu != []} class="pl-14 md:pl-20">
       <div id="mobile-menu" class="relative z-40 hidden" role="dialog" aria-modal="true">
         <div class="fixed inset-0 bg-gray-600 bg-opacity-75 cursor-text"></div>
-        
+
         <div class="fixed inset-0 z-40 flex">
           <div class="relative flex w-full max-w-xs flex-1 flex-col bg-white">
             <div class="absolute top-0 right-0 -mr-12 pt-2">
@@ -51,7 +51,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
                 <span class="sr-only">Close sidebar</span> <.icon name="hero-x-mark" class="h-6 w-6 text-white" />
               </button>
             </div>
-            
+
             <div class="h-0 flex-1 overflow-y-auto py-3">
               <.focus_wrap
                 id="mobile-sidebar-container"
@@ -64,13 +64,13 @@ defmodule LivePlaygroundWeb.MoreComponents do
               </.focus_wrap>
             </div>
           </div>
-          
+
           <div class="w-14 flex-shrink-0">
             <!-- Force sidebar to shrink to fit close icon -->
           </div>
         </div>
       </div>
-      
+
       <div class="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
         <div class="flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white">
           <div class="flex flex-1 flex-col overflow-y-auto">
@@ -80,7 +80,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
           </div>
         </div>
       </div>
-      
+
       <div class="flex flex-1 flex-col lg:pl-64">
         <div class="sticky top-0 z-10 bg-white pl-2.5 pt-2 lg:hidden">
           <button
@@ -91,7 +91,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
             <span class="sr-only">Open sidebar</span> <.icon name="hero-bars-3" class="h-6 w-6" />
           </button>
         </div>
-        
+
         <main class="flex-1">
           <div class="lg:py-6">
             <div class="mx-auto max-w-7xl px-6">
@@ -106,9 +106,9 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   @doc """
   Renders a list of links for narrow sidebar.
-  
+
   ## Examples
-  
+
       <.narrow_sidebar items={[
         %{
           icon: "hero-home",
@@ -139,14 +139,10 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   @doc """
   Renders a list of links for vertical navigation.
-  
+
   ## Examples
-  
+
       <.vertical_navigation items={[
-        %{
-          label: "Group name",
-          path: nil
-        },
         %{
           icon: "hero-home",
           label: "Home",
@@ -157,29 +153,22 @@ defmodule LivePlaygroundWeb.MoreComponents do
       ]} />
   """
   attr :items, :list, required: true
-  attr :text_class, :string, default: "text-sm"
 
   def vertical_navigation(assigns) do
     ~H"""
     <div :for={item <- @items}>
-      <div :if={!item.path} class="ml-1 font-semibold leading-6 text-gray-400 text-xs">
-        <%= item.label %>
-      </div>
-      
       <.link
-        :if={item.path}
         navigate={item.path}
         class={[
-          "text-gray-900 group flex items-center px-2 py-2 font-medium rounded-md",
+          "text-gray-900 group flex items-center px-2 py-2 font-medium rounded-md text-sm",
           item.active == true && "bg-gray-100",
-          item.active == false && "hover:bg-gray-100",
-          @text_class
+          item.active == false && "hover:bg-gray-100"
         ]}
       >
-        <.icon :if={item.icon} name={item.icon} class="text-gray-500 mr-1 flex-shrink-0 h-5 w-5" />
+        <.icon :if={Map.has_key?(item, :icon) && item.icon} name={item.icon} class="text-gray-500 mr-1 flex-shrink-0 h-5 w-5" />
         <span class="flex-1 ml-2"><%= item.label %></span>
         <span
-          :if={item.badge}
+          :if={Map.has_key?(item, :badge) && item.badge}
           class={[
             "ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full",
             item.active == true && "bg-gray-200",
@@ -194,10 +183,124 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
-  Renders a link styled as button.
-  
+  Renders a grouped list of links for vertical navigation.
+
   ## Examples
-  
+
+      <.vertical_navigation_grouped items={[
+        %{
+          group: "Group name",
+          subitems:  %{
+            icon: "hero-home",
+            label: "Home",
+            path: "/",
+            badge: 2,
+            active: true
+          }
+        },
+
+      ]} />
+  """
+  attr :items, :list, required: true
+
+  def vertical_navigation_grouped(assigns) do
+    ~H"""
+    <div :for={item <- @items}>
+      <div class="ml-1 font-semibold leading-6 text-gray-400 text-xs">
+        <%= item.group %>
+      </div>
+      <.link
+        :for={subitem <- item.subitems}
+        navigate={subitem.path}
+        class={[
+          "text-gray-900 group flex items-center px-2 py-2 font-medium rounded-md text-sm",
+          subitem.active == true && "bg-gray-100",
+          subitem.active == false && "hover:bg-gray-100"
+        ]}
+      >
+        <.icon
+          :if={Map.has_key?(subitem, :icon) && subitem.icon}
+          name={subitem.icon}
+          class="text-gray-500 mr-1 flex-shrink-0 h-5 w-5"
+        />
+        <span class="flex-1 ml-2"><%= subitem.label %></span>
+        <span
+          :if={Map.has_key?(subitem, :badge) && subitem.badge}
+          class={[
+            "ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full",
+            subitem.active == true && "bg-gray-200",
+            subitem.active == false && "bg-gray-100 group-hover:bg-gray-200"
+          ]}
+        >
+          <%= subitem.badge %>
+        </span>
+      </.link>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders an expandable list of links for vertical navigation.
+
+  ## Examples
+
+      <.vertical_navigation_expandable items={[
+        %{
+          group: "Group name",
+          subitems:  %{
+            icon: "hero-home",
+            label: "Home",
+            path: "/",
+            badge: 2,
+            active: true
+          }
+        },
+
+      ]} />
+  """
+  attr :items, :list, required: true
+
+  def vertical_navigation_expandable(assigns) do
+    ~H"""
+    <div :for={item <- @items}>
+      <div class="ml-1 font-semibold leading-6 text-gray-400 text-xs">
+        <%= item.group %>
+      </div>
+      <.link
+        :for={subitem <- item.subitems}
+        navigate={subitem.path}
+        class={[
+          "text-gray-900 group flex items-center px-2 py-2 font-medium rounded-md text-sm",
+          subitem.active == true && "bg-gray-100",
+          subitem.active == false && "hover:bg-gray-100"
+        ]}
+      >
+        <.icon
+          :if={Map.has_key?(subitem, :icon) && subitem.icon}
+          name={subitem.icon}
+          class="text-gray-500 mr-1 flex-shrink-0 h-5 w-5"
+        />
+        <span class="flex-1 ml-2"><%= subitem.label %></span>
+        <span
+          :if={Map.has_key?(subitem, :badge) && subitem.badge}
+          class={[
+            "ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full",
+            subitem.active == true && "bg-gray-200",
+            subitem.active == false && "bg-gray-100 group-hover:bg-gray-200"
+          ]}
+        >
+          <%= subitem.badge %>
+        </span>
+      </.link>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders a link styled as button.
+
+  ## Examples
+
       <.button_link navigate={~p"/page"}>Go</.button_link>
       <.button_link patch={~p"/page"} type="secondary">Refresh</.button_link>
   """
@@ -227,9 +330,9 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   @doc """
   Renders an alert box.
-  
+
   ## Examples
-  
+
       <.alert>Info</.alert>
       <.alert type="warning">Warning</.alert>
       <.alert type="error">Error</.alert>
@@ -257,9 +360,9 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   @doc """
   Renders a basic card.
-  
+
   ## Examples
-  
+
       <.card>Content</.card>
       <.card class="mt-6">Content</.card>
   """
@@ -276,9 +379,9 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   @doc """
   Renders a simple list.
-  
+
   ## Examples
-  
+
       <.simple_list>
         <:item :for={item <- @items}><%= item.name %></:item>
       </.simple_list>
@@ -303,9 +406,9 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   @doc """
   Renders a list of steps.
-  
+
   ## Examples
-  
+
       <.steps>
         <:step :for={step <- @steps} patch={step.patch} active={step.active}>
           <%= step.name %>
@@ -332,12 +435,12 @@ defmodule LivePlaygroundWeb.MoreComponents do
         ]}>
           <div class="w-px bg-gray-200"></div>
         </div>
-        
+
         <div class="relative flex mt-2 h-6 w-6 flex-none items-center justify-center bg-white">
           <div :if={step.active == false} class="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300"></div>
-           <.icon :if={step.active == true} name="hero-check-circle" class="h-6 w-6 text-gray-400" />
+          <.icon :if={step.active == true} name="hero-check-circle" class="h-6 w-6 text-gray-400" />
         </div>
-        
+
         <div class="flex-auto leading-5">
           <.link navigate={step.path} class="block p-2 rounded-md hover:bg-gray-100">
             <%= render_slot(step) %>
@@ -350,9 +453,9 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   @doc """
   Renders tabs.
-  
+
   ## Examples
-  
+
       <.tabs>
         <:tab :for={tab <- @tabs} patch={tab.patch} active={tab.active}>
           <%= tab.name %>
@@ -388,9 +491,9 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   @doc """
   Renders a card for statistics.
-  
+
   ## Examples
-  
+
       <.stat>
         <:card title="Orders">
           <%= @orders %>
@@ -414,7 +517,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
     <dl class={["grid grid-cols-1 gap-5 sm:grid-cols-3", @class]}>
       <div :for={card <- @card} class="relative overflow-hidden rounded-lg shadow-sm border border-gray-200 bg-white px-4 py-5 sm:p-6">
         <dt class="truncate text-sm font-medium text-gray-500"><%= card.title %></dt>
-        
+
         <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900">
           <%= render_slot(card) %>
         </dd>
@@ -425,9 +528,9 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   @doc """
   Renders a spinning circle as a loading indicator.
-  
+
   ## Examples
-  
+
       <.loading :if={@loading} />
       <button type="submit">
         Search <.loading :if={@loading} class="ml-2 -mr-2 w-5 h-5" />
@@ -439,7 +542,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
     ~H"""
     <svg class={["animate-spin", @class]} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-      
+
       <path
         class="opacity-75"
         fill="currentColor"
@@ -452,9 +555,9 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   @doc """
   Renders pagination.
-  
+
   ## Examples
-  
+
       <.pagination
         page={@page}
         per_page={@per_page}
@@ -484,7 +587,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
           <.icon name="hero-arrow-long-left" class="mr-3 h-5 w-5 text-gray-400" /> Previous
         </.link>
       </div>
-      
+
       <div class="hidden lg:-mt-px lg:flex">
         <.link
           :for={page <- get_pages(@page, @per_page, @count_all, @limit)}
@@ -499,7 +602,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
           <%= page %>
         </.link>
       </div>
-      
+
       <div class="-mt-px flex w-0 flex-1 justify-end">
         <.link
           :if={@page * @per_page < @count_all}
@@ -528,14 +631,14 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   @doc """
   Renders an editable content.
-  
+
   Editable field has two blocks: (1) inner block content with edit link
   and (2) input field(s) block with save and cancel buttons. Edit link,
   save and cancel buttons are pointing to events that must be defined in
   liveview that renders this component.
-  
+
   ## Examples
-  
+
       <div id="country" phx-update="replace">
         <.list class="mt-6 mb-16 ml-1">
           <:item title="Name"><%= @user.name %></:item>
@@ -566,7 +669,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <div id={@id}>
         <%= render_slot(@inner_block) %>
       </div>
-      
+
       <.link phx-click={@edit_event} phx-value-field={@id}>
         <span class="hidden md:inline font-bold">Edit</span> <.icon name="hero-pencil-square-mini" class="md:hidden h-6 w-6" />
       </.link>
@@ -582,7 +685,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <div>
         <.button class="w-full md:w-auto" phx-disable-with="">Save</.button>
       </div>
-      
+
       <div>
         <.button_link type="secondary" class="w-full md:w-auto" phx-click={@cancel_event}>Cancel</.button_link>
       </div>
@@ -592,16 +695,16 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   @doc """
   Renders a slideover.
-  
+
   ## Examples
-  
+
       <.slideover id="menu">
         ...
       </.slideover>
-  
+
   JS commands may be passed to the `:on_cancel` and `on_confirm` attributes
   for the caller to react to each button press, for example:
-  
+
       <.slideover id="confirm" on_confirm={JS.push("delete")} on_cancel={JS.navigate(~p"/items")}>
         Are you sure to delete these items?
         ...
@@ -658,23 +761,23 @@ defmodule LivePlaygroundWeb.MoreComponents do
                     <h3 id={"#{@id}-title"} class="text-lg font-medium leading-6 text-gray-900">
                       <%= render_slot(@title) %>
                     </h3>
-                    
+
                     <p :if={@subtitle != []} id={"#{@id}-subtitle"} class="mt-2 text-base leading-6 text-zinc-600">
                       <%= render_slot(@subtitle) %>
                     </p>
                   </header>
-                  
+
                   <div class="ml-3 flex h-7">
                     <.link phx-click={hide_slideover(@on_cancel, @id)}>
                       <.icon name="hero-x-mark-solid" class="w-6 h-6 text-gray-400 hover:text-gray-500" />
                     </.link>
                   </div>
                 </div>
-                
+
                 <div class="relative mt-6 flex-1 overflow-y-auto">
                   <%= render_slot(@inner_block) %>
                 </div>
-                
+
                 <div :if={@confirm != [] or @cancel != []} class="border-t border-zinc-200 pt-4 sm:pl-4 sm:flex sm:flex-row-reverse">
                   <.link
                     :for={cancel <- @cancel}
@@ -687,7 +790,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
                   >
                     <%= render_slot(cancel) %>
                   </.link>
-                  
+
                   <.button
                     :for={confirm <- @confirm}
                     phx-click={@on_confirm}

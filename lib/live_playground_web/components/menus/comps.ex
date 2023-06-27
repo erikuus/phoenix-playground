@@ -8,43 +8,36 @@ defmodule LivePlaygroundWeb.Menus.Comps do
 
   def menu(assigns) do
     ~H"""
-    <.vertical_navigation items={get_items(@current_path)} text_class={@text_class} />
+    <.vertical_navigation_grouped items={get_items(@current_path)} text_class={@text_class} />
     """
   end
 
   defp get_items(current_path) do
-    get_items()
-    |> Enum.map(&Map.put(&1, :active, is_active?(current_path, &1)))
-    |> Enum.map(&Map.put(&1, :icon, nil))
-    |> Enum.map(&Map.put(&1, :badge, nil))
-  end
-
-  defp is_active?(current_path, item) do
-    if current_path in item.paths, do: true, else: false
-  end
-
-  defp get_items() do
     [
       %{
-        label: "Core components",
-        path: nil,
-        paths: []
+        group: "Core components",
+        subitems: [
+          %{
+            label: "Modal",
+            path: "/modal",
+            active: is_active?(current_path, ["/modal"])
+          }
+        ]
       },
       %{
-        label: "Modal",
-        path: "/modal",
-        paths: ["/modal"]
-      },
-      %{
-        label: "More components",
-        path: nil,
-        paths: []
-      },
-      %{
-        label: "Slideover",
-        path: "/slideover",
-        paths: ["/slideover"]
+        group: "More components",
+        subitems: [
+          %{
+            label: "Slideover",
+            path: "/slideover",
+            active: is_active?(current_path, ["/slideover"])
+          }
+        ]
       }
     ]
+  end
+
+  defp is_active?(current_path, paths) do
+    if current_path in paths, do: true, else: false
   end
 end

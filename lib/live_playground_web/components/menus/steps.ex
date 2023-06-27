@@ -24,10 +24,6 @@ defmodule LivePlaygroundWeb.Menus.Steps do
     get_steps() |> Enum.map(&Map.put(&1, :active, is_active?(current_path, &1)))
   end
 
-  defp is_active?(current_path, step) do
-    if String.starts_with?(current_path, step.path), do: true, else: false
-  end
-
   defp get_steps() do
     [
       %{
@@ -52,5 +48,9 @@ defmodule LivePlaygroundWeb.Menus.Steps do
         path: "/languages2"
       }
     ]
+  end
+
+  defp is_active?(current_path, step) do
+    if String.starts_with?(current_path, step.path), do: true, else: false
   end
 end
