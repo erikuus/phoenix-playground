@@ -8,7 +8,7 @@ defmodule LivePlaygroundWeb.Menus.Comps do
 
   def menu(assigns) do
     ~H"""
-    <.vertical_navigation_grouped items={get_items(@current_path)} text_class={@text_class} />
+    <.vertical_navigation_grouped items={get_items(@current_path)} />
     """
   end
 

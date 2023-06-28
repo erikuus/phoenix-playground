@@ -206,71 +206,15 @@ defmodule LivePlaygroundWeb.MoreComponents do
   def vertical_navigation_grouped(assigns) do
     ~H"""
     <div :for={item <- @items}>
-      <div class="ml-1 font-semibold leading-6 text-gray-400 text-xs">
+      <div :if={item.group} class="ml-2 font-semibold leading-6 text-gray-400 text-xs">
         <%= item.group %>
       </div>
       <.link
         :for={subitem <- item.subitems}
         navigate={subitem.path}
         class={[
-          "text-gray-900 group flex items-center px-2 py-2 font-medium rounded-md text-sm",
-          subitem.active == true && "bg-gray-100",
-          subitem.active == false && "hover:bg-gray-100"
-        ]}
-      >
-        <.icon
-          :if={Map.has_key?(subitem, :icon) && subitem.icon}
-          name={subitem.icon}
-          class="text-gray-500 mr-1 flex-shrink-0 h-5 w-5"
-        />
-        <span class="flex-1 ml-2"><%= subitem.label %></span>
-        <span
-          :if={Map.has_key?(subitem, :badge) && subitem.badge}
-          class={[
-            "ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full",
-            subitem.active == true && "bg-gray-200",
-            subitem.active == false && "bg-gray-100 group-hover:bg-gray-200"
-          ]}
-        >
-          <%= subitem.badge %>
-        </span>
-      </.link>
-    </div>
-    """
-  end
-
-  @doc """
-  Renders an expandable list of links for vertical navigation.
-
-  ## Examples
-
-      <.vertical_navigation_expandable items={[
-        %{
-          group: "Group name",
-          subitems:  %{
-            icon: "hero-home",
-            label: "Home",
-            path: "/",
-            badge: 2,
-            active: true
-          }
-        },
-
-      ]} />
-  """
-  attr :items, :list, required: true
-
-  def vertical_navigation_expandable(assigns) do
-    ~H"""
-    <div :for={item <- @items}>
-      <div class="ml-1 font-semibold leading-6 text-gray-400 text-xs">
-        <%= item.group %>
-      </div>
-      <.link
-        :for={subitem <- item.subitems}
-        navigate={subitem.path}
-        class={[
-          "text-gray-900 group flex items-center px-2 py-2 font-medium rounded-md text-sm",
+          "text-gray-900 group flex items-center py-2 font-medium rounded-md text-sm",
+          item.group && "px-2",
           subitem.active == true && "bg-gray-100",
           subitem.active == false && "hover:bg-gray-100"
         ]}
