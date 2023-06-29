@@ -21,7 +21,8 @@ defmodule LivePlaygroundWeb.Menus.Steps do
   end
 
   defp get_steps(current_path) do
-    get_steps() |> Enum.map(&Map.put(&1, :active, is_active?(current_path, &1)))
+    get_steps()
+    |> Enum.map(&Map.put(&1, :active, is_active?(current_path, &1)))
   end
 
   defp get_steps() do
@@ -30,22 +31,22 @@ defmodule LivePlaygroundWeb.Menus.Steps do
         title: "Generate",
         description:
           "Run mix phx.gen.live command to generate LiveViews, components, and context for a resource.",
-        path: "/languages4"
-      },
-      %{
-        title: "Step 2",
-        description: LivePlaygroundWeb.DemoHelpers.lorem_ipsum_sentences(2, true),
         path: "/languages"
       },
       %{
+        title: "Step 2",
+        description: "Goming soon",
+        path: "/click-buttons"
+      },
+      %{
         title: "Step 3",
-        description: LivePlaygroundWeb.DemoHelpers.lorem_ipsum_sentences(2, true),
-        path: "/languages3"
+        description: "Goming soon",
+        path: "/click-buttons"
       },
       %{
         title: "Step 4",
-        description: LivePlaygroundWeb.DemoHelpers.lorem_ipsum_sentences(2, true),
-        path: "/languages2"
+        description: "Goming soon",
+        path: "/click-buttons"
       }
     ]
   end

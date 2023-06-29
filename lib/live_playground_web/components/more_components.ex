@@ -379,14 +379,23 @@ defmodule LivePlaygroundWeb.MoreComponents do
         ]}>
           <div class="w-px bg-gray-200"></div>
         </div>
-
         <div class="relative flex mt-2 h-6 w-6 flex-none items-center justify-center bg-white">
           <div :if={step.active == false} class="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300"></div>
           <.icon :if={step.active == true} name="hero-check-circle" class="h-6 w-6 text-gray-400" />
         </div>
-
         <div class="flex-auto leading-5">
-          <.link navigate={step.path} class="block p-2 rounded-md hover:bg-gray-100">
+          <div :if={!Map.has_key?(step, :path)} class="block p-2 mb-1 rounded-md">
+            <%= render_slot(step) %>
+          </div>
+          <.link
+            :if={Map.has_key?(step, :path) && step.path}
+            navigate={step.path}
+            class={[
+              "block p-2 mb-1 rounded-md",
+              step.active == false && "hover:bg-gray-100",
+              step.active == true && "bg-gray-100"
+            ]}
+          >
             <%= render_slot(step) %>
           </.link>
         </div>
