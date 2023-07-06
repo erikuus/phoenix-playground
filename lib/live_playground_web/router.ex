@@ -47,6 +47,9 @@ defmodule LivePlaygroundWeb.Router do
       live "/broadcast-stream/edit", ReceipesLive.BroadcastStream, :edit
       live "/key-events", ReceipesLive.KeyEvents
       live "/js-commands", ReceipesLive.JsCommands
+      live "/js-hook-map-dataset", ReceipesLive.JsHookMapDataset
+      live "/js-hook-map-push-event", ReceipesLive.JsHookMapPushEvent
+      live "/js-hook-map-handle-event", ReceipesLive.JsHookMapHandleEvent
       live "/upload", ReceipesLive.Upload
     end
   end

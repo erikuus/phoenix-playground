@@ -48,42 +48,66 @@ defmodule LivePlaygroundWeb.Menus.Recipes do
         label: "Send Messages",
         path: "/send-interval",
         badge: 2,
-        active: is_active?(current_path, ["/send-interval", "/send-after"])
+        active:
+          is_active?(current_path, [
+            "/send-interval",
+            "/send-after"
+          ])
       },
       %{
         icon: "hero-queue-list",
         label: "Autocomplete",
         path: "/autocomplete",
         badge: 2,
-        active: is_active?(current_path, ["/autocomplete", "/autocomplete-custom"])
+        active:
+          is_active?(current_path, [
+            "/autocomplete",
+            "/autocomplete-custom"
+          ])
       },
       %{
         icon: "hero-magnifying-glass",
         label: "Search",
         path: "/search",
         badge: 2,
-        active: is_active?(current_path, ["/search", "/search-param"])
+        active:
+          is_active?(current_path, [
+            "/search",
+            "/search-param"
+          ])
       },
       %{
         icon: "hero-funnel",
         label: "Filtering",
         path: "/filter",
         badge: 2,
-        active: is_active?(current_path, ["/filter", "/filter-params"])
+        active:
+          is_active?(current_path, [
+            "/filter",
+            "/filter-params"
+          ])
       },
       %{
         icon: "hero-arrows-up-down",
         label: "Sorting",
         path: "/sort",
         badge: 2,
-        active: is_active?(current_path, ["/sort", "/sort-params"])
+        active:
+          is_active?(current_path, [
+            "/sort",
+            "/sort-params"
+          ])
       },
       %{
         icon: "hero-arrows-right-left",
         label: "Pagination",
         path: "/paginate",
         badge: 2,
-        active: is_active?(current_path, ["/paginate", "/paginate-params"])
+        active:
+          is_active?(current_path, [
+            "/paginate",
+            "/paginate-params"
+          ])
       },
       %{
         icon: "hero-pencil-square",
@@ -91,27 +115,51 @@ defmodule LivePlaygroundWeb.Menus.Recipes do
         path: "/form-insert",
         badge: 2,
         active:
-          is_active?(current_path, ["/form-insert", "/form-insert-validate", "/form-update"])
+          is_active?(current_path, [
+            "/form-insert",
+            "/form-insert-validate",
+            "/form-update"
+          ])
       },
       %{
         icon: "hero-rss",
         label: "Stream",
         path: "/stream-insert",
         badge: 2,
-        active: is_active?(current_path, ["/stream-insert", "/stream-update"])
+        active:
+          is_active?(current_path, [
+            "/stream-insert",
+            "/stream-update"
+          ])
       },
       %{
         icon: "hero-signal",
         label: "Broadcast",
         path: "/broadcast",
         badge: 2,
-        active: is_active?(current_path, ["/broadcast", "/broadcast-stream"])
+        active:
+          is_active?(current_path, [
+            "/broadcast",
+            "/broadcast-stream"
+          ])
       },
       %{
         icon: "hero-table-cells",
         label: "Tabular Insert",
         path: "/tabular-insert",
         active: is_active?(current_path, ["/tabular-insert"])
+      },
+      %{
+        icon: "hero-map",
+        label: "JS Hooks",
+        path: "/js-hook-map-dataset",
+        badge: 3,
+        active:
+          is_active?(current_path, [
+            "/js-hook-map-dataset",
+            "/js-hook-map-push-event",
+            "/js-hook-map-handle-event"
+          ])
       },
       %{
         icon: "hero-arrow-up-tray",

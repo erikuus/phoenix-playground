@@ -14,26 +14,12 @@ defmodule LivePlaygroundWeb.ReceipesLive.HandleParams do
 
   def handle_params(%{"id" => id}, _url, socket) do
     country = Countries.get_country!(id)
-
-    socket =
-      assign(socket,
-        selected_country: country,
-        page_title: country.name
-      )
-
-    {:noreply, socket}
+    {:noreply, assign(socket, :selected_country, country)}
   end
 
   def handle_params(_params, _url, socket) do
     country = hd(socket.assigns.countries)
-
-    socket =
-      assign(socket,
-        selected_country: country,
-        page_title: country.name
-      )
-
-    {:noreply, socket}
+    {:noreply, assign(socket, :selected_country, country)}
   end
 
   def render(assigns) do
