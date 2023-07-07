@@ -31,6 +31,9 @@ defmodule LivePlaygroundWeb.ReceipesLive.JsHookMapDataset do
       <%= raw(code("lib/live_playground/locations.ex", "# jshookmapdataset", "# endjshookmapdataset")) %>
       <%= raw(code("lib/live_playground/locations/location.ex", "# jshookmapdataset", "# endjshookmapdataset")) %>
       <%= raw(code("assets/js/app.js", "// jshookmapdataset", "// endjshookmapdataset", false)) %>
+      <%= raw(
+        code("lib/live_playground_web/components/layouts/root.html.heex", "<!-- leafletstyle -->", "<!-- endleafletstyle -->", false)
+      ) %>
       <%= raw(code("assets/js/map-dataset.js")) %>
       <%= raw(code("assets/js/map.js")) %>
     </div>

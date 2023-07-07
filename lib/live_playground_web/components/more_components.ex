@@ -278,8 +278,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
   ## Examples
 
       <.alert>Info</.alert>
-      <.alert type="warning">Warning</.alert>
-      <.alert type="error">Error</.alert>
+      <.alert look="warning">Warning</.alert>
+      <.alert look="error">Error</.alert>
   """
   attr :look, :string, default: "info"
   attr :class, :string, default: "text-sm"
@@ -307,7 +307,6 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   ## Examples
 
-      <.card>Content</.card>
       <.card class="mt-6">Content</.card>
   """
   attr :class, :string, default: nil

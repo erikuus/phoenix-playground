@@ -92,7 +92,7 @@ defmodule LivePlaygroundWeb.DemoHelpers do
     |> Macro.to_string()
   end
 
-  defp hide_comment(code_string, false), do: code_string
+  defp hide_comment(code_string, false), do: String.trim_leading(code_string)
 
   defp hide_marked(code) do
     contains = String.contains?(code, "<!-- start hiding from live code -->")

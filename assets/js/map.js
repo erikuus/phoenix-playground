@@ -1,3 +1,8 @@
+/*
+install required library as follows:
+cd assets
+npm install --save leaflet@1.7.1
+*/
 import L from "leaflet";
 
 class Map {
