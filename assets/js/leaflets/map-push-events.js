@@ -28,27 +28,15 @@ class Map {
     return marker;
   }
 
-  highlightMarker(location) {
-    const marker = this.markerForLocation(location);
-
-    marker.openPopup();
-
-    this.map.panTo(marker.getLatLng());
-  }
-
-  markerForLocation(location) {
-    let markerLayer;
+  fitMarkers() {
+    var visibleLayerGroup = new L.FeatureGroup();
     this.map.eachLayer(layer => {
       if (layer instanceof L.Marker) {
-        const markerPosition = layer.getLatLng();
-        if (markerPosition.lat === location.lat &&
-          markerPosition.lng === location.lng) {
-          markerLayer = layer;
-        }
+        visibleLayerGroup.addLayer(layer);
       }
     });
-
-    return markerLayer;
+    const bounds = visibleLayerGroup.getBounds();
+    this.map.fitBounds(bounds);
   }
 }
 

@@ -295,9 +295,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
       @look == "error" && "bg-red-50 text-red-700",
       @class
     ]}>
-      <div class="flex space-x-2">
-        <%= render_slot(@inner_block) %>
-      </div>
+      <%= render_slot(@inner_block) %>
     </div>
     """
   end
@@ -332,7 +330,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   attr :class, :string, default: nil
 
   slot :item, required: true do
-    attr :class, :string
+    attr :class, :any
   end
 
   def simple_list(assigns) do

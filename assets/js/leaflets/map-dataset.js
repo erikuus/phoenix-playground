@@ -1,7 +1,7 @@
 import L from "leaflet";
 
 class Map {
-  constructor(element, center, zoom, markerClickedCallback) {
+  constructor(element, center, zoom) {
     this.map = L.map(element).setView(center, zoom);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -10,8 +10,6 @@ class Map {
       tileSize: 512,
       zoomOffset: -1
     }).addTo(this.map);
-
-    this.markerClickedCallback = markerClickedCallback;
   }
 
   addMarker(location) {
@@ -22,33 +20,20 @@ class Map {
 
     marker.on("click", e => {
       marker.openPopup();
-      this.markerClickedCallback(e);
     });
 
     return marker;
   }
 
-  highlightMarker(location) {
-    const marker = this.markerForLocation(location);
-
-    marker.openPopup();
-
-    this.map.panTo(marker.getLatLng());
-  }
-
-  markerForLocation(location) {
-    let markerLayer;
+  fitMarkers() {
+    var visibleLayerGroup = new L.FeatureGroup();
     this.map.eachLayer(layer => {
       if (layer instanceof L.Marker) {
-        const markerPosition = layer.getLatLng();
-        if (markerPosition.lat === location.lat &&
-          markerPosition.lng === location.lng) {
-          markerLayer = layer;
-        }
+        visibleLayerGroup.addLayer(layer);
       }
     });
-
-    return markerLayer;
+    const bounds = visibleLayerGroup.getBounds();
+    this.map.fitBounds(bounds);
   }
 }
 
