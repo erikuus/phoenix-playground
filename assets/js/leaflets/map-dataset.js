@@ -26,13 +26,13 @@ class Map {
   }
 
   fitMarkers() {
-    var visibleLayerGroup = new L.FeatureGroup();
+    var markers = new L.FeatureGroup();
     this.map.eachLayer(layer => {
       if (layer instanceof L.Marker) {
-        visibleLayerGroup.addLayer(layer);
+        markers.addLayer(layer);
       }
     });
-    const bounds = visibleLayerGroup.getBounds();
+    const bounds = markers.getBounds();
     this.map.fitBounds(bounds);
   }
 }

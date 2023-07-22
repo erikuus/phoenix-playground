@@ -14,7 +14,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.JsHookMapDataset do
     <.header class="mb-6">
       Map Dataset
       <:subtitle>
-        How to hook a JavaScript map library and add markers with dataset in LiveView
+        How to hook a JavaScript map library and add markers through the dataset object in LiveView
       </:subtitle>
       <:actions>
         <.link navigate={~p"/js-hook-map-push-event"}>
@@ -34,7 +34,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.JsHookMapDataset do
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <%= raw(code("lib/live_playground_web/live/receipes_live/js_hook_map_dataset.ex")) %>
-      <%= raw(code("lib/live_playground/locations.ex", "# jshookmapdataset", "# endjshookmapdataset")) %>
+      <%= raw(code("lib/live_playground/locations.ex", "# jshooks", "# endjshooks")) %>
       <%= raw(code("lib/live_playground/locations/location.ex", "# jshookmapdataset", "# endjshookmapdataset")) %>
       <%= raw(code("assets/js/app.js", "// jshooks", "// endjshooks", false)) %>
       <%= raw(code("assets/js/hooks/map-dataset.js")) %>

@@ -7,7 +7,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.JsHookMapPushEvent do
     socket =
       assign(socket,
         locations: Locations.list_est_location(),
-        selected_location: nil
+        selected: nil
       )
 
     {:ok, socket}
@@ -19,7 +19,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.JsHookMapPushEvent do
     <.header class="mb-6">
       Map Push Events
       <:subtitle>
-        How to hook a JavaScript map library and push events into LiveView
+        How to hook a map library and push events from JavaScript into LiveView
       </:subtitle>
       <:actions>
         <.link navigate={~p"/js-hook-map-handle-event"}>
@@ -41,7 +41,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.JsHookMapPushEvent do
           id={"location-#{location.id}"}
           class={[
             "text-gray-900 group flex items-center px-3 py-2 mr-2 rounded-md text-sm",
-            location == @selected_location && "rounded-md bg-gray-100"
+            location == @selected && "rounded-md bg-gray-100"
           ]}
         >
           <%= location.name %>
@@ -51,7 +51,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.JsHookMapPushEvent do
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <%= raw(code("lib/live_playground_web/live/receipes_live/js_hook_map_push_event.ex")) %>
-      <%= raw(code("lib/live_playground/locations.ex", "# jshookmapdataset", "# endjshookmapdataset")) %>
+      <%= raw(code("lib/live_playground/locations.ex", "# jshooks", "# endjshooks")) %>
       <%= raw(code("assets/js/app.js", "// jshooks", "// endjshooks", false)) %>
       <%= raw(code("assets/js/hooks/map-push-events.js")) %>
       <%= raw(code("assets/js/leaflets/map-push-events.js")) %>
@@ -80,7 +80,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.JsHookMapPushEvent do
 
   def handle_event("marker-clicked", id, socket) do
     location = find_location(socket, id)
-    {:reply, %{location: location}, assign(socket, selected_location: location)}
+    {:reply, %{location: location}, assign(socket, selected: location)}
   end
 
   defp find_location(socket, id) do

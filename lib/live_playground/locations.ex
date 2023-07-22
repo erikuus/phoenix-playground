@@ -21,7 +21,7 @@ defmodule LivePlayground.Locations do
     Repo.all(Location)
   end
 
-  # jshookmapdataset
+  # jshooks
   def list_est_location() do
     from(Location)
     |> where(countrycode: "EST")
@@ -29,7 +29,7 @@ defmodule LivePlayground.Locations do
     |> Repo.all()
   end
 
-  # endjshookmapdataset
+  # endjshooks
 
   @doc """
   Gets a single location.

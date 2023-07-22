@@ -24,10 +24,12 @@ import topbar from "../vendor/topbar"
 // jshooks
 import MapDataset from "./hooks/map-dataset"
 import MapPushEvents from "./hooks/map-push-events"
+import MapHandleEvents from "./hooks/map-handle-events"
 
 let Hooks = {
   MapDataset: MapDataset,
-  MapPushEvents: MapPushEvents
+  MapPushEvents: MapPushEvents,
+  MapHandleEvents: MapHandleEvents
 }
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
