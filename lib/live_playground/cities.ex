@@ -262,10 +262,10 @@ defmodule LivePlayground.Cities do
       %Ecto.Changeset{data: %City{}}
 
   """
-  # form # streaminsert # streamupdate # broadcaststream # tabularinsert
+  # form # streaminsert # streamupdate # broadcaststream # tabularinsert # upload
   def change_city(%City{} = city, attrs \\ %{}) do
     City.changeset(city, attrs)
   end
 
-  # endform # endstreaminsert # endstreamupdate # endbroadcaststream # endtabularinsert
+  # endform # endstreaminsert # endstreamupdate # endbroadcaststream # endtabularinsert # endupload
 end

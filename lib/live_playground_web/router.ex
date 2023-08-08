@@ -51,6 +51,8 @@ defmodule LivePlaygroundWeb.Router do
       live "/js-hook-map-push-event", ReceipesLive.JsHookMapPushEvent
       live "/js-hook-map-handle-event", ReceipesLive.JsHookMapHandleEvent
       live "/upload", ReceipesLive.Upload
+      live "/upload-cloud", ReceipesLive.UploadCloud
+      live "/upload-server", ReceipesLive.UploadServer
     end
   end
 

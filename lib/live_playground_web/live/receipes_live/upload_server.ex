@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.ReceipesLive.UploadCloud do
+defmodule LivePlaygroundWeb.ReceipesLive.UploadServer do
   use LivePlaygroundWeb, :live_view
 
   def mount(_params, _session, socket) do
@@ -9,13 +9,13 @@ defmodule LivePlaygroundWeb.ReceipesLive.UploadCloud do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      File Uploads to Cloud
+      File Uploads to Server
       <:subtitle>
-        How to upload files to a cloud in LiveView
+        How to upload files to a server in LiveView
       </:subtitle>
       <:actions>
-        <.link navigate={~p"/upload"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: File Uploads UI
+        <.link navigate={~p"/upload-cloud"}>
+          See also: File Uploads to Cloud <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
         </.link>
       </:actions>
     </.header>

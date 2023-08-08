@@ -163,9 +163,15 @@ defmodule LivePlaygroundWeb.Menus.Recipes do
       },
       %{
         icon: "hero-arrow-up-tray",
-        label: "Upload",
+        label: "File Uploads",
         path: "/upload",
-        active: is_active?(current_path, ["/upload"])
+        badge: 3,
+        active:
+          is_active?(current_path, [
+            "/upload",
+            "/upload-cloud",
+            "/upload-server"
+          ])
       }
     ]
   end
