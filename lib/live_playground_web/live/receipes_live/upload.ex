@@ -14,7 +14,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.Upload do
       allow_upload(
         socket,
         :photos,
-        accept: ~w(.png .jpeg .jpg),
+        accept: ~w(.png .jpg),
         max_entries: 8,
         max_file_size: 10_000_000
       )
@@ -30,6 +30,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.Upload do
       <:subtitle>
         How to create file upload controls and previews in LiveView
       </:subtitle>
+
       <:actions>
         <.link navigate={~p"/upload-server"}>
           See also: File Uploads to Server <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
@@ -39,7 +40,6 @@ defmodule LivePlaygroundWeb.ReceipesLive.Upload do
     <!-- end hiding from live code -->
     <.form for={@form} phx-submit="save" phx-change="validate" class="space-y-6">
       <.input field={@form[:name]} placeholder="Name" />
-
       <div
         phx-drop-target={@uploads.photos.ref}
         class="flex justify-center rounded-lg border border-dashed border-zinc-900/25 px-6 py-10"
@@ -48,21 +48,20 @@ defmodule LivePlaygroundWeb.ReceipesLive.Upload do
           <.icon name="hero-photo" class="mx-auto h-12 w-12 text-zinc-300" />
           <div class="mt-4 flex text-sm leading-6 text-zinc-600">
             <label for={@uploads.photos.ref} class="relative cursor-pointer rounded-md bg-white font-semibold">
-              <span>Upload a file</span>
-              <.live_file_input upload={@uploads.photos} class="sr-only" />
+              <span>Upload a file</span> <.live_file_input upload={@uploads.photos} class="sr-only" />
             </label>
             <p class="pl-1">or drag and drop</p>
           </div>
+
           <p class="text-xs leading-5 text-zinc-600">
-            <%= @uploads.photos.max_entries %> PNG, JPG photos up to <%= trunc(@uploads.photos.max_file_size / 1_000_000) %> MB each
+            <%= @uploads.photos.max_entries %>
+            <%= format_accept(@uploads.photos.accept) %> files up to <%= trunc(@uploads.photos.max_file_size / 1_000_000) %> MB each
           </p>
         </div>
       </div>
-
       <.error :for={err <- upload_errors(@uploads.photos)}>
         <%= Phoenix.Naming.humanize(err) %>
       </.error>
-
       <ul role="list" class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 xl:grid-cols-4">
         <li :for={entry <- @uploads.photos.entries}>
           <.live_img_preview
@@ -110,8 +109,9 @@ defmodule LivePlaygroundWeb.ReceipesLive.Upload do
     </.form>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/upload.ex")) %>
-      <%= raw(code("lib/live_playground/cities.ex", "# upload", "# endupload")) %>
+      <%= raw(code("lib/live_playground_web/live/receipes_live/upload.ex")) %> <%= raw(
+        code("lib/live_playground/cities.ex", "# upload", "# endupload")
+      ) %>
     </div>
     <!-- end hiding from live code -->
     """
@@ -128,6 +128,14 @@ defmodule LivePlaygroundWeb.ReceipesLive.Upload do
 
   def handle_event("cancel", %{"ref" => ref}, socket) do
     {:noreply, cancel_upload(socket, :photos, ref)}
+  end
+
+  defp format_accept(accept) do
+    accept
+    |> String.split(",")
+    |> Enum.map(&String.trim_leading(&1, "."))
+    |> Enum.map(&String.upcase/1)
+    |> Enum.join(", ")
   end
 
   defp get_circumference(radius) do
