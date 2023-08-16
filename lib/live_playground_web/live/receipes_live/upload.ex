@@ -1,13 +1,13 @@
 defmodule LivePlaygroundWeb.ReceipesLive.Upload do
   use LivePlaygroundWeb, :live_view
 
-  alias LivePlayground.Cities
-  alias LivePlayground.Cities.City
+  alias LivePlayground.Locations
+  alias LivePlayground.Locations.Location
 
   def mount(_params, _session, socket) do
     socket =
       assign(socket,
-        form: to_form(Cities.change_city(%City{}))
+        form: to_form(Locations.change_location(%Location{}))
       )
 
     socket =
@@ -15,7 +15,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.Upload do
         socket,
         :photos,
         accept: ~w(.png .jpg),
-        max_entries: 8,
+        max_entries: 4,
         max_file_size: 10_000_000
       )
 
@@ -112,22 +112,35 @@ defmodule LivePlaygroundWeb.ReceipesLive.Upload do
       <%= raw(code("lib/live_playground_web/live/receipes_live/upload.ex")) %> <%= raw(
         code("lib/live_playground/cities.ex", "# upload", "# endupload")
       ) %>
+      <.card class="px-4 py-5 sm:p-6">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <.icon name="hero-information-circle" class="h-10 w-10" />
+          </div>
+          <div class="ml-3">
+            Please take note that in this recipe, we have constructed the Upload UI employing
+            Phoenix components and Tailwind CSS. In our
+            <.link class="underline" navigate={~p"/upload-server"}>next recipe</.link>,
+            we will encapsulate the Upload UI within our own streamlined and efficient functional components.
+          </div>
+        </div>
+      </.card>
     </div>
     <!-- end hiding from live code -->
     """
   end
 
-  def handle_event("validate", %{"city" => params}, socket) do
+  def handle_event("cancel", %{"ref" => ref}, socket) do
+    {:noreply, cancel_upload(socket, :photos, ref)}
+  end
+
+  def handle_event("validate", %{"location" => params}, socket) do
     changeset =
-      %City{}
-      |> Cities.change_city(params)
+      %Location{}
+      |> Locations.change_location(params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign(socket, :form, to_form(changeset))}
-  end
-
-  def handle_event("cancel", %{"ref" => ref}, socket) do
-    {:noreply, cancel_upload(socket, :photos, ref)}
   end
 
   defp format_accept(accept) do

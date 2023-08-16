@@ -16,7 +16,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   Renders a multi-column layout with left-fixed narrow sidebar, mobile menu for small
   and static menu for larger displays.
 
-  ## Examples
+  ## Example
 
       <.multi_column_layout>
         <:narrow_sidebar></:narrow_sidebar>
@@ -107,7 +107,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   @doc """
   Renders a list of links for narrow sidebar.
 
-  ## Examples
+  ## Example
 
       <.narrow_sidebar items={[
         %{
@@ -140,7 +140,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   @doc """
   Renders a list of links for vertical navigation.
 
-  ## Examples
+  ## Example
 
       <.vertical_navigation items={[
         %{
@@ -185,7 +185,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   @doc """
   Renders a grouped list of links for vertical navigation.
 
-  ## Examples
+  ## Example
 
       <.vertical_navigation_grouped items={[
         %{
@@ -303,7 +303,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   @doc """
   Renders a basic card.
 
-  ## Examples
+  ## Example
 
       <.card class="mt-6">Content</.card>
   """
@@ -321,7 +321,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   @doc """
   Renders a simple list.
 
-  ## Examples
+  ## Example
 
       <.simple_list>
         <:item :for={item <- @items}><%= item.name %></:item>
@@ -348,7 +348,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   @doc """
   Renders a list of steps.
 
-  ## Examples
+  ## Example
 
       <.steps>
         <:step :for={step <- @steps} patch={step.patch} active={step.active}>
@@ -404,7 +404,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   @doc """
   Renders tabs.
 
-  ## Examples
+  ## Example
 
       <.tabs>
         <:tab :for={tab <- @tabs} patch={tab.patch} active={tab.active}>
@@ -440,9 +440,9 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
-  Renders a card for statistics.
+  Renders cards for statistics.
 
-  ## Examples
+  ## Example
 
       <.stat>
         <:card title="Orders">
@@ -479,7 +479,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   @doc """
   Renders a spinning circle as a loading indicator.
 
-  ## Examples
+  ## Example
 
       <.loading :if={@loading} />
       <button type="submit">
@@ -506,7 +506,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   @doc """
   Renders pagination.
 
-  ## Examples
+  ## Example
 
       <.pagination
         page={@page}
@@ -587,7 +587,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   save and cancel buttons are pointing to events that must be defined in
   liveview that renders this component.
 
-  ## Examples
+  ## Example
 
       <div id="country" phx-update="replace">
         <.list class="mt-6 mb-16 ml-1">
@@ -800,5 +800,133 @@ defmodule LivePlaygroundWeb.MoreComponents do
       to: "#root-body"
     )
     |> JS.pop_focus()
+  end
+
+  @doc """
+  Renders a file upload area.
+
+  ## Example
+
+      <.uploads_upload_area uploads_name={@uploads.photos} />
+  """
+  attr :uploads_name, :map, required: true
+
+  def uploads_upload_area(assigns) do
+    ~H"""
+    <div phx-drop-target={@uploads_name.ref} class="flex justify-center rounded-lg border border-dashed border-zinc-900/25 px-6 py-10">
+      <div class="text-center">
+        <.icon name="hero-photo" class="mx-auto h-12 w-12 text-zinc-300" />
+        <div class="mt-4 flex text-sm leading-6 text-zinc-600">
+          <label for={@uploads_name.ref} class="relative cursor-pointer rounded-md bg-white font-semibold">
+            <span>Upload a file</span> <.live_file_input upload={@uploads_name} class="sr-only" />
+          </label>
+          <p class="pl-1">or drag and drop</p>
+        </div>
+
+        <p class="text-xs leading-5 text-zinc-600">
+          <%= @uploads_name.max_entries %>
+          <%= format_uploads_accept(@uploads_name.accept) %> files up to <%= trunc(@uploads_name.max_file_size / 1_000_000) %> MB each
+        </p>
+      </div>
+    </div>
+    """
+  end
+
+  def format_uploads_accept(accept) do
+    accept
+    |> String.split(",")
+    |> Enum.map(&String.trim_leading(&1, "."))
+    |> Enum.map(&String.upcase/1)
+    |> Enum.join(", ")
+  end
+
+  @doc """
+  Renders a preview area for images to be uploaded.
+
+  ## Example
+
+      <.uploads_photo_preview_area uploads_name={@uploads.photos} />
+  """
+  attr :uploads_name, :map, required: true
+
+  def uploads_photo_preview_area(assigns) do
+    ~H"""
+    <ul role="list" class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 xl:grid-cols-4">
+      <li :for={entry <- @uploads_name.entries}>
+        <.live_img_preview
+          :if={:not_accepted not in upload_errors(@uploads_name, entry)}
+          entry={entry}
+          class="object-contain w-full h-28 sm:h-44 rounded-lg bg-zinc-200"
+        />
+        <div
+          :if={:not_accepted in upload_errors(@uploads_name, entry)}
+          class="flex items-center justify-center text-xs w-full h-28 sm:h-44 rounded-lg bg-zinc-100 text-ellipsis truncate"
+        >
+          <%= entry.client_name %>
+        </div>
+        <div class="flex justify-between items-center space-x-2">
+          <div :if={upload_errors(@uploads_name, entry) == []} class="mt-3 flex gap-3 text-sm leading-6">
+            <.circular_progress_bar progress={entry.progress} stroke_width={3} radius={7.5} svg_class="mt-0.5 w-5 h-5 flex-none" />
+            <div :if={entry.progress > 0}>
+              <%= entry.progress %>%
+            </div>
+          </div>
+          <.error :for={err <- upload_errors(@uploads_name, entry)}>
+            <%= Phoenix.Naming.humanize(err) %>
+          </.error>
+          <.link phx-click="cancel" phx-value-ref={entry.ref} class="mt-2">
+            <.icon name="hero-trash" class="w-5 h-5 text-zinc-400 hover:text-zinc-600" />
+          </.link>
+        </div>
+      </li>
+    </ul>
+    """
+  end
+
+  @doc """
+  Renders a circular progress bar
+
+  ## Example
+
+      <.circular_progress_bar progress={50} stroke_width={3} radius={7.5} svg_class="mt-0.5 w-5 h-5 flex-none" />
+  """
+  attr :progress, :integer, required: true
+  attr :stroke_width, :integer, required: true
+  attr :radius, :float, required: true
+  attr :svg_class, :string, default: nil
+  attr :bg_circle_class, :string, default: "text-zinc-300"
+  attr :progress_circle_class, :string, default: "text-zinc-600"
+
+  def circular_progress_bar(assigns) do
+    assigns =
+      assigns
+      |> assign_new(:center, fn -> (assigns.radius * 2 + assigns.stroke_width) / 2 end)
+      |> assign_new(:circumference, fn -> 2 * Math.pi() * assigns.radius end)
+
+    ~H"""
+    <svg class={@svg_class}>
+      <circle
+        class={@bg_circle_class}
+        stroke-width={@stroke_width}
+        stroke="currentColor"
+        fill="transparent"
+        r={@radius}
+        cx={@center}
+        cy={@center}
+      />
+      <circle
+        class={@progress_circle_class}
+        stroke-width={@stroke_width}
+        stroke-dasharray={@circumference}
+        stroke-dashoffset={@circumference - @progress / 100 * @circumference}
+        stroke-linecap="round"
+        stroke="currentColor"
+        fill="transparent"
+        r={@radius}
+        cx={@center}
+        cy={@center}
+      />
+    </svg>
+    """
   end
 end

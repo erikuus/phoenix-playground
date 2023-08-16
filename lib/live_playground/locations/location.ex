@@ -11,13 +11,14 @@ defmodule LivePlayground.Locations.Location do
     field :countrycode, :string
     field :lat, :float
     field :lng, :float
+    field :photos, {:array, :string}, default: []
   end
 
   @doc false
   def changeset(location, attrs) do
     location
-    |> cast(attrs, [:name, :lat, :lng])
-    |> validate_required([:name, :lat, :lng])
+    |> cast(attrs, [:name, :lat, :lng, :photos])
+    |> validate_required([:name, :lat, :lng, :photos])
     |> validate_length(:countrycode, is: 3)
   end
 end
