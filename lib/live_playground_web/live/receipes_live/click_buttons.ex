@@ -15,10 +15,6 @@ defmodule LivePlaygroundWeb.ReceipesLive.ClickButtons do
     {:ok, socket}
   end
 
-  def handle_params(_params, _url, socket) do
-    {:noreply, socket}
-  end
-
   def render(assigns) do
     ~H"""
     <!-- start hiding from live code -->
