@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.ReceipesLive.FormInsertValidate do
+defmodule LivePlaygroundWeb.RecipesLive.FormInsert do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Cities
@@ -18,26 +18,21 @@ defmodule LivePlaygroundWeb.ReceipesLive.FormInsertValidate do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Validate on Change
+      Insert Form
       <:subtitle>
-        How to create insert form that validates on change
+        How to create insert form that validates on submit
       </:subtitle>
       <:actions>
-        <.link navigate={~p"/form-insert"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Insert Form
+        <.link navigate={~p"/form-insert-validate"}>
+          See also: Validate on Change <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
         </.link>
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <.form
-      for={@form}
-      phx-change="validate"
-      phx-submit="save"
-      class="flex flex-col space-x-0 space-y-4 md:flex-row md:space-x-4 md:space-y-0"
-    >
-      <.input field={@form[:name]} phx-debounce="2000" label="Name" class="flex-auto" />
-      <.input field={@form[:district]} phx-debounce="2000" label="District" class="flex-auto" />
-      <.input field={@form[:population]} phx-debounce="2000" label="Population" class="flex-auto" />
+    <.form for={@form} phx-submit="save" class="flex flex-col space-x-0 space-y-4 md:flex-row md:space-x-4 md:space-y-0">
+      <.input field={@form[:name]} label="Name" class="flex-auto" />
+      <.input field={@form[:district]} label="District" class="flex-auto" />
+      <.input field={@form[:population]} label="Population" class="flex-auto" />
       <div>
         <.button phx-disable-with="" class="md:mt-8">Save</.button>
       </div>
@@ -57,24 +52,11 @@ defmodule LivePlaygroundWeb.ReceipesLive.FormInsertValidate do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/form_insert_validate.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/recipes_live/form_insert.ex")) %>
       <%= raw(code("lib/live_playground/cities.ex", "# form", "# endform")) %>
     </div>
     <!-- end hiding from live code -->
     """
-  end
-
-  def handle_event("validate", %{"city" => params}, socket) do
-    params = Map.put(params, "countrycode", "EST")
-
-    form =
-      %City{}
-      |> Cities.change_city(params)
-      |> Map.put(:action, :validate)
-      |> to_form()
-
-    socket = assign(socket, :form, form)
-    {:noreply, socket}
   end
 
   def handle_event("save", %{"city" => params}, socket) do
@@ -84,6 +66,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.FormInsertValidate do
       {:ok, city} ->
         socket = update(socket, :cities, &[city | &1])
         socket = assign(socket, :form, get_empty_form())
+
         {:noreply, socket}
 
       {:error, changeset} ->

@@ -1,9 +1,29 @@
-defmodule LivePlaygroundWeb.ReceipesLive.Filter do
+defmodule LivePlaygroundWeb.RecipesLive.FilterParams do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Cities
 
   def mount(_params, _session, socket) do
+    {:ok, socket}
+  end
+
+  def handle_params(
+        %{"name" => name, "dist" => dist, "sm" => sm, "md" => md, "lg" => lg},
+        _url,
+        socket
+      ) do
+    filter = %{
+      dist: dist,
+      name: name,
+      sm: sm,
+      md: md,
+      lg: lg
+    }
+
+    {:noreply, assign_filter(socket, filter)}
+  end
+
+  def handle_params(_params, _url, socket) do
     filter = %{
       dist: "",
       name: "",
@@ -12,25 +32,25 @@ defmodule LivePlaygroundWeb.ReceipesLive.Filter do
       lg: "false"
     }
 
-    {:ok, assign_filter(socket, filter)}
+    {:noreply, assign_filter(socket, filter)}
   end
 
   def render(assigns) do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Filter
+      Filter with URL Parameters
       <:subtitle>
-        How to filter data in LiveView
+        How to handle filter parameters in LiveView
       </:subtitle>
       <:actions>
-        <.link navigate={~p"/filter-params"}>
-          See also: Filter with URL Parameters <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
+        <.link navigate={~p"/filter"}>
+          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Filter
         </.link>
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <form id="filter-form" class="space-y-4 mb-6 md:flex md:items-end md:space-x-6" phx-change="filter">
+    <form id="filter-form" class="md:flex md:items-end md:space-x-6 space-y-4 mb-6" phx-change="filter">
       <.input type="text" name="name" label="Name" value={@filter.name} phx-debounce="500" />
       <.input type="select" name="dist" label="District" options={dist_options()} value={@filter.dist} />
       <div class="md:flex md:space-x-6 md:pb-2.5">
@@ -50,12 +70,15 @@ defmodule LivePlaygroundWeb.ReceipesLive.Filter do
       </:col>
       <:col :let={city} label="District" class="hidden md:table-cell"><%= city.district %></:col>
       <:col :let={city} label="Population" class="text-right">
-        <%= Number.Delimit.number_to_delimited(city.population, precision: 0, delimiter: " ") %>
+        <%= Number.Delimit.number_to_delimited(city.population,
+          precision: 0,
+          delimiter: " "
+        ) %>
       </:col>
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/filter.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/recipes_live/filter_params.ex")) %>
       <%= raw(code("lib/live_playground/cities.ex", "# filter", "# endfilter")) %>
     </div>
     <!-- end hiding from live code -->
@@ -67,15 +90,12 @@ defmodule LivePlaygroundWeb.ReceipesLive.Filter do
         %{"name" => name, "dist" => dist, "sm" => sm, "md" => md, "lg" => lg},
         socket
       ) do
-    filter = %{
-      dist: dist,
-      name: name,
-      sm: sm,
-      md: md,
-      lg: lg
-    }
+    socket =
+      push_patch(socket,
+        to: ~p"/filter-params?#{[name: name, dist: dist, sm: sm, md: md, lg: lg]}"
+      )
 
-    {:noreply, assign_filter(socket, filter)}
+    {:noreply, socket}
   end
 
   defp assign_filter(socket, filter) do

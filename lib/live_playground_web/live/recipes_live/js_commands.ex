@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.ReceipesLive.JsCommands do
+defmodule LivePlaygroundWeb.RecipesLive.JsCommands do
   use LivePlaygroundWeb, :live_view
 
   def mount(_params, _session, socket) do
@@ -61,7 +61,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.JsCommands do
     </div>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/js_commands.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/recipes_live/js_commands.ex")) %>
     </div>
     <!-- end hiding from live code -->
     """

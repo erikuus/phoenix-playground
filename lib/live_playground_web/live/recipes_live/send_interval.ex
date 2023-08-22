@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.ReceipesLive.SendInterval do
+defmodule LivePlaygroundWeb.RecipesLive.SendInterval do
   use LivePlaygroundWeb, :live_view
 
   def mount(_params, _session, socket) do
@@ -34,7 +34,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.SendInterval do
     </.card>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/send_interval.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/recipes_live/send_interval.ex")) %>
     </div>
     <!-- end hiding from live code -->
     """

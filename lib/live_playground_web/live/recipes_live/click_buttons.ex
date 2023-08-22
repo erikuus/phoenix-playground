@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.ReceipesLive.ClickButtons do
+defmodule LivePlaygroundWeb.RecipesLive.ClickButtons do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Countries
@@ -63,7 +63,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.ClickButtons do
     </.list>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/click_buttons.ex")) %> <%= raw(
+      <%= raw(code("lib/live_playground_web/live/recipes_live/click_buttons.ex")) %> <%= raw(
         code("lib/live_playground/countries.ex", "# listnordiccountry", "# endlistnordiccountry")
       ) %>
     </div>

@@ -20,39 +20,39 @@ defmodule LivePlaygroundWeb.Router do
     scope "/", LivePlaygroundWeb do
       pipe_through :browser
 
-      live "/click-buttons", ReceipesLive.ClickButtons
-      live "/handle-params", ReceipesLive.HandleParams
-      live "/dynamic-form", ReceipesLive.DynamicForm
-      live "/send-interval", ReceipesLive.SendInterval
-      live "/send-after", ReceipesLive.SendAfter
-      live "/search", ReceipesLive.Search
-      live "/search-param", ReceipesLive.SearchParam
-      live "/autocomplete", ReceipesLive.Autocomplete
-      live "/autocomplete-custom", ReceipesLive.AutocompleteCustom
-      live "/filter", ReceipesLive.Filter
-      live "/filter-params", ReceipesLive.FilterParams
-      live "/sort", ReceipesLive.Sort
-      live "/sort-params", ReceipesLive.SortParams
-      live "/paginate", ReceipesLive.Paginate
-      live "/paginate-params", ReceipesLive.PaginateParams
-      live "/form-insert", ReceipesLive.FormInsert
-      live "/form-insert-validate", ReceipesLive.FormInsertValidate
-      live "/form-update-validate", ReceipesLive.FormUpdateValidate
-      live "/stream-insert", ReceipesLive.StreamInsert
-      live "/stream-update", ReceipesLive.StreamUpdate, :index
-      live "/stream-update/edit", ReceipesLive.StreamUpdate, :edit
-      live "/tabular-insert", ReceipesLive.TabularInsert
-      live "/broadcast", ReceipesLive.Broadcast
-      live "/broadcast-stream", ReceipesLive.BroadcastStream, :index
-      live "/broadcast-stream/edit", ReceipesLive.BroadcastStream, :edit
-      live "/key-events", ReceipesLive.KeyEvents
-      live "/js-commands", ReceipesLive.JsCommands
-      live "/js-hook-map-dataset", ReceipesLive.JsHookMapDataset
-      live "/js-hook-map-push-event", ReceipesLive.JsHookMapPushEvent
-      live "/js-hook-map-handle-event", ReceipesLive.JsHookMapHandleEvent
-      live "/upload", ReceipesLive.Upload
-      live "/upload-cloud", ReceipesLive.UploadCloud
-      live "/upload-server", ReceipesLive.UploadServer
+      live "/click-buttons", RecipesLive.ClickButtons
+      live "/handle-params", RecipesLive.HandleParams
+      live "/dynamic-form", RecipesLive.DynamicForm
+      live "/send-interval", RecipesLive.SendInterval
+      live "/send-after", RecipesLive.SendAfter
+      live "/search", RecipesLive.Search
+      live "/search-param", RecipesLive.SearchParam
+      live "/autocomplete", RecipesLive.Autocomplete
+      live "/autocomplete-custom", RecipesLive.AutocompleteCustom
+      live "/filter", RecipesLive.Filter
+      live "/filter-params", RecipesLive.FilterParams
+      live "/sort", RecipesLive.Sort
+      live "/sort-params", RecipesLive.SortParams
+      live "/paginate", RecipesLive.Paginate
+      live "/paginate-params", RecipesLive.PaginateParams
+      live "/form-insert", RecipesLive.FormInsert
+      live "/form-insert-validate", RecipesLive.FormInsertValidate
+      live "/form-update-validate", RecipesLive.FormUpdateValidate
+      live "/stream-insert", RecipesLive.StreamInsert
+      live "/stream-update", RecipesLive.StreamUpdate, :index
+      live "/stream-update/edit", RecipesLive.StreamUpdate, :edit
+      live "/tabular-insert", RecipesLive.TabularInsert
+      live "/broadcast", RecipesLive.Broadcast
+      live "/broadcast-stream", RecipesLive.BroadcastStream, :index
+      live "/broadcast-stream/edit", RecipesLive.BroadcastStream, :edit
+      live "/key-events", RecipesLive.KeyEvents
+      live "/js-commands", RecipesLive.JsCommands
+      live "/js-hook-map-dataset", RecipesLive.JsHookMapDataset
+      live "/js-hook-map-push-event", RecipesLive.JsHookMapPushEvent
+      live "/js-hook-map-handle-event", RecipesLive.JsHookMapHandleEvent
+      live "/upload", RecipesLive.Upload
+      live "/upload-cloud", RecipesLive.UploadCloud
+      live "/upload-server", RecipesLive.UploadServer
     end
   end
 

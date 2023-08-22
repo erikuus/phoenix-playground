@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.ReceipesLive.JsHookMapDataset do
+defmodule LivePlaygroundWeb.RecipesLive.JsHookMapDataset do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Locations
@@ -33,10 +33,17 @@ defmodule LivePlaygroundWeb.ReceipesLive.JsHookMapDataset do
     </div>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/js_hook_map_dataset.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/recipes_live/js_hook_map_dataset.ex")) %>
       <%= raw(code("lib/live_playground/locations.ex", "# jshooks", "# endjshooks")) %>
       <%= raw(code("lib/live_playground/locations/location.ex", "# jshookmapdataset", "# endjshookmapdataset")) %>
-      <%= raw(code("assets/js/app.js", "// jshooks", "// endjshooks", false)) %>
+      <%= raw(
+        code(
+          "assets/js/app.js",
+          "// Establish Phoenix Socket and LiveView configuration",
+          "// Show progress bar on live navigation and form submits",
+          false
+        )
+      ) %>
       <%= raw(code("assets/js/hooks/map-dataset.js")) %>
       <%= raw(code("assets/js/leaflets/map-dataset.js")) %>
       <.card class="px-4 py-5 sm:p-6">

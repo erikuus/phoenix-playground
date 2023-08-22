@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.ReceipesLive.BroadcastStream do
+defmodule LivePlaygroundWeb.RecipesLive.BroadcastStream do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Cities
@@ -100,7 +100,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.BroadcastStream do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/broadcast_stream.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/recipes_live/broadcast_stream.ex")) %>
       <%= raw(code("lib/live_playground/cities.ex", "# broadcaststream", "# endbroadcaststream")) %>
     </div>
     <!-- end hiding from live code -->

@@ -1,28 +1,9 @@
-defmodule LivePlaygroundWeb.ReceipesLive.SearchParam do
+defmodule LivePlaygroundWeb.RecipesLive.Search do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Countries
 
   def mount(_params, _session, socket) do
-    {:ok, socket}
-  end
-
-  def handle_params(%{"q" => query}, _url, socket) do
-    send(self(), {:find, query})
-
-    socket =
-      socket
-      |> clear_flash()
-      |> assign(
-        query: query,
-        countries: [],
-        loading: true
-      )
-
-    {:noreply, socket}
-  end
-
-  def handle_params(_params, _url, socket) do
     socket =
       assign(socket,
         query: nil,
@@ -30,34 +11,32 @@ defmodule LivePlaygroundWeb.ReceipesLive.SearchParam do
         loading: false
       )
 
-    {:noreply, socket}
+    {:ok, socket}
   end
 
   def render(assigns) do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Search with URL Parameter
+      Search
       <:subtitle>
-        How to handle query parameter in LiveView
+        How to create a search interface in LiveView
       </:subtitle>
       <:actions>
-        <.link navigate={~p"/search"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Search
+        <.link navigate={~p"/search-param"}>
+          See also: Search with URL Parameter <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
         </.link>
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <form phx-submit="search" class="flex flex-col space-x-0 space-y-4 md:flex-row md:space-x-4 md:space-y-0 md:w-96 mb-6">
-      <.input type="text" name="query" autocomplete="off" placeholder="Country" value={@query} readonly={@loading} />
+    <form class="mb-4 flex space-x-3" phx-submit="search">
+      <div class="w-72">
+        <.input type="text" name="query" autocomplete="off" placeholder="Country" value={@query} readonly={@loading} />
+      </div>
       <.button type="submit">
-        Search
+        Search <.loading :if={@loading} class="ml-2 -mr-2 w-5 h-5" />
       </.button>
-      <.button_link look="secondary" patch={~p"/search-param"}>
-        Clear
-      </.button_link>
     </form>
-    <.loading :if={@loading} />
     <.alert :if={@flash["no_result"]}>
       <%= live_flash(@flash, :no_result) %>
     </.alert>
@@ -72,7 +51,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.SearchParam do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/search_param.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/recipes_live/search.ex")) %>
       <%= raw(code("lib/live_playground/countries.ex", "# search", "# endsearch")) %>
     </div>
     <!-- end hiding from live code -->
@@ -80,9 +59,15 @@ defmodule LivePlaygroundWeb.ReceipesLive.SearchParam do
   end
 
   def handle_event("search", %{"query" => query}, socket) do
+    send(self(), {:find, query})
+
     socket =
-      push_patch(socket,
-        to: ~p"/search-advanced?#{[q: query]}"
+      socket
+      |> clear_flash()
+      |> assign(
+        query: query,
+        countries: [],
+        loading: true
       )
 
     {:noreply, socket}

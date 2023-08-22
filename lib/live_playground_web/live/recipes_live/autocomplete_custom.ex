@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.ReceipesLive.AutocompleteCustom do
+defmodule LivePlaygroundWeb.RecipesLive.AutocompleteCustom do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Countries
@@ -63,7 +63,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.AutocompleteCustom do
     </ul>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/autocomplete_custom.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/recipes_live/autocomplete_custom.ex")) %>
       <%= raw(code("lib/live_playground/countries.ex", "# search", "# endsearch")) %>
     </div>
     <!-- end hiding from live code -->

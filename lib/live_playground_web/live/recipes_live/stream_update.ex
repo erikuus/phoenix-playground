@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.ReceipesLive.StreamUpdate do
+defmodule LivePlaygroundWeb.RecipesLive.StreamUpdate do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Cities
@@ -79,7 +79,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.StreamUpdate do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/stream_update.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/recipes_live/stream_update.ex")) %>
       <%= raw(code("lib/live_playground/cities.ex", "# streamupdate", "# endstreamupdate")) %>
     </div>
     <!-- end hiding from live code -->

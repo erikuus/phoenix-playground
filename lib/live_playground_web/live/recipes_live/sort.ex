@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.ReceipesLive.Sort do
+defmodule LivePlaygroundWeb.RecipesLive.Sort do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Cities
@@ -43,7 +43,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.Sort do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/sort.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/recipes_live/sort.ex")) %>
       <%= raw(code("lib/live_playground/cities.ex", "# sort", "# endsort")) %>
     </div>
     <!-- end hiding from live code -->

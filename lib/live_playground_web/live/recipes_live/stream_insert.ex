@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.ReceipesLive.FormInsert do
+defmodule LivePlaygroundWeb.RecipesLive.StreamInsert do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Cities
@@ -6,10 +6,9 @@ defmodule LivePlaygroundWeb.ReceipesLive.FormInsert do
 
   def mount(_params, _session, socket) do
     socket =
-      assign(socket,
-        cities: Cities.list_est_city(),
-        form: get_empty_form()
-      )
+      socket
+      |> stream(:cities, Cities.list_est_city())
+      |> assign(:form, get_empty_form())
 
     {:ok, socket}
   end
@@ -18,13 +17,13 @@ defmodule LivePlaygroundWeb.ReceipesLive.FormInsert do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Insert Form
+      Stream Insert
       <:subtitle>
-        How to create insert form that validates on submit
+        How to insert items into large collections without keeping them in memory on the server
       </:subtitle>
       <:actions>
-        <.link navigate={~p"/form-insert-validate"}>
-          See also: Validate on Change <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
+        <.link navigate={~p"/stream-update"}>
+          See also: Stream Update <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
         </.link>
       </:actions>
     </.header>
@@ -37,23 +36,29 @@ defmodule LivePlaygroundWeb.ReceipesLive.FormInsert do
         <.button phx-disable-with="" class="md:mt-8">Save</.button>
       </div>
     </.form>
-    <.table :if={@cities != []} id="cities" rows={@cities}>
-      <:col :let={city} label="Name">
+    <.table id="cities" rows={@streams.cities}>
+      <:col :let={{_id, city}} label="Name">
         <%= city.name %>
         <dl class="font-normal md:hidden">
           <dt class="sr-only">District</dt>
-          <dd class="mt-1 truncate text-gray-700"><%= city.district %></dd>
+          <dd class="mt-1 truncate text-zinc-700"><%= city.district %></dd>
         </dl>
       </:col>
-      <:col :let={city} label="District" class="hidden md:table-cell"><%= city.district %></:col>
-      <:col :let={city} label="Population" class="text-right">
+      <:col :let={{_id, city}} label="District" class="hidden md:table-cell"><%= city.district %></:col>
+      <:col :let={{_id, city}} label="Population" class="text-right md:pr-10">
         <%= Number.Delimit.number_to_delimited(city.population, precision: 0, delimiter: " ") %>
       </:col>
+      <:action :let={{id, city}}>
+        <.link phx-click={JS.push("delete", value: %{id: city.id}) |> hide("##{id}")} data-confirm="Are you sure?">
+          <span class="hidden md:inline">Delete</span>
+          <.icon name="hero-trash-mini" class="md:hidden" />
+        </.link>
+      </:action>
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/form_insert.ex")) %>
-      <%= raw(code("lib/live_playground/cities.ex", "# form", "# endform")) %>
+      <%= raw(code("lib/live_playground_web/live/recipes_live/stream_insert.ex")) %>
+      <%= raw(code("lib/live_playground/cities.ex", "# streaminsert", "# endstreaminsert")) %>
     </div>
     <!-- end hiding from live code -->
     """
@@ -64,7 +69,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.FormInsert do
 
     case Cities.create_city(params) do
       {:ok, city} ->
-        socket = update(socket, :cities, &[city | &1])
+        socket = stream_insert(socket, :cities, city, at: 0)
         socket = assign(socket, :form, get_empty_form())
 
         {:noreply, socket}
@@ -73,6 +78,13 @@ defmodule LivePlaygroundWeb.ReceipesLive.FormInsert do
         socket = assign(socket, :form, to_form(changeset))
         {:noreply, socket}
     end
+  end
+
+  def handle_event("delete", %{"id" => id}, socket) do
+    city = Cities.get_city!(id)
+    {:ok, _} = Cities.delete_city(city)
+
+    {:noreply, stream_delete(socket, :cities, city)}
   end
 
   defp get_empty_form() do

@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.ReceipesLive.Broadcast do
+defmodule LivePlaygroundWeb.RecipesLive.Broadcast do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Countries
@@ -24,6 +24,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.Broadcast do
       <:subtitle>
         How to broadcast real-time updates in LiveView
       </:subtitle>
+
       <:actions>
         <.link navigate={~p"/broadcast-stream"}>
           See also: Real-Time Updates with Streams <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
@@ -34,11 +35,17 @@ defmodule LivePlaygroundWeb.ReceipesLive.Broadcast do
     <div id="country" phx-update="replace">
       <.list class="mt-6 mb-16 ml-1">
         <:item title="Name"><%= @country.name %></:item>
+
         <:item title="Code"><%= @country.code %></:item>
+
         <:item title="Continent"><%= @country.continent %></:item>
+
         <:item title="Region"><%= @country.region %></:item>
+
         <:item title="The form of government"><%= @country.governmentform %></:item>
+
         <:item title="The year of independence"><%= @country.indepyear %></:item>
+
         <:item title="The head of state">
           <.editable id="headofstate" form={@form} edit={@edit_field == "headofstate"}>
             <%= @country.headofstate %>
@@ -47,6 +54,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.Broadcast do
             </:input_block>
           </.editable>
         </:item>
+
         <:item title="Population">
           <.editable id="population" form={@form} edit={@edit_field == "population"}>
             <%= Number.Delimit.number_to_delimited(@country.population, precision: 0, delimiter: " ") %>
@@ -55,6 +63,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.Broadcast do
             </:input_block>
           </.editable>
         </:item>
+
         <:item title="GNP">
           <.editable id="gnp" form={@form} edit={@edit_field == "gnp"}>
             <%= Number.Delimit.number_to_delimited(@country.gnp, precision: 0, delimiter: " ") %>
@@ -63,6 +72,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.Broadcast do
             </:input_block>
           </.editable>
         </:item>
+
         <:item title="Life expectancy">
           <.editable id="lifeexpectancy" form={@form} edit={@edit_field == "lifeexpectancy"}>
             <%= Number.Delimit.number_to_delimited(@country.lifeexpectancy, precision: 2) %>
@@ -75,8 +85,9 @@ defmodule LivePlaygroundWeb.ReceipesLive.Broadcast do
     </div>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/broadcast.ex")) %>
-      <%= raw(code("lib/live_playground/countries.ex", "# broadcast", "# endbroadcast")) %>
+      <%= raw(code("lib/live_playground_web/live/recipes_live/broadcast.ex")) %> <%= raw(
+        code("lib/live_playground/countries.ex", "# broadcast", "# endbroadcast")
+      ) %>
     </div>
     <!-- end hiding from live code -->
     """
