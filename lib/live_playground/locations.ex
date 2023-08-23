@@ -8,10 +8,9 @@ defmodule LivePlayground.Locations do
 
   alias LivePlayground.Locations.Location
 
-  # uploadserver
+  # uploadserver # uploadcloud
   @pubsub LivePlayground.PubSub
   @topic inspect(__MODULE__)
-  @uploads Path.join(["priv", "static", "uploads"])
 
   def subscribe do
     Phoenix.PubSub.subscribe(@pubsub, @topic)
@@ -27,16 +26,7 @@ defmodule LivePlayground.Locations do
     {:error, changeset}
   end
 
-  def remove_photos({:ok, location}, photos) do
-    for photo <- photos do
-      photo_dest = Path.join([@uploads, photo])
-      File.rm!(photo_dest)
-    end
-
-    {:ok, location}
-  end
-
-  # enduploadserver
+  # enduploadserver # enduploadcloud
 
   @doc """
   Returns the list of location.
@@ -75,9 +65,9 @@ defmodule LivePlayground.Locations do
       ** (Ecto.NoResultsError)
 
   """
-  # uploadserver
+  # uploadserver # uploadcloud
   def get_location!(id), do: Repo.get!(Location, id)
-  # enduploadserver
+  # enduploadserver # enduploadcloud
 
   @doc """
   Creates a location.
@@ -109,16 +99,15 @@ defmodule LivePlayground.Locations do
       {:error, %Ecto.Changeset{}}
 
   """
-  # uploadserver
+  # uploadserver # uploadcloud
   def update_location(%Location{} = location, attrs) do
     location
     |> Location.changeset(attrs)
     |> Repo.update()
     |> broadcast(:update_location)
-    |> remove_photos(location.photos)
   end
 
-  # enduploadserver
+  # enduploadserver # enduploadcloud
 
   @doc """
   Deletes a location.
@@ -145,10 +134,10 @@ defmodule LivePlayground.Locations do
       %Ecto.Changeset{data: %Location{}}
 
   """
-  # uploadserver
+  # uploadserver # uploadcloud
   def change_location(%Location{} = location, attrs \\ %{}) do
     Location.changeset(location, attrs)
   end
 
-  # enduploadserver
+  # enduploadserver # enduploadcloud
 end

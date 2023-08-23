@@ -817,7 +817,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <div class="text-center">
         <.icon name="hero-photo" class="mx-auto h-12 w-12 text-zinc-300" />
         <div class="mt-4 flex text-sm leading-6 text-zinc-600">
-          <label for={@uploads_name.ref} class="relative cursor-pointer rounded-md bg-white font-semibold">
+          <label for={@uploads_name.ref} class="relative cursor-pointer bg-transparent font-semibold">
             <span>Upload a file</span> <.live_file_input upload={@uploads_name} class="sr-only" />
           </label>
           <p class="pl-1">or drag and drop</p>
@@ -848,6 +848,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <.uploads_photo_preview_area uploads_name={@uploads.photos} />
   """
   attr :uploads_name, :map, required: true
+  attr :target, :string, default: nil
 
   def uploads_photo_preview_area(assigns) do
     ~H"""
@@ -874,7 +875,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
           <.error :for={err <- upload_errors(@uploads_name, entry)}>
             <%= Phoenix.Naming.humanize(err) %>
           </.error>
-          <.link phx-click="cancel" phx-value-ref={entry.ref} class="mt-2">
+          <.link phx-click="cancel" phx-value-ref={entry.ref} phx-target={@target} class="mt-2">
             <.icon name="hero-trash" class="w-5 h-5 text-zinc-400 hover:text-zinc-600" />
           </.link>
         </div>

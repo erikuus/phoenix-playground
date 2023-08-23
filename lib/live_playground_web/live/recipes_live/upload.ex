@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.ReceipesLive.Upload do
+defmodule LivePlaygroundWeb.RecipesLive.Upload do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Locations
@@ -109,7 +109,7 @@ defmodule LivePlaygroundWeb.ReceipesLive.Upload do
     </.form>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/upload.ex")) %> <%= raw(
+      <%= raw(code("lib/live_playground_web/live/recipes_live/upload.ex")) %> <%= raw(
         code("lib/live_playground/cities.ex", "# upload", "# endupload")
       ) %>
       <.card class="px-4 py-5 sm:p-6">

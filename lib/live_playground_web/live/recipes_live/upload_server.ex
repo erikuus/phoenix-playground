@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.ReceipesLive.UploadServer do
+defmodule LivePlaygroundWeb.RecipesLive.UploadServer do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Locations
@@ -73,9 +73,16 @@ defmodule LivePlaygroundWeb.ReceipesLive.UploadServer do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/receipes_live/upload_server.ex")) %>
+      <%= raw(code("lib/live_playground_web/live/recipes_live/upload_server.ex")) %>
       <%= raw(code("lib/live_playground/locations.ex", "# uploadserver", "# enduploadserver")) %>
       <%= raw(code("lib/live_playground_web.ex", "# uploadserver", "# enduploadserver")) %>
+      <%= raw(
+        code(
+          "config/dev.exs",
+          "# Watch static and templates for browser reloading.",
+          "# Enable dev routes for dashboard and mailbox"
+        )
+      ) %>
     </div>
     <!-- end hiding from live code -->
     """
@@ -97,27 +104,42 @@ defmodule LivePlaygroundWeb.ReceipesLive.UploadServer do
   def handle_event("save", %{"location" => params}, socket) do
     id = params["id"] |> String.to_integer()
     selected_location = Locations.get_location!(id)
+    old_photos = selected_location.photos
 
-    photos =
+    new_photos =
       consume_uploaded_entries(socket, :photos, fn meta, entry ->
-        photo = "#{entry.uuid}-#{entry.client_name}"
+        photo = filename(entry)
         dest = Path.join([@uploads, photo])
         File.cp!(meta.path, dest)
 
         {:ok, photo}
       end)
 
-    params = Map.put(params, "photos", photos)
+    params = Map.put(params, "photos", new_photos)
 
-    Locations.update_location(selected_location, params)
-    {:noreply, socket}
+    case Locations.update_location(selected_location, params) do
+      {:ok, _location} ->
+        remove_photos(old_photos)
+        {:noreply, socket}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign_form(socket, changeset)}
+    end
   end
 
   def handle_event("remove", %{"id" => id}, socket) do
     selected_location = Locations.get_location!(id)
+    photos = selected_location.photos
     params = Map.put(%{}, "photos", [])
-    Locations.update_location(selected_location, params)
-    {:noreply, socket}
+
+    case Locations.update_location(selected_location, params) do
+      {:ok, _location} ->
+        remove_photos(photos)
+        {:noreply, socket}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign_form(socket, changeset)}
+    end
   end
 
   def handle_info({:update_location, location}, socket) do
@@ -126,5 +148,16 @@ defmodule LivePlaygroundWeb.ReceipesLive.UploadServer do
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
     assign(socket, :form, to_form(changeset))
+  end
+
+  defp filename(entry) do
+    "#{entry.uuid}-#{entry.client_name}"
+  end
+
+  defp remove_photos(photos) do
+    for photo <- photos do
+      photo_dest = Path.join([@uploads, photo])
+      File.rm!(photo_dest)
+    end
   end
 end
