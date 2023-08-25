@@ -4,7 +4,7 @@ defmodule LivePlaygroundWeb.RecipesLive.PaginateParams do
   alias LivePlayground.Cities
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :count, Cities.count_city())}
+    {:ok, assign(socket, :count, Cities.count_country_city("USA"))}
   end
 
   def handle_params(params, _url, socket) do
@@ -20,7 +20,7 @@ defmodule LivePlaygroundWeb.RecipesLive.PaginateParams do
 
     socket =
       assign(socket,
-        cities: Cities.list_city(options),
+        cities: Cities.list_country_city("USA", options),
         options: options
       )
 

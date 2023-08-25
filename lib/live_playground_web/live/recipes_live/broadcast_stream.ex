@@ -7,7 +7,7 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStream do
   def mount(_params, _session, socket) do
     if connected?(socket), do: Cities.subscribe()
 
-    {:ok, stream(socket, :cities, Cities.list_est_city())}
+    {:ok, stream(socket, :cities, Cities.list_country_city("EST"))}
   end
 
   def handle_params(params, _url, socket) do

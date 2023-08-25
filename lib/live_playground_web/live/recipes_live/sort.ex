@@ -75,7 +75,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Sort do
 
   defp assign_sorting_options(socket, options) do
     assign(socket,
-      cities: Cities.list_est_city(options),
+      cities: Cities.list_country_city("EST", options),
       options: options
     )
   end

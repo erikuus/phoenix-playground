@@ -80,14 +80,14 @@ defmodule LivePlaygroundWeb.RecipesLive.Filter do
 
   defp assign_filter(socket, filter) do
     assign(socket,
-      cities: Cities.list_usa_city(filter),
+      cities: Cities.list_country_city("USA", filter),
       filter: filter
     )
   end
 
   defp dist_options() do
     districts =
-      Cities.list_distinct_usa_district()
+      Cities.list_distinct_country_district("USA")
       |> Enum.map(fn x -> x.district end)
 
     ["" | districts]

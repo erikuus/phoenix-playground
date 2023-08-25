@@ -28,7 +28,7 @@ defmodule LivePlaygroundWeb.RecipesLive.SortParams do
 
     socket =
       assign(socket,
-        cities: Cities.list_est_city(options),
+        cities: Cities.list_country_city("EST", options),
         options: options
       )
 

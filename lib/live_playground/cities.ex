@@ -28,70 +28,34 @@ defmodule LivePlayground.Cities do
 
   # endbroadcaststream # endtabularinsert
 
-  # paginate
-  def count_city do
-    Repo.aggregate(City, :count, :id)
-  end
-
-  def list_city(options) when is_map(options) do
-    from(City)
-    |> paginate(options)
-    |> order_by({:desc, :population})
-    |> Repo.all()
-  end
-
-  defp paginate(query, %{page: page, per_page: per_page}) do
-    offset = max((page - 1) * per_page, 0)
-
-    query
-    |> limit(^per_page)
-    |> offset(^offset)
-  end
-
-  defp paginate(query, _options), do: query
-
   def list_city do
     Repo.all(City)
   end
 
+  # paginate
+  def count_country_city(countrycode) do
+    from(City)
+    |> where(countrycode: ^countrycode)
+    |> Repo.aggregate(:count, :id)
+  end
+
   # endpaginate
 
-  # form # streaminsert # streamupdate # broadcaststream # tabularinsert
-  def list_est_city() do
+  # paginate # filter # sort # form # streaminsert # streamupdate # broadcaststream # tabularinsert
+  def list_country_city(countrycode, options \\ %{}) do
     from(City)
-    |> where(countrycode: "EST")
-    |> order_by(:name)
-    |> Repo.all()
-  end
-
-  # endform # endstreaminsert # endstreamupdate # endbroadcaststream # endtabularinsert
-
-  # sort
-  def list_est_city(options) when is_map(options) do
-    from(City)
-    |> where(countrycode: "EST")
+    |> where(countrycode: ^countrycode)
+    |> filter_by_name(options)
+    |> filter_by_district(options)
+    |> filter_by_size(options)
     |> sort(options)
+    |> paginate(options)
     |> Repo.all()
   end
 
-  defp sort(query, %{sort_by: sort_by, sort_order: sort_order}) do
-    order_by(query, {^sort_order, ^sort_by})
-  end
-
-  defp sort(query, _options), do: query
-
-  # endsort
+  # endpaginate # endfilter # endsort # endform # endstreaminsert # endstreamupdate # endbroadcaststream # endtabularinsert
 
   # filter
-  def list_usa_city(filter) when is_map(filter) do
-    from(City)
-    |> where(countrycode: "USA")
-    |> filter_by_name(filter)
-    |> filter_by_district(filter)
-    |> filter_by_size(filter)
-    |> Repo.all()
-  end
-
   defp filter_by_name(query, %{name: ""}), do: query
 
   defp filter_by_name(query, %{name: name}) do
@@ -99,23 +63,29 @@ defmodule LivePlayground.Cities do
     where(query, [c], ilike(c.name, ^ilike))
   end
 
+  defp filter_by_name(query, _options), do: query
+
   defp filter_by_district(query, %{dist: ""}), do: query
 
   defp filter_by_district(query, %{dist: district}) do
     where(query, district: ^district)
   end
 
+  defp filter_by_district(query, _options), do: query
+
   defp filter_by_size(query, %{sm: "false", md: "false", lg: "false"}), do: query
 
-  defp filter_by_size(query, filter) do
+  defp filter_by_size(query, %{sm: _sm, md: _md, lg: _lg} = options) do
     size_conditions =
       dynamic(false)
-      |> condition_by_sm(filter)
-      |> condition_by_md(filter)
-      |> condition_by_lg(filter)
+      |> condition_by_sm(options)
+      |> condition_by_md(options)
+      |> condition_by_lg(options)
 
     where(query, ^size_conditions)
   end
+
+  defp filter_by_size(query, _options), do: query
 
   defp condition_by_sm(dynamic, %{sm: "false"}), do: dynamic
 
@@ -135,16 +105,38 @@ defmodule LivePlayground.Cities do
     dynamic([c], c.population >= 1_000_000 or ^dynamic)
   end
 
-  def list_distinct_usa_district() do
+  def list_distinct_country_district(countrycode) do
     from(City)
     |> select([:district])
-    |> where(countrycode: "USA")
+    |> where(countrycode: ^countrycode)
     |> order_by(asc: :district)
     |> distinct(true)
     |> Repo.all()
   end
 
   # endfilter
+
+  # sort
+  defp sort(query, %{sort_by: sort_by, sort_order: sort_order}) do
+    order_by(query, {^sort_order, ^sort_by})
+  end
+
+  defp sort(query, _options), do: query
+
+  # endsort
+
+  # paginate
+  defp paginate(query, %{page: page, per_page: per_page}) do
+    offset = max((page - 1) * per_page, 0)
+
+    query
+    |> limit(^per_page)
+    |> offset(^offset)
+  end
+
+  defp paginate(query, _options), do: query
+
+  # endpaginate
 
   @doc """
   Gets a single city.

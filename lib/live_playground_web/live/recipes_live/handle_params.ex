@@ -6,7 +6,7 @@ defmodule LivePlaygroundWeb.RecipesLive.HandleParams do
   def mount(_params, _session, socket) do
     socket =
       assign(socket,
-        countries: Countries.list_nordic_country()
+        countries: Countries.list_region_country("Nordic Countries")
       )
 
     {:ok, socket}
@@ -66,7 +66,7 @@ defmodule LivePlaygroundWeb.RecipesLive.HandleParams do
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <%= raw(code("lib/live_playground_web/live/recipes_live/handle_params.ex")) %> <%= raw(
-        code("lib/live_playground/countries.ex", "# listnordiccountry", "# endlistnordiccountry")
+        code("lib/live_playground/countries.ex", "# handleparams", "# endhandleparams")
       ) %>
     </div>
     <!-- end hiding from live code -->

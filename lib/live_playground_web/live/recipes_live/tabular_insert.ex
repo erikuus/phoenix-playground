@@ -9,7 +9,7 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
 
     socket =
       socket
-      |> stream(:cities, Cities.list_est_city())
+      |> stream(:cities, Cities.list_country_city("EST"))
       |> stream(:tabular_inputs, [])
       |> assign(:tabular_input_ids, [])
 

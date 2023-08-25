@@ -7,7 +7,7 @@ defmodule LivePlaygroundWeb.RecipesLive.FormInsert do
   def mount(_params, _session, socket) do
     socket =
       assign(socket,
-        cities: Cities.list_est_city(),
+        cities: Cities.list_country_city("EST"),
         form: get_empty_form()
       )
 

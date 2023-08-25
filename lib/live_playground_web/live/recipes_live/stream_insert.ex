@@ -7,7 +7,7 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamInsert do
   def mount(_params, _session, socket) do
     socket =
       socket
-      |> stream(:cities, Cities.list_est_city())
+      |> stream(:cities, Cities.list_country_city("EST"))
       |> assign(:form, get_empty_form())
 
     {:ok, socket}
