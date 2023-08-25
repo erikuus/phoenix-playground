@@ -6,7 +6,7 @@ defmodule LivePlaygroundWeb.RecipesLive.HandleParams do
   def mount(_params, _session, socket) do
     socket =
       assign(socket,
-        countries: Countries.list_region_country("Nordic Countries")
+        countries: Countries.list_region_country("Baltic Countries")
       )
 
     {:ok, socket}

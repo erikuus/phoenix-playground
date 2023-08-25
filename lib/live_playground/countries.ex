@@ -56,10 +56,10 @@ defmodule LivePlayground.Countries do
   end
 
   # clickbuttons # handleparams
-  def list_region_country(region, population \\ 100_000) do
+  def list_region_country(region) do
     from(Country)
     |> where(region: ^region)
-    |> where([c], c.population >= ^population)
+    |> order_by(asc: :name)
     |> Repo.all()
   end
 

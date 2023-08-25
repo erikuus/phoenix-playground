@@ -4,7 +4,7 @@ defmodule LivePlaygroundWeb.RecipesLive.ClickButtons do
   alias LivePlayground.Countries
 
   def mount(_params, _session, socket) do
-    countries = Countries.list_region_country("Nordic Countries")
+    countries = Countries.list_region_country("Baltic Countries")
 
     socket =
       assign(socket,
