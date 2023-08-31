@@ -82,7 +82,7 @@ defmodule LivePlaygroundWeb.RecipesLive.SearchParam do
   def handle_event("search", %{"query" => query}, socket) do
     socket =
       push_patch(socket,
-        to: ~p"/search-advanced?#{[q: query]}"
+        to: ~p"/search-param?#{[q: query]}"
       )
 
     {:noreply, socket}
