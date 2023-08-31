@@ -53,6 +53,9 @@ defmodule LivePlaygroundWeb.Router do
       live "/upload", RecipesLive.Upload
       live "/upload-cloud", RecipesLive.UploadCloud
       live "/upload-server", RecipesLive.UploadServer
+      live "/cities", CityLive.Index, :index
+      live "/cities/new", CityLive.Index, :new
+      live "/cities/edit", CityLive.Index, :edit
     end
   end
 
