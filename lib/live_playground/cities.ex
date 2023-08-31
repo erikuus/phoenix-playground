@@ -42,7 +42,7 @@ defmodule LivePlayground.Cities do
   # endpaginate
 
   # paginate # filter # sort # form # streaminsert # streamupdate # broadcaststream # tabularinsert
-  def list_country_city(countrycode, options \\ %{}) do
+  def list_country_city(countrycode, options \\ %{sort_by: :name, sort_order: :asc}) do
     from(City)
     |> where(countrycode: ^countrycode)
     |> filter_by_name(options)

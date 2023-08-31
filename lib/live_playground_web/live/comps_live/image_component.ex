@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.Components.ImageComponent do
+defmodule LivePlaygroundWeb.CompsLive.ImageComponent do
   use LivePlaygroundWeb, :live_component
 
   def mount(socket) do

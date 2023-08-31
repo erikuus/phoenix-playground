@@ -4,7 +4,7 @@ defmodule LivePlaygroundWeb.RecipesLive.JsCommandsReal do
   alias LivePlayground.Cities
 
   def mount(_params, _session, socket) do
-    count = Cities.count_city()
+    count = Cities.count_country_city("USA")
 
     options = %{
       page: 1,
@@ -98,7 +98,7 @@ defmodule LivePlaygroundWeb.RecipesLive.JsCommandsReal do
 
   defp assign_pagination_options(socket, options) do
     assign(socket,
-      cities: Cities.list_city(options),
+      cities: Cities.list_country_city("USA", options),
       options: options
     )
   end

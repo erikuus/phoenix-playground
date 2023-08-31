@@ -87,7 +87,7 @@ defmodule LivePlaygroundWeb.CompsLive.Slideover do
     </.slideover>
     <.slideover :if={@live_action == :image} id="image-slideover" show on_cancel={JS.navigate(~p"/slideover")} width_class="max-w-5xl">
       <.live_component
-        module={LivePlaygroundWeb.Components.ImageComponent}
+        module={LivePlaygroundWeb.CompsLive.ImageComponent}
         id={:image}
         title="Image Component"
         images={["DSC02232.jpg", "DSC02234.jpg", "DSC02235.jpg"]}

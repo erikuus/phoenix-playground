@@ -7,6 +7,7 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamInsert do
   def mount(_params, _session, socket) do
     socket =
       socket
+      |> stream_configure(:cities, dom_dom_id: &"cities-#{&1.id}")
       |> stream(:cities, Cities.list_country_city("EST"))
       |> assign(:form, get_empty_form())
 
@@ -37,19 +38,19 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamInsert do
       </div>
     </.form>
     <.table id="cities" rows={@streams.cities}>
-      <:col :let={{_id, city}} label="Name">
+      <:col :let={{_dom_id, city}} label="Name">
         <%= city.name %>
         <dl class="font-normal md:hidden">
           <dt class="sr-only">District</dt>
           <dd class="mt-1 truncate text-zinc-700"><%= city.district %></dd>
         </dl>
       </:col>
-      <:col :let={{_id, city}} label="District" class="hidden md:table-cell"><%= city.district %></:col>
-      <:col :let={{_id, city}} label="Population" class="text-right md:pr-10">
+      <:col :let={{_dom_id, city}} label="District" class="hidden md:table-cell"><%= city.district %></:col>
+      <:col :let={{_dom_id, city}} label="Population" class="text-right md:pr-10">
         <%= Number.Delimit.number_to_delimited(city.population, precision: 0, delimiter: " ") %>
       </:col>
-      <:action :let={{id, city}}>
-        <.link phx-click={JS.push("delete", value: %{id: city.id}) |> hide("##{id}")} data-confirm="Are you sure?">
+      <:action :let={{dom_id, city}}>
+        <.link phx-click={JS.push("delete", value: %{id: city.id}) |> hide("##{dom_id}")} data-confirm="Are you sure?">
           <span class="hidden md:inline">Delete</span>
           <.icon name="hero-trash-mini" class="md:hidden" />
         </.link>

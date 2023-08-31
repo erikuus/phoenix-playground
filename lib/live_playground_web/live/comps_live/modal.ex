@@ -85,7 +85,7 @@ defmodule LivePlaygroundWeb.CompsLive.Modals do
     </.modal>
     <.modal :if={@live_action == :image} id="image-modal" show on_cancel={JS.navigate(~p"/modal")} width_class="max-w-5xl">
       <.live_component
-        module={LivePlaygroundWeb.Components.ImageComponent}
+        module={LivePlaygroundWeb.CompsLive.ImageComponent}
         id={:image}
         title="Image Component"
         images={["DSC02232.jpg", "DSC02234.jpg", "DSC02235.jpg"]}

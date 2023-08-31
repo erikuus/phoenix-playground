@@ -523,6 +523,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
   attr :rows, :list, required: true
   attr :row_id, :any, default: nil, doc: "the function for generating the row id"
   attr :row_click, :any, default: nil, doc: "the function for handling phx-click on each row"
+  attr :class, :string, default: "mt-11 w-full"
 
   attr :row_item, :any,
     default: &Function.identity/1,
@@ -542,7 +543,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
       end
 
     ~H"""
-    <table class="mt-11 w-full">
+    <table class={@class}>
       <thead class="text-left text-[0.8125rem] leading-6 text-zinc-500">
         <tr>
           <th :for={col <- @col} class={["p-0 pb-4 font-normal", col[:class]]}>
