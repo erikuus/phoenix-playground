@@ -7,44 +7,48 @@ defmodule LivePlaygroundWeb.CityLive.Index do
 
   def mount(%{"country_id" => country_id} = params, _session, socket) do
     if connected?(socket), do: Cities.subscribe()
-    {:ok, assign_defaults(socket)}
+
+    countries = Countries.list_region_country("Baltic Countries")
+    selected_country = Countries.get_country!(country_id)
+    {:ok, init_tab(socket, countries, selected_country)}
   end
 
   def mount(_params, _session, socket) do
     if connected?(socket), do: Cities.subscribe()
-    socket = assign_defaults(socket)
-    {:ok, stream(socket, :cities, Cities.list_country_city(socket.assigns.selected_country.code))}
+
+    countries = Countries.list_region_country("Baltic Countries")
+    selected_country = hd(countries)
+    {:ok, init_tab(socket, countries, selected_country)}
   end
 
-  defp assign_defaults(socket) do
-    countries = Countries.list_region_country("Baltic Countries")
-    country = hd(countries)
-
+  defp init_tab(socket, countries, selected_country) do
     socket
     |> assign(:countries, countries)
-    |> assign(:selected_country, country)
+    |> assign(:selected_country, selected_country)
+    |> stream(:cities, Cities.list_country_city(selected_country.code))
   end
 
   def handle_params(%{"country_id" => country_id} = params, _url, socket) do
-    country = Countries.get_country!(country_id)
-
     socket =
-      if socket.assigns.selected_country != country do
-        stream(socket, :cities, Cities.list_country_city(country.code), reset: true)
+      if socket.assigns.selected_country.id != String.to_integer(country_id) do
+        socket = change_tab(socket, country_id)
       else
         socket
       end
 
-    socket =
-      socket
-      |> assign(:selected_country, country)
-      |> apply_action(socket.assigns.live_action, params)
-
-    {:noreply, socket}
+    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
   def handle_params(params, _url, socket) do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+  end
+
+  defp change_tab(socket, country_id) do
+    selected_country = Countries.get_country!(country_id)
+
+    socket
+    |> assign(:selected_country, selected_country)
+    |> stream(:cities, Cities.list_country_city(selected_country.code), reset: true)
   end
 
   defp apply_action(socket, :index, _params) do
