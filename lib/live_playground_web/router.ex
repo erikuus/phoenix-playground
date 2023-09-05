@@ -22,7 +22,7 @@ defmodule LivePlaygroundWeb.Router do
 
       live "/click-buttons", RecipesLive.ClickButtons
       live "/handle-params", RecipesLive.HandleParams
-      live "/dynamic-form", RecipesLive.DynamicForm
+      live "/change-form", RecipesLive.ChangeForm
       live "/send-interval", RecipesLive.SendInterval
       live "/send-after", RecipesLive.SendAfter
       live "/search", RecipesLive.Search
@@ -41,6 +41,8 @@ defmodule LivePlaygroundWeb.Router do
       live "/stream-insert", RecipesLive.StreamInsert
       live "/stream-update", RecipesLive.StreamUpdate, :index
       live "/stream-update/edit", RecipesLive.StreamUpdate, :edit
+      live "/stream-reset", RecipesLive.StreamReset, :index
+      live "/stream-reset/edit", RecipesLive.StreamReset, :edit
       live "/tabular-insert", RecipesLive.TabularInsert
       live "/broadcast", RecipesLive.Broadcast
       live "/broadcast-stream", RecipesLive.BroadcastStream, :index

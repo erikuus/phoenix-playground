@@ -44,6 +44,10 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamInsert do
           <dt class="sr-only">District</dt>
           <dd class="mt-1 truncate text-zinc-700"><%= city.district %></dd>
         </dl>
+        <dl class="hidden md:block font-normal text-xs text-zinc-400">
+          <dt>Stream inserted:</dt>
+          <dd><%= Timex.now() %></dd>
+        </dl>
       </:col>
       <:col :let={{_dom_id, city}} label="District" class="hidden md:table-cell"><%= city.district %></:col>
       <:col :let={{_dom_id, city}} label="Population" class="text-right md:pr-10">

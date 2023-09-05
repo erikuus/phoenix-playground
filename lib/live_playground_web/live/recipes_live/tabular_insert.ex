@@ -71,6 +71,10 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
           <dt class="sr-only">District</dt>
           <dd class="mt-1 truncate text-zinc-700"><%= city.district %></dd>
         </dl>
+        <dl class="hidden md:block font-normal text-xs text-zinc-400">
+          <dt>Stream inserted:</dt>
+          <dd><%= Timex.now() %></dd>
+        </dl>
       </:col>
       <:col :let={{_id, city}} label="District" class="hidden md:table-cell"><%= city.district %></:col>
       <:col :let={{_id, city}} label="Population" class="text-right md:pr-10">
@@ -115,7 +119,7 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
   end
 
   def handle_event("save", %{"city" => tabular_params}, socket) do
-    city_params = get_city_params(tabular_params, socket)
+    city_params = get_city_params(socket.assigns.tabular_input_ids, tabular_params)
 
     validations =
       for {id, params} <- city_params do
@@ -169,19 +173,42 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
     {:noreply, stream_delete(socket, :cities, city)}
   end
 
-  defp get_city_params(tabular_params, socket) do
-    for {id, index} <- Enum.with_index(socket.assigns.tabular_input_ids) do
+  defp get_empty_form() do
+    %City{}
+    |> Cities.change_city()
+    |> to_form()
+  end
+
+  @doc """
+  Converts map received from multiple inputs into list of tuples that can be used to validate and save data.
+
+  ## Parameters
+
+    - tabular_input_ids: List that represents the ids of added (and not removed) tabular inputs.
+    - tabular_params: Map that save event will receive from tabular inputs (from inputs where `multiple={true}`).
+
+  ## Example
+
+      iex> tabular_input_ids = [2, 5]
+      iex> tabular_params = %{
+        "name" => ["Tallinn", "Tartu"],
+        "district" => ["Tartu Maakond", "Harju Maakond"],
+        "population" => ["101 246", "403 981"]
+      }
+      iex> get_city_params(tabular_input_ids, tabular_params)
+      [
+        {2, %{"name" => "Tartu, "district" => "Tartu Maakond", population => "101 246", "countrycode" => "EST"}},
+        {5, %{"name" => "Tallinn, "district" => "Harju Maakond", population => "403 981", "countrycode" => "EST"}}
+      ]
+
+  """
+  defp get_city_params(tabular_input_ids, tabular_params) do
+    for {id, index} <- Enum.with_index(tabular_input_ids) do
       params =
         Enum.reduce(tabular_params, %{}, fn {k, v}, acc -> Map.put(acc, k, Enum.at(v, index)) end)
         |> Map.put("countrycode", "EST")
 
       {id, params}
     end
-  end
-
-  defp get_empty_form() do
-    %City{}
-    |> Cities.change_city()
-    |> to_form()
   end
 end

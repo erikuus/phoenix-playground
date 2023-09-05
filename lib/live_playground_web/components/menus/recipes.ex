@@ -27,9 +27,9 @@ defmodule LivePlaygroundWeb.Menus.Recipes do
       },
       %{
         icon: "hero-arrow-path-rounded-square",
-        label: "Dynamic Form",
-        path: "/dynamic-form",
-        active: is_active?(current_path, ["/dynamic-form"])
+        label: "Change Form",
+        path: "/change-form",
+        active: is_active?(current_path, ["/change-form"])
       },
       %{
         icon: "hero-cube",
@@ -125,11 +125,12 @@ defmodule LivePlaygroundWeb.Menus.Recipes do
         icon: "hero-rss",
         label: "Stream",
         path: "/stream-insert",
-        badge: 2,
+        badge: 3,
         active:
           is_active?(current_path, [
             "/stream-insert",
-            "/stream-update"
+            "/stream-update",
+            "/stream-reset"
           ])
       },
       %{

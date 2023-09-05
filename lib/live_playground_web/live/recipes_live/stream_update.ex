@@ -33,8 +33,8 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamUpdate do
         How to update items in large collections without keeping them in memory on the server
       </:subtitle>
       <:actions>
-        <.link navigate={~p"/stream-insert"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Stream Insert
+        <.link navigate={~p"/stream-reset"}>
+          See also: Stream Reset <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
         </.link>
       </:actions>
     </.header>
@@ -63,6 +63,10 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamUpdate do
         <dl class="font-normal md:hidden">
           <dt class="sr-only">District</dt>
           <dd class="mt-1 truncate text-gray-700"><%= city.district %></dd>
+        </dl>
+        <dl class="hidden md:block font-normal text-xs text-zinc-400">
+          <dt>Stream inserted:</dt>
+          <dd><%= Timex.now() %></dd>
         </dl>
       </:col>
       <:col :let={{_id, city}} label="District" class="hidden md:table-cell"><%= city.district %></:col>

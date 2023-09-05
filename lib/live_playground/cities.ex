@@ -41,7 +41,7 @@ defmodule LivePlayground.Cities do
 
   # endpaginate
 
-  # paginate # filter # sort # form # streaminsert # streamupdate # broadcaststream # tabularinsert
+  # paginate # filter # sort # form # streaminsert # streamreset # streamupdate # streamreset # broadcaststream # tabularinsert
   def list_country_city(countrycode, options \\ %{sort_by: :name, sort_order: :asc}) do
     from(City)
     |> where(countrycode: ^countrycode)
@@ -53,7 +53,7 @@ defmodule LivePlayground.Cities do
     |> Repo.all()
   end
 
-  # endpaginate # endfilter # endsort # endform # endstreaminsert # endstreamupdate # endbroadcaststream # endtabularinsert
+  # endpaginate # endfilter # endsort # endform # endstreaminsert # endstreamreset # endstreamupdate # endstreamreset # endbroadcaststream # endtabularinsert
 
   # filter
   defp filter_by_name(query, %{name: ""}), do: query
@@ -152,9 +152,9 @@ defmodule LivePlayground.Cities do
       ** (Ecto.NoResultsError)
 
   """
-  # streamupdate # broadcaststream # tabularinsert
+  # streamupdate # streamreset # broadcaststream # tabularinsert
   def get_city!(id), do: Repo.get!(City, id)
-  # streamupdate # endbroadcaststream # endtabularinsert
+  # endstreamupdate # endstreamreset # endbroadcaststream # endtabularinsert
 
   @doc """
   Creates a city.
@@ -168,14 +168,14 @@ defmodule LivePlayground.Cities do
       {:error, %Ecto.Changeset{}}
 
   """
-  # form # streaminsert
+  # form # streaminsert # streamreset
   def create_city(attrs \\ %{}) do
     %City{}
     |> City.changeset(attrs)
     |> Repo.insert()
   end
 
-  # endform # endstreaminsert
+  # endform # endstreaminsert # endstreamreset
 
   # broadcaststream # tabularinsert
   def create_city_broadcast(attrs \\ %{}) do
@@ -199,14 +199,14 @@ defmodule LivePlayground.Cities do
       {:error, %Ecto.Changeset{}}
 
   """
-  # streamupdate
+  # streamupdate # streamreset
   def update_city(%City{} = city, attrs) do
     city
     |> City.changeset(attrs)
     |> Repo.update()
   end
 
-  # endstreamupdate
+  # endstreamupdate # endstreamreset
 
   # broadcaststream
   def update_city_broadcast(%City{} = city, attrs) do
@@ -230,12 +230,12 @@ defmodule LivePlayground.Cities do
       {:error, %Ecto.Changeset{}}
 
   """
-  # streaminsert
+  # streaminsert # streamreset
   def delete_city(%City{} = city) do
     Repo.delete(city)
   end
 
-  # endstreaminsert
+  # endstreaminsert # endstreamreset
 
   # broadcaststream # tabularinsert
   def delete_city_broadcast(%City{} = city) do
@@ -254,10 +254,10 @@ defmodule LivePlayground.Cities do
       %Ecto.Changeset{data: %City{}}
 
   """
-  # form # streaminsert # streamupdate # broadcaststream # tabularinsert # upload
+  # form # streaminsert # streamreset # streamupdate # broadcaststream # tabularinsert # upload
   def change_city(%City{} = city, attrs \\ %{}) do
     City.changeset(city, attrs)
   end
 
-  # endform # endstreaminsert # endstreamupdate # endbroadcaststream # endtabularinsert # endupload
+  # endform # endstreaminsert # endstreamreset # endstreamupdate # endbroadcaststream # endtabularinsert # endupload
 end
