@@ -14,25 +14,27 @@
 <div class="text-right">
   <.link patch={~p"/cities/new?#{[country_id: @selected_country.id]}"}>
     <span class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700 hidden md:inline">New</span>
-    <.icon name="hero-plus-circle" class="md:hidden" />
+    <.icon name="hero-plus-circle-mini" class="md:hidden" />
   </.link>
 </div>
 
 <.table id="cities" rows={@streams.cities} class="mt-2 w-full">
   <:col :let={{_id, city}} label="Name">
     <%= city.name %>
-    <dl class="font-normal">
-      <dd class="mt-1 text-xs text-zinc-700">Stream inserted: <%= Timex.now() %></dd>
-    </dl>
     <dl class="font-normal md:hidden">
       <dt class="sr-only">District</dt>
       <dd class="mt-1 truncate text-zinc-700"><%= city.district %></dd>
+    </dl>
+    <dl class="hidden md:block font-normal text-xs text-zinc-400">
+      <dt>Stream inserted:</dt>
+      <dd><%= Timex.now() %></dd>
     </dl>
   </:col>
   <:col :let={{_id, city}} label="District" class="hidden md:table-cell"><%= city.district %></:col>
   <:col :let={{_id, city}} label="Population" class="text-right md:pr-10">
     <%= Number.Delimit.number_to_delimited(city.population, precision: 0, delimiter: " ") %>
   </:col>
+
   <:action :let={{id, city}}>
     <.link patch={~p"/cities/edit?#{[country_id: @selected_country.id, city_id: city.id]}"} class="md:mr-4">
       <span class="hidden md:inline">Edit</span>
