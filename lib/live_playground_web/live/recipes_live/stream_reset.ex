@@ -71,7 +71,7 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamReset do
     <.header class="mb-6">
       Stream Reset
       <:subtitle>
-        How to reset streams in conjunction with navigation
+        How to reset streams in conjunction with navigation in LiveView
       </:subtitle>
       <:actions>
         <.link navigate={~p"/stream-insert"}>
@@ -98,7 +98,7 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamReset do
         <.button phx-disable-with="" class="md:mt-8"><%= @btn_title %></.button>
       </div>
       <div :if={@live_action == :edit}>
-        <.button_link look="secondary" patch={~p"/stream-reset"} class="w-full md:mt-8">
+        <.button_link look="secondary" patch={~p"/stream-reset?#{[country_id: @selected_country.id]}"} class="w-full md:mt-8">
           Cancel
         </.button_link>
       </div>
@@ -154,7 +154,7 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamReset do
   end
 
   defp save_city(socket, :index, city_params) do
-    city_params = Map.put(city_params, "countrycode", "EST")
+    city_params = Map.put(city_params, "countrycode", socket.assigns.selected_country.code)
 
     case Cities.create_city(city_params) do
       {:ok, city} ->
