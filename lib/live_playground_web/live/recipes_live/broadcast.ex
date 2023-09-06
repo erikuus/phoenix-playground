@@ -27,7 +27,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Broadcast do
 
       <:actions>
         <.link navigate={~p"/broadcast-stream"}>
-          See also: Real-Time Updates with Streams <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
+          See also: Real-Time Updates with Stream <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
         </.link>
       </:actions>
     </.header>

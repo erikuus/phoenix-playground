@@ -55,7 +55,7 @@ defmodule LivePlayground.Countries do
     []
   end
 
-  # clickbuttons # handleparams # streamreset
+  # clickbuttons # handleparams # streamreset # broadcaststreamreset
   def list_region_country(region) do
     from(Country)
     |> where(region: ^region)
@@ -63,7 +63,7 @@ defmodule LivePlayground.Countries do
     |> Repo.all()
   end
 
-  # endclickbuttons # endhandleparams # endstreamreset
+  # endclickbuttons # endhandleparams # endstreamreset # endbroadcaststreamreset
 
   @doc """
   Gets a single country.

@@ -130,18 +130,23 @@ defmodule LivePlaygroundWeb.Menus.Recipes do
           is_active?(current_path, [
             "/stream-insert",
             "/stream-update",
-            "/stream-reset"
+            "/stream-update/edit",
+            "/stream-reset",
+            "/stream-reset/edit"
           ])
       },
       %{
         icon: "hero-signal",
         label: "Broadcast",
         path: "/broadcast",
-        badge: 2,
+        badge: 3,
         active:
           is_active?(current_path, [
             "/broadcast",
-            "/broadcast-stream"
+            "/broadcast-stream",
+            "/broadcast-stream/edit",
+            "/broadcast-stream-reset",
+            "/broadcast-stream-reset/edit"
           ])
       },
       %{

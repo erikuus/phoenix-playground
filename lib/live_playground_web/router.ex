@@ -47,6 +47,8 @@ defmodule LivePlaygroundWeb.Router do
       live "/broadcast", RecipesLive.Broadcast
       live "/broadcast-stream", RecipesLive.BroadcastStream, :index
       live "/broadcast-stream/edit", RecipesLive.BroadcastStream, :edit
+      live "/broadcast-stream-reset", RecipesLive.BroadcastStreamReset, :index
+      live "/broadcast-stream-reset/edit", RecipesLive.BroadcastStreamReset, :edit
       live "/key-events", RecipesLive.KeyEvents
       live "/js-commands", RecipesLive.JsCommands
       live "/js-hook-map-dataset", RecipesLive.JsHookMapDataset

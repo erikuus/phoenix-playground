@@ -8,7 +8,7 @@ defmodule LivePlayground.Cities do
 
   alias LivePlayground.Cities.City
 
-  # broadcaststream # tabularinsert
+  # broadcaststream # broadcaststreamreset # tabularinsert
   @pubsub LivePlayground.PubSub
   @topic inspect(__MODULE__)
 
@@ -26,7 +26,7 @@ defmodule LivePlayground.Cities do
     {:error, changeset}
   end
 
-  # endbroadcaststream # endtabularinsert
+  # endbroadcaststream # endbroadcaststreamreset # endtabularinsert
 
   def list_city do
     Repo.all(City)
@@ -41,7 +41,7 @@ defmodule LivePlayground.Cities do
 
   # endpaginate
 
-  # paginate # filter # sort # form # streaminsert # streamreset # streamupdate # streamreset # broadcaststream # tabularinsert
+  # paginate # filter # sort # form # streaminsert # streamreset # streamupdate # streamreset # broadcaststream # broadcaststreamreset # tabularinsert
   def list_country_city(countrycode, options \\ %{sort_by: :name, sort_order: :asc}) do
     from(City)
     |> where(countrycode: ^countrycode)
@@ -53,7 +53,7 @@ defmodule LivePlayground.Cities do
     |> Repo.all()
   end
 
-  # endpaginate # endfilter # endsort # endform # endstreaminsert # endstreamreset # endstreamupdate # endstreamreset # endbroadcaststream # endtabularinsert
+  # endpaginate # endfilter # endsort # endform # endstreaminsert # endstreamreset # endstreamupdate # endstreamreset # endbroadcaststream # endbroadcaststreamreset # endtabularinsert
 
   # filter
   defp filter_by_name(query, %{name: ""}), do: query
@@ -152,9 +152,10 @@ defmodule LivePlayground.Cities do
       ** (Ecto.NoResultsError)
 
   """
-  # streamupdate # streamreset # broadcaststream # tabularinsert
+  # streamupdate # streamreset # broadcaststream # broadcaststreamreset # tabularinsert
   def get_city!(id), do: Repo.get!(City, id)
-  # endstreamupdate # endstreamreset # endbroadcaststream # endtabularinsert
+
+  # endstreamupdate # endstreamreset # endbroadcaststream # endbroadcaststreamreset # endtabularinsert
 
   @doc """
   Creates a city.
@@ -177,7 +178,7 @@ defmodule LivePlayground.Cities do
 
   # endform # endstreaminsert # endstreamreset
 
-  # broadcaststream # tabularinsert
+  # broadcaststream # broadcaststreamreset # tabularinsert
   def create_city_broadcast(attrs \\ %{}) do
     %City{}
     |> City.changeset(attrs)
@@ -185,7 +186,7 @@ defmodule LivePlayground.Cities do
     |> broadcast(:create_city)
   end
 
-  # endbroadcaststream # endtabularinsert
+  # endbroadcaststream # endbroadcaststreamreset # endtabularinsert
 
   @doc """
   Updates a city.
@@ -208,7 +209,7 @@ defmodule LivePlayground.Cities do
 
   # endstreamupdate # endstreamreset
 
-  # broadcaststream
+  # broadcaststream # broadcaststreamreset
   def update_city_broadcast(%City{} = city, attrs) do
     city
     |> City.changeset(attrs)
@@ -216,7 +217,7 @@ defmodule LivePlayground.Cities do
     |> broadcast(:update_city)
   end
 
-  # endbroadcaststream
+  # endbroadcaststream # endbroadcaststreamreset
 
   @doc """
   Deletes a city.
@@ -237,13 +238,13 @@ defmodule LivePlayground.Cities do
 
   # endstreaminsert # endstreamreset
 
-  # broadcaststream # tabularinsert
+  # broadcaststream # broadcaststreamreset # tabularinsert
   def delete_city_broadcast(%City{} = city) do
     Repo.delete(city)
     |> broadcast(:delete_city)
   end
 
-  # endbroadcaststream # endtabularinsert
+  # endbroadcaststream # endbroadcaststreamreset # endtabularinsert
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking city changes.
@@ -254,10 +255,10 @@ defmodule LivePlayground.Cities do
       %Ecto.Changeset{data: %City{}}
 
   """
-  # form # streaminsert # streamreset # streamupdate # broadcaststream # tabularinsert # upload
+  # form # streaminsert # streamreset # streamupdate # broadcaststream # broadcaststreamreset # tabularinsert # upload
   def change_city(%City{} = city, attrs \\ %{}) do
     City.changeset(city, attrs)
   end
 
-  # endform # endstreaminsert # endstreamreset # endstreamupdate # endbroadcaststream # endtabularinsert # endupload
+  # endform # endstreaminsert # endstreamreset # endstreamupdate # endbroadcaststream # endbroadcaststreamreset # endtabularinsert # endupload
 end
