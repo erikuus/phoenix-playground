@@ -119,9 +119,8 @@ defmodule LivePlaygroundWeb.RecipesLive.Upload do
           </div>
           <div class="ml-3">
             Please take note that in this recipe, we have constructed the Upload UI employing
-            Phoenix components and Tailwind CSS. In our
-            <.link class="underline" navigate={~p"/upload-server"}>next recipe</.link>,
-            we will encapsulate the Upload UI within our own streamlined and efficient functional components.
+            Phoenix components and Tailwind CSS. In our <.link class="underline" navigate={~p"/upload-server"}>next recipe</.link>,
+            we will encapsulate the Upload UI within our own streamlined and efficient components.
           </div>
         </div>
       </.card>
