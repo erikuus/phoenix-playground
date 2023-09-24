@@ -22,13 +22,14 @@ import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 
-
+import IframeResize from "./hooks/iframe-resize"
 import MapDataset from "./hooks/map-dataset"
 import MapPushEvents from "./hooks/map-push-events"
 import MapHandleEvents from "./hooks/map-handle-events"
 import S3 from "./uploaders/S3"
 
 let Hooks = {
+  IframeResize: IframeResize,
   MapDataset: MapDataset,
   MapPushEvents: MapPushEvents,
   MapHandleEvents: MapHandleEvents

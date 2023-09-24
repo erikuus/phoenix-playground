@@ -17,6 +17,11 @@ defmodule LivePlaygroundWeb.CompsLive.Slideover do
       <:subtitle>
         How to use slideover component
       </:subtitle>
+      <:actions>
+        <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def slideover">
+          Goto Definition
+        </.goto_definition>
+      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <div class="flex flex-col space-x-0 space-y-3 xl:flex-row xl:space-x-3 xl:space-y-0">
@@ -46,7 +51,7 @@ defmodule LivePlaygroundWeb.CompsLive.Slideover do
 
     <.slideover id="basic" on_confirm={JS.push("ok", value: %{slideover: "Basic"}) |> hide_slideover("basic")}>
       <:title>Basic</:title>
-      <%= lorem_ipsum_sentences(3) %>
+      <%= placeholder_sentences(3) %>
       <:confirm>OK</:confirm>
       <:cancel>Cancel</:cancel>
     </.slideover>
@@ -54,7 +59,7 @@ defmodule LivePlaygroundWeb.CompsLive.Slideover do
     <.slideover id="with-subtitle" on_confirm={JS.push("ok", value: %{slideover: "With subtitle"}) |> hide_slideover("with-subtitle")}>
       <:title>With subtitle</:title>
       <:subtitle>Subtitle</:subtitle>
-      <%= lorem_ipsum_sentences(3) %>
+      <%= placeholder_sentences(3) %>
       <:confirm>OK</:confirm>
       <:cancel>Cancel</:cancel>
     </.slideover>
@@ -65,7 +70,7 @@ defmodule LivePlaygroundWeb.CompsLive.Slideover do
     >
       <:title>With subtitle</:title>
       <div class="space-y-6">
-        <%= lorem_ipsum_paragraphs(20) %>
+        <%= placeholder_paragraphs(20) %>
       </div>
       <:confirm>OK</:confirm>
       <:cancel>Cancel</:cancel>
@@ -76,7 +81,7 @@ defmodule LivePlaygroundWeb.CompsLive.Slideover do
       on_confirm={JS.push("ok", value: %{slideover: "With red button"}) |> hide_slideover("with-red-button")}
     >
       <:title>With red button</:title>
-      <%= lorem_ipsum_sentences(3) %>
+      <%= placeholder_sentences(3) %>
       <:confirm class="bg-red-600 hover:bg-red-700">OK</:confirm>
       <:cancel>Cancel</:cancel>
     </.slideover>

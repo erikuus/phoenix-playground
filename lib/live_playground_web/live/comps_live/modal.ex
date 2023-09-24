@@ -17,6 +17,11 @@ defmodule LivePlaygroundWeb.CompsLive.Modals do
       <:subtitle>
         How to use modal component
       </:subtitle>
+      <:actions>
+        <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def modal">
+          Goto Definition
+        </.goto_definition>
+      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <div class="flex flex-col space-x-0 space-y-3 xl:flex-row xl:space-x-3 xl:space-y-0">
@@ -46,7 +51,7 @@ defmodule LivePlaygroundWeb.CompsLive.Modals do
 
     <.modal id="basic" on_confirm={JS.push("ok", value: %{modal: "Basic"}) |> hide_modal("basic")}>
       <:title>Basic</:title>
-      <%= lorem_ipsum_sentences(3) %>
+      <%= placeholder_sentences(3) %>
       <:confirm>OK</:confirm>
       <:cancel>Cancel</:cancel>
     </.modal>
@@ -54,7 +59,7 @@ defmodule LivePlaygroundWeb.CompsLive.Modals do
     <.modal id="with-subtitle" on_confirm={JS.push("ok", value: %{modal: "With subtitle"}) |> hide_modal("with-subtitle")}>
       <:title>With subtitle</:title>
       <:subtitle>Subtitle</:subtitle>
-      <%= lorem_ipsum_sentences(3) %>
+      <%= placeholder_sentences(3) %>
       <:confirm>OK</:confirm>
       <:cancel>Cancel</:cancel>
     </.modal>
@@ -62,7 +67,7 @@ defmodule LivePlaygroundWeb.CompsLive.Modals do
     <.modal id="with-icon" on_confirm={JS.push("ok", value: %{modal: "With icon"}) |> hide_modal("with-icon")}>
       <:icon><.icon name="hero-exclamation-triangle" class="h-10 w-10 text-yellow-500" /></:icon>
       <:title>With icon</:title>
-      <%= lorem_ipsum_sentences(3) %>
+      <%= placeholder_sentences(3) %>
       <:confirm>OK</:confirm>
       <:cancel>Cancel</:cancel>
     </.modal>
@@ -74,7 +79,7 @@ defmodule LivePlaygroundWeb.CompsLive.Modals do
         </div>
       </:icon>
       <:title>With red button</:title>
-      <%= lorem_ipsum_sentences(3) %>
+      <%= placeholder_sentences(3) %>
       <:confirm class="bg-red-600 hover:bg-red-700">OK</:confirm>
       <:cancel>Cancel</:cancel>
     </.modal>
