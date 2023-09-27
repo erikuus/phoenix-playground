@@ -34,6 +34,33 @@ defmodule LivePlaygroundWeb.DemoHelpers do
   end
 
   @doc """
+  Renders a link to Github.
+
+  ## Example
+
+      <.github_link filename="lib/live_playground_web/components/more_components.ex">
+        See more components source file
+      </.github_link>
+  """
+  attr :filename, :string, required: true
+  attr :rest, :global
+
+  slot :inner_block, required: true
+
+  def github_link(assigns) do
+    assigns =
+      assigns
+      |> assign_new(:dirname, fn -> Path.dirname(assigns.filename) end)
+      |> assign_new(:basename, fn -> Path.basename(assigns.filename) end)
+
+    ~H"""
+    <a target="_blank" href={"https://github.com/erikuus/phoenix-playground/tree/main/#{@dirname}/#{@basename}"} {@rest}>
+      <%= render_slot(@inner_block) %>
+    </a>
+    """
+  end
+
+  @doc """
   Renders a link to Github that jumps to given function definition.
 
   ## Example
