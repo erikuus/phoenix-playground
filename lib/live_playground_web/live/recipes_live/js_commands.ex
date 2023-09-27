@@ -18,7 +18,7 @@ defmodule LivePlaygroundWeb.RecipesLive.JsCommands do
     <.button phx-click={show_panel()}>
       Show
     </.button>
-    <.alert :if={@btn} class="mt-6">
+    <.alert :if={@btn} look="success" class="mt-6">
       <%= @btn %> clicked!
     </.alert>
     <div class="relative z-50" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">

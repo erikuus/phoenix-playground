@@ -45,7 +45,7 @@ defmodule LivePlaygroundWeb.CompsLive.Slideover do
       </.button_link>
     </div>
 
-    <.alert :if={@slideover} class="mt-6">
+    <.alert :if={@slideover} look="success" class="mt-6">
       Slideover "<%= @slideover %>" confirmed!
     </.alert>
 

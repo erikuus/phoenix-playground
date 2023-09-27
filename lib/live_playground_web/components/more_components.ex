@@ -290,7 +290,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
     ~H"""
     <div class={[
       "rounded-md p-4",
-      @look == "info" && "bg-blue-50 text-blue-700",
+      @look == "info" && "bg-zinc-100 text-zinc-600",
+      @look == "success" && "bg-green-50 text-green-700",
       @look == "warning" && "bg-yellow-50 text-yellow-700",
       @look == "error" && "bg-red-50 text-red-700",
       @class
