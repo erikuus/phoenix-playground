@@ -319,6 +319,30 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
+  Renders a note as text in card with icon.
+
+  ## Example
+
+      <.note icon="hero-information-circle" class="mt-6">Content</.note>
+  """
+  attr :class, :string, default: nil
+  attr :icon, :string, default: nil
+  slot :inner_block, required: true
+
+  def note(assigns) do
+    ~H"""
+    <div class={["flex overflow-hidden bg-white shadow-sm border border-gray-200 rounded-md px-4 py-5 sm:p-6", @class]}>
+      <div :if={@icon} class="flex-shrink-0">
+        <.icon name={@icon} class="h-10 w-10" />
+      </div>
+      <div class="ml-3">
+        <%= render_slot(@inner_block) %>
+      </div>
+    </div>
+    """
+  end
+
+  @doc """
   Renders a simple list.
 
   ## Example

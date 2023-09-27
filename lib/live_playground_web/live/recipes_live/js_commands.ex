@@ -62,20 +62,13 @@ defmodule LivePlaygroundWeb.RecipesLive.JsCommands do
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <%= raw(code("lib/live_playground_web/live/recipes_live/js_commands.ex")) %>
-      <.card class="px-4 py-5 sm:p-6">
-        <div class="flex">
-          <div class="flex-shrink-0">
-            <.icon name="hero-information-circle" class="h-10 w-10" />
-          </div>
-          <div class="ml-3">
-            Please be aware that in this recipe, we have designed the slideover to showcase
-            JavaScript commands. If you require a slideover in your application, kindly refer to <.link
-              class="underline"
-              navigate={~p"/slideover"}
-            >slideover component</.link>.
-          </div>
-        </div>
-      </.card>
+      <.note icon="hero-information-circle">
+        Please be aware that in this recipe, we have designed the slideover to showcase
+        JavaScript commands. If you require a slideover in your application, kindly refer to <.link
+          class="underline"
+          navigate={~p"/slideover"}
+        >slideover component</.link>.
+      </.note>
     </div>
     <!-- end hiding from live code -->
     """

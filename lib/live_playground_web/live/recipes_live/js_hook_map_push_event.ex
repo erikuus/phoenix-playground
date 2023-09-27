@@ -62,20 +62,13 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapPushEvent do
       ) %>
       <%= raw(code("assets/js/hooks/map-push-events.js")) %>
       <%= raw(code("assets/js/leaflets/map-push-events.js")) %>
-      <.card class="px-4 py-5 sm:p-6">
-        <div class="flex">
-          <div class="flex-shrink-0">
-            <.icon name="hero-information-circle" class="h-10 w-10" />
-          </div>
-          <div class="ml-3">
-            <p class="font-semibold">Install required javascript library as follows:</p>
-            <p class="font-mono">cd assets</p>
-            <p class="font-mono">npm install --save leaflet@1.7.1</p>
-            <p class="mt-4 font-semibold">Link stylesheet in root.html.heex as follows:</p>
-            <p class="font-mono">&lt;link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.cs" /&gt;</p>
-          </div>
-        </div>
-      </.card>
+      <.note icon="hero-information-circle">
+        <p class="font-semibold">Install required javascript library as follows:</p>
+        <p class="font-mono">cd assets</p>
+        <p class="font-mono">npm install --save leaflet@1.7.1</p>
+        <p class="mt-4 font-semibold">Link stylesheet in root.html.heex as follows:</p>
+        <p class="font-mono">&lt;link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.cs" /&gt;</p>
+      </.note>
     </div>
     <!-- end hiding from live code -->
     """

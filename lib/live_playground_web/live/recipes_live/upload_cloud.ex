@@ -93,28 +93,23 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadCloud do
       ) %>
       <%= raw(code("assets/js/uploaders/S3.js")) %>
       <%= raw(code("lib/live_playground/simple_s3_upload.ex")) %>
-      <.card class="px-4 py-5 sm:p-6">
-        <div class="flex">
-          <div class="flex-shrink-0">
-            <.icon name="hero-information-circle" class="h-10 w-10" />
-          </div>
-          <div class="ml-3 flex flex-col space-y-4">
-            <p>Access to S3 is governed by a set of credentials: an access key id and a secret access key. The access key identifies
-              your S3 account and the secret access key should be treated like a password. Your S3 credentials can be found on the
-              Your Security Credentials section of the AWS console.</p>
-            <img src="/images/s3_access.png" class="rounded xl:w-2/3" />
-            <p>To ensure the success of this recipe, store an access key id and a secret access key as system environmental variables.
-              As an illustration, on a Windows system:</p>
-            <img src="/images/env_var.png" class="rounded xl:w-96" />
-            <p>
-              You'll also need to configure cross-origin resource sharing (CORS) on the bucket in order for LiveView to POST form data
-              to the bucket. To do that from the S3 console, choose the name of the bucket and then choose "Permissions". Bear in mind,
-              this configuration is very permissive and therefore best suited for educational purposes.
-            </p>
-            <img src="/images/s3_bucket_permissions.png" class="rounded xl:w-1/2" />
-          </div>
+      <.note icon="hero-information-circle">
+        <div class="ml-3 flex flex-col space-y-4">
+          <p>Access to S3 is governed by a set of credentials: an access key id and a secret access key. The access key identifies
+            your S3 account and the secret access key should be treated like a password. Your S3 credentials can be found on the
+            Your Security Credentials section of the AWS console.</p>
+          <img src="/images/s3_access.png" class="rounded xl:w-2/3" />
+          <p>To ensure the success of this recipe, store an access key id and a secret access key as system environmental variables.
+            As an illustration, on a Windows system:</p>
+          <img src="/images/env_var.png" class="rounded xl:w-96" />
+          <p>
+            You'll also need to configure cross-origin resource sharing (CORS) on the bucket in order for LiveView to POST form data
+            to the bucket. To do that from the S3 console, choose the name of the bucket and then choose "Permissions". Bear in mind,
+            this configuration is very permissive and therefore best suited for educational purposes.
+          </p>
+          <img src="/images/s3_bucket_permissions.png" class="rounded xl:w-1/2" />
         </div>
-      </.card>
+      </.note>
     </div>
     <!-- end hiding from live code -->
     """
