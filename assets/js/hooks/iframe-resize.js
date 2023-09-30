@@ -8,6 +8,8 @@ let IframeResize = {
     const overlay = document.getElementById(this.el.dataset.overlay);
     const ruler = document.getElementById(this.el.dataset.ruler);
 
+    overlay.style.pointerEvents = 'none'; // Disable overlay to allow iframe interaction
+
     function startResize(e) {
       isResizing = true;
       document.addEventListener('mousemove', resize);
