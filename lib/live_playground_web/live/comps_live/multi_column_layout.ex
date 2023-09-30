@@ -25,9 +25,7 @@ defmodule LivePlaygroundWeb.CompsLive.MultiColumnLayout do
       <.note icon="hero-information-circle">
         Please note that this playground is itself constructed using a multi-column layout component, making it an excellent example of its usage.
         Open any page and resize the window to observe how the layout responds. Also take a look at how the layout component is implemented in the
-        <.github_link class="underline" filename="lib/live_playground_web/components/layouts/recipes.html.heex">
-          source code
-        </.github_link>.
+        <.github_link filename="lib/live_playground_web/components/layouts/recipes.html.heex">source code</.github_link>.
       </.note>
     </div>
     """
