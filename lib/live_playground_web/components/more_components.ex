@@ -120,18 +120,23 @@ defmodule LivePlaygroundWeb.MoreComponents do
   """
   attr :items, :list, required: true
 
+  attr :item_class, :string,
+    default: "text-zinc-100 hover:bg-zinc-600 hover:bg-opacity-50 hover:text-white"
+
+  attr :item_active_class, :string, default: "bg-zinc-600 bg-opacity-50 text-white"
+
   def narrow_sidebar(assigns) do
     ~H"""
     <.link
       :for={item <- @items}
       navigate={item.path}
       class={[
-        "group flex w-full flex-col items-center rounded-md p-3 text-xs font-medium",
-        item.active == true && "bg-zinc-600 bg-opacity-50 text-white",
-        item.active == false && "text-zinc-100 hover:bg-zinc-600 hover:bg-opacity-50 hover:text-white"
+        "flex w-full flex-col items-center rounded-md p-3 text-xs font-medium",
+        item.active == true && @item_active_class,
+        item.active == false && @item_class
       ]}
     >
-      <.icon :if={item.icon} name={item.icon} class="text-zinc-300 group-hover:text-white h-6 w-6" />
+      <.icon :if={item.icon} name={item.icon} class="h-6 w-6" />
       <span class="mt-1 hidden md:block"><%= item.label %></span>
     </.link>
     """
@@ -153,6 +158,12 @@ defmodule LivePlaygroundWeb.MoreComponents do
       ]} />
   """
   attr :items, :list, required: true
+  attr :item_class, :string, default: "text-gray-900 hover:bg-gray-100"
+  attr :item_active_class, :string, default: "text-gray-900 bg-gray-100"
+  attr :icon_class, :string, default: "text-gray-500"
+  attr :icon_active_class, :string, default: "text-gray-500"
+  attr :badge_class, :string, default: "bg-gray-100 group-hover:bg-gray-200"
+  attr :badge_active_class, :string, default: "bg-gray-200"
 
   def vertical_navigation(assigns) do
     ~H"""
@@ -160,19 +171,27 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <.link
         navigate={item.path}
         class={[
-          "text-gray-900 group flex items-center px-2 py-2 font-medium rounded-md text-sm",
-          item.active == true && "bg-gray-100",
-          item.active == false && "hover:bg-gray-100"
+          "group flex items-center px-2 py-2 rounded-md text-sm font-medium",
+          item.active == false && @item_class,
+          item.active == true && @item_active_class
         ]}
       >
-        <.icon :if={Map.has_key?(item, :icon) && item.icon} name={item.icon} class="text-gray-500 mr-1 flex-shrink-0 h-5 w-5" />
+        <.icon
+          :if={Map.has_key?(item, :icon) && item.icon}
+          name={item.icon}
+          class={[
+            "mr-1 flex-shrink-0 h-5 w-5",
+            item.active == false && @icon_class,
+            item.active == true && @icon_active_class
+          ]}
+        />
         <span class="flex-1 ml-2"><%= item.label %></span>
         <span
           :if={Map.has_key?(item, :badge) && item.badge}
           class={[
             "ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full",
-            item.active == true && "bg-gray-200",
-            item.active == false && "bg-gray-100 group-hover:bg-gray-200"
+            item.active == false && @badge_class,
+            item.active == true && @badge_active_class
           ]}
         >
           <%= item.badge %>

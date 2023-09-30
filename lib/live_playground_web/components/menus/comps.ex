@@ -1,5 +1,4 @@
 defmodule LivePlaygroundWeb.Menus.Comps do
-  alias LivePlaygroundWeb.CompsLive.VerticalNavigation
   use Phoenix.Component
 
   import LivePlaygroundWeb.MoreComponents
@@ -29,11 +28,6 @@ defmodule LivePlaygroundWeb.Menus.Comps do
         group: "More components",
         subitems: [
           %{
-            label: "Slideover",
-            path: "/slideover",
-            active: is_active?(current_path, ["/slideover"])
-          },
-          %{
             label: "Multi-Column Layout",
             path: "/multi-column-layout",
             active: is_active?(current_path, ["/multi-column-layout"])
@@ -49,9 +43,9 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             active: is_active?(current_path, ["/vertical-navigation"])
           },
           %{
-            label: "Grouped Vertical Navigation",
-            path: "/vertical-navigation-grouped",
-            active: is_active?(current_path, ["/vertical-navigation-grouped"])
+            label: "Slideover",
+            path: "/slideover",
+            active: is_active?(current_path, ["/slideover"])
           }
         ]
       }

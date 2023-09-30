@@ -9,7 +9,7 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigationGrouped do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Grouped Vertical Navigation
+      Vertical Navigation Grouped
       <:subtitle>
         How to ...
       </:subtitle>

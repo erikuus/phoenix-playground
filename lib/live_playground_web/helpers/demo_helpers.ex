@@ -12,13 +12,14 @@ defmodule LivePlaygroundWeb.DemoHelpers do
   attr :id, :string, required: true
   attr :src, :string, required: true
   attr :hook, :string, required: true
+  attr :height, :string, default: "h-96"
 
   def resizable_iframe(assigns) do
     ~H"""
     <div id={"#{@id}-ruler"} class="w-full"></div>
     <div id={"#{@id}-container"} class="relative">
-      <div id={"#{@id}-overlay"} class="iframe-overlay absolute w-full h-96 overflow-hidden"></div>
-      <iframe class="w-full h-96 overflow-hidden rounded-lg ring-1 ring-slate-900/10" src={@src}></iframe>
+      <div id={"#{@id}-overlay"} class={[@height, "iframe-overlay absolute w-full overflow-hidden"]}></div>
+      <iframe class={[@height, "w-full h-96 overflow-hidden rounded-lg ring-1 ring-slate-900/10"]} src={@src}></iframe>
       <div
         id={"#{@id}-handler"}
         data-ruler={"#{@id}-ruler"}
@@ -43,20 +44,18 @@ defmodule LivePlaygroundWeb.DemoHelpers do
       </.github_link>
   """
   attr :filename, :string, required: true
-  attr :rest, :global
 
   slot :inner_block, required: true
 
   def github_link(assigns) do
     assigns =
       assigns
-      |> assign_new(:dirname, fn -> Path.dirname(assigns.filename) end)
-      |> assign_new(:basename, fn -> Path.basename(assigns.filename) end)
+      |> assign_new(:url, fn ->
+        "https://github.com/erikuus/phoenix-playground/tree/main/#{Path.dirname(assigns.filename)}/#{Path.basename(assigns.filename)}"
+      end)
 
     ~H"""
-    <a target="_blank" href={"https://github.com/erikuus/phoenix-playground/tree/main/#{@dirname}/#{@basename}"} {@rest}>
-      <%= render_slot(@inner_block) %>
-    </a>
+    <a target="_blank" class="underline" href={@url}><%= render_slot(@inner_block) %></a>
     """
   end
 

@@ -85,11 +85,13 @@ defmodule LivePlaygroundWeb.CompsLive.Slideover do
       <:confirm class="bg-red-600 hover:bg-red-700">OK</:confirm>
       <:cancel>Cancel</:cancel>
     </.slideover>
+
     <.slideover id="with-navigate-button" on_confirm={JS.navigate(~p"/modal")}>
       <:title>With navigate button</:title>
       Navigate to modal
       <:confirm>Go</:confirm>
     </.slideover>
+
     <.slideover :if={@live_action == :image} id="image-slideover" show on_cancel={JS.navigate(~p"/slideover")} width_class="max-w-5xl">
       <.live_component
         module={LivePlaygroundWeb.CompsLive.ImageComponent}

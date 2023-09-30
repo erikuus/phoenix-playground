@@ -77,6 +77,7 @@ defmodule LivePlaygroundWeb.Router do
       live "/multi-column-layout", CompsLive.MultiColumnLayout
       live "/multi-column-layout-demo", CompsLive.MultiColumnLayoutDemo
       live "/narrow-sidebar", CompsLive.NarrowSidebar
+      live "/narrow-sidebar-demo", CompsLive.NarrowSidebarDemo
       live "/vertical-navigation", CompsLive.VerticalNavigation
       live "/vertical-navigation-grouped", CompsLive.VerticalNavigationGrouped
     end
