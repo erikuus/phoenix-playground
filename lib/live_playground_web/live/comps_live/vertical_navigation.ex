@@ -23,7 +23,7 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigation do
     <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:gap-0 xl:grid-cols-4 xl:divide-x xl:divide-gray-100">
       <div class="space-y-1 xl:pr-4">
         <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
-          With Text Only
+          With text only
         </h2>
         <.vertical_navigation items={[
           %{
