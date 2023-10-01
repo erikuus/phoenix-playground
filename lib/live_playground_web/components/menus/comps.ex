@@ -21,6 +21,11 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             label: "Modal",
             path: "/modal",
             active: is_active?(current_path, ["/modal"])
+          },
+          %{
+            label: "Flash",
+            path: "/flash",
+            active: is_active?(current_path, ["/flash"])
           }
         ]
       },

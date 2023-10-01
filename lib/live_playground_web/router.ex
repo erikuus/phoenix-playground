@@ -70,16 +70,17 @@ defmodule LivePlaygroundWeb.Router do
     scope "/", LivePlaygroundWeb do
       pipe_through :browser
 
-      live "/modal", CompsLive.Modals
-      live "/modal/image", CompsLive.Modals, :image
-      live "/slideover", CompsLive.Slideover
-      live "/slideover/image", CompsLive.Slideover, :image
+      live "/modal", CompsLive.Modal
+      live "/modal/image", CompsLive.Modal, :image
+      live "/flash", CompsLive.Flash
       live "/multi-column-layout", CompsLive.MultiColumnLayout
       live "/multi-column-layout-demo", CompsLive.MultiColumnLayoutDemo
       live "/narrow-sidebar", CompsLive.NarrowSidebar
       live "/narrow-sidebar-demo", CompsLive.NarrowSidebarDemo
       live "/vertical-navigation", CompsLive.VerticalNavigation
       live "/vertical-navigation-grouped", CompsLive.VerticalNavigationGrouped
+      live "/slideover", CompsLive.Slideover
+      live "/slideover/image", CompsLive.Slideover, :image
     end
   end
 
