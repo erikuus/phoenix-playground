@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.CompsLive.Modals do
+defmodule LivePlaygroundWeb.CompsLive.Modal do
   use LivePlaygroundWeb, :live_view
 
   def mount(_params, _session, socket) do
