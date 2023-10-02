@@ -36,8 +36,8 @@ defmodule LivePlaygroundWeb.RecipesLive.SendAfter do
     </.stat>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/recipes_live/send_after.ex")) %>
-      <%= raw(code("lib/live_playground/sales.ex")) %>
+      <.code_block filename="lib/live_playground_web/live/recipes_live/send_after.ex" />
+      <.code_block filename="lib/live_playground/sales.ex" />
     </div>
     <!-- end hiding from live code -->
     """

@@ -144,9 +144,9 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/recipes_live/broadcast_stream_reset.ex")) %>
-      <%= raw(code("lib/live_playground/cities.ex", "# broadcaststreamreset", "# endbroadcaststreamreset")) %>
-      <%= raw(code("lib/live_playground/countries.ex", "# broadcaststreamreset", "# endbroadcaststreamreset")) %>
+      <.code_block filename="lib/live_playground_web/live/recipes_live/broadcast_stream_reset.ex" />
+      <.code_block filename="lib/live_playground/cities.ex" from="# broadcaststreamreset" to="# endbroadcaststreamreset" />
+      <.code_block filename="lib/live_playground/countries.ex" from="# broadcaststreamreset" to="# endbroadcaststreamreset" />
     </div>
     <!-- end hiding from live code -->
     """

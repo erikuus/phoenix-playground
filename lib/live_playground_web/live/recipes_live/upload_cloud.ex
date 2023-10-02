@@ -81,18 +81,16 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadCloud do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/recipes_live/upload_cloud.ex")) %>
-      <%= raw(code("lib/live_playground/locations.ex", "# uploadcloud", "# enduploadcloud")) %>
-      <%= raw(
-        code(
-          "assets/js/app.js",
-          "// Establish Phoenix Socket and LiveView configuration",
-          "// Show progress bar on live navigation and form submits",
-          false
-        )
-      ) %>
-      <%= raw(code("assets/js/uploaders/S3.js")) %>
-      <%= raw(code("lib/live_playground/simple_s3_upload.ex")) %>
+      <.code_block filename="lib/live_playground_web/live/recipes_live/upload_cloud.ex" />
+      <.code_block filename="lib/live_playground/locations.ex" from="# uploadcloud" to="# enduploadcloud" />
+      <.code_block
+        filename="assets/js/app.js"
+        from="// Establish Phoenix Socket and LiveView configuration"
+        to="// Show progress bar on live navigation and form submits"
+        elixir={false}
+      />
+      <.code_block filename="assets/js/uploaders/S3.js" />
+      <.code_block filename="lib/live_playground/simple_s3_upload.ex" />
       <.note icon="hero-information-circle">
         <div class="ml-3 flex flex-col space-y-4">
           <p>Access to S3 is governed by a set of credentials: an access key id and a secret access key. The access key identifies

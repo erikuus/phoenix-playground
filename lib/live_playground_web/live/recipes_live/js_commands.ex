@@ -61,7 +61,7 @@ defmodule LivePlaygroundWeb.RecipesLive.JsCommands do
     </div>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/recipes_live/js_commands.ex")) %>
+      <.code_block filename="lib/live_playground_web/live/recipes_live/js_commands.ex" />
       <.note icon="hero-information-circle">
         Please be aware that in this recipe, we have designed the slideover to showcase
         JavaScript commands. If you require a slideover in your application, kindly refer to <.link

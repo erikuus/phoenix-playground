@@ -94,8 +94,8 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStream do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/recipes_live/broadcast_stream.ex")) %>
-      <%= raw(code("lib/live_playground/cities.ex", "# broadcaststream", "# endbroadcaststream")) %>
+      <.code_block filename="lib/live_playground_web/live/recipes_live/broadcast_stream.ex" />
+      <.code_block filename="lib/live_playground/cities.ex" from="# broadcaststream_" to="# endbroadcaststream_" />
     </div>
     <!-- end hiding from live code -->
     """

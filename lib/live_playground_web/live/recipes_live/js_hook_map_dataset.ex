@@ -33,19 +33,17 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapDataset do
     </div>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/recipes_live/js_hook_map_dataset.ex")) %>
-      <%= raw(code("lib/live_playground/locations.ex", "# jshooks", "# endjshooks")) %>
-      <%= raw(code("lib/live_playground/locations/location.ex", "# jshookmapdataset", "# endjshookmapdataset")) %>
-      <%= raw(
-        code(
-          "assets/js/app.js",
-          "// Establish Phoenix Socket and LiveView configuration",
-          "// Show progress bar on live navigation and form submits",
-          false
-        )
-      ) %>
-      <%= raw(code("assets/js/hooks/map-dataset.js")) %>
-      <%= raw(code("assets/js/leaflets/map-dataset.js")) %>
+      <.code_block filename="lib/live_playground_web/live/recipes_live/js_hook_map_dataset.ex" />
+      <.code_block filename="lib/live_playground/locations.ex" from="# jshooks" to="# endjshooks" />
+      <.code_block filename="lib/live_playground/locations/location.ex" from="# jshookmapdataset" to="# endjshookmapdataset" />
+      <.code_block
+        filename="assets/js/app.js"
+        from="// Establish Phoenix Socket and LiveView configuration"
+        to="// Show progress bar on live navigation and form submits"
+        elixir={false}
+      />
+      <.code_block filename="assets/js/hooks/map-dataset.js" />
+      <.code_block filename="assets/js/leaflets/map-dataset.js" />
       <.note icon="hero-information-circle">
         <p class="font-semibold">Install required javascript library as follows:</p>
         <p class="font-mono">cd assets</p>

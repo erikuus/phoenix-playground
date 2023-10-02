@@ -66,8 +66,8 @@ defmodule LivePlaygroundWeb.RecipesLive.PaginateParams do
     <.pagination event="select-page" page={@options.page} per_page={@options.per_page} count_all={@count} />
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/recipes_live/paginate_params.ex")) %>
-      <%= raw(code("lib/live_playground/cities.ex", "# paginate", "# endpaginate")) %>
+      <.code_block filename="lib/live_playground_web/live/recipes_live/paginate_params.ex" />
+      <.code_block filename="lib/live_playground/cities.ex" from="# paginate" to="# endpaginate" />
     </div>
     <!-- end hiding from live code -->
     """

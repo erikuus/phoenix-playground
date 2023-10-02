@@ -85,9 +85,8 @@ defmodule LivePlaygroundWeb.RecipesLive.Broadcast do
     </div>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/recipes_live/broadcast.ex")) %> <%= raw(
-        code("lib/live_playground/countries.ex", "# broadcast", "# endbroadcast")
-      ) %>
+      <.code_block filename="lib/live_playground_web/live/recipes_live/broadcast.ex" />
+      <.code_block filename="lib/live_playground/countries.ex" from="# broadcast" to="# endbroadcast" />
     </div>
     <!-- end hiding from live code -->
     """

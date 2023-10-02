@@ -61,7 +61,7 @@ defmodule LivePlaygroundWeb.CompsLive.Flash do
     <.flash id="flash-messages-info" kind={:info} flash={@flash} title="Flash messages info" />
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/comps_live/flash.ex")) %>
+      <.code_block filename="lib/live_playground_web/live/comps_live/flash.ex" />
     </div>
     <!-- end hiding from live code -->
     """

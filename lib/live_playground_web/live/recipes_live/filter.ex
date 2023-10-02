@@ -55,8 +55,8 @@ defmodule LivePlaygroundWeb.RecipesLive.Filter do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/recipes_live/filter.ex")) %>
-      <%= raw(code("lib/live_playground/cities.ex", "# filter", "# endfilter")) %>
+      <.code_block filename="lib/live_playground_web/live/recipes_live/filter.ex" />
+      <.code_block filename="lib/live_playground/cities.ex" from="# filter" to="# endfilter" />
     </div>
     <!-- end hiding from live code -->
     """

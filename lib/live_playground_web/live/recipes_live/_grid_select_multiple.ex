@@ -74,8 +74,8 @@ defmodule LivePlaygroundWeb.RecipesLive.JsCommandsReal do
     </.simple_list>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/recipes_live/js_commands_grid.ex")) %>
-      <%= raw(code("lib/live_playground/cities.ex", "# jscommands", "# endjscommands")) %>
+      <.code_block filename="lib/live_playground_web/live/recipes_live/js_commands_grid.ex" />
+      <.code_block filename="lib/live_playground/cities.ex" from="# jscommands" to="# endjscommands" />
     </div>
     <!-- end hiding from live code -->
     """

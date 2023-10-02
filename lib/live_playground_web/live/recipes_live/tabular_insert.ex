@@ -89,8 +89,8 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/recipes_live/tabular_insert.ex")) %>
-      <%= raw(code("lib/live_playground/cities.ex", "# tabularinsert", "# endtabularinsert")) %>
+      <.code_block filename="lib/live_playground_web/live/recipes_live/tabular_insert.ex" />
+      <.code_block filename="lib/live_playground/cities.ex" from="# tabularinsert" to="# endtabularinsert" />
     </div>
     <!-- end hiding from live code -->
     """

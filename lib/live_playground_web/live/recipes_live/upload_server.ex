@@ -73,16 +73,14 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadServer do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/recipes_live/upload_server.ex")) %>
-      <%= raw(code("lib/live_playground/locations.ex", "# uploadserver", "# enduploadserver")) %>
-      <%= raw(code("lib/live_playground_web.ex", "# uploadserver", "# enduploadserver")) %>
-      <%= raw(
-        code(
-          "config/dev.exs",
-          "# Watch static and templates for browser reloading.",
-          "# Enable dev routes for dashboard and mailbox"
-        )
-      ) %>
+      <.code_block filename="lib/live_playground_web/live/recipes_live/upload_server.ex" />
+      <.code_block filename="lib/live_playground/locations.ex" from="# uploadserver" to="# enduploadserver" />
+      <.code_block filename="lib/live_playground_web.ex" from="# uploadserver" to="# enduploadserver" />
+      <.code_block
+        filename="config/dev.exs"
+        from="# Watch static and templates for browser reloading."
+        to="# Enable dev routes for dashboard and mailbox"
+      />
     </div>
     <!-- end hiding from live code -->
     """

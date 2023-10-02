@@ -65,9 +65,8 @@ defmodule LivePlaygroundWeb.RecipesLive.HandleParams do
     </.list>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/recipes_live/handle_params.ex")) %> <%= raw(
-        code("lib/live_playground/countries.ex", "# handleparams", "# endhandleparams")
-      ) %>
+      <.code_block filename="lib/live_playground_web/live/recipes_live/handle_params.ex" />
+      <.code_block filename="lib/live_playground/countries.ex" from="# handleparams" to="# endhandleparams" />
     </div>
     <!-- end hiding from live code -->
     """

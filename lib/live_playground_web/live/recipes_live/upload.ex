@@ -109,9 +109,8 @@ defmodule LivePlaygroundWeb.RecipesLive.Upload do
     </.form>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/recipes_live/upload.ex")) %> <%= raw(
-        code("lib/live_playground/cities.ex", "# upload", "# endupload")
-      ) %>
+      <.code_block filename="lib/live_playground_web/live/recipes_live/upload.ex" />
+      <.code_block filename="lib/live_playground/cities.ex" from="# upload" to="# endupload" />
       <.note icon="hero-information-circle">
         Please take note that in this recipe, we have constructed the Upload UI employing
         Phoenix components and Tailwind CSS. In our <.link class="underline" navigate={~p"/upload-server"}>next recipe</.link>,

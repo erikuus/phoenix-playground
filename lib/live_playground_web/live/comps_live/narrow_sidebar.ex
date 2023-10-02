@@ -20,7 +20,7 @@ defmodule LivePlaygroundWeb.CompsLive.NarrowSidebar do
     </.header>
     <.resizable_iframe hook="IframeResize" id="multi-column-layout-demo" src="/narrow-sidebar-demo" />
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/comps_live/narrow_sidebar_demo.ex")) %>
+      <.code_block filename="lib/live_playground_web/live/comps_live/narrow_sidebar_demo.ex" />
       <.note icon="hero-information-circle">
         It could prove beneficial for you to explore the implementation of the sidebar component within this playground.
         The sidebar is encapsulated within the

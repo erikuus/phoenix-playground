@@ -63,9 +63,8 @@ defmodule LivePlaygroundWeb.RecipesLive.ClickButtons do
     </.list>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/recipes_live/click_buttons.ex")) %> <%= raw(
-        code("lib/live_playground/countries.ex", "# clickbuttons", "# endclickbuttons")
-      ) %>
+      <.code_block filename="lib/live_playground_web/live/recipes_live/click_buttons.ex" />
+      <.code_block filename="lib/live_playground/countries.ex" from="# clickbuttons" to="# endclickbuttons" />
     </div>
     <!-- end hiding from live code -->
     """

@@ -185,7 +185,7 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigation do
     </div>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/comps_live/vertical_navigation.ex")) %>
+      <.code_block filename="lib/live_playground_web/live/comps_live/vertical_navigation.ex" />
       <.note icon="hero-information-circle">
         It would be helpful for you to look into how the vertical navigation component works in this playground.
         The vertical navigation is part of the

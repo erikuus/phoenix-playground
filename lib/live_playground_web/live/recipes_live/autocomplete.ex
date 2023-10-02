@@ -41,8 +41,8 @@ defmodule LivePlaygroundWeb.RecipesLive.Autocomplete do
     </datalist>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/recipes_live/autocomplete.ex")) %>
-      <%= raw(code("lib/live_playground/countries.ex", "# search", "# endsearch")) %>
+      <.code_block filename="lib/live_playground_web/live/recipes_live/autocomplete.ex" />
+      <.code_block filename="lib/live_playground/countries.ex" from="# search" to="# endsearch" />
     </div>
     <!-- end hiding from live code -->
     """

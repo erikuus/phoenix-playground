@@ -82,8 +82,8 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamUpdate do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/recipes_live/stream_update.ex")) %>
-      <%= raw(code("lib/live_playground/cities.ex", "# streamupdate", "# endstreamupdate")) %>
+      <.code_block filename="lib/live_playground_web/live/recipes_live/stream_update.ex" />
+      <.code_block filename="lib/live_playground/cities.ex" from="# streamupdate" to="# endstreamupdate" />
     </div>
     <!-- end hiding from live code -->
     """

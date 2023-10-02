@@ -52,8 +52,8 @@ defmodule LivePlaygroundWeb.RecipesLive.FormInsert do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <%= raw(code("lib/live_playground_web/live/recipes_live/form_insert.ex")) %>
-      <%= raw(code("lib/live_playground/cities.ex", "# form", "# endform")) %>
+      <.code_block filename="lib/live_playground_web/live/recipes_live/form_insert.ex" />
+      <.code_block filename="lib/live_playground/cities.ex" from="# form" to="# endform" />
     </div>
     <!-- end hiding from live code -->
     """

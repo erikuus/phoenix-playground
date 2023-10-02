@@ -2,6 +2,7 @@ defmodule LivePlaygroundWeb.DemoHelpers do
   @moduledoc """
   Offers specialized components and functions tailored to enhance the functionality of this playground.
   """
+  import Phoenix.HTML
   import LivePlaygroundWeb.FileHelpers
 
   use Phoenix.Component
@@ -107,72 +108,62 @@ defmodule LivePlaygroundWeb.DemoHelpers do
   end
 
   @doc """
-  Display placeholder text
+  Renders a code block with filename as title, github link as action, and highlighted code as content.
 
   ## Examples
 
-      <%= placeholder_words(10) %>
-      <%= placeholder_sentences(3) %>
-      <%= placeholder_paragraphs(20, true) %>
+      <.code_block filename="lib/live_playground_web/live/comps_live/modal.ex" />
+      <.code_block filename="lib/live_playground/countries.ex" from="# search" to="# endsearch" />
   """
-  def placeholder_words(count, random \\ false) do
-    String.split(get_lorem_ipsum(), " ", trim: true)
-    |> shuffle(random)
-    |> Enum.slice(0..(count - 1))
-    |> Enum.join(" ")
-  end
+  attr :filename, :string, required: true
+  attr :from, :string
+  attr :to, :string
+  attr :elixir, :boolean
 
-  def placeholder_sentences(count, random \\ false) do
-    sentences =
-      String.split(get_lorem_ipsum(), ".", trim: true)
-      |> shuffle(random)
-      |> Enum.slice(0..(count - 1))
-      |> Enum.join(". ")
+  def code_block(%{filename: filename, from: from, to: to} = assigns) do
+    assigns =
+      assigns
+      |> assign_new(:formatted_filename, fn -> format_filename(filename) |> raw() end)
+      |> assign_new(:highlighted_code, fn ->
+        read_file(filename)
+        |> show_marked(from, to, Map.get(assigns, :elixir, true))
+        |> hide_marked()
+        |> Makeup.highlight()
+        |> raw()
+      end)
 
-    "#{sentences}."
-  end
-
-  def placeholder_paragraphs(count, random \\ false) do
-    String.split(get_lorem_ipsum(), "\n\n", trim: true)
-    |> shuffle(random)
-    |> Enum.slice(0..(count - 1))
-    |> Enum.map(&Phoenix.HTML.Tag.content_tag(:p, &1))
-  end
-
-  defp get_lorem_ipsum() do
-    read_file("priv/static/text/lorem_ipsum")
-  end
-
-  defp shuffle(list, true), do: Enum.shuffle(list)
-
-  defp shuffle(list, false), do: list
-
-  @doc """
-  Display code, filename and link to Github
-  """
-  def code(filename, from, to, elixir \\ true) do
-    """
+    ~H"""
     <div class="rounded-lg bg-white border border-gray-200 text-sm xl:text-base">
       <div class="overflow-hidden text-ellipsis px-4 py-5 sm:px-6 text-gray-400 font-mono">
-        #{format_filename(filename)}
+        <%= @formatted_filename %>
       </div>
       <div class="overflow-auto overscroll-auto bg-[#f8f8f8] px-4 py-5 sm:p-6">
         <div class="text-lg text-gray-400 tracking-widest -mt-2 mb-3">...</div>
-        #{read_file(filename) |> show_marked(from, to, elixir) |> hide_marked() |> Makeup.highlight()}
+        <%= @highlighted_code %>
         <div class="text-lg text-gray-400 tracking-widest mb-1">...</div>
       </div>
     </div>
     """
   end
 
-  def code(filename) do
-    """
+  def code_block(assigns) do
+    assigns =
+      assigns
+      |> assign_new(:formatted_filename, fn -> format_filename(assigns.filename) |> raw() end)
+      |> assign_new(:highlighted_code, fn ->
+        read_file(assigns.filename)
+        |> hide_marked()
+        |> Makeup.highlight()
+        |> raw()
+      end)
+
+    ~H"""
     <div class="rounded-lg bg-white border border-gray-200 text-sm xl:text-base">
       <div class="overflow-hidden text-ellipsis px-4 py-5 sm:px-6 text-gray-400 font-mono">
-        #{format_filename(filename)}
+        <%= @formatted_filename %>
       </div>
       <div class="overflow-auto overscroll-auto bg-[#f8f8f8] px-4 py-5 sm:p-6">
-        #{read_file(filename) |> hide_marked() |> Makeup.highlight()}
+        <%= @highlighted_code %>
       </div>
     </div>
     """
@@ -236,4 +227,45 @@ defmodule LivePlaygroundWeb.DemoHelpers do
   end
 
   defp hide(code, false), do: code
+
+  @doc """
+  Display placeholder text
+
+  ## Examples
+
+      <%= placeholder_words(10) %>
+      <%= placeholder_sentences(3) %>
+      <%= placeholder_paragraphs(20, true) %>
+  """
+  def placeholder_words(count, random \\ false) do
+    String.split(get_lorem_ipsum(), " ", trim: true)
+    |> shuffle(random)
+    |> Enum.slice(0..(count - 1))
+    |> Enum.join(" ")
+  end
+
+  def placeholder_sentences(count, random \\ false) do
+    sentences =
+      String.split(get_lorem_ipsum(), ".", trim: true)
+      |> shuffle(random)
+      |> Enum.slice(0..(count - 1))
+      |> Enum.join(". ")
+
+    "#{sentences}."
+  end
+
+  def placeholder_paragraphs(count, random \\ false) do
+    String.split(get_lorem_ipsum(), "\n\n", trim: true)
+    |> shuffle(random)
+    |> Enum.slice(0..(count - 1))
+    |> Enum.map(&Phoenix.HTML.Tag.content_tag(:p, &1))
+  end
+
+  defp get_lorem_ipsum() do
+    read_file("priv/static/text/lorem_ipsum")
+  end
+
+  defp shuffle(list, true), do: Enum.shuffle(list)
+
+  defp shuffle(list, false), do: list
 end
