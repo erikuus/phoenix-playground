@@ -264,7 +264,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
   """
   attr :type, :string, default: nil
   attr :class, :string, default: nil
-  attr :look, :string, default: "primary"
+  attr :kind, :atom, default: :primary
   attr :rest, :global, include: ~w(disabled form name value)
 
   slot :inner_block, required: true
@@ -277,9 +277,9 @@ defmodule LivePlaygroundWeb.CoreComponents do
         "phx-submit-loading:opacity-75",
         "inline-flex inline-flex items-center justify-center rounded-lg py-2 px-5 ring-inset",
         "text-sm font-semibold leading-6",
-        @look == "primary" && "bg-zinc-900 hover:bg-zinc-700 text-white active:text-white/80",
-        @look == "secondary" && "border border-zinc-200 bg-zinc-100 hover:bg-zinc-200 text-gray-700 active:text-gray-800",
-        @look == "dangerous" && "bg-red-600 hover:bg-red-700 text-white active:text-white/80",
+        @kind == :primary && "bg-zinc-900 hover:bg-zinc-700 text-white active:text-white/80",
+        @kind == :secondary && "border border-zinc-200 bg-zinc-100 hover:bg-zinc-200 text-gray-700 active:text-gray-800",
+        @kind == :dangerous && "bg-red-600 hover:bg-red-700 text-white active:text-white/80",
         @class
       ]}
       {@rest}

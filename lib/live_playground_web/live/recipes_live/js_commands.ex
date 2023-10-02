@@ -46,9 +46,9 @@ defmodule LivePlaygroundWeb.RecipesLive.JsCommands do
                   Panel content
                 </div>
                 <div class="border-t border-zinc-200 pt-4 sm:pl-4 sm:flex sm:flex-row-reverse">
-                  <.button_link phx-click={hide_panel()} kind={:secondary} class="w-full sm:w-auto ml-0 sm:ml-2">
+                  <.button phx-click={hide_panel()} kind={:secondary} class="w-full sm:w-auto ml-0 sm:ml-2">
                     Cancel
-                  </.button_link>
+                  </.button>
                   <.button phx-click={JS.push("confirm", value: %{btn: "OK"}) |> hide_panel()} class="w-full sm:w-auto mt-3 sm:mt-0">
                     OK
                   </.button>

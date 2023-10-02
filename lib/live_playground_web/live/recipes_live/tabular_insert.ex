@@ -49,15 +49,9 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
             class="flex-1"
           />
           <div class="flex flex-col md:flex-none">
-            <.button_link
-              type="button"
-              kind={:secondary}
-              phx-click="remove-tabular-input"
-              phx-value-id={tabular_input.id}
-              class="md:flex"
-            >
+            <.button type="button" kind={:secondary} phx-click="remove-tabular-input" phx-value-id={tabular_input.id} class="md:flex">
               Remove
-            </.button_link>
+            </.button>
           </div>
         </div>
       </div>
