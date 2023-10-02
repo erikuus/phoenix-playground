@@ -98,7 +98,7 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamReset do
         <.button phx-disable-with="" class="md:mt-8"><%= @btn_title %></.button>
       </div>
       <div :if={@live_action == :edit}>
-        <.button_link look="secondary" patch={~p"/stream-reset?#{[country_id: @selected_country.id]}"} class="w-full md:mt-8">
+        <.button_link kind={:secondary} patch={~p"/stream-reset?#{[country_id: @selected_country.id]}"} class="w-full md:mt-8">
           Cancel
         </.button_link>
       </div>

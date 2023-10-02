@@ -52,7 +52,7 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamUpdate do
         <.button phx-disable-with="" class="w-full md:mt-8">Save</.button>
       </div>
       <div>
-        <.button_link look="secondary" patch={~p"/stream-update"} class="w-full md:mt-8">
+        <.button_link kind={:secondary} patch={~p"/stream-update"} class="w-full md:mt-8">
           Cancel
         </.button_link>
       </div>

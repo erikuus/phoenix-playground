@@ -18,7 +18,7 @@ defmodule LivePlaygroundWeb.RecipesLive.JsCommands do
     <.button phx-click={show_panel()}>
       Show
     </.button>
-    <.alert :if={@btn} look="success" class="mt-6">
+    <.alert :if={@btn} kind={:success} class="mt-6">
       <%= @btn %> clicked!
     </.alert>
     <div class="relative z-50" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
@@ -46,9 +46,9 @@ defmodule LivePlaygroundWeb.RecipesLive.JsCommands do
                   Panel content
                 </div>
                 <div class="border-t border-zinc-200 pt-4 sm:pl-4 sm:flex sm:flex-row-reverse">
-                  <.button phx-click={hide_panel()} look="secondary" class="w-full sm:w-auto ml-0 sm:ml-2">
+                  <.button_link phx-click={hide_panel()} kind={:secondary} class="w-full sm:w-auto ml-0 sm:ml-2">
                     Cancel
-                  </.button>
+                  </.button_link>
                   <.button phx-click={JS.push("confirm", value: %{btn: "OK"}) |> hide_panel()} class="w-full sm:w-auto mt-3 sm:mt-0">
                     OK
                   </.button>

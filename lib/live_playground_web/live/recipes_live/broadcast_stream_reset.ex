@@ -107,7 +107,7 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
       </div>
       <div :if={@live_action == :edit}>
         <.button_link
-          look="secondary"
+          kind={:secondary}
           patch={~p"/broadcast-stream-reset?#{[country_id: @selected_country.id]}"}
           class="w-full md:mt-8"
         >

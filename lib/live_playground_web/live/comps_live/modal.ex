@@ -45,7 +45,7 @@ defmodule LivePlaygroundWeb.CompsLive.Modal do
       </.button_link>
     </div>
 
-    <.alert :if={@modal} look="success" class="mt-6">
+    <.alert :if={@modal} kind={:success} class="mt-6">
       Modal "<%= @modal %>" confirmed!
     </.alert>
 

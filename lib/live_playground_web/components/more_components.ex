@@ -265,9 +265,9 @@ defmodule LivePlaygroundWeb.MoreComponents do
   ## Examples
 
       <.button_link navigate={~p"/page"}>Go</.button_link>
-      <.button_link patch={~p"/page"} type="secondary">Refresh</.button_link>
+      <.button_link patch={~p"/page"} kind={:secondary}">Refresh</.button_link>
   """
-  attr :look, :string, default: "primary"
+  attr :kind, :atom, default: :primary
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(href navigate patch)
 
@@ -279,9 +279,9 @@ defmodule LivePlaygroundWeb.MoreComponents do
       class={[
         "inline-flex items-center justify-center rounded-lg py-2 px-5",
         "text-sm font-semibold leading-6",
-        @look == "primary" && "bg-zinc-900 hover:bg-zinc-700 text-white active:text-white/80",
-        @look == "secondary" && "border border-zinc-200 bg-zinc-100 hover:bg-zinc-200 text-gray-700 active:text-gray-800",
-        @look == "dangerous" && "bg-red-600 hover:bg-red-700 text-white active:text-white/80",
+        @kind == :primary && "bg-zinc-900 hover:bg-zinc-700 text-white active:text-white/80",
+        @kind == :secondary && "border border-zinc-200 bg-zinc-100 hover:bg-zinc-200 text-gray-700 active:text-gray-800",
+        @kind == :dangerous && "bg-red-600 hover:bg-red-700 text-white active:text-white/80",
         @class
       ]}
       {@rest}
@@ -297,10 +297,10 @@ defmodule LivePlaygroundWeb.MoreComponents do
   ## Examples
 
       <.alert>Info</.alert>
-      <.alert look="warning">Warning</.alert>
-      <.alert look="error">Error</.alert>
+      <.alert kind={:warning}>Warning</.alert>
+      <.alert kind={:error}>Error</.alert>
   """
-  attr :look, :string, default: "info"
+  attr :kind, :atom, default: :info
   attr :class, :string, default: "text-sm"
 
   slot :inner_block, required: true
@@ -309,10 +309,10 @@ defmodule LivePlaygroundWeb.MoreComponents do
     ~H"""
     <div class={[
       "rounded-md p-4",
-      @look == "info" && "bg-zinc-100 text-zinc-600",
-      @look == "success" && "bg-green-50 text-green-700",
-      @look == "warning" && "bg-yellow-50 text-yellow-700",
-      @look == "error" && "bg-red-50 text-red-700",
+      @kind == :info && "bg-zinc-100 text-zinc-600",
+      @kind == :success && "bg-green-50 text-green-700",
+      @kind == :warning && "bg-yellow-50 text-yellow-700",
+      @kind == :error && "bg-red-50 text-red-700",
       @class
     ]}>
       <%= render_slot(@inner_block) %>
