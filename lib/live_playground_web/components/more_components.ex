@@ -52,13 +52,12 @@ defmodule LivePlaygroundWeb.MoreComponents do
               </button>
             </div>
 
-            <div class="h-0 flex-1 overflow-y-auto py-3">
+            <div class="h-0 flex-1 overflow-y-auto p-2">
               <.focus_wrap
                 id="mobile-sidebar-container"
                 phx-window-keydown={JS.hide(to: "#mobile-menu")}
                 phx-key="escape"
                 phx-click-away={JS.hide(to: "#mobile-menu")}
-                class="space-y-1 px-2"
               >
                 <%= render_slot(@mobile_menu) %>
               </.focus_wrap>
@@ -74,9 +73,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <div class="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
         <div class="flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white">
           <div class="flex flex-1 flex-col overflow-y-auto">
-            <nav class="mt-4 flex-1 space-y-1 bg-white px-3">
-              <%= render_slot(@static_menu) %>
-            </nav>
+            <%= render_slot(@static_menu) %>
           </div>
         </div>
       </div>
@@ -167,8 +164,9 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   def vertical_navigation(assigns) do
     ~H"""
-    <div :for={item <- @items}>
+    <nav class="mt-4 bg-white px-3 space-y-1">
       <.link
+        :for={item <- @items}
         navigate={item.path}
         class={[
           "group flex items-center px-2 py-2 rounded-md text-sm font-medium",
@@ -197,7 +195,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
           <%= item.badge %>
         </span>
       </.link>
-    </div>
+    </nav>
     """
   end
 
@@ -224,38 +222,39 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   def vertical_navigation_grouped(assigns) do
     ~H"""
-    <div :for={item <- @items}>
-      <div :if={item.group} class="ml-2 font-semibold leading-6 text-gray-400 text-xs">
-        <%= item.group %>
-      </div>
-      <.link
-        :for={subitem <- item.subitems}
-        navigate={subitem.path}
-        class={[
-          "text-gray-900 group flex items-center py-2 font-medium rounded-md text-sm",
-          item.group && "px-2",
-          subitem.active == true && "bg-gray-100",
-          subitem.active == false && "hover:bg-gray-100"
-        ]}
-      >
-        <.icon
-          :if={Map.has_key?(subitem, :icon) && subitem.icon}
-          name={subitem.icon}
-          class="text-gray-500 mr-1 flex-shrink-0 h-5 w-5"
-        />
-        <span class="flex-1 ml-2"><%= subitem.label %></span>
-        <span
-          :if={Map.has_key?(subitem, :badge) && subitem.badge}
+    <nav class="mt-4 px-3">
+      <div :for={item <- @items} class="space-y-1">
+        <div :if={item.group} class="ml-2 font-semibold leading-6 text-gray-400 text-xs">
+          <%= item.group %>
+        </div>
+        <.link
+          :for={subitem <- item.subitems}
+          navigate={subitem.path}
           class={[
-            "ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full",
-            subitem.active == true && "bg-gray-200",
-            subitem.active == false && "bg-gray-100 group-hover:bg-gray-200"
+            "group flex items-center px-2 py-2 rounded-md text-sm font-medium",
+            subitem.active == true && "bg-gray-100",
+            subitem.active == false && "hover:bg-gray-100"
           ]}
         >
-          <%= subitem.badge %>
-        </span>
-      </.link>
-    </div>
+          <.icon
+            :if={Map.has_key?(subitem, :icon) && subitem.icon}
+            name={subitem.icon}
+            class="text-gray-500 mr-1 flex-shrink-0 h-5 w-5"
+          />
+          <span class="flex-1 ml-2"><%= subitem.label %></span>
+          <span
+            :if={Map.has_key?(subitem, :badge) && subitem.badge}
+            class={[
+              "ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full",
+              subitem.active == true && "bg-gray-200",
+              subitem.active == false && "bg-gray-100 group-hover:bg-gray-200"
+            ]}
+          >
+            <%= subitem.badge %>
+          </span>
+        </.link>
+      </div>
+    </nav>
     """
   end
 
@@ -411,7 +410,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
     assigns = assign(assigns, :last_step, List.last(assigns.step))
 
     ~H"""
-    <ul role="list" class={@class}>
+    <ul role="list" class={["mt-4 bg-white px-3", @class]}>
       <li :for={step <- @step} class="relative flex gap-x-2">
         <div class={[
           "absolute mt-2 left-0 top-0 flex w-6 justify-center",

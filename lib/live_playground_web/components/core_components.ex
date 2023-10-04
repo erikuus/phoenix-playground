@@ -666,7 +666,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
       <.icon name="hero-bolt" class="bg-blue-500 w-10 h-10" />
   """
   attr :name, :string, required: true
-  attr :class, :string, default: nil
+  attr :class, :any, default: nil
 
   def icon(%{name: "hero-" <> _} = assigns) do
     ~H"""
