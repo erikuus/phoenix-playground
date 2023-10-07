@@ -142,7 +142,22 @@ defmodule LivePlaygroundWeb.MoreComponents do
   @doc """
   Renders a list of links for vertical navigation.
 
-  ## Example
+  ## Examples
+
+      <.vertical_navigation items={[
+        %{
+          section: "Section name",
+          subitems:  [
+            %{
+              icon: "hero-home",
+              label: "Home",
+              path: "/",
+              badge: 2,
+              active: true
+            }
+          ]
+        }
+      ]} />
 
       <.vertical_navigation items={[
         %{
@@ -161,6 +176,48 @@ defmodule LivePlaygroundWeb.MoreComponents do
   attr :icon_active_class, :string, default: "text-gray-500"
   attr :badge_class, :string, default: "bg-gray-100 group-hover:bg-gray-200"
   attr :badge_active_class, :string, default: "bg-gray-200"
+
+  def vertical_navigation(%{items: [%{section: _, subitems: [%{} | _]} | _]} = assigns) do
+    ~H"""
+    <nav class="mt-4 px-3">
+      <div :for={item <- @items} class="space-y-1">
+        <div :if={item.section} class="ml-2 font-semibold leading-6 text-gray-400 text-xs">
+          <%= item.section %>
+        </div>
+        <.link
+          :for={subitem <- item.subitems}
+          navigate={subitem.path}
+          class={[
+            "group flex items-center px-2 py-2 rounded-md text-sm font-medium",
+            subitem.active == false && @item_class,
+            subitem.active == true && @item_active_class
+          ]}
+        >
+          <.icon
+            :if={Map.has_key?(subitem, :icon) && subitem.icon}
+            name={subitem.icon}
+            class={[
+              "mr-1 flex-shrink-0 h-5 w-5",
+              subitem.active == false && @icon_class,
+              subitem.active == true && @icon_active_class
+            ]}
+          />
+          <span class="flex-1 ml-2"><%= subitem.label %></span>
+          <span
+            :if={Map.has_key?(subitem, :badge) && subitem.badge}
+            class={[
+              "ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full",
+              subitem.active == false && @badge_class,
+              subitem.active == true && @badge_active_class
+            ]}
+          >
+            <%= subitem.badge %>
+          </span>
+        </.link>
+      </div>
+    </nav>
+    """
+  end
 
   def vertical_navigation(assigns) do
     ~H"""
@@ -195,65 +252,6 @@ defmodule LivePlaygroundWeb.MoreComponents do
           <%= item.badge %>
         </span>
       </.link>
-    </nav>
-    """
-  end
-
-  @doc """
-  Renders a grouped list of links for vertical navigation.
-
-  ## Example
-
-      <.vertical_navigation_grouped items={[
-        %{
-          group: "Group name",
-          subitems:  %{
-            icon: "hero-home",
-            label: "Home",
-            path: "/",
-            badge: 2,
-            active: true
-          }
-        },
-
-      ]} />
-  """
-  attr :items, :list, required: true
-
-  def vertical_navigation_grouped(assigns) do
-    ~H"""
-    <nav class="mt-4 px-3">
-      <div :for={item <- @items} class="space-y-1">
-        <div :if={item.group} class="ml-2 font-semibold leading-6 text-gray-400 text-xs">
-          <%= item.group %>
-        </div>
-        <.link
-          :for={subitem <- item.subitems}
-          navigate={subitem.path}
-          class={[
-            "group flex items-center px-2 py-2 rounded-md text-sm font-medium",
-            subitem.active == true && "bg-gray-100",
-            subitem.active == false && "hover:bg-gray-100"
-          ]}
-        >
-          <.icon
-            :if={Map.has_key?(subitem, :icon) && subitem.icon}
-            name={subitem.icon}
-            class="text-gray-500 mr-1 flex-shrink-0 h-5 w-5"
-          />
-          <span class="flex-1 ml-2"><%= subitem.label %></span>
-          <span
-            :if={Map.has_key?(subitem, :badge) && subitem.badge}
-            class={[
-              "ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full",
-              subitem.active == true && "bg-gray-200",
-              subitem.active == false && "bg-gray-100 group-hover:bg-gray-200"
-            ]}
-          >
-            <%= subitem.badge %>
-          </span>
-        </.link>
-      </div>
     </nav>
     """
   end

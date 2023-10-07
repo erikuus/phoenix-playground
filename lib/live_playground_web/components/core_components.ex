@@ -487,8 +487,14 @@ defmodule LivePlaygroundWeb.CoreComponents do
   attr :class, :string, default: nil
 
   slot :inner_block, required: true
-  slot :subtitle
-  slot :actions
+
+  slot :subtitle do
+    attr :class, :string
+  end
+
+  slot :actions do
+    attr :class, :string
+  end
 
   def header(assigns) do
     ~H"""
@@ -501,12 +507,12 @@ defmodule LivePlaygroundWeb.CoreComponents do
           <%= render_slot(@inner_block) %>
         </h1>
 
-        <p :if={@subtitle != []} class="mt-2 mr-4 text-sm leading-6 text-zinc-600">
+        <p :for={subtitle <- @subtitle} class={["mt-2 mr-4 text-sm leading-6 text-zinc-600", Map.get(subtitle, :class, nil)]}>
           <%= render_slot(@subtitle) %>
         </p>
       </div>
 
-      <div :if={@actions != []} class="mt-4 flex md:mt-0 md:ml-4 self-start">
+      <div :for={actions <- @actions} class={["mt-4 flex md:mt-0 md:ml-4 self-start", Map.get(actions, :class, nil)]}>
         <%= render_slot(@actions) %>
       </div>
     </header>

@@ -13,10 +13,16 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigation do
       <:subtitle>
         How to use vertical navigation component
       </:subtitle>
-      <:actions>
-        <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def vertical_navigation">
+      <:actions class="flex-col space-y-2 items-end">
+        <.goto_definition
+          filename="lib/live_playground_web/components/more_components.ex"
+          definition="def vertical_navigation(assigns)"
+        >
           Goto Definition
         </.goto_definition>
+        <.link navigate={~p"/vertical-navigation-sections"}>
+          See also: Sections <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
+        </.link>
       </:actions>
     </.header>
     <!-- end hiding from live code -->

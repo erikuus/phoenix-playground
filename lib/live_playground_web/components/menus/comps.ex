@@ -8,14 +8,14 @@ defmodule LivePlaygroundWeb.Menus.Comps do
 
   def menu(assigns) do
     ~H"""
-    <.vertical_navigation_grouped items={get_items(@current_path)} />
+    <.vertical_navigation items={get_items(@current_path)} />
     """
   end
 
   defp get_items(current_path) do
     [
       %{
-        group: "Core components",
+        section: "Core components",
         subitems: [
           %{
             label: "Modal",
@@ -30,7 +30,7 @@ defmodule LivePlaygroundWeb.Menus.Comps do
         ]
       },
       %{
-        group: "More components",
+        section: "More components",
         subitems: [
           %{
             label: "Multi-Column Layout",
@@ -45,7 +45,12 @@ defmodule LivePlaygroundWeb.Menus.Comps do
           %{
             label: "Vertical Navigation",
             path: "/vertical-navigation",
-            active: is_active?(current_path, ["/vertical-navigation"])
+            badge: 2,
+            active:
+              is_active?(current_path, [
+                "/vertical-navigation",
+                "/vertical-navigation-sections"
+              ])
           },
           %{
             label: "Slideover",
