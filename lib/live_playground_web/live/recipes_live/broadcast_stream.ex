@@ -101,6 +101,13 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStream do
     """
   end
 
+  def handle_event("delete", %{"id" => id}, socket) do
+    city = Cities.get_city!(id)
+    {:ok, _} = Cities.delete_city_broadcast(city)
+
+    {:noreply, socket}
+  end
+
   def handle_event("validate", %{"city" => params}, socket) do
     changeset =
       socket.assigns.city
@@ -134,13 +141,6 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStream do
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}
     end
-  end
-
-  def handle_event("delete", %{"id" => id}, socket) do
-    city = Cities.get_city!(id)
-    {:ok, _} = Cities.delete_city_broadcast(city)
-
-    {:noreply, socket}
   end
 
   def handle_info({:create_city, city}, socket) do

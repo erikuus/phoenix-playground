@@ -262,7 +262,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   ## Examples
 
       <.button_link navigate={~p"/page"}>Go</.button_link>
-      <.button_link patch={~p"/page"} kind={:secondary}">Refresh</.button_link>
+      <.button_link patch={~p"/page"} kind={:secondary}>Refresh</.button_link>
   """
   attr :kind, :atom, default: :primary
   attr :class, :string, default: nil

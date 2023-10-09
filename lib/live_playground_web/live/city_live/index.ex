@@ -5,7 +5,7 @@ defmodule LivePlaygroundWeb.CityLive.Index do
   alias LivePlayground.Cities
   alias LivePlayground.Cities.City
 
-  def mount(%{"country_id" => country_id} = params, _session, socket) do
+  def mount(%{"country_id" => country_id}, _session, socket) do
     if connected?(socket), do: Cities.subscribe()
 
     countries = Countries.list_region_country("Baltic Countries")
@@ -31,7 +31,7 @@ defmodule LivePlaygroundWeb.CityLive.Index do
   def handle_params(%{"country_id" => country_id} = params, _url, socket) do
     socket =
       if socket.assigns.selected_country.id != String.to_integer(country_id) do
-        socket = change_tab(socket, country_id)
+        change_tab(socket, country_id)
       else
         socket
       end

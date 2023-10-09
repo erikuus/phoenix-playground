@@ -5,7 +5,7 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
   alias LivePlayground.Cities
   alias LivePlayground.Cities.City
 
-  def mount(%{"country_id" => country_id} = params, _session, socket) do
+  def mount(%{"country_id" => country_id}, _session, socket) do
     if connected?(socket), do: Cities.subscribe()
 
     countries = Countries.list_region_country("Baltic Countries")
@@ -31,7 +31,7 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
   def handle_params(%{"country_id" => country_id} = params, _url, socket) do
     socket =
       if socket.assigns.selected_country.id != String.to_integer(country_id) do
-        socket = change_tab(socket, country_id)
+        change_tab(socket, country_id)
       else
         socket
       end
@@ -152,6 +152,13 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
     """
   end
 
+  def handle_event("delete", %{"city_id" => city_id}, socket) do
+    city = Cities.get_city!(city_id)
+    {:ok, _} = Cities.delete_city_broadcast(city)
+
+    {:noreply, stream_delete(socket, :cities, city)}
+  end
+
   def handle_event("validate", %{"city" => city_params}, socket) do
     changeset =
       socket.assigns.city
@@ -169,7 +176,7 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
     city_params = Map.put(city_params, "countrycode", socket.assigns.selected_country.code)
 
     case Cities.create_city_broadcast(city_params) do
-      {:ok, city} ->
+      {:ok, _city} ->
         {:noreply,
          push_patch(socket,
            to: ~p"/broadcast-stream-reset?#{[country_id: socket.assigns.selected_country.id]}"
@@ -182,7 +189,7 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
 
   defp save_city(socket, :edit, city_params) do
     case Cities.update_city_broadcast(socket.assigns.city, city_params) do
-      {:ok, city} ->
+      {:ok, _city} ->
         {:noreply,
          push_patch(socket,
            to: ~p"/broadcast-stream-reset?#{[country_id: socket.assigns.selected_country.id]}"
@@ -191,13 +198,6 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}
     end
-  end
-
-  def handle_event("delete", %{"city_id" => city_id}, socket) do
-    city = Cities.get_city!(city_id)
-    {:ok, _} = Cities.delete_city_broadcast(city)
-
-    {:noreply, stream_delete(socket, :cities, city)}
   end
 
   def handle_info({:create_city, city}, socket) do

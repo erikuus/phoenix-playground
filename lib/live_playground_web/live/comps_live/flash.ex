@@ -14,7 +14,7 @@ defmodule LivePlaygroundWeb.CompsLive.Flash do
         How to use flash component
       </:subtitle>
       <:actions>
-        <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def flash(">
+        <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def flash">
           Goto Definition
         </.goto_definition>
       </:actions>

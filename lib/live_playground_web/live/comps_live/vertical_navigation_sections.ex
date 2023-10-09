@@ -14,10 +14,7 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigationSections do
         How to use sections with vertical navigation component
       </:subtitle>
       <:actions class="flex-col space-y-2 items-end">
-        <.goto_definition
-          filename="lib/live_playground_web/components/more_components.ex"
-          definition="def vertical_navigation(assigns)"
-        >
+        <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def vertical_navigation">
           Goto Definition
         </.goto_definition>
         <.link navigate={~p"/vertical-navigation"}>
