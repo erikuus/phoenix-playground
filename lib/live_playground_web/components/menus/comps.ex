@@ -26,6 +26,11 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             label: "Flash",
             path: "/flash",
             active: is_active?(current_path, ["/flash"])
+          },
+          %{
+            label: "Simple Form",
+            path: "/simple-form",
+            active: is_active?(current_path, ["/simple-form"])
           }
         ]
       },
@@ -56,6 +61,11 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             label: "Slideover",
             path: "/slideover",
             active: is_active?(current_path, ["/slideover"])
+          },
+          %{
+            label: "Button Link",
+            path: "/button-link",
+            active: is_active?(current_path, ["/button-link"])
           }
         ]
       }

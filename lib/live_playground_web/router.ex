@@ -73,6 +73,7 @@ defmodule LivePlaygroundWeb.Router do
       live "/modal", CompsLive.Modal
       live "/modal/image", CompsLive.Modal, :image
       live "/flash", CompsLive.Flash
+      live "/simple-form", CompsLive.SimpleForm
       live "/multi-column-layout", CompsLive.MultiColumnLayout
       live "/multi-column-layout-demo", CompsLive.MultiColumnLayoutDemo
       live "/narrow-sidebar", CompsLive.NarrowSidebar
@@ -81,6 +82,7 @@ defmodule LivePlaygroundWeb.Router do
       live "/vertical-navigation-sections", CompsLive.VerticalNavigationSections
       live "/slideover", CompsLive.Slideover
       live "/slideover/image", CompsLive.Slideover, :image
+      live "/button-link", CompsLive.ButtonLink
     end
   end
 
