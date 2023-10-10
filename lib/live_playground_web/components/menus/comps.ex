@@ -31,6 +31,11 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             label: "Simple Form",
             path: "/simple-form",
             active: is_active?(current_path, ["/simple-form"])
+          },
+          %{
+            label: "Button",
+            path: "/button",
+            active: is_active?(current_path, ["/button"])
           }
         ]
       },
@@ -66,6 +71,11 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             label: "Button Link",
             path: "/button-link",
             active: is_active?(current_path, ["/button-link"])
+          },
+          %{
+            label: "Alert",
+            path: "/alert",
+            active: is_active?(current_path, ["/alert"])
           }
         ]
       }

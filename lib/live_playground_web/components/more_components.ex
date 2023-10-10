@@ -297,22 +297,41 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <.alert kind={:warning}>Warning</.alert>
       <.alert kind={:error}>Error</.alert>
   """
+  attr :id, :string, default: "alert"
   attr :kind, :atom, default: :info
   attr :class, :string, default: "text-sm"
+  attr :icon, :string, default: nil
+  attr :title, :string, default: nil
+  attr :close, :boolean, default: true
 
   slot :inner_block, required: true
 
   def alert(assigns) do
     ~H"""
-    <div class={[
-      "rounded-md p-4",
-      @kind == :info && "bg-zinc-100 text-zinc-600",
-      @kind == :success && "bg-green-50 text-green-700",
-      @kind == :warning && "bg-yellow-50 text-yellow-700",
-      @kind == :error && "bg-red-50 text-red-700",
-      @class
-    ]}>
-      <%= render_slot(@inner_block) %>
+    <div
+      id={@id}
+      phx-click={hide("##{@id}")}
+      class={[
+        "rounded-md p-4",
+        @kind == :info && "bg-zinc-100 text-zinc-600",
+        @kind == :success && "bg-green-50 text-green-700",
+        @kind == :warning && "bg-yellow-50 text-yellow-700",
+        @kind == :error && "bg-red-50 text-red-700",
+        @class
+      ]}
+    >
+      <div class="flex items-start">
+        <div :if={@icon} class="flex-shrink-0">
+          <.icon :if={@icon} name={@icon} />
+        </div>
+        <div class={["flex-1", @icon != nil && "ml-3"]}>
+          <h3 :if={@title} class="font-medium mb-2"><%= @title %></h3>
+          <p><%= render_slot(@inner_block) %></p>
+        </div>
+        <button :if={@close} type="button" class="flex-shrink-0 ml-4" }>
+          <.icon name="hero-x-mark-solid" class="w-5 h-5 opacity-40 group-hover:opacity-70" />
+        </button>
+      </div>
     </div>
     """
   end
