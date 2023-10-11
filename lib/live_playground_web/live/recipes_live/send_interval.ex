@@ -29,9 +29,9 @@ defmodule LivePlaygroundWeb.RecipesLive.SendInterval do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <.card class="text-2xl text-center text-gray-900 font-semibold p-10">
+    <div class="text-2xl font-semibold">
       <%= format_duration(@seconds_remaining) %>
-    </.card>
+    </div>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/recipes_live/send_interval.ex" />

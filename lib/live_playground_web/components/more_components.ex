@@ -337,24 +337,6 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
-  Renders a basic card.
-
-  ## Example
-
-      <.card class="mt-6">Content</.card>
-  """
-  attr :class, :string, default: nil
-  slot :inner_block, required: true
-
-  def card(assigns) do
-    ~H"""
-    <div class={["overflow-hidden bg-white shadow-sm border border-gray-200 rounded-md", @class]}>
-      <%= render_slot(@inner_block) %>
-    </div>
-    """
-  end
-
-  @doc """
   Renders a note as text in card with icon.
 
   ## Example
