@@ -85,6 +85,7 @@ defmodule LivePlaygroundWeb.Router do
       live "/slideover/image", CompsLive.Slideover, :image
       live "/button-link", CompsLive.ButtonLink
       live "/alert", CompsLive.Alert
+      live "/note", CompsLive.Note
     end
   end
 

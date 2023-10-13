@@ -38,7 +38,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
     <div :if={@mobile_menu != [] && @static_menu != []} class="pl-14 md:pl-20">
       <div id="mobile-menu" class="relative z-40 hidden" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-gray-600 bg-opacity-75 cursor-text"></div>
+        <div class="fixed inset-0 bg-gray-600 bg-opacity-75"></div>
 
         <div class="fixed inset-0 z-40 flex">
           <div class="relative flex w-full max-w-xs flex-1 flex-col bg-white">
@@ -349,11 +349,11 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   def note(assigns) do
     ~H"""
-    <div class={["flex overflow-hidden bg-white shadow-sm border border-gray-200 rounded-md px-4 py-5 sm:p-6", @class]}>
+    <div class={["flex flex-col sm:flex-row px-4 py-5 sm:p-6 overflow-hidden shadow-sm border border-gray-200 rounded-md ", @class]}>
       <div :if={@icon} class="flex-shrink-0">
-        <.icon name={@icon} class="h-10 w-10" />
+        <.icon name={@icon} class="h-6 w-6" />
       </div>
-      <div class="ml-3">
+      <div class="mt-3 sm:ml-3 sm:mt-0">
         <%= render_slot(@inner_block) %>
       </div>
     </div>
