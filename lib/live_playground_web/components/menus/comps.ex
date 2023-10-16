@@ -36,6 +36,11 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             label: "Button",
             path: "/button",
             active: is_active?(current_path, ["/button"])
+          },
+          %{
+            label: "Input",
+            path: "/input",
+            active: is_active?(current_path, ["/input"])
           }
         ]
       },

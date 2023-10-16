@@ -20,6 +20,15 @@ defmodule LivePlayground.Languages do
     Repo.all(Language)
   end
 
+  # input
+  def list_languages_by_countries(countrycodes) do
+    from(Language)
+    |> where([l], l.countrycode in ^countrycodes)
+    |> Repo.all()
+  end
+
+  # endinput
+
   @doc """
   Gets a single language.
 
