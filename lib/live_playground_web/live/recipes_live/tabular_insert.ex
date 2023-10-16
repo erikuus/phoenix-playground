@@ -173,12 +173,6 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
     {:noreply, stream_delete(socket, :cities, city)}
   end
 
-  defp get_empty_form() do
-    %City{}
-    |> Cities.change_city()
-    |> to_form()
-  end
-
   @doc """
   Converts map received from multiple inputs into list of tuples that can be used to validate and save data.
 
@@ -202,7 +196,7 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
       ]
 
   """
-  defp get_city_params(tabular_input_ids, tabular_params) do
+  def get_city_params(tabular_input_ids, tabular_params) do
     for {id, index} <- Enum.with_index(tabular_input_ids) do
       params =
         Enum.reduce(tabular_params, %{}, fn {k, v}, acc -> Map.put(acc, k, Enum.at(v, index)) end)
@@ -210,5 +204,11 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
 
       {id, params}
     end
+  end
+
+  defp get_empty_form() do
+    %City{}
+    |> Cities.change_city()
+    |> to_form()
   end
 end

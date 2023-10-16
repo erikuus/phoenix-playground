@@ -3,7 +3,6 @@ defmodule LivePlaygroundWeb.CityLive.FormComponent do
 
   alias LivePlayground.Cities
 
-  @impl true
   def update(%{city: city} = assigns, socket) do
     changeset = Cities.change_city(city)
 
@@ -13,7 +12,6 @@ defmodule LivePlaygroundWeb.CityLive.FormComponent do
      |> assign_form(changeset)}
   end
 
-  @impl true
   def render(assigns) do
     ~H"""
     <div>

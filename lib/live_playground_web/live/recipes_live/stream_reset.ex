@@ -5,7 +5,7 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamReset do
   alias LivePlayground.Cities
   alias LivePlayground.Cities.City
 
-  def mount(%{"country_id" => country_id} = params, _session, socket) do
+  def mount(%{"country_id" => country_id}, _session, socket) do
     countries = Countries.list_region_country("Baltic Countries")
     selected_country = Countries.get_country!(country_id)
     {:ok, init_tab(socket, countries, selected_country)}
@@ -27,7 +27,7 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamReset do
   def handle_params(%{"country_id" => country_id} = params, _url, socket) do
     socket =
       if socket.assigns.selected_country.id != String.to_integer(country_id) do
-        socket = change_tab(socket, country_id)
+        change_tab(socket, country_id)
       else
         socket
       end

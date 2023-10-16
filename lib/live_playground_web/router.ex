@@ -1,5 +1,4 @@
 defmodule LivePlaygroundWeb.Router do
-  alias LivePlaygroundWeb.CompsLive.MultiColumnLayout
   use LivePlaygroundWeb, :router
 
   pipeline :browser do
@@ -75,6 +74,7 @@ defmodule LivePlaygroundWeb.Router do
       live "/flash", CompsLive.Flash
       live "/simple-form", CompsLive.SimpleForm
       live "/button", CompsLive.Button
+      live "/input", CompsLive.Input
       live "/multi-column-layout", CompsLive.MultiColumnLayout
       live "/multi-column-layout-demo", CompsLive.MultiColumnLayoutDemo
       live "/narrow-sidebar", CompsLive.NarrowSidebar
