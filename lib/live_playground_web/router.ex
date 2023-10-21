@@ -72,11 +72,12 @@ defmodule LivePlaygroundWeb.Router do
       live "/modal", CompsLive.Modal
       live "/modal/image", CompsLive.Modal, :image
       live "/flash", CompsLive.Flash
-      live "/simple-form", CompsLive.SimpleForm
-      live "/button", CompsLive.Button
       live "/input", CompsLive.Input
       live "/label", CompsLive.Label
       live "/error", CompsLive.Error
+      live "/button", CompsLive.Button
+      live "/simple-form", CompsLive.SimpleForm
+      live "/back", CompsLive.Back
       live "/multi-column-layout", CompsLive.MultiColumnLayout
       live "/multi-column-layout-demo", CompsLive.MultiColumnLayoutDemo
       live "/narrow-sidebar", CompsLive.NarrowSidebar
