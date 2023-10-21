@@ -251,7 +251,7 @@ defmodule LivePlaygroundWeb.DemoHelpers do
       |> Enum.slice(0..(count - 1))
       |> Enum.join(". ")
 
-    "#{sentences}."
+    "#{String.trim(sentences)}."
   end
 
   def placeholder_paragraphs(count, random \\ false) do

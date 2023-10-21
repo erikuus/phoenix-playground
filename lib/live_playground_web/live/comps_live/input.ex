@@ -4,16 +4,18 @@ defmodule LivePlaygroundWeb.CompsLive.Input do
   alias LivePlayground.Languages
 
   def mount(_params, _session, socket) do
+    language = Languages.get_language!(228)
+
     form =
-      Languages.get_language!(228)
+      language
       |> Languages.change_language()
       |> to_form()
 
     {:ok,
      assign(socket,
-       firstname: "Erik",
-       lastname: "Uus",
+       name: "Erik",
        age: 50,
+       language: language,
        form: form
      )}
   end
@@ -34,36 +36,55 @@ defmodule LivePlaygroundWeb.CompsLive.Input do
     </.header>
     <!-- end hiding from live code -->
     <.form phx-change="demo">
-      <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:gap-0 xl:grid-cols-4 xl:divide-x xl:divide-gray-100">
-        <div class="space-y-8 xl:pr-4">
-          <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
+      <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:gap-0 xl:grid-cols-5 xl:divide-x xl:divide-gray-100">
+        <div class="space-y-5 xl:pr-4 mb-6">
+          <h2 class="truncate font-medium leading-7 text-zinc-500">
             Textbox
           </h2>
-          <.input type="text" name="firstname" value={@firstname} errors={["What is this?"]} />
-          <.input type="text" name="lastname" value={@lastname} label="Lastname" />
-          <.input field={@form[:language]} label="Language" />
+          <.input label="Name" name="name" value={@name} errors={["Who is he?"]} />
+          <.input label="Country" field={@form[:countrycode]} />
         </div>
-        <div class="space-y-8 xl:px-4">
-          <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
+        <div class="space-y-5 xl:px-4 mb-6">
+          <h2 class="truncate font-medium leading-7 text-zinc-500">
             Select
           </h2>
-          <.input type="select" name="size" options={[5, 10, 20, 50, 100]} value={10} errors={["What is this?"]} />
-          <.input type="select" name="age" options={age_options()} value={@age} label="Age" />
-          <.input type="select" name="age" options={language_options()} value={} label="Language" prompt="Select:" />
+          <.input
+            label="Age"
+            type="select"
+            name="size"
+            options={[Five: 5, Ten: 10, Twenty: 20, Fifty: 50, Ninety: 90]}
+            value={@age}
+            errors={["What is this?"]}
+          />
+          <.input label="Language" type="select" field={@form[:id]} options={language_options()} prompt="Select:" />
         </div>
-        <div class="space-y-8 xl:px-4">
-          <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
+        <div class="space-y-5 xl:px-4 mb-6 sm:row-span-2 xl:row-span-0">
+          <h2 class="truncate font-medium leading-7 text-zinc-500">
+            Textarea
+          </h2>
+          <.input label="Description" type="textarea" name="desc" value={placeholder_sentences(1, true)} errors={["What is this?"]} />
+          <.input label="Percentage" type="textarea" field={@form[:percentage]} rows="5" />
+        </div>
+        <div class="space-y-5 xl:px-4 mb-6 sm:mb-0">
+          <h2 class="truncate font-medium leading-7 text-zinc-500">
             Checkbox
           </h2>
-          <.input type="checkbox" name="sm" value={:sm} errors={["What is this?"]} />
-          <.input type="checkbox" name="md" value={:md} label="Medium" />
-          <.input type="checkbox" name="lg" value={:lg} checked={true} label="Large" />
-          <.input type="checkbox" field={@form[:isofficial]} label="Is Official" />
+          <.input label="Small" type="checkbox" name="sm" value={false} errors={["What is this?"]} />
+          <.input label="Large" type="checkbox" name="lg" value={true} />
+          <.input label="Is Official" type="checkbox" field={@form[:isofficial]} />
         </div>
-        <div class="space-y-8 xl:pl-4">
-          <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
+        <div class="space-y-5 xl:pl-4">
+          <h2 class="truncate font-medium leading-7 text-zinc-500">
             Radio
           </h2>
+          <div>
+            <.input type="radio" name="sex" value={:male} checked={true} label="Male" />
+            <.input type="radio" name="sex" value={:female} checked={false} label="Female" />
+          </div>
+          <div>
+            <.input label="Yes" type="radio" field={@form[:isofficial]} value="true" checked={@language.isofficial == true} />
+            <.input label="No" type="radio" field={@form[:isofficial]} value="false" checked={@language.isofficial == false} />
+          </div>
         </div>
       </div>
     </.form>
@@ -71,6 +92,11 @@ defmodule LivePlaygroundWeb.CompsLive.Input do
     <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/comps_live/input.ex" />
       <.code_block filename="lib/live_playground/languages.ex" from="# input" to="# endinput" />
+      <.note icon="hero-information-circle">
+        Examine <.link class="underline" navigate={~p"/tabular-insert"}>this recipe</.link>
+        to understand how to use <span class="font-mono">multiple={true}</span>
+        when configuring input for tabular insert.
+      </.note>
     </div>
     <!-- end hiding from live code -->
     """
@@ -80,19 +106,9 @@ defmodule LivePlaygroundWeb.CompsLive.Input do
     {:noreply, socket}
   end
 
-  defp age_options() do
-    [
-      Five: 5,
-      Ten: 10,
-      Twenty: 20,
-      Fifty: 50,
-      Hundred: 100
-    ]
-  end
-
   defp language_options() do
     Languages.list_languages_by_countries(["USA", "EST"])
-    |> Enum.reduce([], fn x, acc -> [{x.countrycode, x.language} | acc] end)
+    |> Enum.reduce([], fn x, acc -> [{x.countrycode, {x.language, x.id}} | acc] end)
     |> Enum.group_by(&elem(&1, 0), &elem(&1, 1))
   end
 end
