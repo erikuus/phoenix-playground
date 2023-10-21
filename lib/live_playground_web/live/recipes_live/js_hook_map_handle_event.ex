@@ -22,8 +22,8 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapHandleEvent do
         How to hook a map library and handle LiveView events in JavaScript
       </:subtitle>
       <:actions>
-        <.link navigate={~p"/js-hook-map-push-event"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Map Push Events
+        <.link navigate={~p"/js-hook-map-dataset"}>
+          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Map Dataset
         </.link>
       </:actions>
     </.header>
