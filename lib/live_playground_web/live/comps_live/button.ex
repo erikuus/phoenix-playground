@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.CompsLive.Button do
     <.header class="mb-6">
       Button
       <:subtitle>
-        How to use button component
+        How to use Button component
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def button">

@@ -15,7 +15,7 @@ defmodule LivePlaygroundWeb.CompsLive.Modal do
     <.header class="mb-6">
       Modal
       <:subtitle>
-        How to use modal component
+        How to use Modal component
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def modal">

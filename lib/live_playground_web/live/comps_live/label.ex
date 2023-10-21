@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.CompsLive.Label do
     <.header class="mb-6">
       Label
       <:subtitle>
-        How to use label component
+        How to use Label component
       </:subtitle>
       <:actions class="flex-col space-y-2 items-end">
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def label">

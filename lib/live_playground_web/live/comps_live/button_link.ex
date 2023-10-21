@@ -15,7 +15,7 @@ defmodule LivePlaygroundWeb.CompsLive.ButtonLink do
     <.header class="mb-6">
       Button Link
       <:subtitle>
-        How to use button link component
+        How to use Button Link component
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def button_link">

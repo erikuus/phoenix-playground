@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.CompsLive.Error do
     <.header class="mb-6">
       Error
       <:subtitle>
-        How to use error component
+        How to use Error component
       </:subtitle>
       <:actions class="flex-col space-y-2 items-end">
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def error">

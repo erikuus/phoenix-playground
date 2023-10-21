@@ -10,7 +10,7 @@ defmodule LivePlaygroundWeb.CompsLive.MultiColumnLayout do
     <.header class="mb-6">
       Multi-Column Layout
       <:subtitle>
-        How to create responsive multi-column layout using function component
+        How to create responsive Multi-Column Layout using function component
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def multi_column_layout">

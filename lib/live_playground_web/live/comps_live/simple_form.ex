@@ -19,7 +19,7 @@ defmodule LivePlaygroundWeb.CompsLive.SimpleForm do
     <.header class="mb-6">
       Simple Form
       <:subtitle>
-        How to use simple form component
+        How to use Simple Form component
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def simple_form(">

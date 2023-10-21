@@ -26,7 +26,7 @@ defmodule LivePlaygroundWeb.CompsLive.Input do
     <.header class="mb-6">
       Input
       <:subtitle>
-        How to use input component
+        How to use Input component
       </:subtitle>
       <:actions class="flex-col space-y-2 items-end">
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def input">

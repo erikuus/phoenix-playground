@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.CompsLive.Note do
     <.header class="mb-6">
       Note
       <:subtitle>
-        How to use note component
+        How to use Note component
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def note">

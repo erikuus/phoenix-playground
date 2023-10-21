@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.CompsLive.Flash do
     <.header class="mb-6">
       Flash
       <:subtitle>
-        How to use flash component
+        How to use Flash component
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def flash">
