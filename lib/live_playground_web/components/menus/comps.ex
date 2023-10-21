@@ -28,9 +28,10 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             active: is_active?(current_path, ["/flash"])
           },
           %{
-            label: "Simple Form",
-            path: "/simple-form",
-            active: is_active?(current_path, ["/simple-form"])
+            label: "Input",
+            path: "/input",
+            badge: 3,
+            active: is_active?(current_path, ["/input", "/label", "/error"])
           },
           %{
             label: "Button",
@@ -38,9 +39,9 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             active: is_active?(current_path, ["/button"])
           },
           %{
-            label: "Input",
-            path: "/input",
-            active: is_active?(current_path, ["/input"])
+            label: "Simple Form",
+            path: "/simple-form",
+            active: is_active?(current_path, ["/simple-form"])
           }
         ]
       },

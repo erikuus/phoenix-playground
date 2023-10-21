@@ -75,6 +75,8 @@ defmodule LivePlaygroundWeb.Router do
       live "/simple-form", CompsLive.SimpleForm
       live "/button", CompsLive.Button
       live "/input", CompsLive.Input
+      live "/label", CompsLive.Label
+      live "/error", CompsLive.Error
       live "/multi-column-layout", CompsLive.MultiColumnLayout
       live "/multi-column-layout-demo", CompsLive.MultiColumnLayoutDemo
       live "/narrow-sidebar", CompsLive.NarrowSidebar

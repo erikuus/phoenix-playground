@@ -28,10 +28,13 @@ defmodule LivePlaygroundWeb.CompsLive.Input do
       <:subtitle>
         How to use input component
       </:subtitle>
-      <:actions>
+      <:actions class="flex-col space-y-2 items-end">
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def input">
           Goto Definition
         </.goto_definition>
+        <.link navigate={~p"/label"}>
+          See also: Label <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
+        </.link>
       </:actions>
     </.header>
     <!-- end hiding from live code -->
@@ -41,7 +44,7 @@ defmodule LivePlaygroundWeb.CompsLive.Input do
           <h2 class="truncate font-medium leading-7 text-zinc-500">
             Textbox
           </h2>
-          <.input label="Name" name="name" value={@name} errors={["Who is he?"]} />
+          <.input label="Name" name="name" value={@name} errors={["Houston, we have a problem"]} />
           <.input label="Country" field={@form[:countrycode]} />
         </div>
         <div class="space-y-5 xl:px-4 mb-6">
@@ -54,7 +57,7 @@ defmodule LivePlaygroundWeb.CompsLive.Input do
             name="size"
             options={[Five: 5, Ten: 10, Twenty: 20, Fifty: 50, Ninety: 90]}
             value={@age}
-            errors={["What is this?"]}
+            errors={["Houston, we have a problem"]}
           />
           <.input label="Language" type="select" field={@form[:id]} options={language_options()} prompt="Select:" />
         </div>
@@ -62,14 +65,20 @@ defmodule LivePlaygroundWeb.CompsLive.Input do
           <h2 class="truncate font-medium leading-7 text-zinc-500">
             Textarea
           </h2>
-          <.input label="Description" type="textarea" name="desc" value={placeholder_sentences(1, true)} errors={["What is this?"]} />
+          <.input
+            label="Description"
+            type="textarea"
+            name="desc"
+            value={placeholder_sentences(1, true)}
+            errors={["Houston, we have a problem"]}
+          />
           <.input label="Percentage" type="textarea" field={@form[:percentage]} rows="5" />
         </div>
         <div class="space-y-5 xl:px-4 mb-6 sm:mb-0">
           <h2 class="truncate font-medium leading-7 text-zinc-500">
             Checkbox
           </h2>
-          <.input label="Small" type="checkbox" name="sm" value={false} errors={["What is this?"]} />
+          <.input label="Small" type="checkbox" name="sm" value={false} errors={["Houston, we have a problem"]} />
           <.input label="Large" type="checkbox" name="lg" value={true} />
           <.input label="Is Official" type="checkbox" field={@form[:isofficial]} />
         </div>
