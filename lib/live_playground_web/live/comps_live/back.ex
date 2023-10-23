@@ -20,7 +20,7 @@ defmodule LivePlaygroundWeb.CompsLive.Back do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <.back navigate={~p"/simple-form"}>Back to Simple Form</.back>
+    <.back navigate={~p"/icon"}>Back to Icon</.back>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/comps_live/back.ex" />

@@ -18,14 +18,19 @@ defmodule LivePlaygroundWeb.Menus.Comps do
         section: "Core components",
         subitems: [
           %{
-            label: "Modal",
-            path: "/modal",
-            active: is_active?(current_path, ["/modal"])
+            label: "Header",
+            path: "/header",
+            active: is_active?(current_path, ["/header"])
           },
           %{
             label: "Flash",
             path: "/flash",
             active: is_active?(current_path, ["/flash"])
+          },
+          %{
+            label: "Modal",
+            path: "/modal",
+            active: is_active?(current_path, ["/modal"])
           },
           %{
             label: "Input",
@@ -42,6 +47,16 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             label: "Simple Form",
             path: "/simple-form",
             active: is_active?(current_path, ["/simple-form"])
+          },
+          %{
+            label: "List",
+            path: "/list",
+            active: is_active?(current_path, ["/list"])
+          },
+          %{
+            label: "Icon",
+            path: "/icon",
+            active: is_active?(current_path, ["/icon"])
           },
           %{
             label: "Back",

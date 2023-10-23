@@ -69,6 +69,8 @@ defmodule LivePlaygroundWeb.Router do
     scope "/", LivePlaygroundWeb do
       pipe_through :browser
 
+      live "/header", CompsLive.Header
+      live "/header-demo", CompsLive.HeaderDemo
       live "/modal", CompsLive.Modal
       live "/modal/image", CompsLive.Modal, :image
       live "/flash", CompsLive.Flash
@@ -78,6 +80,8 @@ defmodule LivePlaygroundWeb.Router do
       live "/button", CompsLive.Button
       live "/simple-form", CompsLive.SimpleForm
       live "/back", CompsLive.Back
+      live "/list", CompsLive.List
+      live "/icon", CompsLive.Icon
       live "/multi-column-layout", CompsLive.MultiColumnLayout
       live "/multi-column-layout-demo", CompsLive.MultiColumnLayoutDemo
       live "/narrow-sidebar", CompsLive.NarrowSidebar
