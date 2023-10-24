@@ -20,14 +20,14 @@ defmodule LivePlayground.Languages do
     Repo.all(Language)
   end
 
-  # input
+  # input # table
   def list_languages_by_countries(countrycodes) do
     from(Language)
     |> where([l], l.countrycode in ^countrycodes)
     |> Repo.all()
   end
 
-  # endinput
+  # endinput # endtable
 
   @doc """
   Gets a single language.
@@ -43,7 +43,9 @@ defmodule LivePlayground.Languages do
       ** (Ecto.NoResultsError)
 
   """
+  # list
   def get_language!(id), do: Repo.get!(Language, id)
+  # endlist
 
   @doc """
   Creates a language.
