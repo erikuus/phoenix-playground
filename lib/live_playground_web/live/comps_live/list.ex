@@ -31,6 +31,7 @@ defmodule LivePlaygroundWeb.CompsLive.List do
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/comps_live/list.ex" />
+      <.code_block filename="lib/live_playground/languages.ex" from="# list" to="# endlist" />
     </div>
     <!-- end hiding from live code -->
     """

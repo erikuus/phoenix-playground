@@ -29,7 +29,7 @@ defmodule LivePlaygroundWeb.CompsLive.SimpleForm do
     </.header>
     <.flash kind={:info} flash={@flash} title="Notice:" />
     <!-- end hiding from live code -->
-    <.simple_form for={@form} phx-change="validate" phx-submit="save">
+    <.simple_form for={@form} phx-change="validate" phx-submit="nosave">
       <.input field={@form[:name]} label="Name" />
       <.input field={@form[:district]} label="District" />
       <.input field={@form[:population]} label="Population" />
@@ -55,12 +55,12 @@ defmodule LivePlaygroundWeb.CompsLive.SimpleForm do
     {:noreply, assign(socket, :form, form)}
   end
 
-  def handle_event("save", %{"city" => _params}, socket) do
+  def handle_event("nosave", %{"city" => params}, socket) do
     {:noreply,
      put_flash(
        socket,
        :info,
-       "Save functionality not supported in this demo. Please check the recipes section."
+       "PARAMS=#{inspect(params)}. Save functionality not supported in this demo. Please check the recipes section."
      )}
   end
 end
