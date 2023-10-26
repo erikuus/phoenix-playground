@@ -393,7 +393,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   ## Example
 
       <.steps>
-        <:step :for={step <- @steps} patch={step.patch} active={step.active}>
+        <:step :for={step <- @steps} path={step.path} active={step.active}>
           <%= step.name %>
         </:step>
       </.steps>
@@ -401,8 +401,9 @@ defmodule LivePlaygroundWeb.MoreComponents do
   attr :class, :string, default: nil
 
   slot :step, required: true do
-    attr :path, :string, required: true
+    attr :path, :string
     attr :active, :boolean
+    attr :checked, :boolean
   end
 
   def steps(assigns) do
@@ -418,7 +419,11 @@ defmodule LivePlaygroundWeb.MoreComponents do
         ]}>
           <div class="w-px bg-gray-200"></div>
         </div>
-        <div class="relative flex mt-2 h-6 w-6 flex-none items-center justify-center bg-white">
+        <div :if={Map.has_key?(step, :checked)} class="relative flex mt-2 h-6 w-6 flex-none items-center justify-center bg-white">
+          <div :if={step.checked == false} class="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300"></div>
+          <.icon :if={step.checked == true} name="hero-check-circle" class="h-6 w-6 text-gray-400" />
+        </div>
+        <div :if={!Map.has_key?(step, :checked)} class="relative flex mt-2 h-6 w-6 flex-none items-center justify-center bg-white">
           <div :if={step.active == false} class="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300"></div>
           <.icon :if={step.active == true} name="hero-check-circle" class="h-6 w-6 text-gray-400" />
         </div>
@@ -521,9 +526,10 @@ defmodule LivePlaygroundWeb.MoreComponents do
   @doc """
   Renders a spinning circle as a loading indicator.
 
-  ## Example
+  ## Examples
 
       <.loading :if={@loading} />
+
       <button type="submit">
         Search <.loading :if={@loading} class="ml-2 -mr-2 w-5 h-5" />
       </button>

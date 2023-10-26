@@ -94,6 +94,8 @@ defmodule LivePlaygroundWeb.Router do
       live "/button-link", CompsLive.ButtonLink
       live "/alert", CompsLive.Alert
       live "/note", CompsLive.Note
+      live "/simple_list", CompsLive.SimpleList
+      live "/steps", CompsLive.Steps
     end
   end
 

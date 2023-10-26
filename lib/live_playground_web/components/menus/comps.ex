@@ -112,6 +112,16 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             label: "Note",
             path: "/note",
             active: is_active?(current_path, ["/note"])
+          },
+          %{
+            label: "Simple List",
+            path: "/simple_list",
+            active: is_active?(current_path, ["/simple_list"])
+          },
+          %{
+            label: "Steps",
+            path: "/steps",
+            active: is_active?(current_path, ["/steps"])
           }
         ]
       }
