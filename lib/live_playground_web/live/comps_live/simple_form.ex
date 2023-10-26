@@ -22,7 +22,7 @@ defmodule LivePlaygroundWeb.CompsLive.SimpleForm do
         How to use Simple Form component
       </:subtitle>
       <:actions>
-        <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def simple_form(">
+        <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def simple_form">
           Goto Definition
         </.goto_definition>
       </:actions>

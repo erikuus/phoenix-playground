@@ -38,7 +38,7 @@ defmodule LivePlaygroundWeb.CompsLive.Input do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <.form phx-change="demo">
+    <.form for={@form} phx-change="demo">
       <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:gap-0 xl:grid-cols-5 xl:divide-x xl:divide-gray-100">
         <div class="space-y-5 xl:pr-4 mb-6">
           <h2 class="truncate font-medium leading-7 text-zinc-500">
