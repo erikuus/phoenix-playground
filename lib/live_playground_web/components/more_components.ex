@@ -462,7 +462,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   attr :class, :string, default: nil
 
   slot :tab, required: true do
-    attr :patch, :any, required: true
+    attr :path, :any, required: true
     attr :active, :boolean
   end
 
@@ -472,7 +472,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <nav class="-mb-px flex space-x-8 flex-wrap md:flex-nowrap">
         <.link
           :for={tab <- @tab}
-          patch={tab.patch}
+          navigate={tab.path}
           class={[
             "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium",
             tab.active == false && "border-transparent text-zinc-400 hover:border-zinc-300",
