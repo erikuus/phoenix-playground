@@ -459,7 +459,13 @@ defmodule LivePlaygroundWeb.MoreComponents do
         </:tab>
       </.tabs>
   """
+  attr :id, :string, default: "tabs"
   attr :class, :string, default: nil
+
+  attr :modifier, :string,
+    default: nil,
+    doc:
+      "tailwind modifier to specify screen breakpoint at which the tabs is shown instead of dropdown"
 
   slot :tab, required: true do
     attr :path, :any, required: true
@@ -468,7 +474,11 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   def tabs(assigns) do
     ~H"""
-    <div class={["border-b border-gray-200", @class]}>
+    <div class={[
+      "border-b border-gray-200",
+      @modifier && "hidden #{@modifier}:block",
+      @class
+    ]}>
       <nav class="-mb-px flex space-x-8 flex-wrap md:flex-nowrap">
         <.link
           :for={tab <- @tab}
@@ -482,6 +492,39 @@ defmodule LivePlaygroundWeb.MoreComponents do
           <%= render_slot(tab) %>
         </.link>
       </nav>
+    </div>
+    <div :if={@modifier} class={"block #{@modifier}:hidden"}>
+      <button
+        id={"#{@id}-open"}
+        phx-click={JS.show(to: "##{@id}-dropdown") |> JS.hide(to: "##{@id}-open")}
+        type="button"
+        class={["mb-1", @class]}
+      >
+        <span class="sr-only">Open tabs</span>
+        <.icon name="hero-bars-3" class="h-6 w-6 text-zinc-600" />
+      </button>
+      <div id={"#{@id}-dropdown"} class="hidden">
+        <button type="button" class={["mb-1", @class]}>
+          <span class="sr-only">Close tabs</span>
+          <.icon name="hero-x-mark" class="h-6 w-6 text-zinc-600" />
+        </button>
+        <ul
+          phx-click-away={JS.hide(to: "##{@id}-dropdown") |> JS.show(to: "##{@id}-open")}
+          class="rounded-md shadow-lg py-1 border border-gray-200 bg-white"
+        >
+          <li
+            :for={tab <- @tab}
+            class={[
+              tab.active == false && "hover:bg-zinc-300",
+              tab.active == true && "bg-zinc-500 text-white"
+            ]}
+          >
+            <.link navigate={tab.path} class="block py-2 px-4">
+              <%= render_slot(tab) %>
+            </.link>
+          </li>
+        </ul>
+      </div>
     </div>
     """
   end
