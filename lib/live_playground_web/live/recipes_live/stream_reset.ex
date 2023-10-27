@@ -81,7 +81,7 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamReset do
     </.header>
     <!-- end hiding from live code -->
     <.tabs :if={@countries != []} class="mb-5">
-      <:tab :for={country <- @countries} patch={~p"/stream-reset?#{[country_id: country.id]}"} active={country == @selected_country}>
+      <:tab :for={country <- @countries} path={~p"/stream-reset?#{[country_id: country.id]}"} active={country == @selected_country}>
         <%= country.name %>
       </:tab>
     </.tabs>

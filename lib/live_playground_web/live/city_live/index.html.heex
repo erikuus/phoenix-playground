@@ -6,7 +6,7 @@
 </.header>
 
 <.tabs :if={@countries != []} class="mb-4">
-  <:tab :for={country <- @countries} patch={~p"/cities?#{[country_id: country.id]}"} active={country == @selected_country}>
+  <:tab :for={country <- @countries} path={~p"/cities?#{[country_id: country.id]}"} active={country == @selected_country}>
     <%= country.name %>
   </:tab>
 </.tabs>

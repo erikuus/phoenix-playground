@@ -87,7 +87,7 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
     <.tabs :if={@countries != []} class="mb-5">
       <:tab
         :for={country <- @countries}
-        patch={~p"/broadcast-stream-reset?#{[country_id: country.id]}"}
+        path={~p"/broadcast-stream-reset?#{[country_id: country.id]}"}
         active={country == @selected_country}
       >
         <%= country.name %>

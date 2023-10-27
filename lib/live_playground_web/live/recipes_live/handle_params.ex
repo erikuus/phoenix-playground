@@ -33,7 +33,7 @@ defmodule LivePlaygroundWeb.RecipesLive.HandleParams do
     </.header>
     <!-- end hiding from live code -->
     <.tabs :if={@countries != []}>
-      <:tab :for={country <- @countries} patch={~p"/handle-params?#{[id: country.id]}"} active={country == @selected_country}>
+      <:tab :for={country <- @countries} path={~p"/handle-params?#{[id: country.id]}"} active={country == @selected_country}>
         <%= country.name %>
       </:tab>
     </.tabs>
