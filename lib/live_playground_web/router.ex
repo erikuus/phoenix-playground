@@ -97,6 +97,7 @@ defmodule LivePlaygroundWeb.Router do
       live "/simple_list", CompsLive.SimpleList
       live "/steps", CompsLive.Steps
       live "/tabs", CompsLive.Tabs
+      live "/tabs-demo", CompsLive.TabsDemo
     end
   end
 
