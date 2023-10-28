@@ -493,38 +493,43 @@ defmodule LivePlaygroundWeb.MoreComponents do
         </.link>
       </nav>
     </div>
-    <div :if={@modifier} class={"block #{@modifier}:hidden"}>
+    <div :if={@modifier} class={["block #{@modifier}:hidden", @class]}>
       <button
         id={"#{@id}-open"}
-        phx-click={JS.show(to: "##{@id}-dropdown") |> JS.hide(to: "##{@id}-open")}
+        phx-click={JS.show(to: "##{@id}-dropdown") |> JS.hide(to: "##{@id}-open") |> JS.show(to: "##{@id}-close")}
         type="button"
-        class={["mb-1", @class]}
+        class="text-zinc-600 py-4 px-1 text-sm font-medium"
       >
         <span class="sr-only">Open tabs</span>
         <.icon name="hero-bars-3" class="h-6 w-6 text-zinc-600" />
       </button>
-      <div id={"#{@id}-dropdown"} class="hidden">
-        <button type="button" class={["mb-1", @class]}>
-          <span class="sr-only">Close tabs</span>
-          <.icon name="hero-x-mark" class="h-6 w-6 text-zinc-600" />
-        </button>
-        <ul
-          phx-click-away={JS.hide(to: "##{@id}-dropdown") |> JS.show(to: "##{@id}-open")}
-          class="rounded-md shadow-lg py-1 border border-gray-200 bg-white"
+      <button
+        id={"#{@id}-close"}
+        type="button"
+        phx-click={JS.hide(to: "##{@id}-dropdown") |> JS.hide(to: "##{@id}-close") |> JS.show(to: "##{@id}-open")}
+        class="hidden text-zinc-600 py-4 px-1 text-sm font-medium"
+      >
+        <span class="sr-only">Close tabs</span>
+        <.icon name="hero-x-mark" class="h-6 w-6 text-zinc-600" />
+      </button>
+      <ul
+        id={"#{@id}-dropdown"}
+        phx-click-away={JS.hide(to: "##{@id}-dropdown") |> JS.hide(to: "##{@id}-close") |> JS.show(to: "##{@id}-open")}
+        class="hidden absolute z-10 -mt-3 rounded-md shadow-lg py-1 border border-gray-200 bg-white"
+      >
+        <li
+          :for={tab <- @tab}
+          class={[
+            "relative",
+            tab.active == false && "hover:bg-zinc-300",
+            tab.active == true && "bg-zinc-500 text-white"
+          ]}
         >
-          <li
-            :for={tab <- @tab}
-            class={[
-              tab.active == false && "hover:bg-zinc-300",
-              tab.active == true && "bg-zinc-500 text-white"
-            ]}
-          >
-            <.link navigate={tab.path} class="block py-2 px-4">
-              <%= render_slot(tab) %>
-            </.link>
-          </li>
-        </ul>
-      </div>
+          <.link navigate={tab.path} class="block py-2 px-8">
+            <%= render_slot(tab) %>
+          </.link>
+        </li>
+      </ul>
     </div>
     """
   end
