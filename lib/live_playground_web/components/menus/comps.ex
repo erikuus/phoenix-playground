@@ -132,6 +132,11 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             label: "Stats",
             path: "/stats",
             active: is_active?(current_path, ["/stats"])
+          },
+          %{
+            label: "Loading",
+            path: "/loading",
+            active: is_active?(current_path, ["/loading"])
           }
         ]
       }
