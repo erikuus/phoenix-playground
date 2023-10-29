@@ -140,6 +140,13 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamReset do
     """
   end
 
+  def handle_event("delete", %{"city_id" => city_id}, socket) do
+    city = Cities.get_city!(city_id)
+    {:ok, _} = Cities.delete_city_broadcast(city)
+
+    {:noreply, stream_delete(socket, :cities, city)}
+  end
+
   def handle_event("validate", %{"city" => city_params}, socket) do
     changeset =
       socket.assigns.city
@@ -179,13 +186,6 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamReset do
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}
     end
-  end
-
-  def handle_event("delete", %{"city_id" => city_id}, socket) do
-    city = Cities.get_city!(city_id)
-    {:ok, _} = Cities.delete_city_broadcast(city)
-
-    {:noreply, stream_delete(socket, :cities, city)}
   end
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
