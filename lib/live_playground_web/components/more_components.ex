@@ -133,8 +133,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         item.active == false && @item_class
       ]}
     >
-      <.icon :if={item.icon} name={item.icon} class="h-6 w-6" />
-      <span class="mt-1 hidden md:block"><%= item.label %></span>
+      <.icon :if={item.icon} name={item.icon} class="h-6 w-6" /> <span class="mt-1 hidden md:block"><%= item.label %></span>
     </.link>
     """
   end
@@ -184,6 +183,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         <div :if={item.section} class="ml-2 font-semibold leading-6 text-gray-400 text-xs">
           <%= item.section %>
         </div>
+
         <.link
           :for={subitem <- item.subitems}
           navigate={subitem.path}
@@ -201,8 +201,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
               subitem.active == false && @icon_class,
               subitem.active == true && @icon_active_class
             ]}
-          />
-          <span class="flex-1 ml-2"><%= subitem.label %></span>
+          /> <span class="flex-1 ml-2"><%= subitem.label %></span>
           <span
             :if={Map.has_key?(subitem, :badge) && subitem.badge}
             class={[
@@ -239,8 +238,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
             item.active == false && @icon_class,
             item.active == true && @icon_active_class
           ]}
-        />
-        <span class="flex-1 ml-2"><%= item.label %></span>
+        /> <span class="flex-1 ml-2"><%= item.label %></span>
         <span
           :if={Map.has_key?(item, :badge) && item.badge}
           class={[
@@ -324,10 +322,13 @@ defmodule LivePlaygroundWeb.MoreComponents do
         <div :if={@icon} class="flex-shrink-0">
           <.icon :if={@icon} name={@icon} />
         </div>
+
         <div class={["flex-1", @icon != nil && "ml-3"]}>
           <h3 :if={@title} class="font-medium mb-2"><%= @title %></h3>
+
           <p><%= render_slot(@inner_block) %></p>
         </div>
+
         <button :if={@close} type="button" class="flex-shrink-0 ml-4" }>
           <.icon name="hero-x-mark-solid" class="w-5 h-5 opacity-40 group-hover:opacity-70" />
         </button>
@@ -353,6 +354,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <div :if={@icon} class="flex-shrink-0">
         <.icon name={@icon} class="h-6 w-6" />
       </div>
+
       <div class="mt-3 sm:ml-3 sm:mt-0">
         <%= render_slot(@inner_block) %>
       </div>
@@ -419,18 +421,22 @@ defmodule LivePlaygroundWeb.MoreComponents do
         ]}>
           <div class="w-px bg-gray-200"></div>
         </div>
+
         <div :if={Map.has_key?(step, :checked)} class="relative flex mt-2 h-6 w-6 flex-none items-center justify-center bg-white">
           <div :if={step.checked == false} class="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300"></div>
           <.icon :if={step.checked == true} name="hero-check-circle" class="h-6 w-6 text-gray-400" />
         </div>
+
         <div :if={!Map.has_key?(step, :checked)} class="relative flex mt-2 h-6 w-6 flex-none items-center justify-center bg-white">
           <div :if={step.active == false} class="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300"></div>
           <.icon :if={step.active == true} name="hero-check-circle" class="h-6 w-6 text-gray-400" />
         </div>
+
         <div class="flex-auto leading-5">
           <div :if={!Map.has_key?(step, :path)} class="block p-2 mb-1 rounded-md">
             <%= render_slot(step) %>
           </div>
+
           <.link
             :if={Map.has_key?(step, :path) && step.path}
             navigate={step.path}
@@ -493,6 +499,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         </.link>
       </nav>
     </div>
+
     <div :if={@modifier} class={["block #{@modifier}:hidden", @class]}>
       <button
         id={"#{@id}-open"}
@@ -500,18 +507,18 @@ defmodule LivePlaygroundWeb.MoreComponents do
         type="button"
         class="text-zinc-600 py-4 px-1 text-sm font-medium"
       >
-        <span class="sr-only">Open tabs</span>
-        <.icon name="hero-bars-3" class="h-6 w-6 text-zinc-600" />
+        <span class="sr-only">Open tabs</span> <.icon name="hero-bars-3" class="h-6 w-6 text-zinc-600" />
       </button>
+
       <button
         id={"#{@id}-close"}
         type="button"
         phx-click={JS.hide(to: "##{@id}-dropdown") |> JS.hide(to: "##{@id}-close") |> JS.show(to: "##{@id}-open")}
         class="hidden text-zinc-600 py-4 px-1 text-sm font-medium"
       >
-        <span class="sr-only">Close tabs</span>
-        <.icon name="hero-x-mark" class="h-6 w-6 text-zinc-600" />
+        <span class="sr-only">Close tabs</span> <.icon name="hero-x-mark" class="h-6 w-6 text-zinc-600" />
       </button>
+
       <ul
         id={"#{@id}-dropdown"}
         phx-click-away={JS.hide(to: "##{@id}-dropdown") |> JS.hide(to: "##{@id}-close") |> JS.show(to: "##{@id}-open")}
@@ -539,7 +546,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   ## Example
 
-      <.stat>
+      <.stats>
         <:card title="Orders">
           <%= @orders %>
         </:card>
@@ -549,7 +556,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         <:card title="Satisfaction">
           <%= @satisfaction %>
         </:card>
-      </.stat>
+      </.stats>
   """
   attr :class, :string, default: nil
 
@@ -557,12 +564,11 @@ defmodule LivePlaygroundWeb.MoreComponents do
     attr :title, :string, required: true
   end
 
-  def stat(assigns) do
+  def stats(assigns) do
     ~H"""
-    <dl class={["grid grid-cols-1 gap-5 sm:grid-cols-3", @class]}>
+    <dl class={["grid grid-cols-1 gap-5 sm:grid-cols-3 xl:grid-cols-4", @class]}>
       <div :for={card <- @card} class="relative overflow-hidden rounded-lg shadow-sm border border-gray-200 bg-white px-4 py-5 sm:p-6">
         <dt class="truncate text-sm font-medium text-gray-500"><%= card.title %></dt>
-
         <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900">
           <%= render_slot(card) %>
         </dd>
@@ -916,12 +922,14 @@ defmodule LivePlaygroundWeb.MoreComponents do
           <label for={@uploads_name.ref} class="relative cursor-pointer bg-transparent font-semibold">
             <span>Upload a file</span> <.live_file_input upload={@uploads_name} class="sr-only" />
           </label>
+
           <p class="pl-1">or drag and drop</p>
         </div>
 
         <p class="text-xs leading-5 text-zinc-600">
-          <%= @uploads_name.max_entries %>
-          <%= format_uploads_accept(@uploads_name.accept) %> files up to <%= trunc(@uploads_name.max_file_size / 1_000_000) %> MB each
+          <%= @uploads_name.max_entries %> <%= format_uploads_accept(@uploads_name.accept) %> files up to <%= trunc(
+            @uploads_name.max_file_size / 1_000_000
+          ) %> MB each
         </p>
       </div>
     </div>
@@ -961,6 +969,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         >
           <%= entry.client_name %>
         </div>
+
         <div class="flex justify-between items-center space-x-2">
           <div :if={upload_errors(@uploads_name, entry) == []} class="mt-3 flex gap-3 text-sm leading-6">
             <.circular_progress_bar progress={entry.progress} stroke_width={3} radius={7.5} svg_class="mt-0.5 w-5 h-5 flex-none" />
@@ -968,9 +977,11 @@ defmodule LivePlaygroundWeb.MoreComponents do
               <%= entry.progress %>%
             </div>
           </div>
+
           <.error :for={err <- upload_errors(@uploads_name, entry)}>
             <%= Phoenix.Naming.humanize(err) %>
           </.error>
+
           <.link phx-click="cancel" phx-value-ref={entry.ref} phx-target={@target} class="mt-2">
             <.icon name="hero-trash" class="w-5 h-5 text-zinc-400 hover:text-zinc-600" />
           </.link>

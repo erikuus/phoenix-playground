@@ -23,7 +23,7 @@ defmodule LivePlaygroundWeb.RecipesLive.SendAfter do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <.stat>
+    <.stats>
       <:card title="Orders">
         <%= @orders %>
       </:card>
@@ -33,7 +33,7 @@ defmodule LivePlaygroundWeb.RecipesLive.SendAfter do
       <:card title="Satisfaction">
         <%= @satisfaction %>
       </:card>
-    </.stat>
+    </.stats>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/recipes_live/send_after.ex" />
