@@ -22,7 +22,7 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
     <.header class="mb-6">
       Tabular Insert
       <:subtitle>
-        How to insert multiple items using streams and broadcast in LiveView
+        How to insert multiple items in LiveView using stream and broadcast
       </:subtitle>
     </.header>
     <!-- end hiding from live code -->

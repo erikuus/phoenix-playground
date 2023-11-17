@@ -9,184 +9,158 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigationSections do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Vertical Navigation Sections
+      Sectional Navigation
       <:subtitle>
-        How to use Sections with Vertical Navigation component
+        How to use Vertical Navigation component for Sectional Navigation
       </:subtitle>
       <:actions class="flex-col space-y-2 items-end">
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def vertical_navigation">
           Goto Definition
         </.goto_definition>
         <.link navigate={~p"/vertical-navigation"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Vertical Navigation
+          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Single Level Navigation
         </.link>
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:gap-0 xl:grid-cols-4 xl:divide-x xl:divide-gray-100">
+    <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:gap-0 xl:grid-cols-3 xl:divide-x xl:divide-gray-100">
       <div class="space-y-1 xl:pr-4">
         <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
-          With text only
-        </h2>
-        <.vertical_navigation items={[
-          %{
-            section: "Core components",
-            subitems: [
-              %{
-                label: "Modal",
-                path: "/modal",
-                active: true
-              },
-              %{
-                label: "Flash",
-                path: "/flash",
-                active: false
-              }
-            ]
-          },
-          %{
-            section: "More components",
-            subitems: [
-              %{
-                label: "Multi-Column Layout",
-                path: "/multi-column-layout",
-                active: false
-              },
-              %{
-                label: "Vertical Navigation",
-                path: "/vertical-navigation",
-                active: false
-              }
-            ]
-          }
-        ]} />
-      </div>
-      <div class="space-y-1 xl:px-4">
-        <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
-          With icons
-        </h2>
-        <.vertical_navigation items={[
-          %{
-            section: "Core components",
-            subitems: [
-              %{
-                icon: "hero-window",
-                label: "Modal",
-                path: "/modal",
-                active: true
-              },
-              %{
-                icon: "hero-rectangle-stack",
-                label: "Flash",
-                path: "/flash",
-                active: false
-              }
-            ]
-          },
-          %{
-            section: "More components",
-            subitems: [
-              %{
-                icon: "hero-view-columns",
-                label: "Multi-Column Layout",
-                path: "/multi-column-layout",
-                active: false
-              },
-              %{
-                icon: "hero-bars-4",
-                label: "Vertical Navigation",
-                path: "/vertical-navigation",
-                active: false
-              }
-            ]
-          }
-        ]} />
-      </div>
-      <div class="space-y-1 xl:px-4">
-        <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
-          With icons and badge
-        </h2>
-        <.vertical_navigation items={[
-          %{
-            section: "Core components",
-            subitems: [
-              %{
-                icon: "hero-window",
-                label: "Modal",
-                path: "/modal",
-                active: true
-              },
-              %{
-                icon: "hero-rectangle-stack",
-                label: "Flash",
-                path: "/flash",
-                active: false
-              }
-            ]
-          },
-          %{
-            section: "More components",
-            subitems: [
-              %{
-                icon: "hero-view-columns",
-                label: "Multi-Column Layout",
-                path: "/multi-column-layout",
-                active: false
-              },
-              %{
-                icon: "hero-bars-4",
-                label: "Vertical Navigation",
-                path: "/vertical-navigation",
-                badge: 2,
-                active: false
-              }
-            ]
-          }
-        ]} />
-      </div>
-      <div class="space-y-1 xl:pl-4">
-        <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
-          With custom colors
+          Labels only
         </h2>
         <.vertical_navigation
-          item_class="text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
-          item_active_class="bg-gray-50 text-indigo-600"
-          icon_class="text-gray-400 group-hover:text-indigo-600"
-          icon_active_class="text-indigo-600"
-          badge_class="bg-white text-gray-600 ring-1 ring-inset ring-gray-200"
-          badge_active_class="bg-white text-gray-600 ring-1 ring-inset ring-gray-200"
+          id="labels-only"
           items={[
             %{
-              section: "Core components",
-              subitems: [
+              section: %{
+                label: "CORE COMPONENTS"
+              },
+              section_items: [
                 %{
-                  icon: "hero-window",
-                  label: "Modal",
-                  path: "/modal",
+                  label: "Header",
+                  path: ~p"/header",
                   active: true
                 },
                 %{
-                  icon: "hero-rectangle-stack",
-                  label: "Flash",
-                  path: "/flash",
+                  label: "Button",
+                  path: ~p"/button",
                   active: false
                 }
               ]
             },
             %{
-              section: "More components",
-              subitems: [
+              section: %{
+                label: "MORE COMPONENTS"
+              },
+              section_items: [
                 %{
-                  icon: "hero-view-columns",
                   label: "Multi-Column Layout",
-                  path: "/multi-column-layout",
+                  path: ~p"/multi-column-layout",
                   active: false
                 },
                 %{
+                  label: "Narrow Sidebar",
+                  path: ~p"/narrow-sidebar",
+                  active: false
+                }
+              ]
+            }
+          ]}
+        />
+      </div>
+      <div class="space-y-1 xl:px-4">
+        <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
+          With icons
+        </h2>
+        <.vertical_navigation
+          id="with-cons"
+          items={[
+            %{
+              section: %{
+                label: "CORE COMPONENTS"
+              },
+              section_items: [
+                %{
+                  icon: "hero-queue-list",
+                  label: "Header",
+                  path: ~p"/header",
+                  active: true
+                },
+                %{
+                  icon: "hero-cursor-arrow-ripple",
+                  label: "Button",
+                  path: ~p"/button",
+                  active: false
+                }
+              ]
+            },
+            %{
+              section: %{
+                label: "MORE COMPONENTS"
+              },
+              section_items: [
+                %{
+                  icon: "hero-view-columns",
+                  label: "Multi-Column Layout",
+                  path: ~p"/multi-column-layout",
+                  active: false
+                },
+                %{
+                  icon: "hero-ellipsis-vertical",
+                  label: "Narrow Sidebar",
+                  path: ~p"/narrow-sidebar",
+                  active: false
+                }
+              ]
+            }
+          ]}
+        />
+      </div>
+      <div class="space-y-1 xl:px-4">
+        <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
+          With icons and badges
+        </h2>
+        <.vertical_navigation
+          id="with-badges"
+          items={[
+            %{
+              section: %{
+                label: "CORE COMPONENTS"
+              },
+              section_items: [
+                %{
+                  icon: "hero-rectangle-stack",
+                  label: "Flash",
+                  path: ~p"/flash",
+                  badge: 5,
+                  active: true
+                },
+                %{
+                  icon: "hero-window",
+                  label: "Modal",
+                  path: ~p"/modal",
+                  badge: 6,
+                  active: false
+                }
+              ]
+            },
+            %{
+              section: %{
+                label: "MORE COMPONENTS"
+              },
+              section_items: [
+                %{
                   icon: "hero-bars-4",
                   label: "Vertical Navigation",
-                  path: "/vertical-navigation",
-                  badge: 2,
+                  path: ~p"/vertical-navigation",
+                  badge: 4,
+                  active: false
+                },
+                %{
+                  icon: "hero-arrow-right-on-rectangle",
+                  label: "Slideover",
+                  path: ~p"/slideover",
+                  badge: 6,
                   active: false
                 }
               ]

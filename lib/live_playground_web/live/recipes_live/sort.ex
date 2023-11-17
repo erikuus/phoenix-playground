@@ -16,13 +16,13 @@ defmodule LivePlaygroundWeb.RecipesLive.Sort do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Sorting
+      Handle-event Sorting
       <:subtitle>
-        How to sort data in LiveView
+        How to handle sorting in LiveView without passing the sort parameters as a URL parameters
       </:subtitle>
       <:actions>
         <.link navigate={~p"/sort-params"}>
-          See also: Sorting with URL Parameters <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
+          See also: Handle-params Sorting <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
         </.link>
       </:actions>
     </.header>

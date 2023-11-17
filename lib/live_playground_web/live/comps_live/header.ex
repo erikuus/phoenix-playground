@@ -14,7 +14,7 @@ defmodule LivePlaygroundWeb.CompsLive.Header do
       </:subtitle>
 
       <:actions>
-        <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def header">
+        <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def header">
           Goto Definition
         </.goto_definition>
       </:actions>

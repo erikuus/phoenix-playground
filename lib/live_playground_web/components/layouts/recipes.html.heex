@@ -4,10 +4,10 @@
     <Sidebar.menu current_layout={:recipes} />
   </:narrow_sidebar>
   <:mobile_menu>
-    <Recipes.menu current_path={@current_path} />
+    <Recipes.menu id="recipes-mobile-menu" current_path={@current_path} />
   </:mobile_menu>
-  <:static_menu>
-    <Recipes.menu current_path={@current_path} />
-  </:static_menu>
+  <:desktop_menu>
+    <Recipes.menu id="recipes-desktop-menu" current_path={@current_path} />
+  </:desktop_menu>
   <%= @inner_content %>
 </.multi_column_layout>

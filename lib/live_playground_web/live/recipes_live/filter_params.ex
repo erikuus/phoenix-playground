@@ -39,13 +39,13 @@ defmodule LivePlaygroundWeb.RecipesLive.FilterParams do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Filter with URL Parameters
+      Handle-params Filtering
       <:subtitle>
-        How to handle filter parameters in LiveView
+        How to handle filter parameters in LiveView passing the filter strings as a URL parameters
       </:subtitle>
       <:actions>
         <.link navigate={~p"/filter"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Filter
+          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Handle-event Filtering
         </.link>
       </:actions>
     </.header>

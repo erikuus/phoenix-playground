@@ -38,7 +38,7 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStream do
     <.header class="mb-6">
       Real-Time Updates with Stream
       <:subtitle>
-        How to broadcast real-time updates with stream in LiveView
+        How to broadcast real-time updates in conjunction with stream
       </:subtitle>
       <:actions>
         <.link navigate={~p"/broadcast-stream-reset"}>

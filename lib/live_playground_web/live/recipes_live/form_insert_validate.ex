@@ -20,11 +20,11 @@ defmodule LivePlaygroundWeb.RecipesLive.FormInsertValidate do
     <.header class="mb-6">
       Validate on Change
       <:subtitle>
-        How to create insert form that validates on change
+        How to create insert form in LiveView  that validates on change
       </:subtitle>
       <:actions>
         <.link navigate={~p"/form-insert"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Insert Form
+          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Validate on Submit
         </.link>
       </:actions>
     </.header>

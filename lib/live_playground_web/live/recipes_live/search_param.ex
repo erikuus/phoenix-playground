@@ -37,13 +37,13 @@ defmodule LivePlaygroundWeb.RecipesLive.SearchParam do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Search with URL Parameter
+      Handle-params Search
       <:subtitle>
-        How to handle query parameter in LiveView
+        How to create a search interface in LiveView passing the query string as a URL parameter
       </:subtitle>
       <:actions>
         <.link navigate={~p"/search"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Search
+          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Handle-event Search
         </.link>
       </:actions>
     </.header>

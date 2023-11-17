@@ -31,13 +31,13 @@ defmodule LivePlaygroundWeb.RecipesLive.PaginateParams do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Pagination with URL Parameters
+      Handle-params Pagination
       <:subtitle>
-        How to handle pagination parameters in LiveView
+        How to handle pagination parameters in LiveView passing the pagination parameters as a URL parameters
       </:subtitle>
       <:actions>
         <.link navigate={~p"/paginate"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Pagination
+          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Handle-event Pagination
         </.link>
       </:actions>
     </.header>

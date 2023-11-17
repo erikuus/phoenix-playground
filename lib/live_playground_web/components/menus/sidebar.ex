@@ -30,7 +30,7 @@ defmodule LivePlaygroundWeb.Menus.Sidebar do
         layout: :recipes
       },
       %{
-        icon: "hero-rectangle-group",
+        icon: "hero-puzzle-piece",
         label: "Comps",
         path: "/modal",
         layout: :comps

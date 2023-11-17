@@ -18,9 +18,9 @@ defmodule LivePlaygroundWeb.RecipesLive.FormInsert do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Insert Form
+      Validate on Submit
       <:subtitle>
-        How to create insert form that validates on submit
+        How to create insert form in LiveView  that validates on submit
       </:subtitle>
       <:actions>
         <.link navigate={~p"/form-insert-validate"}>

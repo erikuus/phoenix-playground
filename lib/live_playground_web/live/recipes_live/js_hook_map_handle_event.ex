@@ -17,13 +17,13 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapHandleEvent do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Map Handle Events
+      Handle Events
       <:subtitle>
         How to hook a map library and handle LiveView events in JavaScript
       </:subtitle>
       <:actions>
         <.link navigate={~p"/js-hook-map-dataset"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Map Dataset
+          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Dataset
         </.link>
       </:actions>
     </.header>

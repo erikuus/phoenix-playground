@@ -12,13 +12,13 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapDataset do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Map Dataset
+      Dataset
       <:subtitle>
         How to hook a JavaScript map library and add markers through the dataset object in LiveView
       </:subtitle>
       <:actions>
         <.link navigate={~p"/js-hook-map-push-event"}>
-          See also: Map Push Events <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
+          See also: Push Events <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
         </.link>
       </:actions>
     </.header>

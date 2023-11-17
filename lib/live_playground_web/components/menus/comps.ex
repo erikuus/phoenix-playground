@@ -1,141 +1,177 @@
 defmodule LivePlaygroundWeb.Menus.Comps do
   use Phoenix.Component
 
+  use Phoenix.VerifiedRoutes,
+    endpoint: LivePlaygroundWeb.Endpoint,
+    router: LivePlaygroundWeb.Router,
+    statics: LivePlaygroundWeb.static_paths()
+
   import LivePlaygroundWeb.MoreComponents
 
+  attr :id, :string, required: true
   attr :current_path, :string
-  attr :text_class, :string, default: "text-sm"
 
   def menu(assigns) do
     ~H"""
-    <.vertical_navigation items={get_items(@current_path)} />
+    <.vertical_navigation id={@id} items={get_items(@current_path)} />
     """
   end
 
   defp get_items(current_path) do
     [
       %{
-        section: "Core components",
-        subitems: [
+        section: %{
+          label: "CORE COMPONENTS"
+        },
+        section_items: [
           %{
+            icon: "hero-queue-list",
             label: "Header",
-            path: "/header",
+            path: ~p"/header",
             active: is_active?(current_path, ["/header"])
           },
           %{
+            icon: "hero-rectangle-stack",
             label: "Flash",
-            path: "/flash",
+            path: ~p"/flash",
             active: is_active?(current_path, ["/flash"])
           },
           %{
+            icon: "hero-window",
             label: "Modal",
-            path: "/modal",
+            path: ~p"/modal",
             active: is_active?(current_path, ["/modal"])
           },
           %{
+            icon: "hero-pencil-square",
             label: "Input",
-            path: "/input",
+            path: ~p"/input",
             badge: 3,
             active: is_active?(current_path, ["/input", "/label", "/error"])
           },
           %{
+            icon: "hero-cursor-arrow-ripple",
             label: "Button",
-            path: "/button",
+            path: ~p"/button",
             active: is_active?(current_path, ["/button"])
           },
           %{
+            icon: "hero-squares-2x2",
             label: "Simple Form",
-            path: "/simple-form",
+            path: ~p"/simple-form",
             active: is_active?(current_path, ["/simple-form"])
           },
           %{
+            icon: "hero-table-cells",
             label: "Table",
-            path: "/table",
+            path: ~p"/table",
             active: is_active?(current_path, ["/table"])
           },
           %{
+            icon: "hero-bars-4",
             label: "List",
-            path: "/list",
+            path: ~p"/list",
             active: is_active?(current_path, ["/list"])
           },
           %{
+            icon: "hero-cake",
             label: "Icon",
-            path: "/icon",
+            path: ~p"/icon",
             active: is_active?(current_path, ["/icon"])
           },
           %{
+            icon: "hero-arrow-uturn-left",
             label: "Back",
-            path: "/back",
+            path: ~p"/back",
             active: is_active?(current_path, ["/back"])
           }
         ]
       },
       %{
-        section: "More components",
-        subitems: [
+        section: %{
+          label: "MORE COMPONENTS"
+        },
+        section_items: [
           %{
+            icon: "hero-view-columns",
             label: "Multi-Column Layout",
-            path: "/multi-column-layout",
+            path: ~p"/multi-column-layout",
             active: is_active?(current_path, ["/multi-column-layout"])
           },
           %{
+            icon: "hero-ellipsis-vertical",
             label: "Narrow Sidebar",
-            path: "/narrow-sidebar",
+            path: ~p"/narrow-sidebar",
             active: is_active?(current_path, ["/narrow-sidebar"])
           },
           %{
-            label: "Vertical Navigation",
-            path: "/vertical-navigation",
-            badge: 2,
-            active:
-              is_active?(current_path, [
-                "/vertical-navigation",
-                "/vertical-navigation-sections"
-              ])
+            expandable: %{
+              id: "vertical-navigation",
+              icon: "hero-bars-3",
+              label: "Vertical Navigation",
+              open:
+                is_active?(current_path, [
+                  "/vertical-navigation",
+                  "/vertical-navigation-sections"
+                ])
+            },
+            expandable_items: [
+              %{
+                label: "Single Level Navigation",
+                path: ~p"/vertical-navigation",
+                active: is_active?(current_path, ["/vertical-navigation"])
+              },
+              %{
+                label: "Sectional Navigation",
+                path: ~p"/vertical-navigation-sections",
+                active: is_active?(current_path, ["/vertical-navigation-sections"])
+              }
+            ]
           },
           %{
+            icon: "hero-arrow-right-on-rectangle",
             label: "Slideover",
-            path: "/slideover",
+            path: ~p"/slideover",
             active: is_active?(current_path, ["/slideover"])
           },
           %{
             label: "Button Link",
-            path: "/button-link",
+            path: ~p"/button-link",
             active: is_active?(current_path, ["/button-link"])
           },
           %{
             label: "Alert",
-            path: "/alert",
+            path: ~p"/alert",
             active: is_active?(current_path, ["/alert"])
           },
           %{
             label: "Note",
-            path: "/note",
+            path: ~p"/note",
             active: is_active?(current_path, ["/note"])
           },
           %{
             label: "Simple List",
-            path: "/simple_list",
+            path: ~p"/simple_list",
             active: is_active?(current_path, ["/simple_list"])
           },
           %{
             label: "Steps",
-            path: "/steps",
+            path: ~p"/steps",
             active: is_active?(current_path, ["/steps"])
           },
           %{
             label: "Tabs",
-            path: "/tabs",
+            path: ~p"/tabs",
             active: is_active?(current_path, ["/tabs"])
           },
           %{
             label: "Stats",
-            path: "/stats",
+            path: ~p"/stats",
             active: is_active?(current_path, ["/stats"])
           },
           %{
             label: "Loading",
-            path: "/loading",
+            path: ~p"/loading",
             active: is_active?(current_path, ["/loading"])
           }
         ]

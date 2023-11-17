@@ -71,7 +71,7 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamReset do
     <.header class="mb-6">
       Stream Reset
       <:subtitle>
-        How to reset streams in conjunction with navigation in LiveView
+        How to reset stream in conjunction with navigation
       </:subtitle>
       <:actions>
         <.link navigate={~p"/stream-insert"}>

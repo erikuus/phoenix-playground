@@ -17,13 +17,13 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapPushEvent do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Map Push Events
+      Push Events
       <:subtitle>
         How to hook a map library and push events from JavaScript into LiveView
       </:subtitle>
       <:actions>
         <.link navigate={~p"/js-hook-map-handle-event"}>
-          See also: Map Handle Events <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
+          See also: Handle Events <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
         </.link>
       </:actions>
     </.header>

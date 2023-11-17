@@ -25,9 +25,9 @@ defmodule LivePlaygroundWeb.CompsLive.NarrowSidebar do
         It could prove beneficial for you to explore the implementation of the sidebar component within this playground.
         The sidebar is encapsulated within the
         <.github_link filename="lib/live_playground_web/components/menus/sidebar.ex">menu component</.github_link>,
-        which features an 'active layout' attribute configured in various
+        which features an 'current layout' attribute configured in various
         <.github_link filename="lib/live_playground_web/components/layouts/recipes.html.heex">layouts</.github_link>.
-        The active sidebar item is determined within the menu component based on the value of the active layout attribute.
+        The active sidebar item is determined within the menu component based on the value of the current layout attribute.
       </.note>
     </div>
     """

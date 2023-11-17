@@ -14,20 +14,20 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   @doc """
   Renders a multi-column layout with left-fixed narrow sidebar, mobile menu for small
-  and static menu for larger displays.
+  and desktop menu for larger displays.
 
   ## Example
 
       <.multi_column_layout>
         <:narrow_sidebar></:narrow_sidebar>
         <:mobile_menu></:mobile_menu>
-        <:static_menu></:static_menu>
+        <:desktop_menu></:desktop_menu>
         <%= @inner_content %>
       </.multi_column_layout>
   """
   slot :narrow_sidebar, required: true
   slot :mobile_menu
-  slot :static_menu
+  slot :desktop_menu
   slot :inner_block
 
   def multi_column_layout(assigns) do
@@ -36,7 +36,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <%= render_slot(@narrow_sidebar) %>
     </div>
 
-    <div :if={@mobile_menu != [] && @static_menu != []} class="pl-14 md:pl-20">
+    <div :if={@mobile_menu != [] && @desktop_menu != []} class="pl-14 md:pl-20">
       <div id="mobile-menu" class="relative z-40 hidden" role="dialog" aria-modal="true">
         <div class="fixed inset-0 bg-gray-600 bg-opacity-75"></div>
 
@@ -73,7 +73,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <div class="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
         <div class="flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white">
           <div class="flex flex-1 flex-col overflow-y-auto">
-            <%= render_slot(@static_menu) %>
+            <%= render_slot(@desktop_menu) %>
           </div>
         </div>
       </div>
@@ -117,11 +117,6 @@ defmodule LivePlaygroundWeb.MoreComponents do
   """
   attr :items, :list, required: true
 
-  attr :item_class, :string,
-    default: "text-zinc-100 hover:bg-zinc-600 hover:bg-opacity-50 hover:text-white"
-
-  attr :item_active_class, :string, default: "bg-zinc-600 bg-opacity-50 text-white"
-
   def narrow_sidebar(assigns) do
     ~H"""
     <.link
@@ -129,8 +124,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
       navigate={item.path}
       class={[
         "flex w-full flex-col items-center rounded-md p-3 text-xs font-medium",
-        item.active == true && @item_active_class,
-        item.active == false && @item_class
+        item.active == true && "bg-zinc-600 bg-opacity-50 text-white",
+        item.active == false && "text-zinc-100 hover:bg-zinc-600 hover:bg-opacity-50 hover:text-white"
       ]}
     >
       <.icon :if={item.icon} name={item.icon} class="h-6 w-6" /> <span class="mt-1 hidden md:block"><%= item.label %></span>
@@ -139,119 +134,216 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
-  Renders a list of links for vertical navigation.
+  Renders a vertical navigation.
 
-  ## Examples
+  ## Example
 
-      <.vertical_navigation items={[
+      <.vertical_navigation id="ver-nav" items={[
         %{
-          section: "Section name",
-          subitems:  [
+          icon: "hero-map",
+          label: "Map",
+          path: "/map",
+          badge: 3,
+          active: false
+        },
+        %{
+          section: %{
+            label: "SECTION"
+          },
+          section_items: [
             %{
-              icon: "hero-home",
-              label: "Home",
-              path: "/",
-              badge: 2,
+              icon: "hero-paper-airplane",
+              label: "Paper Airplane",
+              path: "/paper-airplane",
               active: true
+            },
+            %{
+              expandable: %{
+                id: "squares-plus",
+                icon: "hero-squares-plus",
+                label: "Squares Plus",
+                open: false
+              },
+              expandable_items: [
+                %{
+                  label: "Square 1",
+                  path: "/square-one",
+                  badge: 1,
+                  active: false
+                },
+                %{
+                  label: "Square 2",
+                  path: "/square-two",
+                  badge: 2,
+                  active: false
+                }
+              ]
             }
           ]
         }
       ]} />
-
-      <.vertical_navigation items={[
-        %{
-          icon: "hero-home",
-          label: "Home",
-          path: "/",
-          badge: 2,
-          active: true
-        }
-      ]} />
   """
+  attr :id, :string, required: true
   attr :items, :list, required: true
-  attr :item_class, :string, default: "text-gray-900 hover:bg-gray-100"
-  attr :item_active_class, :string, default: "text-gray-900 bg-gray-100"
-  attr :icon_class, :string, default: "text-gray-500"
-  attr :icon_active_class, :string, default: "text-gray-500"
-  attr :badge_class, :string, default: "bg-gray-100 group-hover:bg-gray-200"
-  attr :badge_active_class, :string, default: "bg-gray-200"
-
-  def vertical_navigation(%{items: [%{section: _, subitems: [%{} | _]} | _]} = assigns) do
-    ~H"""
-    <nav class="mt-4 px-3">
-      <div :for={item <- @items} class="space-y-1">
-        <div :if={item.section} class="ml-2 font-semibold leading-6 text-gray-400 text-xs">
-          <%= item.section %>
-        </div>
-
-        <.link
-          :for={subitem <- item.subitems}
-          navigate={subitem.path}
-          class={[
-            "group flex items-center px-2 py-2 rounded-md text-sm font-medium",
-            subitem.active == false && @item_class,
-            subitem.active == true && @item_active_class
-          ]}
-        >
-          <.icon
-            :if={Map.has_key?(subitem, :icon) && subitem.icon}
-            name={subitem.icon}
-            class={[
-              "mr-1 flex-shrink-0 h-5 w-5",
-              subitem.active == false && @icon_class,
-              subitem.active == true && @icon_active_class
-            ]}
-          /> <span class="flex-1 ml-2"><%= subitem.label %></span>
-          <span
-            :if={Map.has_key?(subitem, :badge) && subitem.badge}
-            class={[
-              "ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full",
-              subitem.active == false && @badge_class,
-              subitem.active == true && @badge_active_class
-            ]}
-          >
-            <%= subitem.badge %>
-          </span>
-        </.link>
-      </div>
-    </nav>
-    """
-  end
 
   def vertical_navigation(assigns) do
     ~H"""
     <nav class="mt-4 bg-white px-3 space-y-1">
-      <.link
-        :for={item <- @items}
-        navigate={item.path}
-        class={[
-          "group flex items-center px-2 py-2 rounded-md text-sm font-medium",
-          item.active == false && @item_class,
-          item.active == true && @item_active_class
-        ]}
-      >
-        <.icon
-          :if={Map.has_key?(item, :icon) && item.icon}
-          name={item.icon}
-          class={[
-            "mr-1 flex-shrink-0 h-5 w-5",
-            item.active == false && @icon_class,
-            item.active == true && @icon_active_class
-          ]}
-        /> <span class="flex-1 ml-2"><%= item.label %></span>
-        <span
-          :if={Map.has_key?(item, :badge) && item.badge}
-          class={[
-            "ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full",
-            item.active == false && @badge_class,
-            item.active == true && @badge_active_class
-          ]}
-        >
-          <%= item.badge %>
-        </span>
-      </.link>
+      <.vertical_navigation_item :for={item <- @items} id={@id} item={item} />
     </nav>
     """
+  end
+
+  @doc """
+  Renders a vertical navigation item.
+
+  ## Examples
+
+      <.vertical_navigation_item id="section" item={%{
+        section: %{
+          label: "SECTION"
+        },
+        section_items: [
+          %{
+            icon: "hero-paper-airplane",
+            label: "Paper Airplane",
+            path: "/paper-airplane",
+            active: true
+          },
+          %{
+            icon: "hero-link",
+            label: "Link",
+            path: "/link",
+            active: false
+          }
+        ]
+      }} />
+
+      <.vertical_navigation_item id="expandable" item={%{
+        expandable: %{
+          id: "squares-plus",
+          icon: "hero-squares-plus",
+          label: "Squares Plus",
+          open: false
+        },
+        expandable_items: [
+          %{
+            label: "Square 1",
+            path: "/square-one",
+            badge: 1,
+            active: false
+          },
+          %{
+            label: "Square 2",
+            path: "/square-two",
+            badge: 2,
+            active: false
+          }
+        ]
+      }} />
+
+      <.vertical_navigation_item id="single" item={%{
+        icon: "hero-map",
+        label: "Map",
+        path: "/map",
+        badge: 3,
+        active: false
+      }} />
+  """
+  attr :id, :string
+  attr :item, :map, required: true
+  attr :item_class, :string, default: "font-medium text-gray-900 hover:bg-gray-100"
+  attr :item_active_class, :string, default: "font-medium text-gray-900 bg-gray-100"
+
+  def vertical_navigation_item(%{item: %{section: %{}, section_items: [%{} | _]}} = assigns) do
+    ~H"""
+    <div class={["space-y-1", Map.has_key?(@item.section, :class) && @item.section.class]}>
+      <div class="ml-2 font-semibold leading-6 text-gray-400 text-xs">
+        <%= @item.section.label %>
+      </div>
+      <.vertical_navigation_item :for={section_item <- @item.section_items} id={@id} item={section_item} />
+    </div>
+    """
+  end
+
+  def vertical_navigation_item(%{item: %{expandable: %{}, expandable_items: [%{} | _]}} = assigns) do
+    ~H"""
+    <div
+      :if={Map.has_key?(@item.expandable, :id)}
+      id={"#{@id}-#{@item.expandable.id}"}
+      class={["space-y-1", Map.has_key?(@item.expandable, :class) && @item.expandable.class]}
+    >
+      <button
+        phx-click={toggle_expandable("#{@id}-#{@item.expandable.id}")}
+        type="button"
+        class={["group flex items-center px-2 py-2 rounded-md text-sm w-full text-left", @item_class]}
+      >
+        <.icon
+          :if={Map.has_key?(@item.expandable, :icon)}
+          name={@item.expandable.icon}
+          class="mr-1 flex-shrink-0 h-5 w-5 text-gray-500"
+        />
+        <span :if={Map.has_key?(@item.expandable, :label)} class="flex-1 ml-2">
+          <%= @item.expandable.label %>
+        </span>
+        <.icon
+          name="hero-chevron-right"
+          class={[
+            "mr-1 flex-shrink-0 h-5 w-5 text-gray-500",
+            @item.expandable.open == true && "rotate-90"
+          ]}
+        />
+      </button>
+      <div class={["ver-nav-exp space-y-1", @item.expandable.open == false && "hidden"]}>
+        <.vertical_navigation_item
+          :for={expandable_item <- @item.expandable_items}
+          item={expandable_item}
+          item_class="pl-8 font-normal text-gray-900 hover:bg-gray-100"
+          item_active_class="pl-8 font-normal text-gray-900 bg-gray-100"
+        />
+      </div>
+    </div>
+    """
+  end
+
+  def vertical_navigation_item(assigns) do
+    ~H"""
+    <.link
+      :if={Map.has_key?(@item, :path) && Map.has_key?(@item, :active)}
+      navigate={@item.path}
+      class={[
+        "group flex items-center px-2 py-2 rounded-md text-sm",
+        @item.active == false && @item_class,
+        @item.active == true && @item_active_class
+      ]}
+    >
+      <.icon
+        :if={Map.has_key?(@item, :icon) && Map.has_key?(@item, :active)}
+        name={@item.icon}
+        class="mr-1 flex-shrink-0 h-5 w-5 text-gray-500"
+      />
+      <span :if={Map.has_key?(@item, :label)} class="flex-1 ml-2">
+        <%= @item.label %>
+      </span>
+      <span
+        :if={Map.has_key?(@item, :badge) && Map.has_key?(@item, :active)}
+        class={[
+          "ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full",
+          @item.active == false && "bg-gray-100 group-hover:bg-gray-200",
+          @item.active == true && "bg-gray-200"
+        ]}
+      >
+        <%= @item.badge %>
+      </span>
+    </.link>
+    """
+  end
+
+  def toggle_expandable(id) when is_binary(id) do
+    %JS{}
+    |> JS.toggle(to: "##{id} .ver-nav-exp")
+    |> JS.remove_class("rotate-90", to: "##{id} .hero-chevron-right.rotate-90")
+    |> JS.add_class("rotate-90", to: "##{id} .hero-chevron-right:not(.rotate-90)")
   end
 
   @doc """
@@ -509,7 +601,6 @@ defmodule LivePlaygroundWeb.MoreComponents do
       >
         <span class="sr-only">Open tabs</span> <.icon name="hero-bars-3" class="h-6 w-6 text-zinc-600" />
       </button>
-
       <button
         id={"#{@id}-close"}
         type="button"
@@ -584,9 +675,9 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
       <.loading :if={@loading} />
 
-      <button type="submit">
+      <.button>
         Search <.loading :if={@loading} class="ml-2 -mr-2 w-5 h-5" />
-      </button>
+      </.button>
   """
   attr :class, :string, default: "w-6 h-6"
 

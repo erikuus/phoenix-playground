@@ -73,9 +73,9 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Real-Time Updates with Stream Navigation
+      Real-Time Updates with Stream and Navigation
       <:subtitle>
-        How to broadcast real-time updates with stream in conjunction with navigation in LiveView
+        How to broadcast real-time updates in conjunction with stream and navigation
       </:subtitle>
       <:actions>
         <.link navigate={~p"/broadcast"}>

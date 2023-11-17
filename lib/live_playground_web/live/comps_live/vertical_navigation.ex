@@ -9,9 +9,9 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigation do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Vertical Navigation
+      Single Level Navigation
       <:subtitle>
-        How to use Vertical Navigation component
+        How to use Vertical Navigation component for Single Level Navigation
       </:subtitle>
       <:actions class="flex-col space-y-2 items-end">
         <.goto_definition
@@ -21,134 +21,93 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigation do
           Goto Definition
         </.goto_definition>
         <.link navigate={~p"/vertical-navigation-sections"}>
-          See also: Sections <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
+          See also: Sectional Navigation <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
         </.link>
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:gap-0 xl:grid-cols-4 xl:divide-x xl:divide-gray-100">
+    <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:gap-0 xl:grid-cols-3 xl:divide-x xl:divide-gray-100">
       <div class="space-y-1 xl:pr-4">
         <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
-          With text only
+          Labels only
         </h2>
-        <.vertical_navigation items={[
-          %{
-            label: "Click Buttons",
-            path: "/click-buttons",
-            active: true
-          },
-          %{
-            label: "Handle Params",
-            path: "/handle-params",
-            active: false
-          },
-          %{
-            label: "Change Form",
-            path: "/change-form",
-            active: false
-          },
-          %{
-            label: "Key Events",
-            path: "/key-events",
-            active: false
-          },
-          %{
-            label: "JS Commands",
-            path: "/js-commands",
-            active: false
-          }
-        ]} />
+        <.vertical_navigation
+          id="labels-only"
+          items={[
+            %{
+              label: "Click Buttons",
+              path: "/click-buttons",
+              active: true
+            },
+            %{
+              label: "Handle Params",
+              path: "/handle-params",
+              active: false
+            },
+            %{
+              label: "Change Form",
+              path: "/change-form",
+              active: false
+            },
+            %{
+              label: "Key Events",
+              path: "/key-events",
+              active: false
+            },
+            %{
+              label: "JS Commands",
+              path: "/js-commands",
+              active: false
+            }
+          ]}
+        />
       </div>
       <div class="space-y-1 xl:px-4">
         <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
           With icons
         </h2>
-        <.vertical_navigation items={[
-          %{
-            icon: "hero-cursor-arrow-ripple",
-            label: "Click Buttons",
-            path: "/click-buttons",
-            active: true
-          },
-          %{
-            icon: "hero-link",
-            label: "Handle Params",
-            path: "/handle-params",
-            active: false
-          },
-          %{
-            icon: "hero-arrow-path-rounded-square",
-            label: "Change Form",
-            path: "/change-form",
-            active: false
-          },
-          %{
-            icon: "hero-cube",
-            label: "Key Events",
-            path: "/key-events",
-            active: false
-          },
-          %{
-            icon: "hero-command-line",
-            label: "JS Commands",
-            path: "/js-commands",
-            active: false
-          }
-        ]} />
+        <.vertical_navigation
+          id="with-icons"
+          items={[
+            %{
+              icon: "hero-cursor-arrow-ripple",
+              label: "Click Buttons",
+              path: "/click-buttons",
+              active: true
+            },
+            %{
+              icon: "hero-link",
+              label: "Handle Params",
+              path: "/handle-params",
+              active: false
+            },
+            %{
+              icon: "hero-arrow-path-rounded-square",
+              label: "Change Form",
+              path: "/change-form",
+              active: false
+            },
+            %{
+              icon: "hero-cube",
+              label: "Key Events",
+              path: "/key-events",
+              active: false
+            },
+            %{
+              icon: "hero-command-line",
+              label: "JS Commands",
+              path: "/js-commands",
+              active: false
+            }
+          ]}
+        />
       </div>
       <div class="space-y-1 xl:px-4">
         <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
           With icons and badges
         </h2>
-        <.vertical_navigation items={[
-          %{
-            icon: "hero-paper-airplane",
-            label: "Send Messages",
-            path: "/send-interval",
-            badge: 2,
-            active: true
-          },
-          %{
-            icon: "hero-queue-list",
-            label: "Autocomplete",
-            path: "/autocomplete",
-            badge: 2,
-            active: false
-          },
-          %{
-            icon: "hero-magnifying-glass",
-            label: "Search",
-            path: "/search",
-            badge: 2,
-            active: false
-          },
-          %{
-            icon: "hero-funnel",
-            label: "Filtering",
-            path: "/filter",
-            badge: 2,
-            active: false
-          },
-          %{
-            icon: "hero-arrows-up-down",
-            label: "Sorting",
-            path: "/sort",
-            badge: 2,
-            active: false
-          }
-        ]} />
-      </div>
-      <div class="space-y-1 xl:pl-4">
-        <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
-          With custom colors
-        </h2>
         <.vertical_navigation
-          item_class="text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
-          item_active_class="bg-gray-50 text-indigo-600"
-          icon_class="text-gray-400 group-hover:text-indigo-600"
-          icon_active_class="text-indigo-600"
-          badge_class="bg-white text-gray-600 ring-1 ring-inset ring-gray-200"
-          badge_active_class="bg-white text-gray-600 ring-1 ring-inset ring-gray-200"
+          id="with-badges"
           items={[
             %{
               icon: "hero-paper-airplane",

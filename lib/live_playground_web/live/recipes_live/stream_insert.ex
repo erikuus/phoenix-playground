@@ -74,8 +74,10 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamInsert do
 
     case Cities.create_city(params) do
       {:ok, city} ->
-        socket = stream_insert(socket, :cities, city, at: 0)
-        socket = assign(socket, :form, get_empty_form())
+        socket =
+          socket
+          |> stream_insert(:cities, city, at: 0)
+          |> assign(:form, get_empty_form())
 
         {:noreply, socket}
 
