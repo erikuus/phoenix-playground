@@ -17,8 +17,8 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigationSections do
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def vertical_navigation">
           Goto Definition
         </.goto_definition>
-        <.link navigate={~p"/vertical-navigation"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Single Level Navigation
+        <.link navigate={~p"/vertical-navigation-expandable"}>
+          See also: Expandable Navigation <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
         </.link>
       </:actions>
     </.header>

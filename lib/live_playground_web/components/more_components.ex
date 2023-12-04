@@ -286,6 +286,16 @@ defmodule LivePlaygroundWeb.MoreComponents do
         <span :if={Map.has_key?(@item.expandable, :label)} class="flex-1 ml-2">
           <%= @item.expandable.label %>
         </span>
+        <span
+          :if={Map.has_key?(@item.expandable, :badge) && Map.has_key?(@item.expandable, :open)}
+          class={[
+            "mx-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full",
+            @item.expandable.open == false && "bg-gray-100 group-hover:bg-gray-200",
+            @item.expandable.open == true && "bg-gray-200"
+          ]}
+        >
+          <%= @item.expandable.badge %>
+        </span>
         <.icon
           name="hero-chevron-right"
           class={[
@@ -599,7 +609,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         type="button"
         class="text-zinc-600 py-4 px-1 text-sm font-medium"
       >
-        <span class="sr-only">Open tabs</span> <.icon name="hero-bars-3" class="h-6 w-6 text-zinc-600" />
+        <span class="sr-only">Open tabs</span> <.icon name="hero-ellipsis-vertical" class="h-6 w-6 text-zinc-600" />
       </button>
       <button
         id={"#{@id}-close"}

@@ -89,6 +89,7 @@ defmodule LivePlaygroundWeb.Router do
       live "/narrow-sidebar-demo", CompsLive.NarrowSidebarDemo
       live "/vertical-navigation", CompsLive.VerticalNavigation
       live "/vertical-navigation-sections", CompsLive.VerticalNavigationSections
+      live "/vertical-navigation-expandable", CompsLive.VerticalNavigationExpandable
       live "/slideover", CompsLive.Slideover
       live "/slideover/image", CompsLive.Slideover, :image
       live "/button-link", CompsLive.ButtonLink

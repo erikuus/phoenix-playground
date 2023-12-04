@@ -112,7 +112,8 @@ defmodule LivePlaygroundWeb.Menus.Comps do
               open:
                 is_active?(current_path, [
                   "/vertical-navigation",
-                  "/vertical-navigation-sections"
+                  "/vertical-navigation-sections",
+                  "/vertical-navigation-expandable"
                 ])
             },
             expandable_items: [
@@ -125,6 +126,11 @@ defmodule LivePlaygroundWeb.Menus.Comps do
                 label: "Sectional Navigation",
                 path: ~p"/vertical-navigation-sections",
                 active: is_active?(current_path, ["/vertical-navigation-sections"])
+              },
+              %{
+                label: "Expandable Navigation",
+                path: ~p"/vertical-navigation-expandable",
+                active: is_active?(current_path, ["/vertical-navigation-expandable"])
               }
             ]
           },
