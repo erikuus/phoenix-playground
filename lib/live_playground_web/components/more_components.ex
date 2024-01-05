@@ -299,7 +299,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         <.icon
           name="hero-chevron-right"
           class={[
-            "mr-1 flex-shrink-0 h-5 w-5 text-gray-500",
+            "mr-1 flex-shrink-0 h-4 w-4 text-gray-500",
             @item.expandable.open == true && "rotate-90"
           ]}
         />
