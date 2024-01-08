@@ -297,10 +297,10 @@ defmodule LivePlaygroundWeb.MoreComponents do
           <%= @item.expandable.badge %>
         </span>
         <.icon
-          name="hero-chevron-right"
+          name="hero-chevron-down"
           class={[
             "mr-1 flex-shrink-0 h-4 w-4 text-gray-500",
-            @item.expandable.open == true && "rotate-90"
+            @item.expandable.open == true && "rotate-180"
           ]}
         />
       </button>
@@ -352,8 +352,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
   def toggle_expandable(id) when is_binary(id) do
     %JS{}
     |> JS.toggle(to: "##{id} .ver-nav-exp")
-    |> JS.remove_class("rotate-90", to: "##{id} .hero-chevron-right.rotate-90")
-    |> JS.add_class("rotate-90", to: "##{id} .hero-chevron-right:not(.rotate-90)")
+    |> JS.remove_class("rotate-180", to: "##{id} .hero-chevron-down.rotate-180")
+    |> JS.add_class("rotate-180", to: "##{id} .hero-chevron-down:not(.rotate-180)")
   end
 
   @doc """
