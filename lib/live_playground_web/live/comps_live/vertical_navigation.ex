@@ -20,14 +20,11 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigation do
         >
           Goto Definition
         </.goto_definition>
-        <.link navigate={~p"/vertical-navigation-sections"}>
-          See also: Sectional Navigation <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
-        </.link>
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:gap-0 xl:grid-cols-3 xl:divide-x xl:divide-gray-100">
-      <div class="space-y-1 xl:pr-4">
+    <div class="grid gap-6 grid-cols-1 md:grid-cols-3 md:gap-0 md:divide-x md:divide-gray-100">
+      <div class="space-y-1 md:pr-3 xl:pr-6 2xl:pr-9">
         <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
           Labels only
         </h2>
@@ -62,7 +59,7 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigation do
           ]}
         />
       </div>
-      <div class="space-y-1 xl:px-4">
+      <div class="space-y-1 md:px-3 xl:px-6 2xl:px-9">
         <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
           With icons
         </h2>
@@ -102,7 +99,7 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigation do
           ]}
         />
       </div>
-      <div class="space-y-1 xl:px-4">
+      <div class="space-y-1 md:px-3 xl:px-6 2xl:px-9">
         <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
           With icons and badges
         </h2>

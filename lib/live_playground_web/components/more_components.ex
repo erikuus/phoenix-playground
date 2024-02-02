@@ -183,12 +183,13 @@ defmodule LivePlaygroundWeb.MoreComponents do
         }
       ]} />
   """
+  attr :class, :string, default: nil
   attr :id, :string, required: true
   attr :items, :list, required: true
 
   def vertical_navigation(assigns) do
     ~H"""
-    <nav class="mt-4 bg-white px-3 space-y-1">
+    <nav class={["mt-4 bg-white space-y-1", @class]}>
       <.vertical_navigation_item :for={item <- @items} id={@id} item={item} />
     </nav>
     """

@@ -13,7 +13,7 @@ defmodule LivePlaygroundWeb.Menus.Recipes do
 
   def menu(assigns) do
     ~H"""
-    <.vertical_navigation id={@id} items={get_items(@current_path)} />
+    <.vertical_navigation class="px-3" id={@id} items={get_items(@current_path)} />
     """
   end
 

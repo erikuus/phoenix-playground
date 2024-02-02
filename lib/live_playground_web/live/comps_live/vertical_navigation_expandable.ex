@@ -17,9 +17,6 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigationExpandable do
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def vertical_navigation">
           Goto Definition
         </.goto_definition>
-        <.link navigate={~p"/vertical-navigation"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Single Level Navigation
-        </.link>
       </:actions>
     </.header>
     <!-- end hiding from live code -->
@@ -239,12 +236,12 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigationExpandable do
     <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/comps_live/vertical_navigation_expandable.ex" />
       <.note icon="hero-information-circle">
-        It would be helpful for you to look into how the vertical navigation component with expandale sections works in this playground.
-        The vertical navigation with expandale sections is part of the
-        <.github_link filename="lib/live_playground_web/components/menus/comps.ex">menu component</.github_link>,
-        and it relies on a 'current path' attribute to determine open and active menu items.
+        It would be helpful for you to look into how the vertical navigation component works in this playground.
+        The vertical navigation is part of the
+        <.github_link filename="lib/live_playground_web/components/menus/recipes.ex">menu component</.github_link>,
+        and it relies on a 'current path' attribute to determine the active menu item.
         The 'current path' value for the menu component is passed through the
-        <.github_link filename="lib/live_playground_web/components/layouts/comps.html.heex">layout</.github_link>.
+        <.github_link filename="lib/live_playground_web/components/layouts/recipes.html.heex">layout</.github_link>.
         This value can be set in the layout because it's assigned in a special
         <.github_link filename="lib/live_playground_web/live/init_live.ex">initialization module</.github_link>
         that's mounted on a session in the

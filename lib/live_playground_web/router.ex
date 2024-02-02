@@ -73,7 +73,12 @@ defmodule LivePlaygroundWeb.Router do
       live "/header-demo", CompsLive.HeaderDemo
       live "/modal", CompsLive.Modal
       live "/modal/image", CompsLive.Modal, :image
-      live "/flash", CompsLive.Flash
+      live "/flash-auto-show", CompsLive.FlashAutoShow
+      live "/flash-error-title", CompsLive.FlashErrorTitle
+      live "/flash-error-wo-close", CompsLive.FlashErrorWoClose
+      live "/flash-info-title", CompsLive.FlashInfoTitle
+      live "/flash-text-only", CompsLive.FlashTextOnly
+      live "/flash-put-flash", CompsLive.FlashPutFlash
       live "/input", CompsLive.Input
       live "/label", CompsLive.Label
       live "/error", CompsLive.Error
@@ -90,6 +95,7 @@ defmodule LivePlaygroundWeb.Router do
       live "/vertical-navigation", CompsLive.VerticalNavigation
       live "/vertical-navigation-sections", CompsLive.VerticalNavigationSections
       live "/vertical-navigation-expandable", CompsLive.VerticalNavigationExpandable
+      live "/vertical-navigation-showcase", CompsLive.VerticalNavigationShowcase
       live "/slideover", CompsLive.Slideover
       live "/slideover/image", CompsLive.Slideover, :image
       live "/button-link", CompsLive.ButtonLink

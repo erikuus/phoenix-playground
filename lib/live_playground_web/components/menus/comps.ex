@@ -13,7 +13,7 @@ defmodule LivePlaygroundWeb.Menus.Comps do
 
   def menu(assigns) do
     ~H"""
-    <.vertical_navigation id={@id} items={get_items(@current_path)} />
+    <.vertical_navigation class="px-3" id={@id} items={get_items(@current_path)} />
     """
   end
 
@@ -31,10 +31,52 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             active: is_active?(current_path, ["/header"])
           },
           %{
-            icon: "hero-rectangle-stack",
-            label: "Flash",
-            path: ~p"/flash",
-            active: is_active?(current_path, ["/flash"])
+            expandable: %{
+              id: "flash",
+              icon: "hero-rectangle-stack",
+              label: "Flash",
+              open:
+                is_active?(current_path, [
+                  "/flash-auto-show",
+                  "/flash-text-only",
+                  "/flash-info-title",
+                  "/flash-error-title",
+                  "/flash-error-wo-close",
+                  "/flash-put-flash"
+                ])
+            },
+            expandable_items: [
+              %{
+                label: "Flash Auto Show",
+                path: ~p"/flash-auto-show",
+                active: is_active?(current_path, ["/flash-auto-show"])
+              },
+              %{
+                label: "Flash with Text Only",
+                path: ~p"/flash-text-only",
+                active: is_active?(current_path, ["/flash-text-only"])
+              },
+              %{
+                label: "Flash Info with Title",
+                path: ~p"/flash-info-title",
+                active: is_active?(current_path, ["/flash-info-title"])
+              },
+              %{
+                label: "Flash Error with Title",
+                path: ~p"/flash-error-title",
+                active: is_active?(current_path, ["/flash-error-title"])
+              },
+              %{
+                label: "Flash without Close Button",
+                path: ~p"/flash-error-wo-close",
+                active: is_active?(current_path, ["/flash-error-wo-close"])
+              },
+              %{
+                label: "Flash Using Put Flash",
+                path: ~p"/flash-put-flash",
+                active: is_active?(current_path, ["/flash-put-flash"])
+              }
+            ]
           },
           %{
             icon: "hero-window",
@@ -107,13 +149,14 @@ defmodule LivePlaygroundWeb.Menus.Comps do
           %{
             expandable: %{
               id: "vertical-navigation",
-              icon: "hero-bars-3",
+              icon: "hero-list-bullet",
               label: "Vertical Navigation",
               open:
                 is_active?(current_path, [
                   "/vertical-navigation",
                   "/vertical-navigation-sections",
-                  "/vertical-navigation-expandable"
+                  "/vertical-navigation-expandable",
+                  "/vertical-navigation-showcase"
                 ])
             },
             expandable_items: [
@@ -131,6 +174,11 @@ defmodule LivePlaygroundWeb.Menus.Comps do
                 label: "Expandable Navigation",
                 path: ~p"/vertical-navigation-expandable",
                 active: is_active?(current_path, ["/vertical-navigation-expandable"])
+              },
+              %{
+                label: "Full Functionality",
+                path: ~p"/vertical-navigation-showcase",
+                active: is_active?(current_path, ["/vertical-navigation-showcase"])
               }
             ]
           },
