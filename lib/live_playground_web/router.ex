@@ -73,6 +73,11 @@ defmodule LivePlaygroundWeb.Router do
       live "/header-demo", CompsLive.HeaderDemo
       live "/modal", CompsLive.Modal
       live "/modal/image", CompsLive.Modal, :image
+      live "/modal-basic", CompsLive.ModalBasic
+      live "/modal-subtitle", CompsLive.ModalSubtitle
+      live "/modal-icon", CompsLive.ModalIcon
+      live "/modal-red", CompsLive.ModalRed
+      live "/modal-navigate", CompsLive.ModalNavigate
       live "/flash-auto-show", CompsLive.FlashAutoShow
       live "/flash-error-title", CompsLive.FlashErrorTitle
       live "/flash-error-wo-close", CompsLive.FlashErrorWoClose

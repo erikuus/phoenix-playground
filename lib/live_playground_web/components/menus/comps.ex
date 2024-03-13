@@ -79,10 +79,53 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             ]
           },
           %{
-            icon: "hero-window",
-            label: "Modal",
-            path: ~p"/modal",
-            active: is_active?(current_path, ["/modal"])
+            expandable: %{
+              id: "modal",
+              icon: "hero-window",
+              label: "Modal",
+              open:
+                is_active?(current_path, [
+                  "/modal-basic",
+                  "/modal-subtitle",
+                  "/modal-icon",
+                  "/modal-red",
+                  "/modal-navigate",
+                  "/modal",
+                  "/modal/image"
+                ])
+            },
+            expandable_items: [
+              %{
+                label: "Modal Basics",
+                path: ~p"/modal-basic",
+                active: is_active?(current_path, ["/modal-basic"])
+              },
+              %{
+                label: "Modal with Subtitle",
+                path: ~p"/modal-subtitle",
+                active: is_active?(current_path, ["/modal-subtitle"])
+              },
+              %{
+                label: "Modal with Icon",
+                path: ~p"/modal-icon",
+                active: is_active?(current_path, ["/modal-icon"])
+              },
+              %{
+                label: "Modal in Red",
+                path: ~p"/modal-red",
+                active: is_active?(current_path, ["/modal-red"])
+              },
+              %{
+                label: "Modal with Navigate",
+                path: ~p"/modal-navigate",
+                active: is_active?(current_path, ["/modal-navigate"])
+              },
+              %{
+                label: "Modal with Component",
+                path: ~p"/modal",
+                active: is_active?(current_path, ["/modal","/modal/image"])
+              }
+            ]
           },
           %{
             icon: "hero-pencil-square",
