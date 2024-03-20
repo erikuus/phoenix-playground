@@ -23,9 +23,6 @@ defmodule LivePlaygroundWeb.CompsLive.ModalIcon do
     <.button_link phx-click={show_modal("with-icon")}>
       Show modal
     </.button_link>
-    <.alert :if={@modal} kind={:success} class="mt-6">
-      Modal "<%= @modal %>" confirmed!
-    </.alert>
     <.modal id="with-icon" on_confirm={JS.push("ok", value: %{modal: "With icon"}) |> hide_modal("with-icon")}>
       <:icon><.icon name="hero-exclamation-triangle" class="h-10 w-10 text-yellow-500" /></:icon>
       <:title>With icon</:title>
@@ -33,6 +30,9 @@ defmodule LivePlaygroundWeb.CompsLive.ModalIcon do
       <:confirm>OK</:confirm>
       <:cancel>Cancel</:cancel>
     </.modal>
+    <.alert :if={@modal} kind={:success} class="mt-6">
+      Modal "<%= @modal %>" confirmed!
+    </.alert>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/comps_live/modal_icon.ex" />

@@ -23,9 +23,6 @@ defmodule LivePlaygroundWeb.CompsLive.ModalSubtitle do
     <.button_link phx-click={show_modal("with-subtitle")}>
       Show modal
     </.button_link>
-    <.alert :if={@modal} kind={:success} class="mt-6">
-      Modal "<%= @modal %>" confirmed!
-    </.alert>
     <.modal id="with-subtitle" on_confirm={JS.push("ok", value: %{modal: "With subtitle"}) |> hide_modal("with-subtitle")}>
       <:title>With subtitle</:title>
       <:subtitle>Subtitle</:subtitle>
@@ -33,6 +30,9 @@ defmodule LivePlaygroundWeb.CompsLive.ModalSubtitle do
       <:confirm>OK</:confirm>
       <:cancel>Cancel</:cancel>
     </.modal>
+    <.alert :if={@modal} kind={:success} class="mt-6">
+      Modal "<%= @modal %>" confirmed!
+    </.alert>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/comps_live/modal_subtitle.ex" />

@@ -23,9 +23,6 @@ defmodule LivePlaygroundWeb.CompsLive.ModalRed do
     <.button_link phx-click={show_modal("with-red-button")}>
       Show modal
     </.button_link>
-    <.alert :if={@modal} kind={:success} class="mt-6">
-      Modal "<%= @modal %>" confirmed!
-    </.alert>
     <.modal id="with-red-button" on_confirm={JS.push("ok", value: %{modal: "With red button"}) |> hide_modal("with-red-button")}>
       <:icon>
         <div class="rounded-full bg-red-100 p-3">
@@ -37,6 +34,9 @@ defmodule LivePlaygroundWeb.CompsLive.ModalRed do
       <:confirm class="bg-red-600 hover:bg-red-700">OK</:confirm>
       <:cancel>Cancel</:cancel>
     </.modal>
+    <.alert :if={@modal} kind={:success} class="mt-6">
+      Modal "<%= @modal %>" confirmed!
+    </.alert>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/comps_live/modal_red.ex" />

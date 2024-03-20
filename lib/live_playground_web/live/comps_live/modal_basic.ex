@@ -23,15 +23,15 @@ defmodule LivePlaygroundWeb.CompsLive.ModalBasic do
     <.button_link phx-click={show_modal("basic")}>
       Show modal
     </.button_link>
-    <.alert :if={@modal} kind={:success} class="mt-6">
-      Modal "<%= @modal %>" confirmed!
-    </.alert>
     <.modal id="basic" on_confirm={JS.push("ok", value: %{modal: "Basic"}) |> hide_modal("basic")}>
       <:title>Basic</:title>
       <%= placeholder_sentences(3) %>
       <:confirm>OK</:confirm>
       <:cancel>Cancel</:cancel>
     </.modal>
+    <.alert :if={@modal} kind={:success} class="mt-6">
+      Modal "<%= @modal %>" confirmed!
+    </.alert>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/comps_live/modal_basic.ex" />
