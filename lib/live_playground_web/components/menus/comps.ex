@@ -31,6 +31,12 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             active: is_active?(current_path, ["/header"])
           },
           %{
+            icon: "hero-bars-4",
+            label: "List",
+            path: ~p"/list",
+            active: is_active?(current_path, ["/list"])
+          },          
+          %{
             expandable: %{
               id: "flash",
               icon: "hero-rectangle-stack",
@@ -123,7 +129,43 @@ defmodule LivePlaygroundWeb.Menus.Comps do
               %{
                 label: "Modal with Component",
                 path: ~p"/modal",
-                active: is_active?(current_path, ["/modal","/modal/image"])
+                active: is_active?(current_path, ["/modal", "/modal/image"])
+              }
+            ]
+          },
+          %{
+            expandable: %{
+              id: "table",
+              icon: "hero-table-cells",
+              label: "Table",
+              open:
+                is_active?(current_path, [
+                  "/table",
+                  "/table-action",
+                  "/table-row-click",
+                  "/table-stream"
+                ])
+            },
+            expandable_items: [
+              %{
+                label: "Table Basics",
+                path: ~p"/table",
+                active: is_active?(current_path, ["/table"])
+              },
+              %{
+                label: "Table with Actions",
+                path: ~p"/table-action",
+                active: is_active?(current_path, ["/table-action"])
+              },
+              %{
+                label: "Table with Row Click",
+                path: ~p"/table-row-click",
+                active: is_active?(current_path, ["/table-row-click"])
+              },
+              %{
+                label: "Table with Stream",
+                path: ~p"/table-stream",
+                active: is_active?(current_path, ["/table-stream"])
               }
             ]
           },
@@ -135,29 +177,17 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             active: is_active?(current_path, ["/input", "/label", "/error"])
           },
           %{
-            icon: "hero-cursor-arrow-ripple",
-            label: "Button",
-            path: ~p"/button",
-            active: is_active?(current_path, ["/button"])
-          },
-          %{
             icon: "hero-squares-2x2",
             label: "Simple Form",
             path: ~p"/simple-form",
             active: is_active?(current_path, ["/simple-form"])
           },
           %{
-            icon: "hero-table-cells",
-            label: "Table",
-            path: ~p"/table",
-            active: is_active?(current_path, ["/table"])
-          },
-          %{
-            icon: "hero-bars-4",
-            label: "List",
-            path: ~p"/list",
-            active: is_active?(current_path, ["/list"])
-          },
+            icon: "hero-cursor-arrow-ripple",
+            label: "Button",
+            path: ~p"/button",
+            active: is_active?(current_path, ["/button"])
+          },          
           %{
             icon: "hero-cake",
             label: "Icon",

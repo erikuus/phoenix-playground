@@ -84,12 +84,15 @@ defmodule LivePlaygroundWeb.Router do
       live "/flash-info-title", CompsLive.FlashInfoTitle
       live "/flash-text-only", CompsLive.FlashTextOnly
       live "/flash-put-flash", CompsLive.FlashPutFlash
+      live "/table", CompsLive.Table
+      live "/table-action", CompsLive.TableAction
+      live "/table-row-click", CompsLive.TableRowClick
+      live "/table-stream", CompsLive.TableStream
       live "/input", CompsLive.Input
       live "/label", CompsLive.Label
       live "/error", CompsLive.Error
       live "/button", CompsLive.Button
       live "/simple-form", CompsLive.SimpleForm
-      live "/table", CompsLive.Table
       live "/list", CompsLive.List
       live "/icon", CompsLive.Icon
       live "/back", CompsLive.Back
