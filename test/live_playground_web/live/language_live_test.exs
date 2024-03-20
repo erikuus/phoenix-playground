@@ -4,8 +4,18 @@ defmodule LivePlaygroundWeb.LanguageLiveTest do
   import Phoenix.LiveViewTest
   import LivePlayground.LanguagesFixtures
 
-  @create_attrs %{countrycode: "some countrycode", isofficial: true, language: "some language", percentage: 120.5}
-  @update_attrs %{countrycode: "some updated countrycode", isofficial: false, language: "some updated language", percentage: 456.7}
+  @create_attrs %{
+    countrycode: "some countrycode",
+    isofficial: true,
+    language: "some language",
+    percentage: 120.5
+  }
+  @update_attrs %{
+    countrycode: "some updated countrycode",
+    isofficial: false,
+    language: "some updated language",
+    percentage: 456.7
+  }
   @invalid_attrs %{countrycode: nil, isofficial: false, language: nil, percentage: nil}
 
   defp create_language(_) do
