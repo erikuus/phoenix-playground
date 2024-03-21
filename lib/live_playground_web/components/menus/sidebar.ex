@@ -6,10 +6,15 @@ defmodule LivePlaygroundWeb.Menus.Sidebar do
   on the current layout to indicate which menu item is active.
 
   ## Assigns
-  - `:current_layout`: The current layout (as an atom) indicating which menu item should be marked as active.  
+  - `:current_layout`: The current layout (as an atom) indicating which menu item should be marked as active.
   """
 
   use Phoenix.Component
+
+  use Phoenix.VerifiedRoutes,
+    endpoint: LivePlaygroundWeb.Endpoint,
+    router: LivePlaygroundWeb.Router,
+    statics: LivePlaygroundWeb.static_paths()
 
   import LivePlaygroundWeb.MoreComponents
 
@@ -48,25 +53,25 @@ defmodule LivePlaygroundWeb.Menus.Sidebar do
       %{
         icon: "hero-home",
         label: "Home",
-        path: "/",
+        path: ~p"/",
         layout: :home
       },
       %{
         icon: "hero-book-open",
         label: "Recipes",
-        path: "/click-buttons",
+        path: ~p"/click-buttons",
         layout: :recipes
       },
       %{
         icon: "hero-puzzle-piece",
         label: "Comps",
-        path: "/modal",
+        path: ~p"/header",
         layout: :comps
       },
       %{
         icon: "hero-square-3-stack-3d",
         label: "Steps",
-        path: "/languages",
+        path: ~p"/languages",
         layout: :steps
       }
     ]
