@@ -35,7 +35,7 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             label: "List",
             path: ~p"/list",
             active: is_active?(current_path, ["/list"])
-          },          
+          },
           %{
             expandable: %{
               id: "flash",
@@ -170,11 +170,58 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             ]
           },
           %{
-            icon: "hero-pencil-square",
-            label: "Input",
-            path: ~p"/input",
-            badge: 3,
-            active: is_active?(current_path, ["/input", "/label", "/error"])
+            expandable: %{
+              id: "input",
+              icon: "hero-pencil-square",
+              label: "Input",
+              open:
+                is_active?(current_path, [
+                  "/input-textbox",
+                  "/input-textarea",
+                  "/input-select",
+                  "/input-checkbox",
+                  "/input-radio",
+                  "/input-label",
+                  "/input-error"
+                ])
+            },
+            expandable_items: [
+              %{
+                label: "Textbox",
+                path: ~p"/input-textbox",
+                active: is_active?(current_path, ["/input-textbox"])
+              },
+              %{
+                label: "Textarea",
+                path: ~p"/input-textarea",
+                active: is_active?(current_path, ["/input-textarea"])
+              },
+              %{
+                label: "Select",
+                path: ~p"/input-select",
+                active: is_active?(current_path, ["/input-select"])
+              },
+              %{
+                label: "Checkbox",
+                path: ~p"/input-checkbox",
+                active: is_active?(current_path, ["/input-checkbox"])
+              },
+              %{
+                label: "Radio",
+                path: ~p"/input-radio",
+                active: is_active?(current_path, ["/input-radio"])
+              },
+              %{
+                label: "Label",
+                path: ~p"/input-label",
+                active: is_active?(current_path, ["/input-label"])
+              },
+              %{
+                label: "Error",
+                path: ~p"/input-error",
+                active: is_active?(current_path, ["/input-error"])
+              }
+            ]
           },
           %{
             icon: "hero-squares-2x2",
@@ -187,7 +234,7 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             label: "Button",
             path: ~p"/button",
             active: is_active?(current_path, ["/button"])
-          },          
+          },
           %{
             icon: "hero-cake",
             label: "Icon",

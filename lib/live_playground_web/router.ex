@@ -88,9 +88,13 @@ defmodule LivePlaygroundWeb.Router do
       live "/table-action", CompsLive.TableAction
       live "/table-row-click", CompsLive.TableRowClick
       live "/table-stream", CompsLive.TableStream
-      live "/input", CompsLive.Input
-      live "/label", CompsLive.Label
-      live "/error", CompsLive.Error
+      live "/input-checkbox", CompsLive.InputCheckbox
+      live "/input-radio", CompsLive.InputRadio
+      live "/input-select", CompsLive.InputSelect
+      live "/input-textarea", CompsLive.InputTextarea
+      live "/input-textbox", CompsLive.InputTextbox
+      live "/input-label", CompsLive.InputLabel
+      live "/input-error", CompsLive.InputError
       live "/button", CompsLive.Button
       live "/simple-form", CompsLive.SimpleForm
       live "/list", CompsLive.List
