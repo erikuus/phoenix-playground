@@ -224,8 +224,8 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             ]
           },
           %{
-            icon: "hero-squares-2x2",
-            label: "Simple Form",
+            icon: "hero-document-text",
+            label: "Form",
             path: ~p"/simple-form",
             active: is_active?(current_path, ["/simple-form"])
           },
@@ -261,7 +261,7 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             active: is_active?(current_path, ["/multi-column-layout"])
           },
           %{
-            icon: "hero-ellipsis-vertical",
+            icon: "hero-list-bullet",
             label: "Narrow Sidebar",
             path: ~p"/narrow-sidebar",
             active: is_active?(current_path, ["/narrow-sidebar"])
@@ -269,7 +269,7 @@ defmodule LivePlaygroundWeb.Menus.Comps do
           %{
             expandable: %{
               id: "vertical-navigation",
-              icon: "hero-list-bullet",
+              icon: "hero-bars-3",
               label: "Vertical Navigation",
               open:
                 is_active?(current_path, [

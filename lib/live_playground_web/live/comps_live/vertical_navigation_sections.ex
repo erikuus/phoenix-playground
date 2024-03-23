@@ -20,106 +20,11 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigationSections do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:gap-0 xl:grid-cols-3 xl:divide-x xl:divide-gray-100">
-      <div class="space-y-1 xl:pr-4">
-        <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
-          Labels only
-        </h2>
-        <.vertical_navigation
-          id="labels-only"
-          items={[
-            %{
-              section: %{
-                label: "CORE COMPONENTS"
-              },
-              section_items: [
-                %{
-                  label: "Header",
-                  path: ~p"/header",
-                  active: true
-                },
-                %{
-                  label: "Button",
-                  path: ~p"/button",
-                  active: false
-                }
-              ]
-            },
-            %{
-              section: %{
-                label: "MORE COMPONENTS"
-              },
-              section_items: [
-                %{
-                  label: "Multi-Column Layout",
-                  path: ~p"/multi-column-layout",
-                  active: false
-                },
-                %{
-                  label: "Narrow Sidebar",
-                  path: ~p"/narrow-sidebar",
-                  active: false
-                }
-              ]
-            }
-          ]}
-        />
-      </div>
-      <div class="space-y-1 xl:px-4">
-        <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
-          With icons
-        </h2>
-        <.vertical_navigation
-          id="with-cons"
-          items={[
-            %{
-              section: %{
-                label: "CORE COMPONENTS"
-              },
-              section_items: [
-                %{
-                  icon: "hero-queue-list",
-                  label: "Header",
-                  path: ~p"/header",
-                  active: true
-                },
-                %{
-                  icon: "hero-cursor-arrow-ripple",
-                  label: "Button",
-                  path: ~p"/button",
-                  active: false
-                }
-              ]
-            },
-            %{
-              section: %{
-                label: "MORE COMPONENTS"
-              },
-              section_items: [
-                %{
-                  icon: "hero-view-columns",
-                  label: "Multi-Column Layout",
-                  path: ~p"/multi-column-layout",
-                  active: false
-                },
-                %{
-                  icon: "hero-ellipsis-vertical",
-                  label: "Narrow Sidebar",
-                  path: ~p"/narrow-sidebar",
-                  active: false
-                }
-              ]
-            }
-          ]}
-        />
-      </div>
-      <div class="space-y-1 xl:px-4">
-        <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
-          With icons and badges
-        </h2>
-        <.vertical_navigation
-          id="with-badges"
-          items={[
+    <div class="w-full sm:w-72">
+      <.vertical_navigation
+        id="sectional"
+        items={
+          [
             %{
               section: %{
                 label: "CORE COMPONENTS"
@@ -147,7 +52,7 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigationSections do
               },
               section_items: [
                 %{
-                  icon: "hero-bars-4",
+                  icon: "hero-bars-3",
                   label: "Vertical Navigation",
                   path: ~p"/vertical-navigation",
                   badge: 4,
@@ -162,9 +67,9 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigationSections do
                 }
               ]
             }
-          ]}
-        />
-      </div>
+          ]
+        }
+      />
     </div>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">

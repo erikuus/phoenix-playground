@@ -20,217 +20,75 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigationExpandable do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:gap-0 xl:grid-cols-3 xl:divide-x xl:divide-gray-100">
-      <div class="space-y-1 xl:pr-4">
-        <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
-          Labels only
-        </h2>
-        <.vertical_navigation
-          id="labels-only"
-          items={[
-            %{
-              expandable: %{
-                id: "send-messages",
-                label: "Send Messages",
-                open: true
-              },
-              expandable_items: [
-                %{
-                  label: "Send Repeatedly",
-                  path: ~p"/send-interval",
-                  active: false
-                },
-                %{
-                  label: "Send After",
-                  path: ~p"/send-after",
-                  active: false
-                }
-              ]
+    <div class="w-full sm:w-72">
+      <.vertical_navigation
+        id="expandable"
+        items={[
+          %{
+            expandable: %{
+              id: "send-messages",
+              icon: "hero-paper-airplane",
+              label: "Send Messages",
+              badge: 2,
+              open: true
             },
-            %{
-              expandable: %{
-                id: "autocomplete",
-                label: "Autocomplete",
-                open: false
+            expandable_items: [
+              %{
+                label: "Send Repeatedly",
+                path: ~p"/send-interval",
+                active: false
               },
-              expandable_items: [
-                %{
-                  label: "Native Autocomplete",
-                  path: ~p"/autocomplete",
-                  active: false
-                },
-                %{
-                  label: "Custom Autocomplete",
-                  path: ~p"/autocomplete-custom",
-                  active: false
-                }
-              ]
+              %{
+                label: "Send After",
+                path: ~p"/send-after",
+                active: false
+              }
+            ]
+          },
+          %{
+            expandable: %{
+              id: "autocomplete",
+              icon: "hero-bars-arrow-down",
+              label: "Autocomplete",
+              badge: 2,
+              open: false
             },
-            %{
-              expandable: %{
-                id: "search",
-                label: "Search",
-                open: false
+            expandable_items: [
+              %{
+                label: "Native Autocomplete",
+                path: ~p"/autocomplete",
+                active: false
               },
-              expandable_items: [
-                %{
-                  label: "Handle-event Search",
-                  path: ~p"/search",
-                  active: false
-                },
-                %{
-                  label: "Handle-params Search",
-                  path: ~p"/search-param",
-                  active: false
-                }
-              ]
-            }
-          ]}
-        />
-      </div>
-      <div class="space-y-1 xl:px-4">
-        <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
-          With icons
-        </h2>
-        <.vertical_navigation
-          id="with-cons"
-          items={[
-            %{
-              expandable: %{
-                id: "send-messages",
-                icon: "hero-paper-airplane",
-                label: "Send Messages",
-                open: true
-              },
-              expandable_items: [
-                %{
-                  label: "Send Repeatedly",
-                  path: ~p"/send-interval",
-                  active: false
-                },
-                %{
-                  label: "Send After",
-                  path: ~p"/send-after",
-                  active: false
-                }
-              ]
+              %{
+                label: "Custom Autocomplete",
+                path: ~p"/autocomplete-custom",
+                active: false
+              }
+            ]
+          },
+          %{
+            expandable: %{
+              id: "search",
+              icon: "hero-magnifying-glass",
+              label: "Search",
+              badge: 2,
+              open: false
             },
-            %{
-              expandable: %{
-                id: "autocomplete",
-                icon: "hero-bars-arrow-down",
-                label: "Autocomplete",
-                open: false
+            expandable_items: [
+              %{
+                label: "Handle-event Search",
+                path: ~p"/search",
+                active: false
               },
-              expandable_items: [
-                %{
-                  label: "Native Autocomplete",
-                  path: ~p"/autocomplete",
-                  active: false
-                },
-                %{
-                  label: "Custom Autocomplete",
-                  path: ~p"/autocomplete-custom",
-                  active: false
-                }
-              ]
-            },
-            %{
-              expandable: %{
-                id: "search",
-                icon: "hero-magnifying-glass",
-                label: "Search",
-                open: false
-              },
-              expandable_items: [
-                %{
-                  label: "Handle-event Search",
-                  path: ~p"/search",
-                  active: false
-                },
-                %{
-                  label: "Handle-params Search",
-                  path: ~p"/search-param",
-                  active: false
-                }
-              ]
-            }
-          ]}
-        />
-      </div>
-      <div class="space-y-1 xl:px-4">
-        <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
-          With icons and badges
-        </h2>
-        <.vertical_navigation
-          id="with-badges"
-          items={[
-            %{
-              expandable: %{
-                id: "send-messages",
-                icon: "hero-paper-airplane",
-                label: "Send Messages",
-                badge: 2,
-                open: true
-              },
-              expandable_items: [
-                %{
-                  label: "Send Repeatedly",
-                  path: ~p"/send-interval",
-                  active: false
-                },
-                %{
-                  label: "Send After",
-                  path: ~p"/send-after",
-                  active: false
-                }
-              ]
-            },
-            %{
-              expandable: %{
-                id: "autocomplete",
-                icon: "hero-bars-arrow-down",
-                label: "Autocomplete",
-                badge: 2,
-                open: false
-              },
-              expandable_items: [
-                %{
-                  label: "Native Autocomplete",
-                  path: ~p"/autocomplete",
-                  active: false
-                },
-                %{
-                  label: "Custom Autocomplete",
-                  path: ~p"/autocomplete-custom",
-                  active: false
-                }
-              ]
-            },
-            %{
-              expandable: %{
-                id: "search",
-                icon: "hero-magnifying-glass",
-                label: "Search",
-                badge: 2,
-                open: false
-              },
-              expandable_items: [
-                %{
-                  label: "Handle-event Search",
-                  path: ~p"/search",
-                  active: false
-                },
-                %{
-                  label: "Handle-params Search",
-                  path: ~p"/search-param",
-                  active: false
-                }
-              ]
-            }
-          ]}
-        />
-      </div>
+              %{
+                label: "Handle-params Search",
+                path: ~p"/search-param",
+                active: false
+              }
+            ]
+          }
+        ]}
+      />
     </div>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">

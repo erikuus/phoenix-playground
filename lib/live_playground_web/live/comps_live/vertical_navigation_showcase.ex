@@ -20,7 +20,7 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigationShowcase do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <div class="w-80">
+    <div class="w-full sm:w-72">
       <.vertical_navigation
         id="showcase"
         items={[
@@ -36,7 +36,7 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigationShowcase do
                 active: false
               },
               %{
-                icon: "hero-ellipsis-vertical",
+                icon: "hero-list-bullet",
                 label: "Narrow Sidebar",
                 path: ~p"/narrow-sidebar",
                 active: false
@@ -44,7 +44,7 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigationShowcase do
               %{
                 expandable: %{
                   id: "vertical-navigation",
-                  icon: "hero-list-bullet",
+                  icon: "hero-bars-3",
                   label: "Vertical Navigation",
                   open: true
                 },

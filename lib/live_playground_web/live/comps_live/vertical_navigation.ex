@@ -23,127 +23,40 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigation do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <div class="grid gap-6 grid-cols-1 md:grid-cols-3 md:gap-0 md:divide-x md:divide-gray-100">
-      <div class="space-y-1 md:pr-3 xl:pr-6 2xl:pr-9">
-        <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
-          Labels only
-        </h2>
-        <.vertical_navigation
-          id="labels-only"
-          items={[
-            %{
-              label: "Click Buttons",
-              path: "/click-buttons",
-              active: true
-            },
-            %{
-              label: "Handle Params",
-              path: "/handle-params",
-              active: false
-            },
-            %{
-              label: "Change Form",
-              path: "/change-form",
-              active: false
-            },
-            %{
-              label: "Key Events",
-              path: "/key-events",
-              active: false
-            },
-            %{
-              label: "JS Commands",
-              path: "/js-commands",
-              active: false
-            }
-          ]}
-        />
-      </div>
-      <div class="space-y-1 md:px-3 xl:px-6 2xl:px-9">
-        <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
-          With icons
-        </h2>
-        <.vertical_navigation
-          id="with-icons"
-          items={[
-            %{
-              icon: "hero-cursor-arrow-ripple",
-              label: "Click Buttons",
-              path: "/click-buttons",
-              active: true
-            },
-            %{
-              icon: "hero-link",
-              label: "Handle Params",
-              path: "/handle-params",
-              active: false
-            },
-            %{
-              icon: "hero-arrow-path-rounded-square",
-              label: "Change Form",
-              path: "/change-form",
-              active: false
-            },
-            %{
-              icon: "hero-cube",
-              label: "Key Events",
-              path: "/key-events",
-              active: false
-            },
-            %{
-              icon: "hero-command-line",
-              label: "JS Commands",
-              path: "/js-commands",
-              active: false
-            }
-          ]}
-        />
-      </div>
-      <div class="space-y-1 md:px-3 xl:px-6 2xl:px-9">
-        <h2 class="truncate font-medium leading-7 text-zinc-500 mb-4">
-          With icons and badges
-        </h2>
-        <.vertical_navigation
-          id="with-badges"
-          items={[
-            %{
-              icon: "hero-paper-airplane",
-              label: "Send Messages",
-              path: "/send-interval",
-              badge: 2,
-              active: true
-            },
-            %{
-              icon: "hero-queue-list",
-              label: "Autocomplete",
-              path: "/autocomplete",
-              badge: 2,
-              active: false
-            },
-            %{
-              icon: "hero-magnifying-glass",
-              label: "Search",
-              path: "/search",
-              badge: 2,
-              active: false
-            },
-            %{
-              icon: "hero-funnel",
-              label: "Filtering",
-              path: "/filter",
-              badge: 2,
-              active: false
-            },
-            %{
-              icon: "hero-arrows-up-down",
-              label: "Sorting",
-              path: "/sort",
-              badge: 2,
-              active: false
-            }
-          ]}
-        />
-      </div>
+    <div class="w-full sm:w-72">
+      <.vertical_navigation
+        id="single-level"
+        items={[
+          %{
+            icon: "hero-paper-airplane",
+            label: "Send Messages",
+            path: "/send-interval",
+            badge: 2,
+            active: true
+          },
+          %{
+            icon: "hero-queue-list",
+            label: "Autocomplete",
+            path: "/autocomplete",
+            badge: 2,
+            active: false
+          },
+          %{
+            icon: "hero-magnifying-glass",
+            label: "Search",
+            path: "/search",
+            badge: 2,
+            active: false
+          },
+          %{
+            icon: "hero-funnel",
+            label: "Filtering",
+            path: "/filter",
+            badge: 2,
+            active: false
+          }
+        ]}
+      />
     </div>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">

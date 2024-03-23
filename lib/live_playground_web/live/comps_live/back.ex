@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.CompsLive.Back do
     <.header class="mb-6">
       Back
       <:subtitle>
-        How to use Back component
+        How to Display Simple "Go Back" Link
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def back">

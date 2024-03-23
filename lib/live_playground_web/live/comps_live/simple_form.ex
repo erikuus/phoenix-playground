@@ -1,6 +1,8 @@
 defmodule LivePlaygroundWeb.CompsLive.SimpleForm do
   use LivePlaygroundWeb, :live_view
 
+  import Phoenix.HTML
+
   alias LivePlayground.Cities
   alias LivePlayground.Cities.City
 
@@ -19,7 +21,7 @@ defmodule LivePlaygroundWeb.CompsLive.SimpleForm do
     <.header class="mb-6">
       Simple Form
       <:subtitle>
-        How to use Simple Form component
+        How to Create Straightforward Web Forms with Minimal Setup Using Simple Form Component
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def simple_form">
@@ -40,6 +42,14 @@ defmodule LivePlaygroundWeb.CompsLive.SimpleForm do
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/comps_live/simple_form.ex" />
+
+      <.note icon="hero-information-circle">
+        <%= html_escape("
+          The <.simple_form> component enhances the <.form> component by automatically wrapping form fields within a <div class=\"space-y-8 bg-white mt-10\">
+          for optimal spacing and styling, and encapsulating action buttons in a <div class=\"mt-2 flex items-center justify-between gap-6\">. This is done by
+          calling the <.form> component internally, thereby streamlining the presentation and organization of forms with minimal manual HTML structuring.
+        ") %>
+      </.note>
     </div>
     <!-- end hiding from live code -->
     """
