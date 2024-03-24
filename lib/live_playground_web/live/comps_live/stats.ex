@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.CopmsLive.Stats do
     <.header class="mb-6">
       Stats
       <:subtitle>
-        How to use Stats component
+        How to Display Statistical Data Cards
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def stats">

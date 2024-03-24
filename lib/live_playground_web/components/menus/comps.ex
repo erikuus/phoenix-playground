@@ -305,7 +305,7 @@ defmodule LivePlaygroundWeb.Menus.Comps do
           %{
             expandable: %{
               id: "slideover",
-              icon: "hero-arrow-right-on-rectangle",
+              icon: "hero-arrow-left-on-rectangle",
               label: "Slideover",
               open:
                 is_active?(current_path, [
@@ -352,41 +352,49 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             ]
           },
           %{
-            label: "Button Link",
-            path: ~p"/button-link",
-            active: is_active?(current_path, ["/button-link"])
-          },
-          %{
+            icon: "hero-exclamation-triangle",
             label: "Alert",
             path: ~p"/alert",
             active: is_active?(current_path, ["/alert"])
           },
           %{
-            label: "Note",
-            path: ~p"/note",
-            active: is_active?(current_path, ["/note"])
-          },
-          %{
-            label: "Simple List",
-            path: ~p"/simple_list",
-            active: is_active?(current_path, ["/simple_list"])
-          },
-          %{
+            icon: "hero-check-circle",
             label: "Steps",
             path: ~p"/steps",
             active: is_active?(current_path, ["/steps"])
           },
           %{
+            icon: "hero-cursor-arrow-rays",
+            label: "Button Link",
+            path: ~p"/button-link",
+            active: is_active?(current_path, ["/button-link"])
+          },
+          %{
+            icon: "hero-light-bulb",
+            label: "Note",
+            path: ~p"/note",
+            active: is_active?(current_path, ["/note"])
+          },
+          %{
+            icon: "hero-bars-4",
+            label: "Simple List",
+            path: ~p"/simple_list",
+            active: is_active?(current_path, ["/simple_list"])
+          },
+          %{
+            icon: "hero-square-3-stack-3d",
             label: "Tabs",
             path: ~p"/tabs",
             active: is_active?(current_path, ["/tabs"])
           },
           %{
+            icon: "hero-squares-2x2",
             label: "Stats",
             path: ~p"/stats",
             active: is_active?(current_path, ["/stats"])
           },
           %{
+            icon: "hero-arrow-path",
             label: "Loading",
             path: ~p"/loading",
             active: is_active?(current_path, ["/loading"])

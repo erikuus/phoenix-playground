@@ -69,7 +69,7 @@ defmodule LivePlaygroundWeb.Menus.Sidebar do
         layout: :comps
       },
       %{
-        icon: "hero-square-3-stack-3d",
+        icon: "hero-check-circle",
         label: "Steps",
         path: ~p"/languages",
         layout: :steps

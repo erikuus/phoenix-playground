@@ -10,7 +10,7 @@ defmodule LivePlaygroundWeb.CompsLive.Tabs do
     <.header class="mb-6">
       Tabs
       <:subtitle>
-        How to use Tabs component
+        How to Display Tabs
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def tabs">

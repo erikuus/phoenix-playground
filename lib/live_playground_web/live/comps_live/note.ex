@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.CompsLive.Note do
     <.header class="mb-6">
       Note
       <:subtitle>
-        How to use Note component
+        How to Display Note
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def note">
@@ -21,8 +21,7 @@ defmodule LivePlaygroundWeb.CompsLive.Note do
     </.header>
     <!-- end hiding from live code -->
     <div class="space-y-2">
-      <.note icon="hero-information-circle"><%= placeholder_sentences(1, true) %></.note>
-      <.note icon="hero-chat-bubble-left-right" class="bg-blue-50"><%= placeholder_sentences(8, true) %></.note>
+      <.note icon="hero-light-bulb"><%= placeholder_sentences(1, true) %></.note>
       <.note icon="hero-bell" class="text-sm text-yellow-900 bg-yellow-50"><%= placeholder_sentences(12, true) %></.note>
     </div>
     <!-- start hiding from live code -->
