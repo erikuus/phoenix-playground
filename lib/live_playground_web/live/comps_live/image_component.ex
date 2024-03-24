@@ -5,8 +5,7 @@ defmodule LivePlaygroundWeb.CompsLive.ImageComponent do
     socket =
       assign(socket,
         images: [],
-        current: 0,
-        playing: false
+        current: 0
       )
 
     {:ok, socket}

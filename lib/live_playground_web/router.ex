@@ -110,6 +110,11 @@ defmodule LivePlaygroundWeb.Router do
       live "/vertical-navigation-showcase", CompsLive.VerticalNavigationShowcase
       live "/slideover", CompsLive.Slideover
       live "/slideover/image", CompsLive.Slideover, :image
+      live "/slideover-basic", CompsLive.SlideoverBasic
+      live "/slideover-subtitle", CompsLive.SlideoverSubtitle
+      live "/slideover-scrollbar", CompsLive.SlideoverScrollbar
+      live "/slideover-red", CompsLive.SlideoverRed
+      live "/slideover-navigate", CompsLive.SlideoverNavigate
       live "/button-link", CompsLive.ButtonLink
       live "/alert", CompsLive.Alert
       live "/note", CompsLive.Note

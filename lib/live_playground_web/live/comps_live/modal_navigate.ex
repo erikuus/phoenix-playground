@@ -23,7 +23,7 @@ defmodule LivePlaygroundWeb.CompsLive.ModalNavigate do
     <.button_link phx-click={show_modal("with-navigate-button")}>
       Show modal
     </.button_link>
-    <.modal id="with-navigate-button" on_confirm={JS.navigate(~p"/slideover")}>
+    <.modal id="with-navigate-button" on_confirm={JS.navigate(~p"/slideover-navigate")}>
       <:title>With navigate button</:title>
       Navigate to slideover
       <:confirm>Go</:confirm>

@@ -303,10 +303,53 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             ]
           },
           %{
-            icon: "hero-arrow-right-on-rectangle",
-            label: "Slideover",
-            path: ~p"/slideover",
-            active: is_active?(current_path, ["/slideover"])
+            expandable: %{
+              id: "slideover",
+              icon: "hero-arrow-right-on-rectangle",
+              label: "Slideover",
+              open:
+                is_active?(current_path, [
+                  "/slideover-basic",
+                  "/slideover-subtitle",
+                  "/slideover-scrollbar",
+                  "/slideover-red",
+                  "/slideover-navigate",
+                  "/slideover",
+                  "/slideover/image"
+                ])
+            },
+            expandable_items: [
+              %{
+                label: "Slideover Basics",
+                path: ~p"/slideover-basic",
+                active: is_active?(current_path, ["/slideover-basic"])
+              },
+              %{
+                label: "Slideover with Subtitle",
+                path: ~p"/slideover-subtitle",
+                active: is_active?(current_path, ["/slideover-subtitle"])
+              },
+              %{
+                label: "Slideover with Scrollbar",
+                path: ~p"/slideover-scrollbar",
+                active: is_active?(current_path, ["/slideover-scrollbar"])
+              },
+              %{
+                label: "Slideover in Red",
+                path: ~p"/slideover-red",
+                active: is_active?(current_path, ["/slideover-red"])
+              },
+              %{
+                label: "Slideover with Navigate",
+                path: ~p"/slideover-navigate",
+                active: is_active?(current_path, ["/slideover-navigate"])
+              },
+              %{
+                label: "Slideover with Component",
+                path: ~p"/slideover",
+                active: is_active?(current_path, ["/slideover", "/slideover/image"])
+              }
+            ]
           },
           %{
             label: "Button Link",
