@@ -118,8 +118,9 @@ defmodule LivePlaygroundWeb.Router do
       live "/button-link", CompsLive.ButtonLink
       live "/alert", CompsLive.Alert
       live "/note", CompsLive.Note
-      live "/simple_list", CompsLive.SimpleList
-      live "/steps", CompsLive.Steps
+      live "/simple-list", CompsLive.SimpleList
+      live "/steps-navigation", CompsLive.StepsNavigation
+      live "/steps-progress", CompsLive.StepsProgress
       live "/tabs", CompsLive.Tabs
       live "/tabs-demo", CompsLive.TabsDemo
       live "/stats", CopmsLive.Stats

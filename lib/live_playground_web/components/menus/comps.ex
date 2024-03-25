@@ -352,16 +352,28 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             ]
           },
           %{
-            icon: "hero-exclamation-triangle",
-            label: "Alert",
-            path: ~p"/alert",
-            active: is_active?(current_path, ["/alert"])
-          },
-          %{
-            icon: "hero-check-circle",
-            label: "Steps",
-            path: ~p"/steps",
-            active: is_active?(current_path, ["/steps"])
+            expandable: %{
+              id: "steps",
+              icon: "hero-check-circle",
+              label: "Steps",
+              open:
+                is_active?(current_path, [
+                  "/steps-navigation",
+                  "/steps-progress"
+                ])
+            },
+            expandable_items: [
+              %{
+                label: "Step Navigation",
+                path: ~p"/steps-navigation",
+                active: is_active?(current_path, ["/steps-navigation"])
+              },
+              %{
+                label: "Step Progress",
+                path: ~p"/steps-progress",
+                active: is_active?(current_path, ["/steps-progress"])
+              }
+            ]
           },
           %{
             icon: "hero-cursor-arrow-rays",
@@ -369,6 +381,12 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             path: ~p"/button-link",
             active: is_active?(current_path, ["/button-link"])
           },
+          %{
+            icon: "hero-exclamation-triangle",
+            label: "Alert",
+            path: ~p"/alert",
+            active: is_active?(current_path, ["/alert"])
+          },          
           %{
             icon: "hero-light-bulb",
             label: "Note",
@@ -378,8 +396,8 @@ defmodule LivePlaygroundWeb.Menus.Comps do
           %{
             icon: "hero-bars-4",
             label: "Simple List",
-            path: ~p"/simple_list",
-            active: is_active?(current_path, ["/simple_list"])
+            path: ~p"/simple-list",
+            active: is_active?(current_path, ["/simple-list"])
           },
           %{
             icon: "hero-square-3-stack-3d",
