@@ -1,17 +1,13 @@
-defmodule LivePlaygroundWeb.CompsLive.VerticalNavigationShowcase do
+defmodule LivePlaygroundWeb.CompsLive.VerticalNavigationEnhanced do
   use LivePlaygroundWeb, :live_view
-
-  def mount(_params, _session, socket) do
-    {:ok, socket}
-  end
 
   def render(assigns) do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Full Functionality
+      Enhanced Navigation
       <:subtitle>
-        How to utilize the full functionality of the Vertical Navigation Component
+        How to Combine Sectioned and Expandable Elements for Optimal Navigation
       </:subtitle>
       <:actions class="flex-col space-y-2 items-end">
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def vertical_navigation">
@@ -66,7 +62,7 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigationShowcase do
                   },
                   %{
                     label: "Full Functionality",
-                    path: ~p"/vertical-navigation-showcase",
+                    path: ~p"/vertical-navigation-enhanced",
                     active: false
                   }
                 ]
@@ -78,7 +74,7 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigationShowcase do
     </div>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <.code_block filename="lib/live_playground_web/live/comps_live/vertical_navigation_showcase.ex" />
+      <.code_block filename="lib/live_playground_web/live/comps_live/vertical_navigation_enhanced.ex" />
       <.note icon="hero-information-circle">
         It would be helpful for you to look into how the vertical navigation component works in this playground.
         The vertical navigation is part of the

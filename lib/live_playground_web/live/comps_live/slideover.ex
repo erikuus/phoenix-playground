@@ -1,10 +1,6 @@
 defmodule LivePlaygroundWeb.CompsLive.Slideover do
   use LivePlaygroundWeb, :live_view
 
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, :slideover, nil)}
-  end
-
   def handle_params(_params, _url, socket) do
     {:noreply, socket}
   end

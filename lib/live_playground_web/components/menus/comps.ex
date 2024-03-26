@@ -276,7 +276,7 @@ defmodule LivePlaygroundWeb.Menus.Comps do
                   "/vertical-navigation",
                   "/vertical-navigation-sections",
                   "/vertical-navigation-expandable",
-                  "/vertical-navigation-showcase"
+                  "/vertical-navigation-enhanced"
                 ])
             },
             expandable_items: [
@@ -296,9 +296,9 @@ defmodule LivePlaygroundWeb.Menus.Comps do
                 active: is_active?(current_path, ["/vertical-navigation-expandable"])
               },
               %{
-                label: "Full Functionality",
-                path: ~p"/vertical-navigation-showcase",
-                active: is_active?(current_path, ["/vertical-navigation-showcase"])
+                label: "Enhanced Navigation",
+                path: ~p"/vertical-navigation-enhanced",
+                active: is_active?(current_path, ["/vertical-navigation-enhanced"])
               }
             ]
           },

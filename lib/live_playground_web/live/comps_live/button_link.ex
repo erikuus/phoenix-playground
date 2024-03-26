@@ -1,10 +1,6 @@
 defmodule LivePlaygroundWeb.CompsLive.ButtonLink do
   use LivePlaygroundWeb, :live_view
 
-  def mount(_params, _session, socket) do
-    {:ok, socket}
-  end
-
   def handle_params(_params, _url, socket) do
     {:noreply, socket}
   end
@@ -25,8 +21,8 @@ defmodule LivePlaygroundWeb.CompsLive.ButtonLink do
     </.header>
     <!-- end hiding from live code -->
     <div class="flex flex-col space-x-0 space-y-3 sm:flex-row sm:space-x-3 sm:space-y-0">
-      <.button_link navigate={~p"/button-link"}>Default</.button_link>
-      <.button_link patch={~p"/button-link"} kind={:secondary}>Secondary</.button_link>
+      <.button_link patch={~p"/button-link"}>Default</.button_link>
+      <.button_link navigate={~p"/button-link"} kind={:secondary}>Secondary</.button_link>
       <.button_link href="/button-link" kind={:dangerous}>Dangerous</.button_link>
     </div>
     <!-- start hiding from live code -->

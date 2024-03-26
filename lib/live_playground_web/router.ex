@@ -107,7 +107,7 @@ defmodule LivePlaygroundWeb.Router do
       live "/vertical-navigation", CompsLive.VerticalNavigation
       live "/vertical-navigation-sections", CompsLive.VerticalNavigationSections
       live "/vertical-navigation-expandable", CompsLive.VerticalNavigationExpandable
-      live "/vertical-navigation-showcase", CompsLive.VerticalNavigationShowcase
+      live "/vertical-navigation-enhanced", CompsLive.VerticalNavigationEnhanced
       live "/slideover", CompsLive.Slideover
       live "/slideover/image", CompsLive.Slideover, :image
       live "/slideover-basic", CompsLive.SlideoverBasic

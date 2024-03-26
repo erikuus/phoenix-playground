@@ -7,7 +7,7 @@ defmodule LivePlaygroundWeb.CompsLive.Alert do
     <.header class="mb-6">
       Alert
       <:subtitle>
-        How to use Alert component
+        How to Display Alert
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def alert">

@@ -1,10 +1,6 @@
 defmodule LivePlaygroundWeb.CompsLive.SlideoverNavigate do
   use LivePlaygroundWeb, :live_view
 
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, :slideover, nil)}
-  end
-
   def render(assigns) do
     ~H"""
     <!-- start hiding from live code -->
