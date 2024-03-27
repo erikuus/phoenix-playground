@@ -6,7 +6,7 @@
   <:mobile_menu>
     <Comps.menu id="comps-mobile-menu" current_path={@current_path} />
   </:mobile_menu>
-  <:desktop_menu>
+  <:desktop_menu hook="PreserveScroll">
     <Comps.menu id="comps-destop-menu" current_path={@current_path} />
   </:desktop_menu>
   <%= @inner_content %>

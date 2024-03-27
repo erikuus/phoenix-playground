@@ -6,7 +6,7 @@
   <:mobile_menu>
     <Recipes.menu id="recipes-mobile-menu" current_path={@current_path} />
   </:mobile_menu>
-  <:desktop_menu>
+  <:desktop_menu hook="PreserveScroll">
     <Recipes.menu id="recipes-desktop-menu" current_path={@current_path} />
   </:desktop_menu>
   <%= @inner_content %>
