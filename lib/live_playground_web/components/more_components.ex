@@ -25,9 +25,15 @@ defmodule LivePlaygroundWeb.MoreComponents do
         <%= @inner_content %>
       </.multi_column_layout>
   """
+  attr :id, :string, default: "multi-column-layout"
+
   slot :narrow_sidebar, required: true
   slot :mobile_menu
-  slot :desktop_menu
+
+  slot :desktop_menu do
+    attr :hook, :string
+  end
+
   slot :inner_block
 
   def multi_column_layout(assigns) do
@@ -72,8 +78,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
       <div class="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
         <div class="flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white">
-          <div class="flex flex-1 flex-col overflow-y-auto">
-            <%= render_slot(@desktop_menu) %>
+          <div id={"#{@id}-desktop-menu"} :for={desktop_menu <- @desktop_menu} phx-hook={Map.get(desktop_menu, :hook, nil)} class="flex flex-1 flex-col overflow-y-auto">
+            <%= render_slot(desktop_menu) %>
           </div>
         </div>
       </div>
