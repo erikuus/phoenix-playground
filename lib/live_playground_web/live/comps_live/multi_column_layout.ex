@@ -29,6 +29,11 @@ defmodule LivePlaygroundWeb.CompsLive.MultiColumnLayout do
         <.github_link filename="lib/live_playground_web/components/layouts/recipes.html.heex">layout</.github_link>,
         <.github_link filename="lib/live_playground_web/router.ex">router</.github_link>.
       </.note>
+      <.note icon="hero-information-circle">
+        An interesting touch to the desktop menu is
+        <.github_link filename="assets/js/hooks/preserve-scroll.js">a JavaScript hook</.github_link>
+        designed to maintain the left menu's scroll position as you move between LiveViews, making navigation feel seamless.
+      </.note>
     </div>
     """
   end
