@@ -78,7 +78,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
       <div class="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
         <div class="flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white">
-          <div id={"#{@id}-desktop-menu"} :for={desktop_menu <- @desktop_menu} phx-hook={Map.get(desktop_menu, :hook, nil)} class="flex flex-1 flex-col overflow-y-auto">
+          <div id={"#{@id}-desktop-menu"} :for={desktop_menu <- @desktop_menu} phx-hook={Map.get(desktop_menu, :hook, nil)} class="flex flex-1 flex-col overflow-y-auto pb-4">
             <%= render_slot(desktop_menu) %>
           </div>
         </div>
