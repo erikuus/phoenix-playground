@@ -719,6 +719,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   ## Example
 
       <.pagination
+        event="select-page"
         page={@page}
         per_page={@per_page}
         count_all={@count}

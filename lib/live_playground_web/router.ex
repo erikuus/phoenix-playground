@@ -125,6 +125,7 @@ defmodule LivePlaygroundWeb.Router do
       live "/tabs-demo", CompsLive.TabsDemo
       live "/stats", CopmsLive.Stats
       live "/loading", CompsLive.Loading
+      live "/pagination", CompsLive.Pagination
     end
   end
 

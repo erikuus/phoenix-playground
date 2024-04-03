@@ -386,7 +386,7 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             label: "Alert",
             path: ~p"/alert",
             active: is_active?(current_path, ["/alert"])
-          },          
+          },
           %{
             icon: "hero-light-bulb",
             label: "Note",
@@ -416,6 +416,12 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             label: "Loading",
             path: ~p"/loading",
             active: is_active?(current_path, ["/loading"])
+          },
+          %{
+            icon: "hero-arrows-right-left",
+            label: "Pagination",
+            path: ~p"/pagination",
+            active: is_active?(current_path, ["/pagination"])
           }
         ]
       }
