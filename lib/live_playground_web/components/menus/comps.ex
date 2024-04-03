@@ -39,7 +39,7 @@ defmodule LivePlaygroundWeb.Menus.Comps do
           %{
             expandable: %{
               id: "flash",
-              icon: "hero-rectangle-stack",
+              icon: "hero-chat-bubble-bottom-center-text",
               label: "Flash",
               open:
                 is_active?(current_path, [
@@ -172,7 +172,7 @@ defmodule LivePlaygroundWeb.Menus.Comps do
           %{
             expandable: %{
               id: "input",
-              icon: "hero-pencil-square",
+              icon: "hero-square-2-stack",
               label: "Input",
               open:
                 is_active?(current_path, [
@@ -422,6 +422,12 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             label: "Pagination",
             path: ~p"/pagination",
             active: is_active?(current_path, ["/pagination"])
+          },
+          %{
+            icon: "hero-pencil-square",
+            label: "Editable",
+            path: ~p"/editable",
+            active: is_active?(current_path, ["/editable"])
           }
         ]
       }

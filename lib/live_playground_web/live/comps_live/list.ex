@@ -13,7 +13,7 @@ defmodule LivePlaygroundWeb.CompsLive.List do
     <.header class="mb-6">
       List
       <:subtitle>
-        How to use List component
+        How to use List Component
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def list">
