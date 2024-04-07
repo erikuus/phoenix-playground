@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.CompsLive.InputError do
     <.header class="mb-6">
       Error
       <:subtitle>
-        How to Display Error
+        Handling Errors in LiveView Inputs
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def error">

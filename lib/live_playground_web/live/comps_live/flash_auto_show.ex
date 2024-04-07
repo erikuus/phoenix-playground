@@ -7,7 +7,7 @@ defmodule LivePlaygroundWeb.CompsLive.FlashAutoShow do
     <.header class="mb-6">
       Flash Auto Show
       <:subtitle>
-        How to Display the Flash Message Upon Rendering in LiveView
+        Configuring Flash Messages for Automatic Display in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def flash">

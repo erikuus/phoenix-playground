@@ -24,7 +24,7 @@ defmodule LivePlaygroundWeb.CompsLive.InputCheckbox do
     <.header class="mb-6">
       Checkbox
       <:subtitle>
-        How to Display Checkbox
+        Using Checkboxes in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def input">

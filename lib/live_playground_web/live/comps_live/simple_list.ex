@@ -7,7 +7,7 @@ defmodule LivePlaygroundWeb.CompsLive.SimpleList do
     <.header class="mb-6">
       Simple List
       <:subtitle>
-       How to Display Simple List
+       Creating Simple Lists in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def simple_list">

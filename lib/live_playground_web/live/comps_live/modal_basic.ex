@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.CompsLive.ModalBasic do
     <.header class="mb-6">
       Modal Basics
       <:subtitle>
-        How to Display Modal
+        Using Basic Modals in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def modal">

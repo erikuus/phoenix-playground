@@ -24,7 +24,7 @@ defmodule LivePlaygroundWeb.CompsLive.InputTextarea do
     <.header class="mb-6">
       Textarea
       <:subtitle>
-        How to Display Textarea
+        Integrating Textareas in LiveView
       </:subtitle>
       <:actions class="flex-col space-y-2 items-end">
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def input">

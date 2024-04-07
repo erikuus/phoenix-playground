@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.CompsLive.Slideover do
     <.header class="mb-6">
       Slideover with Live Component
       <:subtitle>
-        How to Display Live Component in Slideover
+        Incorporating Live Components in Slideovers
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def slideover">

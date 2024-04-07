@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.CompsLive.ModalRed do
     <.header class="mb-6">
       Modal in Red
       <:subtitle>
-        How to Create a Modal with Red Icon and Button
+        Designing Red-Themed Modals in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def modal">

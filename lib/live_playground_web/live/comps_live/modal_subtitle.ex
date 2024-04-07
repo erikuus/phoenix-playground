@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.CompsLive.ModalSubtitle do
     <.header class="mb-6">
       Modal with Subtitle
       <:subtitle>
-        How to Add Subtitle to Modal
+        Adding Subtitles to Modals in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def modal">

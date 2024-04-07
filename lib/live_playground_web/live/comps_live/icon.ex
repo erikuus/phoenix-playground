@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.CompsLive.Icon do
     <.header class="mb-6">
       Icon
       <:subtitle>
-        How to Display Icon
+        Incorporating Icons in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def icon">

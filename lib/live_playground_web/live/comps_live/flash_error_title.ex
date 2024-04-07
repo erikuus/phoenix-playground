@@ -7,7 +7,7 @@ defmodule LivePlaygroundWeb.CompsLive.FlashErrorTitle do
     <.header class="mb-6">
       Flash Error with Title
       <:subtitle>
-        How to Display the Flash Message as an Error
+        Showing Error Flash Messages in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def flash">

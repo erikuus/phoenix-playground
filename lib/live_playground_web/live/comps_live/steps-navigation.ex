@@ -15,7 +15,7 @@ defmodule LivePlaygroundWeb.CompsLive.StepsNavigation do
     <.header class="mb-6">
       Step Navigation
       <:subtitle>
-        How to Implement the Steps Component for Navigation
+        Navigating Steps in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def steps">

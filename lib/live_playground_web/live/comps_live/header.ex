@@ -10,7 +10,7 @@ defmodule LivePlaygroundWeb.CompsLive.Header do
     <.header class="mb-6">
       Header
       <:subtitle>
-        How to use Header Component
+        Implementing Headers in LiveView
       </:subtitle>
 
       <:actions>

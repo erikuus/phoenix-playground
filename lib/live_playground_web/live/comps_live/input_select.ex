@@ -26,7 +26,7 @@ defmodule LivePlaygroundWeb.CompsLive.InputSelect do
     <.header class="mb-6">
       Select
       <:subtitle>
-        How to Display Select Input
+        Creating Select Dropdowns in LiveView
       </:subtitle>
       <:actions class="flex-col space-y-2 items-end">
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def input">

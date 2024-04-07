@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.CompsLive.Modal do
     <.header class="mb-6">
       Modal with Live Component
       <:subtitle>
-        How to Display Live Component in Modal
+        Embedding Live Components in Modals
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def modal">

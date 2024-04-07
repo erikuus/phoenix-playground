@@ -22,7 +22,7 @@ defmodule LivePlaygroundWeb.CompsLive.TableStream do
     <.header class="mb-6">
       Table with Stream
       <:subtitle>
-        How to Stream Data and Implement Row Actions
+        Streaming Data in LiveView Tables
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def table">

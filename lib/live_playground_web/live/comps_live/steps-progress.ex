@@ -7,7 +7,7 @@ defmodule LivePlaygroundWeb.CompsLive.StepsProgress do
     <.header class="mb-6">
       Step Progress
       <:subtitle>
-        How to Implement the Steps Component for Progress
+        Tracking Progress with Steps in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def steps">

@@ -7,7 +7,7 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigationEnhanced do
     <.header class="mb-6">
       Enhanced Navigation
       <:subtitle>
-        How to Combine Sectioned and Expandable Elements for Optimal Navigation
+        Building Enhanced Vertical Navigation in LiveView
       </:subtitle>
       <:actions class="flex-col space-y-2 items-end">
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def vertical_navigation">

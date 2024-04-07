@@ -376,6 +376,36 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             ]
           },
           %{
+            expandable: %{
+              id: "uploads",
+              icon: "hero-arrow-up-tray",
+              label: "Uploads",
+              open:
+                is_active?(current_path, [
+                  "/uploads-upload-area",
+                  "/uploads-photo-preview-area",
+                  "/circular-progress-bar"
+                ])
+            },
+            expandable_items: [
+              %{
+                label: "Upload Area",
+                path: ~p"/uploads-upload-area",
+                active: is_active?(current_path, ["/uploads-upload-area"])
+              },
+              %{
+                label: "Photo Preview Area",
+                path: ~p"/uploads-photo-preview-area",
+                active: is_active?(current_path, ["/uploads-photo-preview-area"])
+              },
+              %{
+                label: "Circular Progress Bar",
+                path: ~p"/circular-progress-bar",
+                active: is_active?(current_path, ["/circular-progress-bar"])
+              }
+            ]
+          },
+          %{
             icon: "hero-cursor-arrow-rays",
             label: "Button Link",
             path: ~p"/button-link",
@@ -406,18 +436,6 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             active: is_active?(current_path, ["/tabs"])
           },
           %{
-            icon: "hero-squares-2x2",
-            label: "Stats",
-            path: ~p"/stats",
-            active: is_active?(current_path, ["/stats"])
-          },
-          %{
-            icon: "hero-arrow-path",
-            label: "Loading",
-            path: ~p"/loading",
-            active: is_active?(current_path, ["/loading"])
-          },
-          %{
             icon: "hero-arrows-right-left",
             label: "Pagination",
             path: ~p"/pagination",
@@ -428,6 +446,18 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             label: "Editable",
             path: ~p"/editable",
             active: is_active?(current_path, ["/editable"])
+          },
+          %{
+            icon: "hero-squares-2x2",
+            label: "Stats",
+            path: ~p"/stats",
+            active: is_active?(current_path, ["/stats"])
+          },
+          %{
+            icon: "hero-arrow-path",
+            label: "Loading",
+            path: ~p"/loading",
+            active: is_active?(current_path, ["/loading"])
           }
         ]
       }

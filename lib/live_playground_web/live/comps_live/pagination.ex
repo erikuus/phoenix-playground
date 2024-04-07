@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.CompsLive.Pagination do
     <.header class="mb-6">
       Pagination
       <:subtitle>
-        How to Use the Pagination Component
+        Paginating Content in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def pagination">

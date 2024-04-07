@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.CompsLive.SlideoverScrollbar do
     <.header class="mb-6">
       Slideover with Scrollbar
       <:subtitle>
-        How to Add Scrollbar to Slideover
+        Implementing Scrollbars in Slideovers
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def slideover">

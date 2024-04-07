@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.CompsLive.SlideoverBasic do
     <.header class="mb-6">
       Slideover Basics
       <:subtitle>
-        How to Display Slideover
+        Using Basic Slideovers in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def slideover">

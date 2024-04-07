@@ -24,7 +24,7 @@ defmodule LivePlaygroundWeb.CompsLive.InputRadio do
     <.header class="mb-6">
       Radio
       <:subtitle>
-        How to Display Radio Input
+        Working with Radio Buttons in LiveView
       </:subtitle>
       <:actions class="flex-col space-y-2 items-end">
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def input">

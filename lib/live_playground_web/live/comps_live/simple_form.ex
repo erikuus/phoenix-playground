@@ -21,7 +21,7 @@ defmodule LivePlaygroundWeb.CompsLive.SimpleForm do
     <.header class="mb-6">
       Simple Form
       <:subtitle>
-        How to Create Straightforward Web Forms with Minimal Setup Using Simple Form Component
+        Streamlining Web Forms with Simple Form in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def simple_form">

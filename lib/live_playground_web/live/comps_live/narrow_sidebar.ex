@@ -10,7 +10,7 @@ defmodule LivePlaygroundWeb.CompsLive.NarrowSidebar do
     <.header class="mb-6">
       Narrow Sidebar
       <:subtitle>
-        How to use Narrow Sidebar component
+        Implementing a Narrow Sidebar in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def narrow_sidebar">

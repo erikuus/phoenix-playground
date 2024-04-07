@@ -20,7 +20,7 @@ defmodule LivePlaygroundWeb.CompsLive.Editable do
     <.header class="mb-6">
       Editable
       <:subtitle>
-        How to use Editable Component
+        Utilizing Editable Fields in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def editable">

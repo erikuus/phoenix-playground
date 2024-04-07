@@ -7,7 +7,7 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigationExpandable do
     <.header class="mb-6">
       Expandable Navigation
       <:subtitle>
-        How to use Vertical Navigation component for Expandable Navigation
+        Designing Expandable Vertical Navigation in LiveView
       </:subtitle>
       <:actions class="flex-col space-y-2 items-end">
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def vertical_navigation">

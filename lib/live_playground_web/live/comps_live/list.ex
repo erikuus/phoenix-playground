@@ -13,7 +13,7 @@ defmodule LivePlaygroundWeb.CompsLive.List do
     <.header class="mb-6">
       List
       <:subtitle>
-        How to use List Component
+        Visualizing Database Attributes and Values in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def list">

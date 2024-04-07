@@ -7,7 +7,7 @@ defmodule LivePlaygroundWeb.CompsLive.FlashTextOnly do
     <.header class="mb-6">
       Flash with Text Only
       <:subtitle>
-        How to Display the Flash Message without a Title
+        Simplifying Flash Messages in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def flash">

@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.CompsLive.Loading do
     <.header class="mb-6">
       Loading
       <:subtitle>
-        How to Display Loading Spinner
+        Adding Loading Indicators in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def loading">

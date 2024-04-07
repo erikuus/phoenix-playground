@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.CompsLive.SlideoverSubtitle do
     <.header class="mb-6">
       Slideover with Subtitle
       <:subtitle>
-        How to Add Subtitle to Slideover
+        Adding Subtitles to Slideovers in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def slideover">

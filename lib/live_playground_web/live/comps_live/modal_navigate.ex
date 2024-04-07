@@ -7,7 +7,7 @@ defmodule LivePlaygroundWeb.CompsLive.ModalNavigate do
     <.header class="mb-6">
       Modal with Navigation
       <:subtitle>
-        How to Add Navigation Functionality to Modal
+        Navigating through Modals in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def modal">

@@ -14,7 +14,7 @@ defmodule LivePlaygroundWeb.CompsLive.TableAction do
     <.header class="mb-6">
       Table With Actions
       <:subtitle>
-        How to Add Action Links to a Table
+        Adding Actions to Tables in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def table">

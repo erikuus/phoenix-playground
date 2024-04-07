@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.CompsLive.InputLabel do
     <.header class="mb-6">
       Label
       <:subtitle>
-        How to Display Label
+        Labeling Inputs in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def label">

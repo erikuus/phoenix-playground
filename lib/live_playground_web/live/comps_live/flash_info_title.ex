@@ -7,7 +7,7 @@ defmodule LivePlaygroundWeb.CompsLive.FlashInfoTitle do
     <.header class="mb-6">
       Flash Info with Title
       <:subtitle>
-        How to Display the Flash Message as an Information
+        Presenting Informational Flash Messages in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def flash">

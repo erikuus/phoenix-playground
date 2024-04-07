@@ -24,7 +24,7 @@ defmodule LivePlaygroundWeb.CompsLive.InputTextbox do
     <.header class="mb-6">
       Textbox
       <:subtitle>
-        How to Display Textbox
+        Utilizing Textboxes in LiveView
       </:subtitle>
       <:actions class="flex-col space-y-2 items-end">
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def input">

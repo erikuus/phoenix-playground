@@ -10,7 +10,7 @@ defmodule LivePlaygroundWeb.CompsLive.Tabs do
     <.header class="mb-6">
       Tabs
       <:subtitle>
-        How to Display Tabs
+        Organizing Content with Tabs in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def tabs">

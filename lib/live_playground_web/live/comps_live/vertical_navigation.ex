@@ -7,7 +7,7 @@ defmodule LivePlaygroundWeb.CompsLive.VerticalNavigation do
     <.header class="mb-6">
       Single Level Navigation
       <:subtitle>
-        How to use Vertical Navigation component for Single Level Navigation
+        Implementing Single Level Vertical Navigation in LiveView
       </:subtitle>
       <:actions class="flex-col space-y-2 items-end">
         <.goto_definition

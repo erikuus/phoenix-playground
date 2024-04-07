@@ -7,7 +7,7 @@ defmodule LivePlaygroundWeb.CompsLive.FlashPutFlash do
     <.header class="mb-6">
       Flash Using Put Flash
       <:subtitle>
-        How to Display the Flash Message Using an Event and Put Flash
+        Triggering Flash Messages with Events in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def flash">

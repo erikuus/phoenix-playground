@@ -7,7 +7,7 @@ defmodule LivePlaygroundWeb.CompsLive.FlashErrorWoClose do
     <.header class="mb-6">
       Flash without Close Button
       <:subtitle>
-        How to Display the Flash Message without a Close Button
+        Displaying Flash Messages without Close Button in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def flash">

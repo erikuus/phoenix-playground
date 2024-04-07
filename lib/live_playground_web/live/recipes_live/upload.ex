@@ -30,7 +30,6 @@ defmodule LivePlaygroundWeb.RecipesLive.Upload do
       <:subtitle>
         How to create file upload controls and previews in LiveView
       </:subtitle>
-
       <:actions>
         <.link navigate={~p"/upload-server"}>
           See also: File Uploads to Server <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />

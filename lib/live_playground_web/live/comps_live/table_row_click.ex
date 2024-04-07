@@ -14,7 +14,7 @@ defmodule LivePlaygroundWeb.CompsLive.TableRowClick do
     <.header class="mb-6">
       Table with Row Click
       <:subtitle>
-        How to Make Table Rows Clickable
+        Making Table Rows Clickable in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def table">

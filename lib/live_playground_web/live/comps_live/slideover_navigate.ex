@@ -7,7 +7,7 @@ defmodule LivePlaygroundWeb.CompsLive.SlideoverNavigate do
     <.header class="mb-6">
       Slideover with Navigation
       <:subtitle>
-        How to Add Navigation Functionality to Slideover
+        Adding Navigation to Slideovers in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def slideover">

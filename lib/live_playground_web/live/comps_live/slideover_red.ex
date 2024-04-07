@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.CompsLive.SlideoverRed do
     <.header class="mb-6">
       Slideover in Red
       <:subtitle>
-        How to Create a Slideover with Red Button
+        Creating Red-Themed Slideovers in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def slideover">

@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.CompsLive.ModalIcon do
     <.header class="mb-6">
       Modal with Icon
       <:subtitle>
-        How to Add Icon to Modal
+        Enhancing Modals with Icons in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/core_components.ex" definition="def modal">
