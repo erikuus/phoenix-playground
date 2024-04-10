@@ -22,6 +22,7 @@ import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 
+import CopyToClipboard from "./hooks/copy-clipboard"
 import PreserveScroll from "./hooks/preserve-scroll"
 import IframeResize from "./hooks/iframe-resize"
 import MapDataset from "./hooks/map-dataset"
@@ -30,6 +31,7 @@ import MapHandleEvents from "./hooks/map-handle-events"
 import S3 from "./uploaders/S3"
 
 let Hooks = {
+  CopyToClipboard: CopyToClipboard,
   PreserveScroll: PreserveScroll,
   IframeResize: IframeResize,
   MapDataset: MapDataset,

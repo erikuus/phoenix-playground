@@ -8,7 +8,11 @@ defmodule LivePlaygroundWeb.DemoHelpers do
   use Phoenix.Component
 
   @doc """
-  Display resizable iframe
+  Creates a resizable iframe component within a LiveView.
+
+  ### Example
+
+      <.resizable_iframe id="my_iframe" src="https://www.example.com" hook="IframeResize" />
   """
   attr :id, :string, required: true
   attr :src, :string, required: true
@@ -123,7 +127,9 @@ defmodule LivePlaygroundWeb.DemoHelpers do
   def code_block(%{filename: filename, from: from, to: to} = assigns) do
     assigns =
       assigns
-      |> assign_new(:formatted_filename, fn -> format_filename(filename) |> raw() end)
+      |> assign_new(:id, fn -> String.replace(assigns.filename, "/", "-") end)
+      |> assign_new(:dirname, fn -> Path.dirname(assigns.filename) end)
+      |> assign_new(:basename, fn -> Path.basename(assigns.filename) end)
       |> assign_new(:highlighted_code, fn ->
         read_file(filename)
         |> show_marked(from, to, Map.get(assigns, :elixir, true))
@@ -134,12 +140,61 @@ defmodule LivePlaygroundWeb.DemoHelpers do
 
     ~H"""
     <div class="rounded-lg bg-white border border-gray-200 text-sm xl:text-base">
-      <div class="overflow-hidden text-ellipsis px-4 py-5 sm:px-6 text-gray-400 font-mono">
-        <%= @formatted_filename %>
+      <div class="overflow-hidden text-ellipsis px-4 py-3 sm:px-6 text-gray-400 font-mono">
+        <div class="flex justify-between items-center">
+          <div>
+            <span class="hidden md:inline"><%= @dirname %>/</span><%= @basename %>
+          </div>
+          <div>
+            <a
+              target="_blank"
+              href={"https://github.com/erikuus/phoenix-playground/tree/main/#{@dirname}/#{@basename}"}
+              class="float-right inline-block rounded-full p-2 text-gray-400 hover:bg-gray-200"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-4 h-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+                />
+              </svg>
+            </a>
+            <.link
+              id={"#{@id}-link"}
+              phx-hook="CopyToClipboard"
+              data-target-div={@id}
+              class="float-right inline-block rounded-full p-2 text-gray-400 hover:bg-gray-200"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-4 h-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5A3.375 3.375 0 0 0 6.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0 0 15 2.25h-1.5a2.251 2.251 0 0 0-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 0 0-9-9Z"
+                />
+              </svg>
+            </.link>
+          </div>
+        </div>
       </div>
       <div class="overflow-auto overscroll-auto bg-[#f8f8f8] px-4 py-5 sm:p-6">
         <div class="text-lg text-gray-400 tracking-widest -mt-2 mb-3">...</div>
-        <%= @highlighted_code %>
+        <div id={@id}>
+          <%= @highlighted_code %>
+        </div>
         <div class="text-lg text-gray-400 tracking-widest mb-1">...</div>
       </div>
     </div>
@@ -149,7 +204,9 @@ defmodule LivePlaygroundWeb.DemoHelpers do
   def code_block(assigns) do
     assigns =
       assigns
-      |> assign_new(:formatted_filename, fn -> format_filename(assigns.filename) |> raw() end)
+      |> assign_new(:id, fn -> String.replace(assigns.filename, "/", "-") end)
+      |> assign_new(:dirname, fn -> Path.dirname(assigns.filename) end)
+      |> assign_new(:basename, fn -> Path.basename(assigns.filename) end)
       |> assign_new(:highlighted_code, fn ->
         read_file(assigns.filename)
         |> hide_marked()
@@ -159,30 +216,59 @@ defmodule LivePlaygroundWeb.DemoHelpers do
 
     ~H"""
     <div class="rounded-lg bg-white border border-gray-200 text-sm xl:text-base">
-      <div class="overflow-hidden text-ellipsis px-4 py-5 sm:px-6 text-gray-400 font-mono">
-        <%= @formatted_filename %>
+      <div class="overflow-hidden text-ellipsis px-4 py-3 sm:px-6 text-gray-400 font-mono">
+        <div class="flex justify-between items-center">
+          <div>
+            <span class="hidden md:inline"><%= @dirname %>/</span><%= @basename %>
+          </div>
+          <div>
+            <a
+              target="_blank"
+              href={"https://github.com/erikuus/phoenix-playground/tree/main/#{@dirname}/#{@basename}"}
+              class="float-right inline-block rounded-full p-2 text-gray-400 hover:bg-gray-200"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-4 h-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+                />
+              </svg>
+            </a>
+            <.link
+              id={"#{@id}-link"}
+              phx-hook="CopyToClipboard"
+              data-target-div={@id}
+              class="float-right inline-block rounded-full p-2 text-gray-400 hover:bg-gray-200"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-4 h-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5A3.375 3.375 0 0 0 6.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0 0 15 2.25h-1.5a2.251 2.251 0 0 0-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 0 0-9-9Z"
+                />
+              </svg>
+            </.link>
+          </div>
+        </div>
       </div>
-      <div class="overflow-auto overscroll-auto bg-[#f8f8f8] px-4 py-5 sm:p-6">
+      <div id={@id} class="overflow-auto overscroll-auto bg-[#f8f8f8] px-4 py-5 sm:p-6">
         <%= @highlighted_code %>
       </div>
-    </div>
-    """
-  end
-
-  defp format_filename(filename) do
-    dirname = Path.dirname(filename)
-    basename = Path.basename(filename)
-
-    """
-    <div class="flex justify-between items-center">
-      <div>
-        <span class="hidden md:inline">#{dirname}/</span>#{basename}
-      </div>
-      <a target="_blank" href="https://github.com/erikuus/phoenix-playground/tree/main/#{dirname}/#{basename}">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-        </svg>
-      </a>
     </div>
     """
   end
