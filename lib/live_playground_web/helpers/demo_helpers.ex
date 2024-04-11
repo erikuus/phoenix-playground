@@ -137,7 +137,7 @@ defmodule LivePlaygroundWeb.DemoHelpers do
       <div class="overflow-hidden text-ellipsis px-4 py-3 sm:px-6 text-gray-400 font-mono">
         <div class="flex justify-between items-center">
           <div>
-            <%= responsive_filename(assigns.filename) %>
+            <%= responsive_filename(assigns.filename) |> raw() %>
           </div>
           <div class="flex">
             <.link
@@ -181,7 +181,7 @@ defmodule LivePlaygroundWeb.DemoHelpers do
       <div class="overflow-hidden text-ellipsis px-4 py-3 sm:px-6 text-gray-400 font-mono">
         <div class="flex justify-between items-center">
           <div>
-            <%= responsive_filename(assigns.filename) %>
+            <%= responsive_filename(assigns.filename) |> raw() %>
           </div>
           <div class="flex">
             <.link
