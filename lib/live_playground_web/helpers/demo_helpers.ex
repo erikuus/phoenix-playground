@@ -134,29 +134,29 @@ defmodule LivePlaygroundWeb.DemoHelpers do
 
     ~H"""
     <div class="rounded-lg bg-white border border-gray-200 text-sm xl:text-base">
-      <div class="overflow-hidden text-ellipsis px-4 py-3 sm:px-6 text-gray-400 font-mono">
-        <div class="flex justify-between items-center">
-          <div>
-            <%= responsive_filename(assigns.filename) |> raw() %>
-          </div>
-          <div class="flex">
-            <.link
-              id={"#{@id}-link"}
-              phx-hook="CopyToClipboard"
-              data-target-div={@id}
-              class="flex rounded-full p-2 text-gray-400 hover:bg-gray-200"
-            >
-              <.icon name="hero-clipboard-document" class="w-4 h-4" />
-            </.link>
-            <a target="_blank" href={github_url(assigns.filename)} class="flex rounded-full p-2 text-gray-400 hover:bg-gray-200">
-              <.icon name="hero-arrow-top-right-on-square" class="w-4 h-4" />
-            </a>
-          </div>
+      <div class="flex justify-between items-center px-4 py-3 sm:px-6 text-gray-400">
+        <div class="overflow-hidden text-ellipsis font-mono">
+          <%= responsive_filename(assigns.filename) |> raw() %>
+        </div>
+        <div class="flex items-center">
+          <span id={"#{@id}-message"} class="text-sm mr-2"></span>
+          <.link
+            id={"#{@id}-link"}
+            phx-hook="CopyToClipboard"
+            data-target-container={"#{@id}-target"}
+            data-message-container={"#{@id}-message"}
+            class="flex rounded-full p-2 hover:bg-gray-200"
+          >
+            <.icon name="hero-clipboard-document" class="w-4 h-4" />
+          </.link>
+          <a target="_blank" href={github_url(assigns.filename)} class="flex rounded-full p-2 hover:bg-gray-200">
+            <.icon name="hero-arrow-top-right-on-square" class="w-4 h-4" />
+          </a>
         </div>
       </div>
       <div class="overflow-auto overscroll-auto bg-[#f8f8f8] px-4 py-5 sm:p-6">
         <div class="text-lg text-gray-400 tracking-widest -mt-2 mb-3">...</div>
-        <div id={@id}>
+        <div id={"#{@id}-target"}>
           <%= @highlighted_code %>
         </div>
         <div class="text-lg text-gray-400 tracking-widest mb-1">...</div>
@@ -178,27 +178,27 @@ defmodule LivePlaygroundWeb.DemoHelpers do
 
     ~H"""
     <div class="rounded-lg bg-white border border-gray-200 text-sm xl:text-base">
-      <div class="overflow-hidden text-ellipsis px-4 py-3 sm:px-6 text-gray-400 font-mono">
-        <div class="flex justify-between items-center">
-          <div>
-            <%= responsive_filename(assigns.filename) |> raw() %>
-          </div>
-          <div class="flex">
-            <.link
-              id={"#{@id}-link"}
-              phx-hook="CopyToClipboard"
-              data-target-div={@id}
-              class="flex rounded-full p-2 text-gray-400 hover:bg-gray-200"
-            >
-              <.icon name="hero-clipboard-document" class="w-4 h-4" />
-            </.link>
-            <a target="_blank" href={github_url(assigns.filename)} class="flex rounded-full p-2 text-gray-400 hover:bg-gray-200">
-              <.icon name="hero-arrow-top-right-on-square" class="w-4 h-4" />
-            </a>
-          </div>
+      <div class="flex justify-between items-center px-4 py-3 sm:px-6 text-gray-400">
+        <div class="overflow-hidden text-ellipsis font-mono">
+          <%= responsive_filename(assigns.filename) |> raw() %>
+        </div>
+        <div class="flex items-center">
+          <span id={"#{@id}-message"} class="text-sm mr-2"></span>
+          <.link
+            id={"#{@id}-link"}
+            phx-hook="CopyToClipboard"
+            data-target-container={"#{@id}-target"}
+            data-message-container={"#{@id}-message"}
+            class="flex rounded-full p-2 hover:bg-gray-200"
+          >
+            <.icon name="hero-clipboard-document" class="w-4 h-4" />
+          </.link>
+          <a target="_blank" href={github_url(assigns.filename)} class="flex rounded-full p-2 hover:bg-gray-200">
+            <.icon name="hero-arrow-top-right-on-square" class="w-4 h-4" />
+          </a>
         </div>
       </div>
-      <div id={@id} class="overflow-auto overscroll-auto bg-[#f8f8f8] px-4 py-5 sm:p-6">
+      <div id={"#{@id}-target"} class="overflow-auto overscroll-auto bg-[#f8f8f8] px-4 py-5 sm:p-6">
         <%= @highlighted_code %>
       </div>
     </div>

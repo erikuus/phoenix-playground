@@ -1,27 +1,33 @@
 let CopyToClipboard = {
   mounted() {
     const link = this.el;
-    const targetDivId = link.dataset.targetDiv; // Get target div ID from data attribute
+    const targetContainerId = link.dataset.targetContainer;
+    const messageContainerId = link.dataset.messageContainer;
 
     link.addEventListener("click", (event) => {
-      event.preventDefault(); // Prevent default link behavior
+      event.preventDefault();
 
-      const targetDiv = document.getElementById(targetDivId);
+      const targetContainer = document.getElementById(targetContainerId);
 
-      if (targetDiv) {
-        const textToCopy = targetDiv.textContent || targetDiv.innerText; // Get content
+      if (targetContainer) {
+        const textToCopy = targetContainer.textContent || targetContainer.innerText;
 
         navigator.clipboard.writeText(textToCopy.trim())
           .then(() => {
-            // Success message (optional)
-            console.log("Content copied to clipboard!");
+            // Display the message
+            const messageElement = document.getElementById(messageContainerId);
+            messageElement.textContent = "Copied!";
+
+            // Hide the message after 2 seconds (adjust as needed)
+            setTimeout(() => {
+              messageElement.textContent = "";
+            }, 2000);
           })
           .catch((err) => {
-            // Error handling (optional)
             console.error("Failed to copy content:", err);
           });
       } else {
-        console.error("Target div with ID", targetDivId, "not found");
+        console.error("Target div with ID", targetContainerId, "not found");
       }
     });
   }
