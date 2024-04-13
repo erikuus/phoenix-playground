@@ -13,8 +13,9 @@ defmodule LivePlaygroundWeb.MoreComponents do
   import LivePlaygroundWeb.CoreComponents
 
   @doc """
-  Renders a multi-column layout with left-fixed narrow sidebar, mobile menu for small
-  and desktop menu for larger displays.
+  Renders a responsive multi-column layout which includes a left-fixed narrow sidebar.
+  It has different types of menus adapted for various display sizes: a mobile menu for
+  smaller displays and a desktop menu for larger screens.
 
   ## Example
 
@@ -78,7 +79,12 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
       <div class="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
         <div class="flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white">
-          <div id={"#{@id}-desktop-menu"} :for={desktop_menu <- @desktop_menu} phx-hook={Map.get(desktop_menu, :hook, nil)} class="flex flex-1 flex-col overflow-y-auto pb-4">
+          <div
+            :for={desktop_menu <- @desktop_menu}
+            id={"#{@id}-desktop-menu"}
+            phx-hook={Map.get(desktop_menu, :hook, nil)}
+            class="flex flex-1 flex-col overflow-y-auto pb-4"
+          >
             <%= render_slot(desktop_menu) %>
           </div>
         </div>
@@ -108,7 +114,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
-  Renders a list of links for narrow sidebar.
+  Renders a list of links to be displayed in a narrow sidebar.
 
   ## Example
 
@@ -140,7 +146,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
-  Renders a vertical navigation.
+  Renders a vertical navigation structure that can be utilized in both desktop and mobile menus.
 
   ## Example
 
@@ -364,7 +370,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
-  Renders a link styled as button.
+  Renders a link that is designed to look like a button.
 
   ## Examples
 
@@ -396,7 +402,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
-  Renders an alert box.
+  Renders a notification or alert box with specific types.
 
   ## Examples
 
@@ -447,7 +453,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
-  Renders a note as text in card with icon.
+  Renders a note as text within a card structure accompanied by an icon.
 
   ## Example
 
@@ -472,7 +478,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
-  Renders a simple list.
+  Renders a basic list.
 
   ## Example
 
@@ -500,12 +506,25 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   @doc """
   Renders a list of steps.
+  This list can be used as a menu or a simple text-based progress tracker.
 
-  ## Example
+  ## Examples
 
       <.steps>
         <:step :for={step <- @steps} path={step.path} active={step.active}>
           <%= step.name %>
+        </:step>
+      </.steps>
+
+      <.steps>
+        <:step active={true}>
+          First
+        </:step>
+        <:step active={true}>
+          Second
+        </:step>
+        <:step active={true}>
+          Third
         </:step>
       </.steps>
   """
@@ -650,7 +669,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
-  Renders cards for statistics.
+  Renders cards for displaying various statistics.
+  Each card has its own title and content.
 
   ## Example
 
@@ -665,6 +685,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
           <%= @satisfaction %>
         </:card>
       </.stats>
+  </.stats>
   """
   attr :class, :string, default: nil
 
@@ -686,7 +707,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
-  Renders a spinning circle as a loading indicator.
+  Renders a spinning circle that serves as a loading indicator.
 
   ## Examples
 
@@ -714,7 +735,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
-  Renders pagination.
+  Renders a pagination toolbar.
 
   ## Example
 
@@ -793,26 +814,25 @@ defmodule LivePlaygroundWeb.MoreComponents do
   @doc """
   Renders an editable content.
 
-  Editable field has two blocks: (1) inner block content with edit link
-  and (2) input field(s) block with save and cancel buttons. Edit link,
-  save and cancel buttons are pointing to events that must be defined in
-  liveview that renders this component.
+  The editable field is composed of two blocks: (1) an inner block that displays the content and includes an edit link,
+  and (2) a block that contains input fields with save and cancel buttons. The actions associated with the edit link,
+  save and cancel buttons are triggered by events that should be defined in the liveview that renders this component.
 
   ## Example
 
-      <div id="country" phx-update="replace">
-        <.list class="mt-6 mb-16 ml-1">
-          <:item title="Name"><%= @user.name %></:item>
-          <:item title="Email">
-            <.editable id="email" form={@form} edit={@edit_field == "email"}>
-              <%= @user.email %>
-              <:input_block>
-                <.input field={@form[:email]} type="email" />
-              </:input_block>
-            </.editable>
-          </:item>
-        </.list>
-      </div>
+      <.editable
+        save_event="nosave"
+        edit_event="edit"
+        cancel_event="cancel"
+        id="lastname"
+        form={@form}
+        edit={@edit_field == "lastname"}
+      >
+        <%= @person.lastname %>
+        <:input_block>
+          <.input field={@form[:lastname]} type="text" class="flex-auto md:-ml-3" />
+        </:input_block>
+      </.editable>
   """
   attr :id, :string, required: true
   attr :form, :map, required: true
@@ -855,7 +875,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
-  Renders a slideover.
+  Renders a slideover (a UI component that slides from right over the existing content).
 
   ## Examples
 
@@ -863,8 +883,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
         ...
       </.slideover>
 
-  JS commands may be passed to the `:on_cancel` and `on_confirm` attributes
-  for the caller to react to each button press, for example:
+  JS commands can be included in the `:on_cancel` and `on_confirm` attributes.
+  These commands are triggered when the confirm or cancel buttons are clicked.
 
       <.slideover id="confirm" on_confirm={JS.push("delete")} on_cancel={JS.navigate(~p"/items")}>
         Are you sure to delete these items?
@@ -872,6 +892,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         <:confirm>OK</:confirm>
         <:cancel>Cancel</:cancel>
       </.slideover>
+  </.slideover>
   """
   attr :id, :string, required: true
   attr :show, :boolean, default: false
@@ -1016,6 +1037,9 @@ defmodule LivePlaygroundWeb.MoreComponents do
   @doc """
   Renders a file upload area.
 
+  Users can upload files by either clicking on the area to open the file selector or by dragging
+  and dropping files into the dashed rectangle. It supports uploading multiple files simultaneously.
+
   ## Example
 
       <.uploads_upload_area uploads_name={@uploads.photos} />
@@ -1054,7 +1078,11 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
-  Renders a preview area for images to be uploaded.
+  Renders a preview area designated for image uploads.
+
+  The photo preview area displays thumbnails of the images, offering a visual confirmation of the files
+  selected. Thumbnails of uploaded files are displayed instantly for review. Users can interact with
+  individual thumbnails to remove the files before the final upload.
 
   ## Example
 
