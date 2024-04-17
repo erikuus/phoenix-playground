@@ -38,6 +38,7 @@ defmodule LivePlaygroundWeb.DemoHelpers do
         data-overlay={"#{@id}-overlay"}
         phx-hook={@hook}
         class="absolute inset-y-0 left-full hidden cursor-ew-resize items-center px-2 sm:flex group"
+        title="Drag to adjust demo size"
       >
         <div class="h-6 w-1 rounded-full bg-gray-300 group-hover:bg-gray-400"></div>
       </div>

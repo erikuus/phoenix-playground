@@ -8,6 +8,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   """
   use Phoenix.Component
 
+  alias LivePlaygroundWeb.Menus.Sidebar
   alias Phoenix.LiveView.JS
 
   import LivePlaygroundWeb.CoreComponents
@@ -89,6 +90,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
             |> JS.toggle_class("lg:pl-64", to: "##{@id}-main-container")
           }
           class="absolute inset-y-0 left-full cursor-pointer items-center px-2 flex group"
+          title="Click to toggle sidebar"
         >
           <div class="h-6 w-1 rounded-full bg-gray-300 group-hover:bg-gray-400"></div>
         </div>
