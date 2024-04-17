@@ -42,65 +42,67 @@ defmodule LivePlaygroundWeb.MoreComponents do
     <div class="fixed inset-y-0 flex flex-col pl-1.5 pr-1.5 py-1.5 space-y-1 items-center overflow-y-auto bg-zinc-700 w-14 md:w-20 z-20">
       <%= render_slot(@narrow_sidebar) %>
     </div>
-
     <div :if={@mobile_menu != [] && @desktop_menu != []} class="pl-14 md:pl-20">
-      <div id="mobile-menu" class="relative z-40 hidden" role="dialog" aria-modal="true">
+      <div id={"#{@id}-mobile-menu"} class="relative z-40 hidden" role="dialog" aria-modal="true">
         <div class="fixed inset-0 bg-gray-600 bg-opacity-75"></div>
-
         <div class="fixed inset-0 z-40 flex">
           <div class="relative flex w-full max-w-xs flex-1 flex-col bg-white">
             <div class="absolute top-0 right-0 -mr-12 pt-2">
               <button
-                phx-click={JS.hide(to: "#mobile-menu")}
+                phx-click={JS.hide(to: "##{@id}-mobile-menu")}
                 type="button"
                 class="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
               >
                 <span class="sr-only">Close sidebar</span> <.icon name="hero-x-mark" class="h-6 w-6 text-white" />
               </button>
             </div>
-
             <div class="h-0 flex-1 overflow-y-auto p-2">
               <.focus_wrap
                 id="mobile-sidebar-container"
-                phx-window-keydown={JS.hide(to: "#mobile-menu")}
+                phx-window-keydown={JS.hide(to: "##{@id}-mobile-menu")}
                 phx-key="escape"
-                phx-click-away={JS.hide(to: "#mobile-menu")}
+                phx-click-away={JS.hide(to: "##{@id}-mobile-menu")}
               >
                 <%= render_slot(@mobile_menu) %>
               </.focus_wrap>
             </div>
           </div>
-
           <div class="w-14 flex-shrink-0">
             <!-- Force sidebar to shrink to fit close icon -->
           </div>
         </div>
       </div>
-
-      <div class="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
+      <div class="relative hidden lg:fixed lg:inset-y-0 lg:flex lg:flex-col">
         <div class="flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white">
           <div
             :for={desktop_menu <- @desktop_menu}
-            id={"#{@id}-desktop-menu"}
+            id={"#{@id}-desktop-menu-content"}
             phx-hook={Map.get(desktop_menu, :hook, nil)}
-            class="flex flex-1 flex-col overflow-y-auto pb-4"
+            class="flex flex-1 flex-col overflow-y-auto pb-4 lg:w-64"
           >
             <%= render_slot(desktop_menu) %>
           </div>
         </div>
+        <div
+          phx-click={
+            JS.toggle(to: "##{@id}-desktop-menu-content")
+            |> JS.toggle_class("lg:pl-64", to: "##{@id}-main-container")
+          }
+          class="absolute inset-y-0 left-full cursor-pointer items-center px-2 flex group"
+        >
+          <div class="h-6 w-1 rounded-full bg-gray-300 group-hover:bg-gray-400"></div>
+        </div>
       </div>
-
-      <div class="flex flex-1 flex-col lg:pl-64">
+      <div id={"#{@id}-main-container"} class="flex flex-1 flex-col lg:pl-64">
         <div class="sticky top-0 z-10 bg-white pl-2.5 pt-2 lg:hidden">
           <button
-            phx-click={JS.show(to: "#mobile-menu")}
+            phx-click={JS.show(to: "##{@id}-mobile-menu")}
             type="button"
             class="-mt-0.5 inline-flex h-12 w-12 items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-100"
           >
             <span class="sr-only">Open sidebar</span> <.icon name="hero-bars-3" class="h-6 w-6" />
           </button>
         </div>
-
         <main class="flex-1">
           <div class="lg:py-6">
             <div class="mx-auto max-w-7xl px-6">
@@ -899,6 +901,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   attr :on_cancel, JS, default: %JS{}
   attr :on_confirm, JS, default: %JS{}
   attr :width_class, :string, default: "max-w-md"
+  attr :enable_main_content, :boolean, default: false
 
   slot :inner_block, required: true
   slot :title
@@ -920,12 +923,12 @@ defmodule LivePlaygroundWeb.MoreComponents do
       aria-modal="true"
       tabindex="0"
     >
-      <div id={"#{@id}-bg"} class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity hidden" />
+      <div :if={!@enable_main_content} id={"#{@id}-bg"} class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity hidden" />
       <div
         id={@id}
         phx-mounted={@show && show_slideover(@id)}
         phx-remove={hide_slideover(@id)}
-        class="fixed inset-0 overflow-hidden hidden"
+        class={["fixed inset-0 overflow-hidden hidden", @enable_main_content && "w-0"]}
       >
         <div class="absolute inset-0 overflow-hidden">
           <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
@@ -933,10 +936,10 @@ defmodule LivePlaygroundWeb.MoreComponents do
               <.focus_wrap
                 id={"#{@id}-container"}
                 phx-mounted={@show && show_slideover(@id)}
-                phx-window-keydown={hide_slideover(@on_cancel, @id)}
+                phx-window-keydown={!@enable_main_content && hide_slideover(@on_cancel, @id)}
                 phx-key="escape"
-                phx-click-away={hide_slideover(@on_cancel, @id)}
-                class="flex h-full flex-col bg-white py-6 shadow-xl px-4 sm:px-6"
+                phx-click-away={!@enable_main_content && hide_slideover(@on_cancel, @id)}
+                class="flex h-full flex-col bg-white py-6 shadow px-4 sm:px-6"
               >
                 <div class="flex items-start justify-between">
                   <header>
@@ -992,7 +995,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
     """
   end
 
-  def show_slideover(js \\ %JS{}, id) when is_binary(id) do
+  def show_slideover(js \\ %JS{}, id, enable_main_content \\ false) when is_binary(id) do
     js
     |> JS.show(
       to: "##{id}",
@@ -1006,11 +1009,15 @@ defmodule LivePlaygroundWeb.MoreComponents do
       to: "##{id}-bg",
       transition: "fade-in"
     )
-    |> JS.add_class(
-      "overflow-y-hidden",
-      to: "#root-body"
-    )
+    |> handle_main_content(enable_main_content)
     |> JS.focus_first(to: "##{id}-container")
+  end
+
+  defp handle_main_content(js, true), do: js
+
+  defp handle_main_content(js, false) do
+    js
+    |> JS.add_class("overflow-y-hidden", to: "#root-body")
   end
 
   def hide_slideover(js \\ %JS{}, id) do
@@ -1027,10 +1034,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         "translate-x-full"
       }
     )
-    |> JS.remove_class(
-      "overflow-y-hidden",
-      to: "#root-body"
-    )
+    |> JS.remove_class("overflow-y-hidden", to: "#root-body")
     |> JS.pop_focus()
   end
 
