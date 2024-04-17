@@ -27,9 +27,9 @@ defmodule LivePlaygroundWeb.CompsLive.SlideoverScrollbar do
       id="with-scrollbar"
       on_confirm={JS.push("ok", value: %{slideover: "With scrollbar"}) |> hide_slideover("with-scrollbar")}
     >
-      <:title>With subtitle</:title>
+      <:title>With scrollbar</:title>
       <div class="space-y-6 mr-2">
-        <%= placeholder_paragraphs(20) %>
+        <%= placeholder_paragraphs(10) %>
       </div>
       <:confirm>OK</:confirm>
       <:cancel>Cancel</:cancel>
