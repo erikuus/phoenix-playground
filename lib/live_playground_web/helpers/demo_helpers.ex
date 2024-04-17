@@ -37,9 +37,9 @@ defmodule LivePlaygroundWeb.DemoHelpers do
         data-container={"#{@id}-container"}
         data-overlay={"#{@id}-overlay"}
         phx-hook={@hook}
-        class="absolute inset-y-0 left-full hidden cursor-ew-resize items-center px-2 sm:flex"
+        class="absolute inset-y-0 left-full hidden cursor-ew-resize items-center px-2 sm:flex group"
       >
-        <div class="h-8 w-1.5 rounded-full bg-slate-400"></div>
+        <div class="h-6 w-1 rounded-full bg-gray-300 group-hover:bg-gray-400"></div>
       </div>
     </div>
     """
