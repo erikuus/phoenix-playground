@@ -113,6 +113,7 @@ defmodule LivePlaygroundWeb.Router do
       live "/slideover-basic", CompsLive.SlideoverBasic
       live "/slideover-subtitle", CompsLive.SlideoverSubtitle
       live "/slideover-scrollbar", CompsLive.SlideoverScrollbar
+      live "/slideover-unobstructed", CompsLive.SlideoverUnobstructed
       live "/slideover-red", CompsLive.SlideoverRed
       live "/slideover-navigate", CompsLive.SlideoverNavigate
       live "/button-link", CompsLive.ButtonLink

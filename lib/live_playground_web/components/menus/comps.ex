@@ -312,6 +312,7 @@ defmodule LivePlaygroundWeb.Menus.Comps do
                   "/slideover-basic",
                   "/slideover-subtitle",
                   "/slideover-scrollbar",
+                  "/slideover-unobstructed",
                   "/slideover-red",
                   "/slideover-navigate",
                   "/slideover",
@@ -333,6 +334,11 @@ defmodule LivePlaygroundWeb.Menus.Comps do
                 label: "Slideover with Scrollbar",
                 path: ~p"/slideover-scrollbar",
                 active: is_active?(current_path, ["/slideover-scrollbar"])
+              },
+              %{
+                label: "Slideover Unobstructed",
+                path: ~p"/slideover-unobstructed",
+                active: is_active?(current_path, ["/slideover-unobstructed"])
               },
               %{
                 label: "Slideover in Red",
