@@ -90,6 +90,8 @@ defmodule LivePlaygroundWeb do
       import LivePlaygroundWeb.Gettext
       # More UI components
       import LivePlaygroundWeb.MoreComponents
+      # File helpers for code breakdown
+      import LivePlaygroundWeb.FileHelpers
 
       # Application specific helpers
       import LivePlaygroundWeb.DemoHelpers

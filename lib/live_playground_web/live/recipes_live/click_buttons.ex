@@ -21,6 +21,11 @@ defmodule LivePlaygroundWeb.RecipesLive.ClickButtons do
       <:subtitle>
         How to handle click events in LiveView
       </:subtitle>
+      <:actions>
+        <.link class="flex items-center" phx-click={show_slideover(%JS{}, "code-breakdown", true)}>
+          <.icon name="hero-light-bulb" class="mr-1.5 h-4 w-4" /> Code Breakdown
+        </.link>
+      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <div class="flex flex-col space-x-0 space-y-3 md:flex-row md:space-x-3 md:space-y-0">
@@ -39,6 +44,12 @@ defmodule LivePlaygroundWeb.RecipesLive.ClickButtons do
       <.code_block filename="lib/live_playground_web/live/recipes_live/click_buttons.ex" />
       <.code_block filename="lib/live_playground/countries.ex" from="# clickbuttons" to="# endclickbuttons" />
     </div>
+    <.slideover id="code-breakdown" enable_main_content={true} width_class="max-w-2xl">
+      <:title>Overview</:title>
+      <div class="mr-2 prose">
+        <%= read_file("priv/static/html/click_buttons.html") |> raw() %>
+      </div>
+    </.slideover>
     <!-- end hiding from live code -->
     """
   end
