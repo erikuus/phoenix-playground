@@ -22,7 +22,17 @@ defmodule LivePlaygroundWeb.RecipesLive.ClickButtons do
         How to handle click events in LiveView
       </:subtitle>
       <:actions>
-        <.link class="flex items-center" phx-click={show_slideover(%JS{}, "code-breakdown", true)}>
+        <.link
+          id="open-code-breakdown"
+          class="flex items-center"
+          phx-click={
+            show_slideover(
+              JS.add_class("xl:pr-96 2xl:pr-[36rem]", to: "#multi-column-layout-main-container") |> hide("#open-code-breakdown"),
+              "code-breakdown",
+              true
+            )
+          }
+        >
           <.icon name="hero-light-bulb" class="mr-1.5 h-4 w-4" /> Code Breakdown
         </.link>
       </:actions>
@@ -44,8 +54,15 @@ defmodule LivePlaygroundWeb.RecipesLive.ClickButtons do
       <.code_block filename="lib/live_playground_web/live/recipes_live/click_buttons.ex" />
       <.code_block filename="lib/live_playground/countries.ex" from="# clickbuttons" to="# endclickbuttons" />
     </div>
-    <.slideover id="code-breakdown" enable_main_content={true} width_class="max-w-2xl">
-      <:title>Overview</:title>
+    <.slideover
+      id="code-breakdown"
+      enable_main_content={true}
+      width_class="w-96 2xl:w-[36rem]"
+      on_cancel={
+        JS.remove_class("xl:pr-96 2xl:pr-[36rem]", to: "#multi-column-layout-main-container") |> show("#open-code-breakdown")
+      }
+    >
+      <:title>Code Breakdown</:title>
       <div class="mr-2 prose">
         <%= read_file("priv/static/html/click_buttons.html") |> raw() %>
       </div>
