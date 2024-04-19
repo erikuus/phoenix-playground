@@ -1002,7 +1002,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
     |> JS.show(
       to: "##{id}",
       transition: {
-        "ease-in-out duration-500 sm:duration-700",
+        "ease-in-out duration-700 sm:duration-800",
         "translate-x-full",
         "translate-x-0"
       }
@@ -1031,7 +1031,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
     |> JS.hide(
       to: "##{id}",
       transition: {
-        "ease-in-out duration-500 sm:duration-700",
+        "ease-in-out duration-700 sm:duration-800",
         "translate-x-0",
         "translate-x-full"
       }
