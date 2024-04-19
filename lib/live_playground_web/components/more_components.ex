@@ -872,7 +872,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
       </div>
 
       <div>
-        <.button_link type="secondary" class="w-full md:w-auto" phx-click={@cancel_event}>Cancel</.button_link>
+        <.button_link kind={:secondary} class="w-full md:w-auto" phx-click={@cancel_event}>Cancel</.button_link>
       </div>
     </.form>
     """
@@ -945,7 +945,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
               >
                 <div class="flex items-start justify-between">
                   <header>
-                    <h3 id={"#{@id}-title"} class="text-lg font-medium leading-6 text-gray-900">
+                    <h3 id={"#{@id}-title"} class="text-xl font-medium leading-6 text-gray-900">
                       <%= render_slot(@title) %>
                     </h3>
 
