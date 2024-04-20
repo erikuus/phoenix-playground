@@ -69,6 +69,7 @@ defmodule LivePlaygroundWeb.Router do
     scope "/", LivePlaygroundWeb do
       pipe_through :browser
 
+      live "/integration", CompsLive.Integration
       live "/header", CompsLive.Header
       live "/header-demo", CompsLive.HeaderDemo
       live "/modal", CompsLive.Modal

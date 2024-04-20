@@ -65,7 +65,7 @@ defmodule LivePlaygroundWeb.Menus.Sidebar do
       %{
         icon: "hero-puzzle-piece",
         label: "Comps",
-        path: ~p"/header",
+        path: ~p"/integration",
         layout: :comps
       },
       %{

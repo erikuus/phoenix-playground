@@ -20,6 +20,12 @@ defmodule LivePlaygroundWeb.Menus.Comps do
   defp get_items(current_path) do
     [
       %{
+        icon: "hero-information-circle",
+        label: "Integration",
+        path: ~p"/integration",
+        active: is_active?(current_path, ["/integration"])
+      },
+      %{
         section: %{
           label: "CORE COMPONENTS"
         },

@@ -81,20 +81,19 @@ defmodule LivePlaygroundWeb do
     end
   end
 
+  # helpers
   defp html_helpers do
     quote do
       # HTML escaping functionality
       import Phoenix.HTML
-      # Core UI components,icons and translation
+      # UI components, icons and translation
       import LivePlaygroundWeb.CoreComponents
-      import LivePlaygroundWeb.Gettext
-      # More UI components
       import LivePlaygroundWeb.MoreComponents
-      # File helpers for code breakdown
-      import LivePlaygroundWeb.FileHelpers
+      import LivePlaygroundWeb.Gettext
 
       # Application specific helpers
       import LivePlaygroundWeb.DemoHelpers
+      import LivePlaygroundWeb.FileHelpers
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
@@ -103,6 +102,8 @@ defmodule LivePlaygroundWeb do
       unquote(verified_routes())
     end
   end
+
+  # endhelpers
 
   def verified_routes do
     quote do
