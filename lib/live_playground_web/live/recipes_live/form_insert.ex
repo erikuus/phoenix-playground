@@ -20,13 +20,8 @@ defmodule LivePlaygroundWeb.RecipesLive.FormInsert do
     <.header class="mb-6">
       Validate on Submit
       <:subtitle>
-        How to create insert form in LiveView  that validates on submit
+        Creating Forms That Validate on Submit in LiveView
       </:subtitle>
-      <:actions>
-        <.link navigate={~p"/form-insert-validate"}>
-          See also: Validate on Change <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
-        </.link>
-      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <.form for={@form} phx-submit="save" class="flex flex-col space-x-0 space-y-4 md:flex-row md:space-x-4 md:space-y-0">

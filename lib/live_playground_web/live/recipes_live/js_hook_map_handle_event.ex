@@ -19,13 +19,8 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapHandleEvent do
     <.header class="mb-6">
       Handle Events
       <:subtitle>
-        How to hook a map library and handle LiveView events in JavaScript
+        Integrating a Map Library and Handling Events in JavaScript With LiveView
       </:subtitle>
-      <:actions>
-        <.link navigate={~p"/js-hook-map-dataset"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Dataset
-        </.link>
-      </:actions>
     </.header>
     <.alert class="mb-6">
       Click on a location in the list to add a marker on the map. Observe how the marker gets highlighted after being added.

@@ -71,13 +71,8 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamReset do
     <.header class="mb-6">
       Stream Reset
       <:subtitle>
-        How to reset stream in conjunction with navigation
+        Resetting Streams With Navigation in LiveView
       </:subtitle>
-      <:actions>
-        <.link navigate={~p"/stream-insert"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Stream Insert
-        </.link>
-      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <.tabs :if={@countries != []} class="mb-5">

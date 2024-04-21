@@ -28,13 +28,8 @@ defmodule LivePlaygroundWeb.RecipesLive.Upload do
     <.header class="mb-6">
       File Uploads UI
       <:subtitle>
-        How to create file upload controls and previews in LiveView
+        Creating File Upload Controls and Previews in LiveView
       </:subtitle>
-      <:actions>
-        <.link navigate={~p"/upload-server"}>
-          See also: File Uploads to Server <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
-        </.link>
-      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <.form for={@form} phx-submit="save" phx-change="validate" class="space-y-6">

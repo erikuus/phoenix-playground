@@ -33,13 +33,8 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadServer do
     <.header class="mb-6">
       File Uploads to Server
       <:subtitle>
-        How to upload files to a server in LiveView
+        Uploading Files to a Server in LiveView
       </:subtitle>
-      <:actions>
-        <.link navigate={~p"/upload-cloud"}>
-          See also: File Uploads to Cloud <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
-        </.link>
-      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <.form for={@form} phx-submit="save" phx-change="validate" class="space-y-6">

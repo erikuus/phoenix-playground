@@ -19,7 +19,7 @@ defmodule LivePlaygroundWeb.RecipesLive.ClickButtons do
     <.header class="mb-6">
       Click Buttons
       <:subtitle>
-        How to handle click events in LiveView
+        Handling Button Click Events in LiveView
       </:subtitle>
       <:actions>
         <.link

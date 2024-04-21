@@ -41,13 +41,8 @@ defmodule LivePlaygroundWeb.RecipesLive.FilterParams do
     <.header class="mb-6">
       Handle-params Filtering
       <:subtitle>
-        How to handle filter parameters in LiveView passing the filter strings as a URL parameters
+        Handling Filter With URL Parameters in LiveView
       </:subtitle>
-      <:actions>
-        <.link navigate={~p"/filter"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Handle-event Filtering
-        </.link>
-      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <form id="filter-form" class="md:flex md:items-end md:space-x-6 space-y-4 mb-6" phx-change="filter">

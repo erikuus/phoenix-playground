@@ -22,30 +22,18 @@ defmodule LivePlaygroundWeb.RecipesLive.Broadcast do
     <.header class="mb-6">
       Real-Time Updates
       <:subtitle>
-        How to broadcast real-time updates in LiveView
+        Broadcasting Real-Time Updates in LiveView
       </:subtitle>
-
-      <:actions>
-        <.link navigate={~p"/broadcast-stream"}>
-          See also: Real-Time Updates with Stream <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
-        </.link>
-      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <div id="country" phx-update="replace">
       <.list class="mt-6 mb-16 ml-1">
         <:item title="Name"><%= @country.name %></:item>
-
         <:item title="Code"><%= @country.code %></:item>
-
         <:item title="Continent"><%= @country.continent %></:item>
-
         <:item title="Region"><%= @country.region %></:item>
-
         <:item title="The form of government"><%= @country.governmentform %></:item>
-
         <:item title="The year of independence"><%= @country.indepyear %></:item>
-
         <:item title="The head of state">
           <.editable id="headofstate" form={@form} edit={@edit_field == "headofstate"}>
             <%= @country.headofstate %>
@@ -54,7 +42,6 @@ defmodule LivePlaygroundWeb.RecipesLive.Broadcast do
             </:input_block>
           </.editable>
         </:item>
-
         <:item title="Population">
           <.editable id="population" form={@form} edit={@edit_field == "population"}>
             <%= Number.Delimit.number_to_delimited(@country.population, precision: 0, delimiter: " ") %>
@@ -63,7 +50,6 @@ defmodule LivePlaygroundWeb.RecipesLive.Broadcast do
             </:input_block>
           </.editable>
         </:item>
-
         <:item title="GNP">
           <.editable id="gnp" form={@form} edit={@edit_field == "gnp"}>
             <%= Number.Delimit.number_to_delimited(@country.gnp, precision: 0, delimiter: " ") %>
@@ -72,7 +58,6 @@ defmodule LivePlaygroundWeb.RecipesLive.Broadcast do
             </:input_block>
           </.editable>
         </:item>
-
         <:item title="Life expectancy">
           <.editable id="lifeexpectancy" form={@form} edit={@edit_field == "lifeexpectancy"}>
             <%= Number.Delimit.number_to_delimited(@country.lifeexpectancy, precision: 2) %>

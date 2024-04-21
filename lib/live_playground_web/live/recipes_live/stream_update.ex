@@ -30,13 +30,8 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamUpdate do
     <.header class="mb-6">
       Stream Update
       <:subtitle>
-        How to update items in large collections without keeping them in memory on the server
+        Updating Items in Large Collections Without Server-Side Memory Storage in LiveView
       </:subtitle>
-      <:actions>
-        <.link navigate={~p"/stream-reset"}>
-          See also: Stream Reset <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
-        </.link>
-      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <.form

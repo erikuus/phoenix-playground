@@ -18,13 +18,8 @@ defmodule LivePlaygroundWeb.RecipesLive.Sort do
     <.header class="mb-6">
       Handle-event Sorting
       <:subtitle>
-        How to handle sorting in LiveView without passing the sort parameters as a URL parameters
+        Implementing Sorting Without URL Parameters in LiveView
       </:subtitle>
-      <:actions>
-        <.link navigate={~p"/sort-params"}>
-          See also: Handle-params Sorting <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
-        </.link>
-      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <.table :if={@cities != []} id="cities" rows={@cities}>

@@ -20,13 +20,8 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamInsert do
     <.header class="mb-6">
       Stream Insert
       <:subtitle>
-        How to insert items into large collections without keeping them in memory on the server
+        Inserting Items into Large Collections Without Server-Side Memory Storage in LiveView
       </:subtitle>
-      <:actions>
-        <.link navigate={~p"/stream-update"}>
-          See also: Stream Update <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
-        </.link>
-      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <.form for={@form} phx-submit="save" class="flex flex-col space-x-0 space-y-4 md:flex-row md:space-x-4 md:space-y-0">

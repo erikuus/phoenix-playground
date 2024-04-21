@@ -28,7 +28,7 @@ defmodule LivePlaygroundWeb.RecipesLive.HandleParams do
     <.header class="mb-6">
       Handle Parameters
       <:subtitle>
-        How to handle url parameteres in LiveView
+        Managing URL Parameters in LiveView
       </:subtitle>
     </.header>
     <!-- end hiding from live code -->
@@ -37,7 +37,6 @@ defmodule LivePlaygroundWeb.RecipesLive.HandleParams do
         <%= country.name %>
       </:tab>
     </.tabs>
-
     <.list class="mt-6 mb-16">
       <:item title="Code"><%= @selected_country.code %></:item>
       <:item title="Continent"><%= @selected_country.continent %></:item>

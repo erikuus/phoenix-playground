@@ -19,13 +19,8 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapPushEvent do
     <.header class="mb-6">
       Push Events
       <:subtitle>
-        How to hook a map library and push events from JavaScript into LiveView
+        Pushing JS Events to LiveView via Map Integrations
       </:subtitle>
-      <:actions>
-        <.link navigate={~p"/js-hook-map-handle-event"}>
-          See also: Handle Events <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
-        </.link>
-      </:actions>
     </.header>
     <.alert class="mb-6">
       Click on a marker to observe the scrolling of the list of locations, and take note of how the selected location gets highlighted.

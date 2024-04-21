@@ -20,20 +20,15 @@ defmodule LivePlaygroundWeb.RecipesLive.SendInterval do
     <.header class="mb-6">
       Send Repeatedly
       <:subtitle>
-        How to send message repeatedly in LiveView after given milliseconds
+        Sending Messages at Intervals in LiveView
       </:subtitle>
-      <:actions>
-        <.link navigate={~p"/send-after"}>
-          See also: Send After <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
-        </.link>
-      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <div class="text-2xl font-semibold">
       <%= format_duration(@seconds_remaining) %>
     </div>
     <!-- start hiding from live code -->
-    <div class="mt-10 space-y-6">
+    <div class="mt-10">
       <.code_block filename="lib/live_playground_web/live/recipes_live/send_interval.ex" />
     </div>
     <!-- end hiding from live code -->

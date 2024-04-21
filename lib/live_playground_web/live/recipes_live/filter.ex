@@ -21,13 +21,8 @@ defmodule LivePlaygroundWeb.RecipesLive.Filter do
     <.header class="mb-6">
       Handle-event Filtering
       <:subtitle>
-        How to filter data in LiveView without passing the filter strings as a URL parameters
+        Filtering Data Without URL Parameters in LiveView
       </:subtitle>
-      <:actions>
-        <.link navigate={~p"/filter-params"}>
-          See also: Handle-params Filtering <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
-        </.link>
-      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <form id="filter-form" class="space-y-4 mb-6 md:flex md:items-end md:space-x-6" phx-change="filter">

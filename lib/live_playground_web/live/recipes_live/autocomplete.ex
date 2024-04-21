@@ -13,13 +13,8 @@ defmodule LivePlaygroundWeb.RecipesLive.Autocomplete do
     <.header class="mb-6">
       Native Autocomplete
       <:subtitle>
-        How to create autocomplete field in LiveView using native HTML5 input list attribute and datalist element
+        Creating an Autocomplete Field With HTML5 Datalist in LiveView
       </:subtitle>
-      <:actions>
-        <.link navigate={~p"/autocomplete-custom"}>
-          See also: Custom Autocomplete <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
-        </.link>
-      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <form>

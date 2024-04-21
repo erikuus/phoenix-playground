@@ -14,13 +14,8 @@ defmodule LivePlaygroundWeb.RecipesLive.SendAfter do
     <.header class="mb-6">
       Send After
       <:subtitle>
-        How to send message in LiveView after given milliseconds
+        Sending Messages After a Delay in LiveView
       </:subtitle>
-      <:actions>
-        <.link navigate={~p"/send-interval"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Send Repeatedly
-        </.link>
-      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <.stats>

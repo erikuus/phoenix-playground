@@ -18,7 +18,7 @@ defmodule LivePlaygroundWeb.RecipesLive.KeyEvents do
     <.header class="mb-6">
       Key Events
       <:subtitle>
-        How to handle key events in LiveView
+        Managing Key Events in LiveView
       </:subtitle>
     </.header>
     <!-- end hiding from live code -->
@@ -32,7 +32,7 @@ defmodule LivePlaygroundWeb.RecipesLive.KeyEvents do
       <img src={"/images/#{Enum.at(@images, @current)}"} class="w-full rounded-lg" />
     </div>
     <!-- start hiding from live code -->
-    <div class="mt-10 space-y-6">
+    <div class="mt-10">
       <.code_block filename="lib/live_playground_web/live/recipes_live/key_events.ex" />
     </div>
     <!-- end hiding from live code -->

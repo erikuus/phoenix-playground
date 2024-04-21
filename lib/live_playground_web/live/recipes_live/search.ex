@@ -20,13 +20,8 @@ defmodule LivePlaygroundWeb.RecipesLive.Search do
     <.header class="mb-6">
       Handle-event Search
       <:subtitle>
-        How to create a search interface in LiveView not passing the query string as a URL parameter
+        Creating a Search Interface Without URL Parameters in LiveView
       </:subtitle>
-      <:actions>
-        <.link navigate={~p"/search-param"}>
-          See also: Handle-params Search <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
-        </.link>
-      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <form class="mb-4 flex space-x-3" phx-submit="search">

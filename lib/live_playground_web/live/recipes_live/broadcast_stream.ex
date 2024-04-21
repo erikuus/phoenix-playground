@@ -38,13 +38,8 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStream do
     <.header class="mb-6">
       Real-Time Updates with Stream
       <:subtitle>
-        How to broadcast real-time updates in conjunction with stream
+        Broadcasting Updates With Streams in LiveView
       </:subtitle>
-      <:actions>
-        <.link navigate={~p"/broadcast-stream-reset"}>
-          See also: Real-Time Updates with Stream Navigation <.icon name="hero-arrow-long-right" class="ml-1 h-5 w-5 text-gray-400" />
-        </.link>
-      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <.form

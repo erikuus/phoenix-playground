@@ -17,7 +17,7 @@ defmodule LivePlaygroundWeb.RecipesLive.ChangeForm do
     <.header class="mb-6">
       Change Form
       <:subtitle>
-        How to handle form changes in LiveView
+        Handling Form Changes in LiveView
       </:subtitle>
     </.header>
     <!-- end hiding from live code -->
@@ -33,7 +33,7 @@ defmodule LivePlaygroundWeb.RecipesLive.ChangeForm do
       </div>
     </form>
     <!-- start hiding from live code -->
-    <div class="mt-10 space-y-6">
+    <div class="mt-10">
       <.code_block filename="lib/live_playground_web/live/recipes_live/change_form.ex" />
     </div>
     <!-- end hiding from live code -->

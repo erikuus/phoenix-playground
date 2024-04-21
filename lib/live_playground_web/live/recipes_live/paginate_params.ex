@@ -33,13 +33,8 @@ defmodule LivePlaygroundWeb.RecipesLive.PaginateParams do
     <.header class="mb-6">
       Handle-params Pagination
       <:subtitle>
-        How to handle pagination parameters in LiveView passing the pagination parameters as a URL parameters
+        Managing Pagination With URL Parameters in LiveView
       </:subtitle>
-      <:actions>
-        <.link navigate={~p"/paginate"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Handle-event Pagination
-        </.link>
-      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <form phx-change="select-per-page" class="flex md:flex-row-reverse md:-mt-10 md:-mb-6">

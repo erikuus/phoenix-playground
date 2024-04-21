@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.RecipesLive.JsCommands do
     <.header class="mb-6">
       JS Commands
       <:subtitle>
-        How to toggle slideover panel with javascript commands in LiveView
+        Using JavaScript Commands to Toggle Elements in LiveView
       </:subtitle>
     </.header>
     <!-- end hiding from live code -->

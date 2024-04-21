@@ -19,13 +19,8 @@ defmodule LivePlaygroundWeb.RecipesLive.AutocompleteCustom do
     <.header class="mb-6">
       Custom Autocomplete
       <:subtitle>
-        How to create autocomplete field in LiveView using custom dropdown
+        Creating a Custom Dropdown Autocomplete in LiveView
       </:subtitle>
-      <:actions>
-        <.link navigate={~p"/autocomplete"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Native Autocomplete
-        </.link>
-      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <form>

@@ -75,13 +75,8 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
     <.header class="mb-6">
       Real-Time Updates with Stream and Navigation
       <:subtitle>
-        How to broadcast real-time updates in conjunction with stream and navigation
+        Broadcasting Updates With Streams and Navigation in LiveView
       </:subtitle>
-      <:actions>
-        <.link navigate={~p"/broadcast"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Real-Time Updates
-        </.link>
-      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <.tabs :if={@countries != []} class="mb-5">

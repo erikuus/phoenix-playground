@@ -41,24 +41,17 @@ defmodule LivePlaygroundWeb.RecipesLive.SortParams do
     <.header class="mb-6">
       Handle-params Sorting
       <:subtitle>
-        How to handle sorting in LiveView passing the sort parameters as a URL parameters
+        Managing Sorting With URL Parameters in LiveView
       </:subtitle>
-      <:actions>
-        <.link navigate={~p"/sort"}>
-          <.icon name="hero-arrow-long-left" class="mr-1 h-5 w-5 text-gray-400" /> Back to: Handle-event Sorting
-        </.link>
-      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <.table :if={@cities != []} id="cities" rows={@cities}>
       <:col :let={city} label={sort_link("Name", :name, @options)}>
         <%= city.name %>
       </:col>
-
       <:col :let={city} label={sort_link("District", :district, @options)}>
         <%= city.district %>
       </:col>
-
       <:col :let={city} label={sort_link("Population", :population, @options)} class="text-right">
         <%= Number.Delimit.number_to_delimited(city.population,
           precision: 0,
