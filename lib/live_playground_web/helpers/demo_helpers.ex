@@ -5,6 +5,9 @@ defmodule LivePlaygroundWeb.DemoHelpers do
   import Phoenix.HTML
   import LivePlaygroundWeb.FileHelpers
   import LivePlaygroundWeb.CoreComponents
+  import LivePlaygroundWeb.MoreComponents
+
+  alias Phoenix.LiveView.JS
 
   use Phoenix.Component
 
@@ -100,6 +103,62 @@ defmodule LivePlaygroundWeb.DemoHelpers do
       <span><%= render_slot(@inner_block) %></span>
       <.icon name="hero-arrow-top-right-on-square" class="ml-1 w-4 h-4" />
     </a>
+    """
+  end
+
+  @doc """
+  Displays a link that opens a code breakdown slideover in an unobstructed mode.
+
+  ## Example
+      <.code_breakdown_link />
+  """
+  attr :title, :string, default: "Code Breakdown"
+
+  def code_breakdown_link(assigns) do
+    ~H"""
+    <.link
+      id="open-code-breakdown"
+      class="flex items-center"
+      phx-click={
+        show_slideover(
+          JS.add_class("xl:pr-96 2xl:pr-[36rem]", to: "#multi-column-layout-main-container") |> hide("#open-code-breakdown"),
+          "code-breakdown",
+          true
+        )
+      }
+    >
+      <.icon name="hero-light-bulb" class="mr-1.5 h-4 w-4" />
+      <%= @title %>
+    </.link>
+    """
+  end
+
+  @doc """
+  Renders a code breakdown slideover in an unobstructed mode.
+
+  ## Example
+      <.code_breakdown_slideover filename="..." />
+  """
+  attr :title, :string, default: "Code Breakdown"
+  attr :filename, :string, required: true
+
+  def code_breakdown_slideover(assigns) do
+    assigns = assigns |> assign_new(:html_code, fn -> read_file(assigns.filename) |> raw() end)
+
+    ~H"""
+    <.slideover
+      id="code-breakdown"
+      enable_main_content={true}
+      width_class="w-96 2xl:w-[36rem]"
+      on_cancel={
+        JS.remove_class("xl:pr-96 2xl:pr-[36rem]", to: "#multi-column-layout-main-container") |> show("#open-code-breakdown")
+      }
+    >
+      <:title><%= @title %></:title>
+      <div class="mr-2 prose">
+        <%= @html_code %>
+      </div>
+    </.slideover>
     """
   end
 
