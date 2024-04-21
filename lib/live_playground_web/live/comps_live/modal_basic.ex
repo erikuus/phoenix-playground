@@ -33,7 +33,7 @@ defmodule LivePlaygroundWeb.CompsLive.ModalBasic do
       Modal "<%= @modal %>" confirmed!
     </.alert>
     <!-- start hiding from live code -->
-    <div class="mt-10 space-y-6">
+    <div class="mt-10">
       <.code_block filename="lib/live_playground_web/live/comps_live/modal_basic.ex" />
     </div>
     <!-- end hiding from live code -->

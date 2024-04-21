@@ -25,7 +25,7 @@ defmodule LivePlaygroundWeb.CompsLive.SlideoverNavigate do
       <:confirm>Go</:confirm>
     </.slideover>
     <!-- start hiding from live code -->
-    <div class="mt-10 space-y-6">
+    <div class="mt-10">
       <.code_block filename="lib/live_playground_web/live/comps_live/slideover_navigate.ex" />
     </div>
     <!-- end hiding from live code -->

@@ -19,7 +19,7 @@ defmodule LivePlaygroundWeb.CompsLive.Tabs do
       </:actions>
     </.header>
     <.resizable_iframe hook="IframeResize" id="multi-column-layout-demo" src="/tabs-demo" />
-    <div class="mt-10 space-y-6">
+    <div class="mt-10">
       <.code_block filename="lib/live_playground_web/live/comps_live/tabs_demo.ex" />
     </div>
     """

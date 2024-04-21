@@ -42,7 +42,6 @@ defmodule LivePlaygroundWeb.CompsLive.SimpleForm do
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/comps_live/simple_form.ex" />
-
       <.note icon="hero-information-circle">
         <%= html_escape("
           The <.simple_form> component enhances the <.form> component by automatically wrapping form fields within a <div class=\"space-y-8 bg-white mt-10\">

@@ -20,7 +20,7 @@ defmodule LivePlaygroundWeb.CompsLive.CircularProgressBar do
       <.circular_progress_bar progress={70} stroke_width={4} radius={17.0} svg_class="mt-2 w-10 h-10" />
     </div>
     <!-- start hiding from live code -->
-    <div class="mt-10 space-y-6">
+    <div class="mt-10">
       <.code_block filename="lib/live_playground_web/live/comps_live/circular_progress_bar.ex" />
     </div>
     <!-- end hiding from live code -->

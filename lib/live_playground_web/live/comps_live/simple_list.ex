@@ -7,7 +7,7 @@ defmodule LivePlaygroundWeb.CompsLive.SimpleList do
     <.header class="mb-6">
       Simple List
       <:subtitle>
-       Creating Simple Lists in LiveView
+        Creating Simple Lists in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def simple_list">
@@ -20,7 +20,7 @@ defmodule LivePlaygroundWeb.CompsLive.SimpleList do
       <:item :for={item <- ["New York", "Los Angeles", "Chicago", "Houston"]}><%= item %></:item>
     </.simple_list>
     <!-- start hiding from live code -->
-    <div class="mt-10 space-y-6">
+    <div class="mt-10">
       <.code_block filename="lib/live_playground_web/live/comps_live/simple_list.ex" />
     </div>
     <!-- end hiding from live code -->

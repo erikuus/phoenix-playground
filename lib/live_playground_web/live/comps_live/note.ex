@@ -21,7 +21,7 @@ defmodule LivePlaygroundWeb.CompsLive.Note do
       <.note icon="hero-bell" class="text-sm text-yellow-900 bg-yellow-50"><%= placeholder_sentences(12, true) %></.note>
     </div>
     <!-- start hiding from live code -->
-    <div class="mt-10 space-y-6">
+    <div class="mt-10">
       <.code_block filename="lib/live_playground_web/live/comps_live/note.ex" />
     </div>
     <!-- end hiding from live code -->

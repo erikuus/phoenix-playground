@@ -38,7 +38,7 @@ defmodule LivePlaygroundWeb.CompsLive.InputTextarea do
       <.input label="Language" type="textarea" rows="3" field={@form[:language]} />
     </.form>
     <!-- start hiding from live code -->
-    <div class="mt-10 space-y-6">
+    <div class="mt-10">
       <.code_block filename="lib/live_playground_web/live/comps_live/input_textarea.ex" />
     </div>
     <!-- end hiding from live code -->

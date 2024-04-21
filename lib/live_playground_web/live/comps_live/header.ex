@@ -1,10 +1,6 @@
 defmodule LivePlaygroundWeb.CompsLive.Header do
   use LivePlaygroundWeb, :live_view
 
-  def mount(_params, _session, socket) do
-    {:ok, socket}
-  end
-
   def render(assigns) do
     ~H"""
     <.header class="mb-6">
@@ -20,7 +16,7 @@ defmodule LivePlaygroundWeb.CompsLive.Header do
       </:actions>
     </.header>
     <.resizable_iframe hook="IframeResize" id="header-demo" src="/header-demo" />
-    <div class="mt-10 space-y-6">
+    <div class="mt-10">
       <.code_block filename="lib/live_playground_web/live/comps_live/header_demo.ex" />
     </div>
     """
