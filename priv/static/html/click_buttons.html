@@ -1,42 +1,16 @@
-<p>This module is an excellent starting point for understanding event handling in an interactive web application with LiveView. The key functionality is to update the displayed country details based on the user's selection, without a full page reload.</p>
-<h3>Key Components and Functions</h3>
-<h4><code>mount/3</code></h4>
-<ul>
-    <li><strong>Purpose</strong>: Initializes the LiveView instance.</li>
-    <li><strong>Functionality</strong>: This function sets up the initial state of the LiveView by loading a list of countries from a predefined region ("Baltic Countries"). It uses pattern matching to handle different outcomes from the <code>Countries.list_region_country/1</code> function:<ul>
-            <li>If no countries are found, it sets the <code>countries</code> list to empty and <code>selected_country</code> to <code>nil</code>.</li>
-            <li>If countries are found, it assigns the first country in the list as the selected country.</li>
-        </ul>
-    </li>
-</ul>
-<h4><code>render/1</code></h4>
-<ul>
-    <li><strong>Purpose</strong>: Renders the HTML content for the LiveView.</li>
-    <li><strong>Functionality</strong>: This function creates a set of button links for each country in the <code>@countries</code> list. These buttons have an event handler (<code>phx-click</code>) assigned to trigger on click events, sending "select-country" along with the country's ID (<code>phx-value-id</code>). It uses a helper function <code>get_button_kind/2</code> to style the button based on whether it's the selected country.</li>
-    <li><strong>Dynamic Content</strong>: Below the buttons, the <code>country_details/1</code> function is called to render details of the selected country, or a message if no countries are available.</li>
-</ul>
-<h4><code>handle_event/3</code></h4>
-<ul>
-    <li><strong>Purpose</strong>: Handles events triggered by user interactions.</li>
-    <li><strong>Functionality</strong>: When a button is clicked, this function is triggered with the event name "select-country" and the ID of the selected country. It then retrieves the full details of this country and updates the <code>selected_country</code> in the <code>socket</code>.</li>
-    <li><strong>Response</strong>: It returns <code>{:noreply, socket}</code>, indicating that the state has been updated but no immediate reply is required.</li>
-</ul>
-<h4><code>get_button_kind/2</code></h4>
-<ul>
-    <li><strong>Purpose</strong>: Determines the styling of the button based on whether the country is currently selected.</li>
-    <li><strong>Functionality</strong>: Returns <code>:primary</code> if the button represents the selected country, otherwise <code>:secondary</code>. This helps visually indicate which country is currently active.</li>
-</ul>
-<h4><code>country_details/1</code></h4>
-<ul>
-    <li><strong>Purpose</strong>: Renders detailed information about the selected country.</li>
-    <li><strong>Functionality</strong>: It checks if there is a selected country and displays its details, including code, continent, population, etc. If no country is selected, it displays an alert message.</li>
-</ul>
-<h3>Key Concepts Illustrated</h3>
+<p>This LiveView module, <code>ClickButtons</code>, is focused on handling button click events to display information about countries within the "Baltic Countries" region. Here's what the code does:</p>
+<h3><code>mount/3</code></h3>
+<p>In the <code>mount/3</code> function, a list of countries in the "Baltic Countries" region is fetched. If the list is empty, both <code>:countries</code> and <code>:selected_country</code> are set to <code>nil</code> in the socket's assigns. If there are countries, the first one is set as the <code>:selected_country</code>, and the list is saved under <code>:countries</code>.</p>
+<h3><code>handle_event/3</code></h3>
+<p>This function captures click events on the buttons, specifically the "select-country" event, which is sent when any of the buttons are clicked. When a button is clicked, it receives the country ID from <code>phx-value-id</code> and uses it to fetch the corresponding country's details with <code>Countries.get_country!/1</code>. It then updates the <code>:selected_country</code> assign with the fetched country.</p>
+<h3><code>render/1</code></h3>
+<p>In the <code>render/1</code> function, button links are generated for each country. These buttons have a <code>phx-click</code> attribute set to "select-country", which means that clicking the button will trigger the <code>handle_event/3</code> function with the corresponding event. The <code>phx-value-id</code> attribute holds the country's ID, which is used to identify which country was selected. The button's style is determined by the <code>get_button_kind/2</code> function based on whether it is the selected country.</p>
+<h3><code>country_details/1</code></h3>
+<p>This helper function renders the details of the selected country. It's designed to handle two scenarios:</p>
 <ol>
-    <li><strong>Event Handling</strong>: <code>phx-click</code> is used to manage user interactions, specifically button clicks here. It links the front end to the server-side Elixir logic seamlessly.</li>
-    <li><strong>Dynamic State Management</strong>: The <code>assign/3</code> function updates the LiveView's state (<code>socket</code>), crucial for changing what the user sees without reloading the page.</li>
-    <li><strong>Conditional Rendering</strong>: The rendering of components changes based on the state, such as which country is selected or whether any countries are available.</li>
-    <li><strong>Component Reuse</strong>: Functions like <code>country_details/1</code> encapsulate rendering logic that can be reused, keeping the <code>render/1</code> function clean and focused.</li>
+    <li>If <code>:selected_country</code> is <code>nil</code>, an alert is shown to inform that no countries were found in the specified region.</li>
+    <li>Otherwise, it renders a list of the selected country's details, such as code, continent, region, year of independence, form of government, head of state, population (formatted with a delimiter), GNP, and life expectancy.</li>
 </ol>
-<h3>Conclusion</h3>
-<p>This module exemplifies how Phoenix LiveView can be used to create interactive, real-time web applications. By handling events like button clicks within the Elixir environment, developers can maintain rich client-side interactions while leveraging server-side efficiencies.</p>
+<h3><code>get_button_kind/2</code></h3>
+<p>A simple utility function used within the <code>render/1</code> function to determine the styling of the buttons. It compares the <code>country</code> against the <code>selected_country</code>. If they match, it returns <code>:primary</code> which signifies that the button should have a primary styling. If they do not match, it returns <code>:secondary</code>, suggesting a more subdued styling.</p>
+<p>This module is a prime example of handling user interaction within Phoenix LiveView, using events to update the state of the LiveView, and conditionally rendering UI elements based on that state. It shows how to update and manage the LiveView's internal state in response to user actions, which is central to creating interactive applications with LiveView.</p>
