@@ -21,10 +21,13 @@ defmodule LivePlaygroundWeb.RecipesLive.AutocompleteCustom do
       <:subtitle>
         Creating a Custom Dropdown Autocomplete in LiveView
       </:subtitle>
+      <:actions>
+        <.code_breakdown_link />
+      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <form>
-      <div class="md:w-96">
+      <div class="w-full md:w-96">
         <.input
           id="autocomplete-field"
           phx-change="suggest"
@@ -61,8 +64,13 @@ defmodule LivePlaygroundWeb.RecipesLive.AutocompleteCustom do
       <.code_block filename="lib/live_playground_web/live/recipes_live/autocomplete_custom.ex" />
       <.code_block filename="lib/live_playground/countries.ex" from="# search" to="# endsearch" />
     </div>
+    <.code_breakdown_slideover filename="priv/static/html/autocomplete_custom.html" />
     <!-- end hiding from live code -->
     """
+  end
+
+  def handle_event("suggest", %{"query" => query}, socket) when query == "" do
+    {:noreply, assign(socket, :matches, [])}
   end
 
   def handle_event("suggest", %{"query" => query}, socket) do

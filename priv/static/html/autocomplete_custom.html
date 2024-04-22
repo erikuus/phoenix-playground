@@ -1,0 +1,28 @@
+<p>The <code>AutocompleteCustom</code> LiveView module implements a custom dropdown autocomplete functionality. Here's the code breakdown:</p>
+<h3><code>mount/3</code></h3>
+<ul>
+    <li>This function sets the initial state of the LiveView when it is mounted. It initializes <code>:query</code> to <code>nil</code> and <code>:matches</code> to an empty list, which will hold the autocomplete suggestions.</li>
+</ul>
+<h3><code>render/1</code></h3>
+<ul>
+    <li>The render function constructs the HTML. It includes a text input for users to type their country query, with <code>phx-change="suggest"</code> to handle changes and <code>phx-debounce="500"</code> to limit the frequency of events sent to the server.</li>
+    <li>If <code>@matches</code> is not empty, it renders an unordered list (<code>&lt;ul&gt;</code>) below the input field to show the country matches. This list is made visible only when there are matches, and it disappears when the user clicks away (<code>phx-click-away="close"</code>).</li>
+    <li>Each list item (<code>&lt;li&gt;</code>) represents a suggestion, responding to clicks (<code>phx-click="select"</code>) with the country's name passed via <code>phx-value-name</code>.</li>
+</ul>
+<h3><code>handle_event/3</code> for <code>"suggest"</code></h3>
+<ul>
+    <li>There are two clauses for handling the <code>"suggest"</code> event:<ul>
+            <li>When the query is an empty string, it clears the matches by setting <code>:matches</code> to an empty list.</li>
+            <li>With a non-empty query, it searches for matching countries using <code>Countries.list_country(query)</code> and updates <code>:query</code> and <code>:matches</code> with the results.</li>
+        </ul>
+    </li>
+</ul>
+<h3><code>handle_event/3</code> for <code>"select"</code></h3>
+<ul>
+    <li>When a user selects a country from the dropdown, this event handler sets the <code>:query</code> to the selected country's name and clears the <code>:matches</code> to hide the suggestions list.</li>
+</ul>
+<h3><code>handle_event/3</code> for <code>"close"</code></h3>
+<ul>
+    <li>This function handles the <code>phx-click-away</code> event triggered when the user clicks outside the dropdown. It hides the suggestions list by setting <code>:matches</code> to an empty list.</li>
+</ul>
+<p>By using these event handlers in conjunction with the <code>phx-debounce</code> attribute, this LiveView module effectively offers an interactive user experience. The server renders the list of suggestions based on the user's input, enabling a custom, real-time search functionality without the need for client-side JavaScript frameworks.</p>

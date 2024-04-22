@@ -15,10 +15,13 @@ defmodule LivePlaygroundWeb.RecipesLive.Autocomplete do
       <:subtitle>
         Creating an Autocomplete Field With HTML5 Datalist in LiveView
       </:subtitle>
+      <:actions>
+        <.code_breakdown_link />
+      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <form>
-      <div class="md:w-96">
+      <div class="w-full md:w-96">
         <.input
           phx-change="suggest"
           phx-debounce="500"
@@ -39,8 +42,13 @@ defmodule LivePlaygroundWeb.RecipesLive.Autocomplete do
       <.code_block filename="lib/live_playground_web/live/recipes_live/autocomplete.ex" />
       <.code_block filename="lib/live_playground/countries.ex" from="# search" to="# endsearch" />
     </div>
+    <.code_breakdown_slideover filename="priv/static/html/autocomplete.html" />
     <!-- end hiding from live code -->
     """
+  end
+
+  def handle_event("suggest", %{"query" => query}, socket) when query == "" do
+    {:noreply, assign(socket, :matches, [])}
   end
 
   def handle_event("suggest", %{"query" => query}, socket) do
