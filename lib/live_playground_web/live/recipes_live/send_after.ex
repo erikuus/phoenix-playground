@@ -3,8 +3,10 @@ defmodule LivePlaygroundWeb.RecipesLive.SendAfter do
 
   alias LivePlayground.Sales
 
+  @refresh_interval 2000
+
   def mount(_params, _session, socket) do
-    if connected?(socket), do: Process.send_after(self(), :refresh, 1000)
+    if connected?(socket), do: Process.send_after(self(), :refresh, @refresh_interval)
     {:ok, assign_stats(socket)}
   end
 
@@ -16,6 +18,9 @@ defmodule LivePlaygroundWeb.RecipesLive.SendAfter do
       <:subtitle>
         Sending Messages After a Delay in LiveView
       </:subtitle>
+      <:actions>
+        <.code_breakdown_link />
+      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <.stats>
@@ -34,13 +39,14 @@ defmodule LivePlaygroundWeb.RecipesLive.SendAfter do
       <.code_block filename="lib/live_playground_web/live/recipes_live/send_after.ex" />
       <.code_block filename="lib/live_playground/sales.ex" />
     </div>
+    <.code_breakdown_slideover filename="priv/static/html/send_after.html" />
     <!-- end hiding from live code -->
     """
   end
 
   def handle_info(:refresh, socket) do
     socket = assign_stats(socket)
-    Process.send_after(self(), :refresh, 1000)
+    Process.send_after(self(), :refresh, @refresh_interval)
     {:noreply, socket}
   end
 

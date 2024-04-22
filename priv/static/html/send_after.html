@@ -1,0 +1,34 @@
+<p>The <code>SendAfter</code> LiveView module is designed to automatically refresh and display sales statistics at regular intervals. Here's a detailed look at its components and functionality:</p>
+<h3><code>mount/3</code></h3>
+<p>Invoked when the LiveView is mounted:</p>
+<ul>
+    <li>It checks if the socket is connected.</li>
+    <li>It schedules a <code>:refresh</code> message to be sent to itself after <code>@refresh_interval</code> milliseconds (in this case, 2000 ms or 2 seconds) using <code>Process.send_after/4</code>.</li>
+    <li>The <code>assign_stats/1</code> helper function is called to fetch and assign the initial statistics to the socket's assigns.</li>
+</ul>
+<h3><code>render/1</code></h3>
+<p>This function renders the assigned statistics within the template:</p>
+<ul>
+    <li>It uses a custom component <code>.stats</code> that defines a layout for the statistics.</li>
+    <li>Within this component, it uses the <code>&lt;:card&gt;</code> subcomponent to display each statistic. The <code>title</code> attribute provides a label for each card, and the corresponding statistic is rendered within it.</li>
+</ul>
+<h3><code>handle_info/2</code> for <code>:refresh</code></h3>
+<p>Handles the <code>:refresh</code> message:</p>
+<ul>
+    <li>When a <code>:refresh</code> message is received (which happens every 2 seconds), it calls the <code>assign_stats/1</code> function again to update the stats in the assigns with the latest data.</li>
+    <li>It then schedules another <code>:refresh</code> message to continue the cycle.</li>
+</ul>
+<h3><code>assign_stats/1</code></h3>
+<p>This helper function fetches the latest statistics by calling functions from the <code>Sales</code> context/module:</p>
+<ul>
+    <li><code>Sales.orders()</code> to get the current number of orders.</li>
+    <li><code>Sales.amount()</code> to get the current amount of sales.</li>
+    <li><code>Sales.satisfaction()</code> to get the current customer satisfaction score.</li>
+    <li>The fetched statistics are assigned to the socket, ready to be used in the render function.</li>
+</ul>
+<h3>Processes in Phoenix LiveView</h3>
+<ul>
+    <li>When a LiveView is instantiated, it runs within its own Elixir process. This is a separate lightweight thread of execution that maintains the LiveView's state and handles events.</li>
+    <li>This process starts when the LiveView is mounted via the <code>mount/3</code> function and continues to exist until the user's session ends, for example, by navigating away from the page or closing the browser, at which point the process is terminated.</li>
+    <li><code>Process.send_after/4</code> is used to schedule a message (<code>:refresh</code> in this case) to be sent to the process after a set amount of time (<code>@refresh_interval</code>). This is an asynchronous action; the process continues to execute other work, such as rendering templates or handling user interactions, without blocking or waiting for this time to elapse.</li>
+</ul>
