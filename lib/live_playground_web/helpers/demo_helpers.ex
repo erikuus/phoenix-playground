@@ -127,7 +127,6 @@ defmodule LivePlaygroundWeb.DemoHelpers do
         )
       }
     >
-      <.icon name="hero-light-bulb" class="mr-1.5 h-4 w-4" />
       <%= @title %>
     </.link>
     """
