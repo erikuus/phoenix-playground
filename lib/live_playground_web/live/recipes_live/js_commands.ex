@@ -1,10 +1,6 @@
 defmodule LivePlaygroundWeb.RecipesLive.JsCommands do
   use LivePlaygroundWeb, :live_view
 
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, :btn, nil)}
-  end
-
   def render(assigns) do
     ~H"""
     <!-- start hiding from live code -->
@@ -13,14 +9,14 @@ defmodule LivePlaygroundWeb.RecipesLive.JsCommands do
       <:subtitle>
         Using JavaScript Commands to Toggle Elements in LiveView
       </:subtitle>
+      <:actions>
+        <.code_breakdown_link />
+      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <.button phx-click={show_panel()}>
       Show
     </.button>
-    <.alert :if={@btn} kind={:success} class="mt-6">
-      <%= @btn %> clicked!
-    </.alert>
     <div class="relative z-50" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
       <div id="panel-bg" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity hidden" />
       <div id="panel" class="fixed inset-0 overflow-hidden hidden">
@@ -45,14 +41,6 @@ defmodule LivePlaygroundWeb.RecipesLive.JsCommands do
                 <div class="relative mt-6 flex-1 overflow-y-auto">
                   Panel content
                 </div>
-                <div class="border-t border-zinc-200 pt-4 sm:pl-4 sm:flex sm:flex-row-reverse">
-                  <.button phx-click={hide_panel()} kind={:secondary} class="w-full sm:w-auto ml-0 sm:ml-2">
-                    Cancel
-                  </.button>
-                  <.button phx-click={JS.push("confirm", value: %{btn: "OK"}) |> hide_panel()} class="w-full sm:w-auto mt-3 sm:mt-0">
-                    OK
-                  </.button>
-                </div>
               </.focus_wrap>
             </div>
           </div>
@@ -70,17 +58,9 @@ defmodule LivePlaygroundWeb.RecipesLive.JsCommands do
         >slideover component</.link>.
       </.note>
     </div>
+    <.code_breakdown_slideover filename="priv/static/html/js_commands.html" />
     <!-- end hiding from live code -->
     """
-  end
-
-  def handle_event("confirm", %{"btn" => btn}, socket) do
-    Process.send_after(self(), :reset, 2000)
-    {:noreply, assign(socket, :btn, btn)}
-  end
-
-  def handle_info(:reset, socket) do
-    {:noreply, assign(socket, :btn, nil)}
   end
 
   defp show_panel(js \\ %JS{}) do

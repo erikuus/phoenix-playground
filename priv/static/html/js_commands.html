@@ -1,0 +1,24 @@
+<p>The <code>JsCommands</code> LiveView module showcases how to use JavaScript interoperability in Phoenix LiveView to toggle UI elements with smooth transitions. It's a clear example of combining LiveView's real-time capabilities with traditional client-side JavaScript to create dynamic and responsive UI experiences. Here's the rundown:</p>
+<h3><code>render/1</code></h3>
+<p>It defines the HTML structure and assigns behavior to the "Show" button, and describes the panel that will be shown or hidden. It's set up with:</p>
+<ul>
+    <li>A button that, when clicked (<code>phx-click</code>), will invoke the <code>show_panel/1</code> function to display the panel.</li>
+    <li>A hidden panel (<code>&lt;div id="panel"&gt;</code>) and background overlay (<code>&lt;div id="panel-bg"&gt;</code>) which will become visible when the "Show" button is clicked.</li>
+    <li>A <code>phx-window-keydown</code> event listener for the Escape key, which triggers the <code>hide_panel/1</code> function to close the panel.</li>
+</ul>
+<h3><code>show_panel/1</code></h3>
+<p>This is a helper function that returns a chain of JavaScript (JS) commands when called. These commands will:</p>
+<ul>
+    <li>Use <code>JS.show</code> to make the <code>#panel</code> and <code>#panel-bg</code> elements visible with specified transition effects.</li>
+    <li>Add the class <code>overflow-y-hidden</code> to the <code>#root-body</code> to prevent scrolling the background content when the panel is open.</li>
+    <li>Set focus to the first focusable element within <code>#panel-container</code> for accessibility reasons.</li>
+</ul>
+<h3><code>hide_panel/1</code></h3>
+<p>Another helper function that similarly returns a chain of JS commands. These commands will:</p>
+<ul>
+    <li>Use <code>JS.hide</code> to transition the <code>#panel</code> and <code>#panel-bg</code> elements out of view.</li>
+    <li>Remove the <code>overflow-y-hidden</code> class from the <code>#root-body</code> to restore scrolling.</li>
+    <li>Return focus to the previously focused element before the panel was opened (<code>JS.pop_focus()</code>).</li>
+</ul>
+<h3><code>%JS{}</code> Struct</h3>
+<p>The <code>%JS{}</code> struct represents a set of JavaScript commands that will be executed in the browser. It's part of LiveView's JavaScript interoperability feature, allowing server-side Elixir code to declaratively send instructions for client-side execution.</p>

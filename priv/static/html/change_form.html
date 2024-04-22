@@ -1,0 +1,17 @@
+<p>This LiveView module, <code>ChangeForm</code>, deals with a form that dynamically updates part of its content based on user selections. It highlights the interaction between the server-side state and client-side events in a Phoenix LiveView application. Here's a breakdown of its functionality:</p>
+<h3><code>mount/3</code></h3>
+<p>Initializes the LiveView with a default state where the color is set to "red" and the shape to "circle". This function runs once when the LiveView is mounted, setting up the initial form values.</p>
+<h3><code>render/1</code></h3>
+<p>The render function uses HEEx (HTML + Elixir) templating to construct the form. It contains:</p>
+<ul>
+    <li>A select input for color, with options provided by <code>color_options/0</code>.</li>
+    <li>Dynamic inputs that are rendered based on the selected color value.</li>
+    <li>A series of radio inputs for shape selection, with additional dynamic inputs rendered based on the selected shape.</li>
+</ul>
+<h3><code>render_dynamic_inputs/2</code></h3>
+<p>This helper function dynamically generates additional inputs based on the current state. There are different clauses based on the value of the color and shape. For example, if the color is "green", additional text inputs for "Dark Green" and "Light Green" are displayed. For shapes, if the shape is "rectangle", radio buttons labeled "A" and "B" are shown.</p>
+<h3><code>handle_event/3</code></h3>
+<p>This function is bound to the <code>phx-change="refresh"</code> event of the form, which is triggered when any input within the form changes. It receives the form's data and updates the socket's assigns for color and shape, which in turn causes the form to re-render with the appropriate dynamic inputs.</p>
+<h3><code>color_options/0</code></h3>
+<p>Provides a list of color options for the select input in the form. It's a simple function that returns a list of tuples, where each tuple contains a human-readable color name and its corresponding value.</p>
+<p>This module showcases the capability of Phoenix LiveView to react to user input by modifying the server-side state, which then automatically updates the client-side UI without a full page refresh. The <code>phx-update="ignore"</code> attribute is particularly notable, as it tells LiveView to ignore the contents of that container during updates, preventing it from being overwritten when other parts of the form change. This is a useful mechanism when you have form inputs that should not be reset or altered during partial page updates.</p>

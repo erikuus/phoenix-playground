@@ -19,28 +19,32 @@ defmodule LivePlaygroundWeb.RecipesLive.ChangeForm do
       <:subtitle>
         Handling Form Changes in LiveView
       </:subtitle>
+      <:actions>
+        <.code_breakdown_link />
+      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <form id="dynamic-form" class="space-y-5" phx-change="refresh">
       <.input type="select" label="Color" name="color" options={color_options()} value={@color} />
-      <%= render_partial(:color, @color, assigns) %>
+      <%= render_dynamic_inputs(:color, assigns) %>
       <div class="ml-1 space-y-2">
         <.input type="radio" name="shape" label="Circle" id="circle" value="circle" checked={@shape == "circle"} />
         <.input type="radio" name="shape" label="Rectangle" id="rectangle" value="rectangle" checked={@shape == "rectangle"} />
-        <%= render_partial(:rectangle, @shape, assigns) %>
+        <%= render_dynamic_inputs(:rectangle, assigns) %>
         <.input type="radio" name="shape" label="Square" id="square" value="square" checked={@shape == "square"} />
-        <%= render_partial(:square, @shape, assigns) %>
+        <%= render_dynamic_inputs(:square, assigns) %>
       </div>
     </form>
     <!-- start hiding from live code -->
     <div class="mt-10">
       <.code_block filename="lib/live_playground_web/live/recipes_live/change_form.ex" />
     </div>
+    <.code_breakdown_slideover filename="priv/static/html/change_form.html" />
     <!-- end hiding from live code -->
     """
   end
 
-  defp render_partial(:color, "green", assigns) do
+  defp render_dynamic_inputs(:color, %{color: "green"} = assigns) do
     ~H"""
     <div id="greens" phx-update="ignore" class="space-y-5 ml-6">
       <.input type="text" id="dark-green" label="Dark Green" name="dark_green" value="" />
@@ -49,7 +53,7 @@ defmodule LivePlaygroundWeb.RecipesLive.ChangeForm do
     """
   end
 
-  defp render_partial(:color, "blue", assigns) do
+  defp render_dynamic_inputs(:color, %{color: "blue"} = assigns) do
     ~H"""
     <div id="blues" phx-update="ignore" class="space-y-5 ml-6">
       <.input type="text" id="dark-blue" label="Dark Blue" name="dark_blue" value="" />
@@ -58,7 +62,7 @@ defmodule LivePlaygroundWeb.RecipesLive.ChangeForm do
     """
   end
 
-  defp render_partial(:rectangle, "rectangle", assigns) do
+  defp render_dynamic_inputs(:rectangle, %{shape: "rectangle"} = assigns) do
     ~H"""
     <div id="rectangles" phx-update="ignore" class="mt-2 ml-6 space-y-2">
       <.input type="radio" name="rectangle" id="a" label="A" value="a" checked={true} />
@@ -67,7 +71,7 @@ defmodule LivePlaygroundWeb.RecipesLive.ChangeForm do
     """
   end
 
-  defp render_partial(:square, "square", assigns) do
+  defp render_dynamic_inputs(:square, %{shape: "square"} = assigns) do
     ~H"""
     <div id="squares" phx-update="ignore" class="mt-2 ml-6 space-y-2">
       <.input type="radio" name="square" id="c" label="C" value="c" checked={true} />
@@ -76,7 +80,7 @@ defmodule LivePlaygroundWeb.RecipesLive.ChangeForm do
     """
   end
 
-  defp render_partial(_, _, _), do: nil
+  defp render_dynamic_inputs(_, _), do: nil
 
   def handle_event("refresh", %{"color" => color, "shape" => shape}, socket) do
     socket =
