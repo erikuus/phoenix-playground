@@ -4,14 +4,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Search do
   alias LivePlayground.Countries
 
   def mount(_params, _session, socket) do
-    socket =
-      assign(socket,
-        query: nil,
-        countries: [],
-        loading: false
-      )
-
-    {:ok, socket}
+    {:ok, assign_empty_search(socket)}
   end
 
   def render(assigns) do
@@ -24,11 +17,11 @@ defmodule LivePlaygroundWeb.RecipesLive.Search do
       </:subtitle>
     </.header>
     <!-- end hiding from live code -->
-    <form class="mb-4 flex space-x-3" phx-submit="search">
+    <form class="mb-4 flex space-x-3 " phx-submit="search">
       <div class="w-72">
-        <.input type="text" name="query" autocomplete="off" placeholder="Country" value={@query} readonly={@loading} />
+        <.input type="text" name="query" autocomplete="off" placeholder="Country" value={@query} disabled={@loading} />
       </div>
-      <.button type="submit">
+      <.button type="submit" phx-disable-with="" disabled={@loading}>
         Search <.loading :if={@loading} class="ml-2 -mr-2 w-5 h-5" />
       </.button>
     </form>
@@ -51,6 +44,15 @@ defmodule LivePlaygroundWeb.RecipesLive.Search do
     </div>
     <!-- end hiding from live code -->
     """
+  end
+
+  def handle_event("search", %{"query" => query}, socket) when query == "" do
+    socket =
+      socket
+      |> put_flash(:no_result, "Please enter a search term")
+      |> assign_empty_search()
+
+    {:noreply, socket}
   end
 
   def handle_event("search", %{"query" => query}, socket) do
@@ -90,5 +92,13 @@ defmodule LivePlaygroundWeb.RecipesLive.Search do
 
         {:noreply, socket}
     end
+  end
+
+  defp assign_empty_search(socket) do
+    assign(socket,
+      query: nil,
+      countries: [],
+      loading: false
+    )
   end
 end

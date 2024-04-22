@@ -443,7 +443,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
           "block w-full rounded-lg border-zinc-300 py-2 px-3",
           "text-zinc-900 focus:outline-none focus:ring-4 sm:text-sm sm:leading-6",
           "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400 phx-no-feedback:focus:ring-zinc-800/5",
-          "border-zinc-300 focus:border-zinc-400 focus:ring-zinc-800/5",
+          "border-zinc-300 focus:border-zinc-400 focus:ring-zinc-800/5 disabled:bg-zinc-100",
           @errors != [] &&
             "border-rose-400 focus:border-rose-400 focus:ring-rose-400/10"
         ]}
