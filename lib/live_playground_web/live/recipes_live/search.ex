@@ -15,9 +15,12 @@ defmodule LivePlaygroundWeb.RecipesLive.Search do
       <:subtitle>
         Creating a Search Interface Without URL Parameters in LiveView
       </:subtitle>
+      <:actions>
+        <.code_breakdown_link />
+      </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <form class="mb-4 flex space-x-3 " phx-submit="search">
+    <form class="mb-4 flex space-x-3" phx-submit="search">
       <div class="w-72">
         <.input type="text" name="query" autocomplete="off" placeholder="Country" value={@query} disabled={@loading} />
       </div>
@@ -42,11 +45,12 @@ defmodule LivePlaygroundWeb.RecipesLive.Search do
       <.code_block filename="lib/live_playground_web/live/recipes_live/search.ex" />
       <.code_block filename="lib/live_playground/countries.ex" from="# search" to="# endsearch" />
     </div>
+    <.code_breakdown_slideover filename="priv/static/html/search.html" />
     <!-- end hiding from live code -->
     """
   end
 
-  def handle_event("search", %{"query" => query}, socket) when query == "" do
+  def handle_event("search", %{"query" => ""}, socket) do
     socket =
       socket
       |> put_flash(:no_result, "Please enter a search term")
