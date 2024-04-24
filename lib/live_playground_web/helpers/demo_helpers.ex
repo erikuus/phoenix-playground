@@ -305,17 +305,16 @@ defmodule LivePlaygroundWeb.DemoHelpers do
     |> Enum.take_every(2)
     |> Enum.map(&String.trim_trailing/1)
     |> Enum.join("\n")
-    |> String.trim_leading("\n")
     |> hide_comment(elixir)
+    |> String.trim_leading("\n")
   end
 
   defp show_marked(code, _, _, _, false), do: code
 
-  # Processes and removes comments from Elixir code.
+  # This regex matches lines with exactly one # (ignores ## or more at the start of a line)
   defp hide_comment(code_string, true) do
-    code_string
-    |> Code.string_to_quoted!()
-    |> Macro.to_string()
+    regex = ~r/^\s*#(?!\#)[^\n]*$/m
+    Regex.replace(regex, code_string, "")
   end
 
   defp hide_comment(code_string, false), do: String.trim_leading(code_string)
