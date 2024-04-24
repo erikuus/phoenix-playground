@@ -42,6 +42,42 @@ defmodule LivePlayground.Cities do
   # endpaginate
 
   # paginate # filter # sort # form # streaminsert # streamreset # streamupdate # streamreset # broadcaststream_ # broadcaststreamreset # tabularinsert
+
+  @doc """
+  Fetches a list of cities filtered by various criteria from the database for a specified country code.
+
+  ## Parameters:
+    - `countrycode`: The ISO country code (e.g., 'US' for the United States).
+    - `options`: A map of options to further filter and sort the results. Default is `%{sort_by: :name, sort_order: :asc}`.
+
+  ## Options:
+    - `name`: Filter cities by name using a case-insensitive like match. (e.g., `%{name: "York"}`).
+    - `district`: Filter cities by their district exactly matching the given string.
+    - `sm`: Include cities with a population less than or equal to 500,000 (`"true"` or `"false"`).
+    - `md`: Include cities with a population greater than 500,000 and less than 1,000,000 (`"true"` or `"false"`).
+    - `lg`: Include cities with a population of at least 1,000,000 (`"true"` or `"false"`).
+    - `sort_by`: Column to sort by (e.g., :name, :population).
+    - `sort_order`: Order of sorting, either `:asc` for ascending or `:desc` for descending.
+
+  ## Example:
+    Given `countrycode` = 'US' and
+    `options` = %{name: "New", district: "York", sm: "true", md: "true", lg: "true", sort_by: :population, sort_order: :desc},
+    the function constructs and executes the following SQL query:
+    ```sql
+    SELECT * FROM cities
+    WHERE countrycode = 'US'
+    AND lower(name) LIKE '%new%'
+    AND district = 'York'
+    AND (
+        population <= 500000 OR
+        (population > 500000 AND population < 1000000) OR
+        population >= 1000000
+    )
+    ORDER BY population DESC
+
+  ## Returns:
+    - A list of %City{} structs matching the criteria, sorted and paginated according to the options.
+  """
   def list_country_city(countrycode, options \\ %{sort_by: :name, sort_order: :asc}) do
     from(City)
     |> where(countrycode: ^countrycode)
@@ -56,18 +92,14 @@ defmodule LivePlayground.Cities do
   # endpaginate # endfilter # endsort # endform # endstreaminsert # endstreamreset # endstreamupdate # endstreamreset # endbroadcaststream_ # endbroadcaststreamreset # endtabularinsert
 
   # filter
-  defp filter_by_name(query, %{name: ""}), do: query
-
-  defp filter_by_name(query, %{name: name}) do
+  defp filter_by_name(query, %{name: name}) when name != "" do
     ilike = "%#{name}%"
     where(query, [c], ilike(c.name, ^ilike))
   end
 
   defp filter_by_name(query, _options), do: query
 
-  defp filter_by_district(query, %{dist: ""}), do: query
-
-  defp filter_by_district(query, %{dist: district}) do
+  defp filter_by_district(query, %{district: district}) when district != "" do
     where(query, district: ^district)
   end
 
@@ -75,7 +107,7 @@ defmodule LivePlayground.Cities do
 
   defp filter_by_size(query, %{sm: "false", md: "false", lg: "false"}), do: query
 
-  defp filter_by_size(query, %{sm: _sm, md: _md, lg: _lg} = options) do
+  defp filter_by_size(query, options) do
     size_conditions =
       dynamic(false)
       |> condition_by_sm(options)
@@ -85,25 +117,23 @@ defmodule LivePlayground.Cities do
     where(query, ^size_conditions)
   end
 
-  defp filter_by_size(query, _options), do: query
-
-  defp condition_by_sm(dynamic, %{sm: "false"}), do: dynamic
-
   defp condition_by_sm(dynamic, %{sm: "true"}) do
     dynamic([c], c.population <= 500_000 or ^dynamic)
   end
 
-  defp condition_by_md(dynamic, %{md: "false"}), do: dynamic
+  defp condition_by_sm(dynamic, _), do: dynamic
 
   defp condition_by_md(dynamic, %{md: "true"}) do
     dynamic([c], (c.population > 500_000 and c.population < 1_000_000) or ^dynamic)
   end
 
-  defp condition_by_lg(dynamic, %{lg: "false"}), do: dynamic
+  defp condition_by_md(dynamic, _), do: dynamic
 
   defp condition_by_lg(dynamic, %{lg: "true"}) do
     dynamic([c], c.population >= 1_000_000 or ^dynamic)
   end
+
+  defp condition_by_lg(dynamic, _), do: dynamic
 
   def list_distinct_country_district(countrycode) do
     from(City)
