@@ -1,0 +1,25 @@
+<p>The <code>Filter</code> LiveView module offers a real-time filtering interface for city data without using URL parameters. It dynamically updates a table based on user-specified filter criteria. Here’s the explanation:</p>
+<h3><code>mount/3</code></h3>
+<ul>
+    <li>Initializes the LiveView with a default filter state: all filter options set to indicate no filtering is applied (<code>""</code> or <code>"false"</code>).</li>
+</ul>
+<h3><code>render/1</code></h3>
+<ul>
+    <li>Constructs the HTML with a form consisting of inputs for city name, district, and city size checkboxes. These inputs are bound to trigger the <code>"filter"</code> event upon change.</li>
+    <li>An <code>phx-debounce="500"</code> attribute on the name input field throttles event triggers, improving performance.</li>
+    <li>The form includes checkboxes for city sizes (Small, Medium, Large) with values bound to the <code>@filter</code> assign.</li>
+    <li>If there are no cities to display (<code>@cities</code> is empty), an alert is shown; otherwise, a table lists the filtered city data.</li>
+</ul>
+<h3><code>handle_event/3</code> for <code>"filter"</code></h3>
+<ul>
+    <li>Called when any filter input changes.</li>
+    <li>Constructs a <code>new_filter</code> map from the event payload and updates the socket's assigns only if the filter has changed.</li>
+    <li>Ensures consistent handling of checkbox values as strings (<code>"true"</code> or <code>"false"</code>), managed by custom LiveView components.</li>
+</ul>
+<h3>Helper Functions</h3>
+<ul>
+    <li><code>assign_filter/2</code> updates the <code>:cities</code> assign with the results from <code>Cities.list_country_city/2</code> using the current filter and stores the filter in the socket's assigns.</li>
+    <li><code>district_options/0</code> provides a list of unique district options for the district select input.</li>
+    <li><code>size_options/0</code> returns a list of maps for size-related checkboxes, each including a label and a key corresponding to the filter options in the assigns.</li>
+</ul>
+<p>This module is a fine example of LiveView’s capabilities to handle complex, interactive UIs that react to user input with minimal latency. By handling filter changes reactively on the server, the interface provides immediate feedback and avoids full page reloads or manual DOM updates traditionally managed by client-side JavaScript.</p>
