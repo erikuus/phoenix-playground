@@ -8,31 +8,31 @@ defmodule LivePlaygroundWeb.RecipesLive.FilterParams do
   end
 
   def handle_params(
-        %{"name" => name, "dist" => dist, "sm" => sm, "md" => md, "lg" => lg},
+        %{"name" => name, "district" => district, "sm" => sm, "md" => md, "lg" => lg},
         _url,
         socket
       ) do
     filter = %{
-      dist: dist,
+      district: district,
       name: name,
-      sm: sm,
-      md: md,
-      lg: lg
+      sm: validate_bool(sm),
+      md: validate_bool(md),
+      lg: validate_bool(lg)
     }
 
     {:noreply, assign_filter(socket, filter)}
   end
 
   def handle_params(_params, _url, socket) do
-    filter = %{
-      dist: "",
+    default_filter = %{
+      district: "",
       name: "",
       sm: "false",
       md: "false",
       lg: "false"
     }
 
-    {:noreply, assign_filter(socket, filter)}
+    {:noreply, assign_filter(socket, default_filter)}
   end
 
   def render(assigns) do
@@ -43,15 +43,21 @@ defmodule LivePlaygroundWeb.RecipesLive.FilterParams do
       <:subtitle>
         Handling Filter With URL Parameters in LiveView
       </:subtitle>
+      <:actions>
+        <.code_breakdown_link />
+      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <form id="filter-form" class="md:flex md:items-end md:space-x-6 space-y-4 mb-6" phx-change="filter">
       <.input type="text" name="name" label="Name" value={@filter.name} phx-debounce="500" />
-      <.input type="select" name="dist" label="District" options={dist_options()} value={@filter.dist} />
+      <.input type="select" name="district" label="District" options={district_options()} value={@filter.district} />
       <div class="md:flex md:space-x-6 md:pb-2.5">
         <.input :for={size <- size_options()} type="checkbox" label={size.label} name={size.name} value={@filter[size.key]} />
       </div>
     </form>
+    <.alert :if={no_filters_applied(@filter)}>
+      Showing all records—no filters applied.
+    </.alert>
     <.alert :if={@cities == []}>
       No results
     </.alert>
@@ -76,22 +82,33 @@ defmodule LivePlaygroundWeb.RecipesLive.FilterParams do
       <.code_block filename="lib/live_playground_web/live/recipes_live/filter_params.ex" />
       <.code_block filename="lib/live_playground/cities.ex" from="# filter" to="# endfilter" />
     </div>
+    <.code_breakdown_slideover filename="priv/static/html/filter_params.html" />
     <!-- end hiding from live code -->
     """
   end
 
+  @doc """
+  Handles the 'filter' event for the name textbox, district select, and size checkboxes. The values for 'sm', 'md', and 'lg'
+  are guaranteed to be strings "true" or "false". This consistent behavior is ensured by the checkbox component design, which
+  always returns "true" if checked and "false" if not, thanks to the combination of a hidden input and a checkbox input with
+  pre-defined values.
+  """
   def handle_event(
         "filter",
-        %{"name" => name, "dist" => dist, "sm" => sm, "md" => md, "lg" => lg},
+        %{"name" => name, "district" => district, "sm" => sm, "md" => md, "lg" => lg},
         socket
       ) do
     socket =
       push_patch(socket,
-        to: ~p"/filter-params?#{[name: name, dist: dist, sm: sm, md: md, lg: lg]}"
+        to: ~p"/filter-params?#{[name: name, district: district, sm: sm, md: md, lg: lg]}"
       )
 
     {:noreply, socket}
   end
+
+  defp validate_bool(value) when value in ["true", "false"], do: value
+
+  defp validate_bool(_), do: "false"
 
   defp assign_filter(socket, filter) do
     assign(socket,
@@ -100,14 +117,23 @@ defmodule LivePlaygroundWeb.RecipesLive.FilterParams do
     )
   end
 
-  defp dist_options() do
-    districts =
-      Cities.list_distinct_country_district("USA")
-      |> Enum.map(fn x -> x.district end)
-
-    ["" | districts]
+  defp no_filters_applied(filter) do
+    filter == %{
+      district: "",
+      name: "",
+      sm: "false",
+      md: "false",
+      lg: "false"
+    }
   end
 
+  defp district_options() do
+    ["" | Cities.list_distinct_country_district("USA") |> Enum.map(& &1.district)]
+  end
+
+  # Provides options for size-related checkboxes. Each option includes a `key` corresponding to an atom used
+  # in the `@filter` assigns. The `key` is essential for ensuring that checkbox states (checked or unchecked)
+  # are accurately maintained across LiveView re-renders.
   defp size_options() do
     [
       %{key: :sm, name: "sm", label: "Small"},
