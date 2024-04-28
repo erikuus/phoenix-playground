@@ -107,7 +107,7 @@ defmodule LivePlayground.Cities do
 
   defp filter_by_size(query, %{sm: "false", md: "false", lg: "false"}), do: query
 
-  defp filter_by_size(query, options) do
+  defp filter_by_size(query, %{sm: _sm, md: _md, lg: _lg} = options) do
     size_conditions =
       dynamic(false)
       |> condition_by_sm(options)
@@ -116,6 +116,8 @@ defmodule LivePlayground.Cities do
 
     where(query, ^size_conditions)
   end
+
+  defp filter_by_size(query, _options), do: query
 
   defp condition_by_sm(dynamic, %{sm: "true"}) do
     dynamic([c], c.population <= 500_000 or ^dynamic)
