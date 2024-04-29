@@ -10,29 +10,22 @@ defmodule LivePlaygroundWeb.RecipesLive.SortParams do
     {:ok, socket}
   end
 
-  def handle_params(params, _url, socket) do
-    sort_order =
-      params
-      |> get_permitted("sort_order", @permitted_sort_orders)
-      |> String.to_atom()
-
-    sort_by =
-      params
-      |> get_permitted("sort_by", @permitted_sort_by)
-      |> String.to_atom()
-
+  def handle_params(%{"sort_order" => sort_order, "sort_by" => sort_by}, _url, socket) do
     options = %{
-      sort_order: sort_order,
-      sort_by: sort_by
+      sort_order: safe_to_atom(sort_order, @permitted_sort_orders, :asc),
+      sort_by: safe_to_atom(sort_by, @permitted_sort_by, :name)
     }
 
-    socket =
-      assign(socket,
-        cities: Cities.list_country_city("EST", options),
-        options: options
-      )
+    {:noreply, assign_sorting_options(socket, options)}
+  end
 
-    {:noreply, socket}
+  def handle_params(params, _url, socket) do
+    options = %{
+      sort_order: :asc,
+      sort_by: :name
+    }
+
+    {:noreply, assign_sorting_options(socket, options)}
   end
 
   def render(assigns) do
@@ -43,6 +36,9 @@ defmodule LivePlaygroundWeb.RecipesLive.SortParams do
       <:subtitle>
         Managing Sorting With URL Parameters in LiveView
       </:subtitle>
+      <:actions>
+        <.code_breakdown_link />
+      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <.table :if={@cities != []} id="cities" rows={@cities}>
@@ -64,6 +60,7 @@ defmodule LivePlaygroundWeb.RecipesLive.SortParams do
       <.code_block filename="lib/live_playground_web/live/recipes_live/sort_params.ex" />
       <.code_block filename="lib/live_playground/cities.ex" from="# sort" to="# endsort" />
     </div>
+    <.code_breakdown_slideover filename="priv/static/html/sort_params.html" />
     <!-- end hiding from live code -->
     """
   end
@@ -71,7 +68,7 @@ defmodule LivePlaygroundWeb.RecipesLive.SortParams do
   defp sort_link(label, col, options) do
     assigns = %{
       label: label <> get_indicator(col, options),
-      to: ~p"/sort-params?#{[sort_by: col, sort_order: get_opposite(options.sort_order)]}"
+      to: ~p"/sort-params?#{[sort_by: col, sort_order: get_sort_order(col, options)]}"
     }
 
     ~H"""
@@ -79,6 +76,13 @@ defmodule LivePlaygroundWeb.RecipesLive.SortParams do
       <%= @label %>
     </.link>
     """
+  end
+
+  defp assign_sorting_options(socket, options) do
+    assign(socket,
+      cities: Cities.list_country_city("EST", options),
+      options: options
+    )
   end
 
   defp get_indicator(col, options) when col == options.sort_by do
@@ -90,15 +94,16 @@ defmodule LivePlaygroundWeb.RecipesLive.SortParams do
 
   defp get_indicator(_, _), do: ""
 
-  defp get_opposite(order) do
-    case order do
+  defp get_sort_order(col, options) when col == options.sort_by do
+    case options.sort_order do
       :asc -> :desc
       :desc -> :asc
     end
   end
 
-  defp get_permitted(params, key, whitelist) do
-    value = params[key]
-    if value in whitelist, do: value, else: hd(whitelist)
+  defp get_sort_order(_, _), do: :asc
+
+  defp safe_to_atom(str, whitelist, fallback) do
+    if str in whitelist, do: String.to_existing_atom(str), else: fallback
   end
 end

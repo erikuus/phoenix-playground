@@ -3,6 +3,9 @@ defmodule LivePlaygroundWeb.RecipesLive.Sort do
 
   alias LivePlayground.Cities
 
+  @permitted_sort_orders ~w(asc desc)
+  @permitted_sort_by ~w(name district population)
+
   def mount(_params, _session, socket) do
     options = %{
       sort_order: :asc,
@@ -20,6 +23,9 @@ defmodule LivePlaygroundWeb.RecipesLive.Sort do
       <:subtitle>
         Implementing Sorting Without URL Parameters in LiveView
       </:subtitle>
+      <:actions>
+        <.code_breakdown_link />
+      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <.table :if={@cities != []} id="cities" rows={@cities}>
@@ -41,6 +47,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Sort do
       <.code_block filename="lib/live_playground_web/live/recipes_live/sort.ex" />
       <.code_block filename="lib/live_playground/cities.ex" from="# sort" to="# endsort" />
     </div>
+    <.code_breakdown_slideover filename="priv/static/html/sort.html" />
     <!-- end hiding from live code -->
     """
   end
@@ -48,7 +55,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Sort do
   defp sort_link(label, col, options) do
     assigns = %{
       label: label <> get_indicator(col, options),
-      sort_order: get_opposite(options.sort_order),
+      sort_order: get_sort_order(col, options),
       sort_by: col
     }
 
@@ -61,8 +68,8 @@ defmodule LivePlaygroundWeb.RecipesLive.Sort do
 
   def handle_event("sort", %{"order" => sort_order, "by" => sort_by}, socket) do
     options = %{
-      sort_order: String.to_atom(sort_order),
-      sort_by: String.to_atom(sort_by)
+      sort_order: safe_to_atom(sort_order, @permitted_sort_orders, :asc),
+      sort_by: safe_to_atom(sort_by, @permitted_sort_by, :name)
     }
 
     {:noreply, assign_sorting_options(socket, options)}
@@ -84,10 +91,16 @@ defmodule LivePlaygroundWeb.RecipesLive.Sort do
 
   defp get_indicator(_, _), do: ""
 
-  defp get_opposite(order) do
-    case order do
+  defp get_sort_order(col, options) when col == options.sort_by do
+    case options.sort_order do
       :asc -> :desc
       :desc -> :asc
     end
+  end
+
+  defp get_sort_order(_, _), do: :asc
+
+  defp safe_to_atom(str, whitelist, fallback) do
+    if str in whitelist, do: String.to_existing_atom(str), else: fallback
   end
 end

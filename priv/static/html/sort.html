@@ -1,0 +1,26 @@
+<p>The <code>Sort</code> LiveView module is designed to manage sorting of city data within a table. It allows users to sort by different columns such as name, district, and population.</p>
+<h3><code>mount/3</code></h3>
+<ul>
+    <li>Initializes the LiveView with the default sorting options (<code>sort_order: :asc</code> and <code>sort_by: :name</code>), setting how the city data will be initially sorted when the page loads.</li>
+</ul>
+<h3><code>render/1</code></h3>
+<ul>
+    <li>The HTML markup creates a table with sortable columns. Sorting options are provided to each column header through the <code>sort_link/3</code> function, allowing users to change the sort order by clicking on the column headers.</li>
+</ul>
+<h3><code>sort_link/3</code></h3>
+<ul>
+    <li>Generates a link for each table column header. It includes the current sort order and column name within the link's attributes (<code>phx-value-order</code> and <code>phx-value-by</code>), allowing the <code>handle_event/3</code> function to access them when sorting.</li>
+    <li>The <code>get_indicator/2</code> helper function appends an indicator (up or down arrow) to the label to show the current sort direction of the column.</li>
+</ul>
+<h3><code>handle_event/3</code> for <code>"sort"</code></h3>
+<ul>
+    <li>When a user clicks on a sort link, this function is triggered. It constructs the new sorting options based on the user's choice and updates the state with the <code>assign_sorting_options/2</code> function.</li>
+</ul>
+<h3>Helper Functions</h3>
+<ul>
+    <li><code>assign_sorting_options/2</code> updates the <code>:cities</code> assign with the sorted city data based on the current <code>options</code> and stores the sorting options in the socket's assigns.</li>
+    <li><code>get_indicator/2</code> returns a sort direction arrow for the currently sorted column.</li>
+    <li><code>get_sort_order/2</code> toggles the sort direction for the clicked column or sets it to <code>:asc</code> by default.</li>
+    <li><code>safe_to_atom/2</code>: Safely converts string parameters to atoms, checking against a whitelist of permitted values to prevent unauthorized or malicious atom creation, which could exhaust system resources.</li>
+</ul>
+<p>This module effectively illustrates how to implement column sorting in a LiveView application, making the interaction seamless by updating the content reactively without page reloads and ensuring the UI reflects the current sort state. The careful handling of string-to-atom conversions demonstrates attention to the safety and stability of the application.</p>
