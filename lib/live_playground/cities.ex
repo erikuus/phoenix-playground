@@ -41,7 +41,7 @@ defmodule LivePlayground.Cities do
 
   # endpaginate
 
-  # paginate # filter # sort # form # streaminsert # streamreset # streamupdate # streamreset # broadcaststream_ # broadcaststreamreset # tabularinsert
+  # filter
 
   @doc """
   Fetches a list of cities filtered by various criteria from the database for a specified country code.
@@ -78,6 +78,7 @@ defmodule LivePlayground.Cities do
   ## Returns:
     - A list of %City{} structs matching the criteria, sorted and paginated according to the options.
   """
+  # paginate # sort # form # streaminsert # streamreset # streamupdate # streamreset # broadcaststream_ # broadcaststreamreset # tabularinsert
   def list_country_city(countrycode, options \\ %{sort_by: :name, sort_order: :asc}) do
     from(City)
     |> where(countrycode: ^countrycode)
