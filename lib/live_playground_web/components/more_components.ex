@@ -739,7 +739,20 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
-  Renders a pagination toolbar.
+  Renders a pagination toolbar component, allowing navigation through pages of items.
+
+  This component displays 'Previous' and 'Next' navigation links along with direct links
+  to individual pages based on the current page, items per page, and the total count of items.
+  It supports dynamic updating through Phoenix LiveView events.
+
+  ## Parameters
+
+    - `:class` (optional): Additional CSS classes to apply to the toolbar.
+    - `:event`: The LiveView event to handle page changes.
+    - `:page`: The current page number.
+    - `:per_page`: Number of items per page.
+    - `:count_all`: Total count of items across all pages.
+    - `:limit`: Maximum number of page links to show around the current page.
 
   ## Example
 
@@ -748,6 +761,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         page={@page}
         per_page={@per_page}
         count_all={@count}
+        limit={5}
       />
   """
   attr :class, :string, default: nil
@@ -759,7 +773,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   def pagination(assigns) do
     ~H"""
-    <nav class={["flex items-center justify-between border-t border-gray-200 px-4 sm:px-0", @class]}>
+    <nav :if={@count_all > 0} class={["flex items-center justify-between border-t border-gray-200 px-4 sm:px-0", @class]}>
       <div class="-mt-px flex w-0 flex-1">
         <.link
           :if={@page > 1}
@@ -806,13 +820,12 @@ defmodule LivePlaygroundWeb.MoreComponents do
     """
   end
 
-  def get_pages(page, per_page, count_all, limit) do
-    page_count = ceil(count_all / per_page)
+  defp get_pages(page, per_page, count_all, limit) do
+    # This function is preferred over ceil(num / denom) to avoid potential precision and efficiency issues.
+    page_count = div(count_all + per_page - 1, per_page)
 
-    for page_number <- (page - limit)..(page + limit),
-        page_number > 0 and page_number <= page_count do
-      page_number
-    end
+    # Test each element in the enumerable. Only elements for which function returns true are included in the result.
+    Enum.filter((page - limit)..(page + limit), &(&1 > 0 and &1 <= page_count))
   end
 
   @doc """
