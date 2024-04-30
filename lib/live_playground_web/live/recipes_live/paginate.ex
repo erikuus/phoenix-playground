@@ -27,6 +27,9 @@ defmodule LivePlaygroundWeb.RecipesLive.Paginate do
       <:subtitle>
         Implementing Pagination Without URL Parameters in LiveView
       </:subtitle>
+      <:actions>
+        <.code_breakdown_link />
+      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <form phx-change="select-per-page" class="flex md:flex-row-reverse md:-mt-10 md:-mb-6">
@@ -56,13 +59,14 @@ defmodule LivePlaygroundWeb.RecipesLive.Paginate do
       <.code_block filename="lib/live_playground_web/live/recipes_live/paginate.ex" />
       <.code_block filename="lib/live_playground/cities.ex" from="# paginate" to="# endpaginate" />
     </div>
+    <.code_breakdown_slideover filename="priv/static/html/paginate.html" />
     <!-- end hiding from live code -->
     """
   end
 
   def handle_event("select-per-page", %{"per_page" => per_page}, socket) do
     per_page = String.to_integer(per_page)
-    page = get_safe_page(socket.assigns.options.page, per_page, socket.assigns.count)
+    page = get_existing_page(socket.assigns.options.page, per_page, socket.assigns.count)
     options = %{socket.assigns.options | per_page: per_page, page: page}
 
     {:noreply, assign_pagination_options(socket, options)}
@@ -81,11 +85,29 @@ defmodule LivePlaygroundWeb.RecipesLive.Paginate do
     )
   end
 
-  defp get_safe_page(page, per_page, count) do
-    if(page * per_page > count) do
-      ceil(count / per_page)
-    else
-      page
+  # Ensures users aren't left on an invalid page when changing the number of items per page
+  defp get_existing_page(page, per_page, count) do
+    max_page = ceil_div(count, per_page)
+
+    cond do
+      page > max_page -> max_page
+      page < 1 -> 1
+      true -> page
     end
+  end
+
+  # Performs ceiling division on two integers.
+  # It calculates how many complete or partial units of `denom` fit into `num` and rounds up if there is any remainder.
+  # This method is particularly useful for scenarios like pagination where you need to determine the number of pages.
+  # This approach avoids floating-point operations by adding `denom - 1` to `num` before dividing.
+  # This addition ensures that any remainder in the division results in rounding up the quotient to the next integer.
+  #
+  # Example:
+  #   ceil_div(45, 10) returns 5, calculating 5 pages needed to display 45 items with 10 items per page.
+  #
+  # This function is preferred over floating-point ceil(num / denom) to avoid potential precision issues and to maintain
+  # integer arithmetic for efficiency and accuracy, especially important in environments where consistency of data types is crucial.
+  defp ceil_div(num, denom) do
+    div(num + denom - 1, denom)
   end
 end
