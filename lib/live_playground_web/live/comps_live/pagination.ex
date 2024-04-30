@@ -20,7 +20,7 @@ defmodule LivePlaygroundWeb.CompsLive.Pagination do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <.pagination event="select-page" page={@page} per_page={20} count_all={100} />
+    <.pagination event="select-page" page={@page} per_page={10} count_all={45} />
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/comps_live/pagination.ex" />
