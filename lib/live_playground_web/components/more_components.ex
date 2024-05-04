@@ -8,7 +8,6 @@ defmodule LivePlaygroundWeb.MoreComponents do
   """
   use Phoenix.Component
 
-  alias LivePlaygroundWeb.Menus.Sidebar
   alias Phoenix.LiveView.JS
 
   import LivePlaygroundWeb.CoreComponents
@@ -106,7 +105,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
           </button>
         </div>
         <main class="flex-1">
-          <div class="lg:py-6">
+          <div class="lg:px-3 lg:py-6">
             <div class="mx-auto max-w-7xl px-6">
               <%= render_slot(@inner_block) %>
             </div>
@@ -592,7 +591,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   ## Example
 
       <.tabs>
-        <:tab :for={tab <- @tabs} patch={tab.patch} active={tab.active}>
+        <:tab :for={tab <- @tabs} patch={tab.path} active={tab.active}>
           <%= tab.name %>
         </:tab>
       </.tabs>
@@ -789,18 +788,21 @@ defmodule LivePlaygroundWeb.MoreComponents do
       </div>
 
       <div class="hidden lg:-mt-px lg:flex">
-        <.link
-          :for={page <- get_pages(@page, @per_page, @count_all, @limit)}
-          phx-click={@event}
-          phx-value-page={page}
-          class={[
-            "inline-flex items-center border-t-2 pt-4 text-sm font-medium px-4",
-            @page != page && "border-transparent text-zinc-400 hover:border-zinc-300",
-            @page == page && "border-zinc-500 text-zinc-600"
-          ]}
-        >
-          <%= page %>
-        </.link>
+        <%= for page <- get_pages(@page, @per_page, @count_all, @limit) do %>
+          <%= if @page == page do %>
+            <span class="inline-flex items-center border-t-2 pt-4 text-sm font-medium px-4 border-zinc-500 text-zinc-600">
+              <%= page %>
+            </span>
+          <% else %>
+            <.link
+              phx-click={@event}
+              phx-value-page={page}
+              class="inline-flex items-center border-t-2 pt-4 text-sm font-medium px-4 border-transparent text-zinc-400 hover:border-zinc-300"
+            >
+              <%= page %>
+            </.link>
+          <% end %>
+        <% end %>
       </div>
 
       <div class="-mt-px flex w-0 flex-1 justify-end">
