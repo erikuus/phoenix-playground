@@ -19,7 +19,7 @@ defmodule LivePlaygroundWeb.RecipesLive.SortParams do
     {:noreply, assign_sorting_options(socket, options)}
   end
 
-  def handle_params(params, _url, socket) do
+  def handle_params(_params, _url, socket) do
     options = %{
       sort_order: :asc,
       sort_by: :name
