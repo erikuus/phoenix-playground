@@ -1,0 +1,29 @@
+<p>The <code>LivePlaygroundWeb.RecipesLive.StreamInsert</code> module leverages LiveView's streaming capabilities to efficiently handle changes in a list of cities displayed to the user. Each operation on the city list updates only the relevant part of the DOM, specifically targeted using a unique DOM ID for each city. This technique reduces the amount of data sent over the wire and enhances the user experience by minimizing the visual disruption typically caused by updating the user interface.</p>
+<h3><code>mount/3</code></h3>
+<p>Upon mounting, the LiveView initializes the stream for city data. It configures the stream with a unique DOM ID for each entry, enabling precise targeting for updates and removals. The cities are fetched with <code>Cities.list_country_city("EST")</code>, and an empty form for new city data input is set up.</p>
+<h3><code>render/1</code></h3>
+<p>The rendering function outlines the structure of the HTML:</p>
+<ul>
+    <li><strong>Form for Input</strong>: A form that captures data for a new city. It is configured to trigger the "save" event on submission.</li>
+    <li><strong>Dynamic Table Display</strong>: A table displays each city's name, district, and population. The table is enhanced with dynamic stream identifiers for each row, allowing for real-time updates. Each city row includes a timestamp printed when the city is inserted to visually signify the real-time nature of data updates.</li>
+    <li><strong>Delete Functionality</strong>: Each city has a delete button, equipped with an action to trigger the "delete" event. This setup ensures that the specific row can be efficiently removed from the DOM upon deletion.</li>
+</ul>
+<h3><code>handle_event/3</code> for "save"</h3>
+<p>Handles the creation of a new city:</p>
+<ul>
+    <li>On successful creation, the city is inserted at the beginning of the stream, ensuring that the city appears immediately on the UI without a full re-render of the entire list.</li>
+    <li>On failure (e.g., due to validation errors), the form is updated to reflect the changeset errors, providing feedback to the user.</li>
+</ul>
+<h3><code>handle_event/3</code> for "delete"</h3>
+<p>Manages the deletion of a city:</p>
+<ul>
+    <li>Fetches the city by ID and deletes it from the database.</li>
+    <li>The city is then removed from the stream, again only affecting the specific DOM element associated with that city, enhancing performance and user experience.</li>
+</ul>
+<h3>Technical Insights</h3>
+<ul>
+    <li><strong>Custom IDs with <code>stream_configure</code></strong>: In Phoenix LiveView, the default behavior of <code>stream</code> allows you to automatically generate DOM IDs based on each item's unique identifier directly from the streamed data, typically using a primary key from a database. This can be accessed and utilized in HEEx templates through tuple destructuring, such as <code>:let={{id, city}}</code>. However, when custom DOM IDs are required—either due to specific frontend requirements, complex data structures, consistency across views, or compatibility with external JavaScript libraries—<code>stream_configure</code> with the <code>dom_id</code> option becomes essential. This function enables you to define custom DOM ID patterns, such as combining multiple attributes or adding prefixes, offering enhanced control over DOM interactions and integration with third-party tools.</li>
+    <li><strong>Real-Time Updates</strong>: Each row in the city table includes a timestamp showing the exact moment of the stream insertion, highlighting the live, dynamic nature of the data displayed. This timestamp serves as a practical demonstration of the real-time capabilities of Phoenix LiveView, specifically in how updates to the DOM are managed efficiently.</li>
+</ul>
+<h3>Conclusion</h3>
+<p>The <code>LivePlaygroundWeb.RecipesLive.StreamInsert</code> module exemplifies an advanced use of Phoenix LiveView for handling large datasets interactively and efficiently. By leveraging LiveView’s streaming capabilities, the application ensures that server memory is not overloaded by large datasets and that user interactions are smooth and responsive. This approach is particularly beneficial for applications requiring real-time data management without compromising on performance or user experience.</p>

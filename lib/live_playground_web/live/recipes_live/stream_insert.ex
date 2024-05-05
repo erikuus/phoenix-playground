@@ -7,7 +7,7 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamInsert do
   def mount(_params, _session, socket) do
     socket =
       socket
-      |> stream_configure(:cities, dom_dom_id: &"cities-#{&1.id}")
+      |> stream_configure(:cities, dom_id: &"city-#{&1.countrycode}-#{&1.id}")
       |> stream(:cities, Cities.list_country_city("EST"))
       |> assign(:form, get_empty_form())
 
@@ -22,6 +22,9 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamInsert do
       <:subtitle>
         Inserting Items into Large Collections Without Server-Side Memory Storage in LiveView
       </:subtitle>
+      <:actions>
+        <.code_breakdown_link />
+      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <.form for={@form} phx-submit="save" class="flex flex-col space-x-0 space-y-4 md:flex-row md:space-x-4 md:space-y-0">
@@ -60,6 +63,7 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamInsert do
       <.code_block filename="lib/live_playground_web/live/recipes_live/stream_insert.ex" />
       <.code_block filename="lib/live_playground/cities.ex" from="# streaminsert" to="# endstreaminsert" />
     </div>
+    <.code_breakdown_slideover filename="priv/static/html/stream_insert.html" />
     <!-- end hiding from live code -->
     """
   end
