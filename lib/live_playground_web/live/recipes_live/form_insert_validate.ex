@@ -22,6 +22,9 @@ defmodule LivePlaygroundWeb.RecipesLive.FormInsertValidate do
       <:subtitle>
         Creating Forms That Validate on Change in LiveView
       </:subtitle>
+      <:actions>
+        <.code_breakdown_link />
+      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <.form
@@ -55,6 +58,7 @@ defmodule LivePlaygroundWeb.RecipesLive.FormInsertValidate do
       <.code_block filename="lib/live_playground_web/live/recipes_live/form_insert_validate.ex" />
       <.code_block filename="lib/live_playground/cities.ex" from="# form" to="# endform" />
     </div>
+    <.code_breakdown_slideover filename="priv/static/html/form_insert_validate.html" />
     <!-- end hiding from live code -->
     """
   end
@@ -77,8 +81,12 @@ defmodule LivePlaygroundWeb.RecipesLive.FormInsertValidate do
 
     case Cities.create_city(params) do
       {:ok, city} ->
-        socket = update(socket, :cities, &[city | &1])
-        socket = assign(socket, :form, get_empty_form())
+        socket =
+          socket
+          |> update(:cities, &[city | &1])
+          |> assign(:form, get_empty_form())
+          |> put_flash(:info, "A new city has been added.")
+
         {:noreply, socket}
 
       {:error, changeset} ->
