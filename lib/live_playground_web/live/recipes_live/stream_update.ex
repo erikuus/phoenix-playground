@@ -32,6 +32,9 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamUpdate do
       <:subtitle>
         Updating Items in Large Collections Without Server-Side Memory Storage in LiveView
       </:subtitle>
+      <:actions>
+        <.code_breakdown_link />
+      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <.form
@@ -80,6 +83,7 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamUpdate do
       <.code_block filename="lib/live_playground_web/live/recipes_live/stream_update.ex" />
       <.code_block filename="lib/live_playground/cities.ex" from="# streamupdate" to="# endstreamupdate" />
     </div>
+    <.code_breakdown_slideover filename="priv/static/html/stream_update.html" />
     <!-- end hiding from live code -->
     """
   end
@@ -90,12 +94,17 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamUpdate do
         socket =
           socket
           |> stream_insert(:cities, city)
+          |> put_flash(:info, "City successfully updated.")
           |> push_patch(to: ~p"/stream-update")
 
         {:noreply, socket}
 
       {:error, changeset} ->
-        socket = assign(socket, :form, to_form(changeset))
+        socket =
+          socket
+          |> assign(:form, to_form(changeset))
+          |> put_flash(:error, "Failed to update city.")
+
         {:noreply, socket}
     end
   end
