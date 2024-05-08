@@ -1,0 +1,42 @@
+<p>The <code>LivePlaygroundWeb.RecipesLive.StreamReset</code> module demonstrates the use of Phoenix LiveView for managing city data dynamically within a navigational setup based on country selection. It handles the creation, update, and viewing of city entries directly within a stream, highlighting how to use stream reset in conjunction with navigation to ensure data consistency and optimize resource use.</p>
+<h3><code>mount/3</code></h3>
+<p>This function initializes the LiveView based on whether a <code>country_id</code> is present:</p>
+<ul>
+    <li><strong>With <code>country_id</code></strong>: It attempts to fetch cities for the specified country. If the country doesn't exist (catching <code>Ecto.NoResultsError</code>), it initializes the view with empty data.</li>
+    <li><strong>Without <code>country_id</code></strong>: It automatically selects the first country from a list of Baltic countries and displays its cities. If no countries are found, it initializes with no data.</li>
+</ul>
+<p>Setting up streams in the <code>mount/2</code> function rather than in <code>handle_params/3</code> in a Phoenix LiveView is often more effective and efficient for several reasons:</p>
+<ul>
+    <li>
+        <p><strong>Initial Setup Efficiency</strong>: <code>mount/2</code> is invoked when the LiveView is first connected, making it ideal for establishing initial states, including data streams, ensuring that all necessary data is available for the initial rendering.</p>
+    </li>
+    <li>
+        <p><strong>Connection Resilience</strong>: On reconnects, <code>mount/2</code> re-establishes the LiveView state and reinitializes data streams, maintaining consistency and functionality across sessions.</p>
+    </li>
+    <li>
+        <p><strong>Load Management</strong>: Setting up streams during initial connection distributes the loading of data more efficiently, preventing performance issues associated with redundant data fetching that could occur if streams were set up in response to parameter changes in <code>handle_params/3</code>.</p>
+    </li>
+    <li>
+        <p><strong>Clear Code Organization</strong>: Using <code>mount/2</code> for setting up streams separates concerns by distinguishing between initial setup tasks and handling updates due to user interactions, enhancing code readability and maintainability.</p>
+    </li>
+</ul>
+<h3><code>handle_params/2</code> with <code>apply_action/2</code></h3>
+<p><code>handle_params/2</code> routes actions based on URL parameters. It adjusts the LiveView state if necessary (e.g., switching tabs between countries) and applies appropriate actions such as loading edit forms for cities:</p>
+<ul>
+    <li><strong>Stream Reset on Tab Change</strong>: If the selected country changes (detected by comparing <code>selected_country</code> in the socket assigns), it resets the city stream (<code>stream(:cities, ..., reset: true)</code>) to reload city data for the new country, which clears previous entries and avoids memory leaks or residual data display.</li>
+</ul>
+<h3><code>render/1</code></h3>
+<p>Defines the HTML output, which includes:</p>
+<ul>
+    <li><strong>Conditional Alerts for Data Absence</strong>: Displays alerts if there are no countries or cities available, handling potentially empty states that can result from direct URL manipulation.</li>
+    <li><strong>Dynamic Tabs for Countries</strong>: Allows users to switch between different countries, dynamically reloading the city list for the selected country.</li>
+    <li><strong>Editable City Data</strong>: Each city row includes an edit link.</li>
+    <li><strong>Real-Time Feedback</strong>: Timestamps within each city row visually demonstrate that only the affected parts of the LiveView are updated, enhancing the user's perception of real-time interaction without unnecessary page refreshes.</li>
+</ul>
+<h3><code>handle_event/3</code> for "save" and "delete"</h3>
+<p>Handles saving new or updated city data or deleting a city:</p>
+<ul>
+    <li><strong>On <code>save</code></strong>: Updates or creates city entries in the database. Upon success, it updates the stream with new or updated city data and redirects to reflect changes.</li>
+    <li><strong>On <code>delete</code></strong>: Removes the city from both the database and the stream, ensuring the UI remains consistent with the backend state.</li>
+</ul>
+<p>The <code>LivePlaygroundWeb.RecipesLive.StreamReset</code> module showcases the use of Phoenix LiveView for dynamically managing city data based on country selection. It effectively demonstrates stream resets in response to navigation changes, ensuring that city data remains consistent and resource usage is optimized when switching between countries.</p>
