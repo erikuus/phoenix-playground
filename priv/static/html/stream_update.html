@@ -1,4 +1,4 @@
-<p>The <code>LivePlaygroundWeb.RecipesLive.StreamUpdate</code> module effectively leverages Phoenix LiveView for dynamic and efficient management of city data, focusing on updates and real-time interactions with minimal server load.</p>
+<p>The <code>LivePlaygroundWeb.RecipesLive.StreamUpdate</code> module uses Phoenix LiveView to handle city data updates dynamically. It's designed to minimize server load by using LiveView's streaming capabilities, which let us update large collections without hefty memory overhead.</p>
 <h3><code>mount/3</code></h3>
 <p>Initializes the LiveView, setting up a stream to deliver city data from the "EST" locale to the client, which allows for real-time updates without full page reloads.</p>
 <h3><code>handle_params/2</code> and <code>apply_action/2</code></h3>
@@ -15,8 +15,9 @@
 <p>Defines the HTML output, including:</p>
 <ul>
     <li><strong>Conditional Form Display</strong>: Shows an edit form if <code>live_action</code> is set to <code>:edit</code>, with fields for name, district, and population. These fields are debounced to optimize input handling.</li>
-    <li><strong>City List Display</strong>: Streams city data into a dynamically updated table. Each row displays a timestamp that reflects when the city data was streamed, indicating real-time updates directly in the user's view.</li>
+    <li><strong>City List Display</strong>: Streams city data into a dynamically updated table.</li>
     <li><strong>Edit and Cancel Actions</strong>: Provides dynamic links for editing each city, adjusting the URL to include city-specific parameters, and a cancel button to revert back to the main view.</li>
+    <li><strong>Real-Time Feedback</strong>: Timestamps within each city row visually demonstrate that only the affected parts of the LiveView are updated, enhancing the user's perception of real-time interaction without unnecessary page refreshes.</li>
 </ul>
 <h3><code>handle_event/3</code> for "save"</h3>
 <p>Handles updates submitted via the edit form:</p>
@@ -24,10 +25,4 @@
     <li><strong>Success</strong>: Inserts the updated city back into the stream and redirects to the main view with a success message, confirming the city was updated.</li>
     <li><strong>Failure</strong>: Reloads the form with validation errors and displays an error message to inform the user of the issue.</li>
 </ul>
-<h3>Stream Management and Real-Time Data Handling</h3>
-<ul>
-    <li><strong>Stream Efficiency</strong>: Utilizes LiveView's streaming capabilities to manage updates, ensuring that only relevant parts of the DOM are updated—this is visually indicated by the timestamps in each row, showing the precise moment of data insertion.</li>
-    <li><strong>Real-Time Feedback</strong>: Timestamps within each city row visually demonstrate that only the affected parts of the LiveView are updated, enhancing the user's perception of real-time interaction without unnecessary page refreshes.</li>
-</ul>
-<h3>Conclusion</h3>
-<p>The <code>LivePlaygroundWeb.RecipesLive.StreamUpdate</code> module demonstrates an advanced implementation of real-time data handling in web applications using Phoenix LiveView. It smartly manages city data updates with efficient streaming and URL-parameter-based actions, ensuring a responsive and user-friendly experience.</p>
+<p>The <code>LivePlaygroundWeb.RecipesLive.StreamUpdate</code> module demonstrates how to update items in large collections efficiently using Phoenix LiveView's streams. This approach keeps server-side memory usage low and ensures that user interactions are responsive and smooth.</p>

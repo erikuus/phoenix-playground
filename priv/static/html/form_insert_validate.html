@@ -23,11 +23,4 @@
 <ul>
     <li><strong><code>get_empty_form/0</code></strong>: Initializes an empty form by creating a <code>City</code> struct and converting it to a form-compatible format using <code>Cities.change_city()</code>. This function is pivotal for setting up the form when the LiveView mounts and for resetting the form after a successful submission.</li>
 </ul>
-<h3>Detailed Functional Flow</h3>
-<ol>
-    <li><strong>Initialization</strong>: The LiveView starts with an initial list of cities and an empty form.</li>
-    <li><strong>Real-time Validation</strong>: As users input data, the form fields trigger the "validate" event after a debounce period, allowing for real-time validation without overloading the server with too many requests.</li>
-    <li><strong>Final Submission</strong>: Upon submitting the form, the input data is fully validated. If valid, the data is added to the city list; if there are errors, they are shown to the user for correction.</li>
-    <li><strong>Dynamic Update</strong>: The list of cities is updated immediately to reflect the newly added city, or retains the existing list in the event of form errors.</li>
-</ol>
 <p>This module showcases efficient handling of form inputs with real-time validation in a Phoenix LiveView application, ensuring an interactive and responsive user experience while managing database interactions seamlessly.</p>

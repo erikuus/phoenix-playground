@@ -17,11 +17,4 @@
 <ul>
     <li><strong><code>get_empty_form/0</code></strong>: Prepares an empty form by initializing a <code>City</code> struct and transforming it into a form-compatible format using <code>Cities.change_city()</code> and <code>to_form()</code>. This function is used to reset the form after a successful submission or to initialize the form when the LiveView mounts.</li>
 </ul>
-<h3>Detailed Functional Flow</h3>
-<ol>
-    <li><strong>Initialization</strong>: On mounting, the LiveView is populated with an initial list of cities and a form for entering new city data.</li>
-    <li><strong>Form Submission</strong>: The form captures user input and submits it via a "save" event.</li>
-    <li><strong>Data Handling</strong>: On submission, the input data is validated and, if correct, added to the city list. The form is then reset. If there are errors, they are displayed to the user to correct.</li>
-    <li><strong>Dynamic Update</strong>: The city list in the LiveView is dynamically updated to immediately reflect the newly added city or to maintain the current list in case of errors.</li>
-</ol>
 <p>This module exemplifies how to efficiently handle forms and dynamically update the user interface in a Phoenix LiveView application, ensuring a smooth and responsive user experience.</p>

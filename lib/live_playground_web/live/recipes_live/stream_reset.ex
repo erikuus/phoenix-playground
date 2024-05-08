@@ -7,41 +7,62 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamReset do
 
   def mount(%{"country_id" => country_id}, _session, socket) do
     countries = Countries.list_region_country("Baltic Countries")
-    selected_country = Countries.get_country!(country_id)
-    {:ok, init_tab(socket, countries, selected_country)}
+
+    try do
+      selected_country = Countries.get_country!(country_id)
+      cities = Cities.list_country_city(selected_country.code)
+      {:ok, init_tab(socket, countries, selected_country, cities)}
+    rescue
+      Ecto.NoResultsError ->
+        {:ok, init_tab(socket, countries, nil, [])}
+    end
   end
 
   def mount(_params, _session, socket) do
     countries = Countries.list_region_country("Baltic Countries")
-    selected_country = hd(countries)
-    {:ok, init_tab(socket, countries, selected_country)}
+
+    case countries do
+      [] ->
+        {:ok, init_tab(socket, countries, nil, [])}
+
+      countries ->
+        selected_country = hd(countries)
+        cities = Cities.list_country_city(selected_country.code)
+        {:ok, init_tab(socket, countries, selected_country, cities)}
+    end
   end
 
-  defp init_tab(socket, countries, selected_country) do
+  defp init_tab(socket, countries, selected_country, cities) do
     socket
     |> assign(:countries, countries)
     |> assign(:selected_country, selected_country)
-    |> stream(:cities, Cities.list_country_city(selected_country.code))
+    |> assign(:cities_empty, Enum.empty?(cities))
+    |> stream(:cities, cities)
   end
 
   def handle_params(%{"country_id" => country_id} = params, _url, socket) do
-    socket =
-      if socket.assigns.selected_country.id != String.to_integer(country_id) do
-        change_tab(socket, country_id)
-      else
-        socket
-      end
+    try do
+      selected_country = Countries.get_country!(country_id)
 
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+      socket =
+        if socket.assigns.selected_country != selected_country do
+          change_tab(socket, selected_country)
+        else
+          socket
+        end
+
+      {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+    rescue
+      Ecto.NoResultsError ->
+        {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+    end
   end
 
   def handle_params(params, _url, socket) do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp change_tab(socket, country_id) do
-    selected_country = Countries.get_country!(country_id)
-
+  defp change_tab(socket, selected_country) do
     socket
     |> assign(:selected_country, selected_country)
     |> stream(:cities, Cities.list_country_city(selected_country.code), reset: true)
@@ -57,12 +78,17 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamReset do
   end
 
   defp apply_action(socket, :edit, %{"city_id" => city_id}) do
-    city = Cities.get_city!(city_id)
+    try do
+      city = Cities.get_city!(city_id)
 
-    socket
-    |> assign(:btn_title, "Update")
-    |> assign(:city, city)
-    |> assign_form(Cities.change_city(city))
+      socket
+      |> assign(:btn_title, "Update")
+      |> assign(:city, city)
+      |> assign_form(Cities.change_city(city))
+    rescue
+      Ecto.NoResultsError ->
+        apply_action(socket, :index, %{})
+    end
   end
 
   def render(assigns) do
@@ -73,8 +99,17 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamReset do
       <:subtitle>
         Resetting Streams With Navigation in LiveView
       </:subtitle>
+      <:actions>
+        <.code_breakdown_link />
+      </:actions>
     </.header>
     <!-- end hiding from live code -->
+    <.alert :if={@countries == []} kind={:info} id="no-countries" class="mb-5">
+      No countries available.
+    </.alert>
+    <.alert :if={@cities_empty} kind={:info} id="no-cities" class="mb-5">
+      No cities available.
+    </.alert>
     <.tabs :if={@countries != []} class="mb-5">
       <:tab :for={country <- @countries} path={~p"/stream-reset?#{[country_id: country.id]}"} active={country == @selected_country}>
         <%= country.name %>
@@ -92,13 +127,13 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamReset do
       <div>
         <.button phx-disable-with="" class="md:mt-8"><%= @btn_title %></.button>
       </div>
-      <div :if={@live_action == :edit}>
+      <div :if={@live_action == :edit && @selected_country}>
         <.button_link kind={:secondary} patch={~p"/stream-reset?#{[country_id: @selected_country.id]}"} class="w-full md:mt-8">
           Cancel
         </.button_link>
       </div>
     </.form>
-    <.table id="cities" rows={@streams.cities}>
+    <.table :if={!@cities_empty} id="cities" rows={@streams.cities}>
       <:col :let={{_id, city}} label="Name">
         <%= city.name %>
         <dl class="font-normal md:hidden">
@@ -131,6 +166,7 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamReset do
       <.code_block filename="lib/live_playground/cities.ex" from="# streamreset" to="# endstreamreset" />
       <.code_block filename="lib/live_playground/countries.ex" from="# streamreset" to="# endstreamreset" />
     </div>
+    <.code_breakdown_slideover filename="priv/static/html/stream_reset.html" />
     <!-- end hiding from live code -->
     """
   end
