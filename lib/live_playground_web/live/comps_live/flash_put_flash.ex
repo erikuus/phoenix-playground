@@ -19,7 +19,6 @@ defmodule LivePlaygroundWeb.CompsLive.FlashPutFlash do
     <.button_link phx-click={JS.push("set-flash", value: %{msg: placeholder_sentences(3, true)})}>
       Show flash
     </.button_link>
-    <.flash id="flash-messages-info" kind={:info} flash={@flash} close={false} title="Flash messages info" />
     <!-- start hiding from live code -->
     <div class="mt-10">
       <.code_block filename="lib/live_playground_web/live/comps_live/flash_put_flash.ex" />
