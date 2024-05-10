@@ -3,17 +3,26 @@ defmodule LivePlaygroundWeb.RecipesLive.Broadcast do
 
   alias LivePlayground.Countries
 
+  @country_id 228
+
   def mount(_params, _session, socket) do
-    if connected?(socket), do: Countries.subscribe()
+    if connected?(socket), do: Countries.subscribe(@country_id)
 
-    socket =
-      assign(socket,
-        country: Countries.get_country!(228),
-        edit_field: nil,
-        form: nil
-      )
+    socket = reset_edit_form(socket)
 
-    {:ok, socket}
+    try do
+      country = Countries.get_country!(@country_id)
+      {:ok, assign(socket, :country, country)}
+    rescue
+      Ecto.NoResultsError ->
+        {:ok, assign(socket, :country, nil)}
+    end
+  end
+
+  def terminate(_reason, socket) do
+    # Ensure we unsubscribe when the LiveView is terminated to clean up resources
+    Countries.unsubscribe(@country_id)
+    :ok
   end
 
   def render(assigns) do
@@ -26,6 +35,26 @@ defmodule LivePlaygroundWeb.RecipesLive.Broadcast do
       </:subtitle>
     </.header>
     <!-- end hiding from live code -->
+    <%= country_details(assigns) %>
+    <!-- start hiding from live code -->
+    <div class="mt-10 space-y-6">
+      <.code_block filename="lib/live_playground_web/live/recipes_live/broadcast.ex" />
+      <.code_block filename="lib/live_playground/countries.ex" from="# broadcast" to="# endbroadcast" />
+    </div>
+    <!-- end hiding from live code -->
+    """
+  end
+
+  defp country_details(%{country: nil} = assigns) do
+    ~H"""
+    <.alert id="no-countries" kind={:info} close={false}>
+      No country found for the provided ID.
+    </.alert>
+    """
+  end
+
+  defp country_details(assigns) do
+    ~H"""
     <div id="country" phx-update="replace">
       <.list class="mt-6 mb-16 ml-1">
         <:item title="Name"><%= @country.name %></:item>
@@ -68,25 +97,13 @@ defmodule LivePlaygroundWeb.RecipesLive.Broadcast do
         </:item>
       </.list>
     </div>
-    <!-- start hiding from live code -->
-    <div class="mt-10 space-y-6">
-      <.code_block filename="lib/live_playground_web/live/recipes_live/broadcast.ex" />
-      <.code_block filename="lib/live_playground/countries.ex" from="# broadcast" to="# endbroadcast" />
-    </div>
-    <!-- end hiding from live code -->
     """
   end
 
   def handle_event("save", %{"country" => params}, socket) do
     case Countries.update_country_broadcast(socket.assigns.country, params) do
       {:ok, _country} ->
-        socket =
-          assign(socket,
-            edit_field: nil,
-            form: nil
-          )
-
-        {:noreply, socket}
+        {:noreply, reset_edit_form(socket)}
 
       {:error, changeset} ->
         socket = assign(socket, :form, to_form(changeset))
@@ -110,16 +127,29 @@ defmodule LivePlaygroundWeb.RecipesLive.Broadcast do
   end
 
   def handle_event("cancel", _, socket) do
-    socket =
-      assign(socket,
-        edit_field: nil,
-        form: nil
-      )
-
-    {:noreply, socket}
+    {:noreply, reset_edit_form(socket)}
   end
 
-  def handle_info({:update_country, country}, socket) do
-    {:noreply, assign(socket, country: country)}
+  def handle_info({:update_country, updated_country}, socket) do
+    cond do
+      updated_country.id == socket.assigns.country.id && socket.assigns.edit_field != nil ->
+        # Notify the user about the update
+        socket =
+          socket
+          |> assign(:country, updated_country)
+          |> put_flash(:info, "This country's details have just been updated by another user.")
+
+        {:noreply, socket}
+
+      updated_country.id == socket.assigns.country.id ->
+        {:noreply, assign(socket, country: updated_country)}
+
+      true ->
+        {:noreply, socket}
+    end
+  end
+
+  defp reset_edit_form(socket) do
+    assign(socket, edit_field: nil, form: nil)
   end
 end

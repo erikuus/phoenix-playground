@@ -10,14 +10,17 @@ defmodule LivePlayground.Countries do
 
   # broadcast
   @pubsub LivePlayground.PubSub
-  @topic inspect(__MODULE__)
 
-  def subscribe do
-    Phoenix.PubSub.subscribe(@pubsub, @topic)
+  def subscribe(country_id) do
+    Phoenix.PubSub.subscribe(@pubsub, "country:#{country_id}")
+  end
+
+  def unsubscribe(country_id) do
+    Phoenix.PubSub.unsubscribe(@pubsub, "country:#{country_id}")
   end
 
   def broadcast({:ok, country}, event) do
-    Phoenix.PubSub.broadcast(@pubsub, @topic, {event, country})
+    Phoenix.PubSub.broadcast(@pubsub, "country:#{country.id}", {event, country})
 
     {:ok, country}
   end
