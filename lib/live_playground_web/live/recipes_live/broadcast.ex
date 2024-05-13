@@ -33,6 +33,9 @@ defmodule LivePlaygroundWeb.RecipesLive.Broadcast do
       <:subtitle>
         Broadcasting Real-Time Updates in LiveView
       </:subtitle>
+      <:actions>
+        <.code_breakdown_link />
+      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <%= country_details(assigns) %>
@@ -41,6 +44,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Broadcast do
       <.code_block filename="lib/live_playground_web/live/recipes_live/broadcast.ex" />
       <.code_block filename="lib/live_playground/countries.ex" from="# broadcast" to="# endbroadcast" />
     </div>
+    <.code_breakdown_slideover filename="priv/static/html/broadcast.html" />
     <!-- end hiding from live code -->
     """
   end
@@ -100,17 +104,6 @@ defmodule LivePlaygroundWeb.RecipesLive.Broadcast do
     """
   end
 
-  def handle_event("save", %{"country" => params}, socket) do
-    case Countries.update_country_broadcast(socket.assigns.country, params) do
-      {:ok, _country} ->
-        {:noreply, reset_edit_form(socket)}
-
-      {:error, changeset} ->
-        socket = assign(socket, :form, to_form(changeset))
-        {:noreply, socket}
-    end
-  end
-
   def handle_event("edit", %{"field" => field}, socket) do
     form =
       socket.assigns.country
@@ -128,6 +121,17 @@ defmodule LivePlaygroundWeb.RecipesLive.Broadcast do
 
   def handle_event("cancel", _, socket) do
     {:noreply, reset_edit_form(socket)}
+  end
+
+  def handle_event("save", %{"country" => params}, socket) do
+    case Countries.update_country_broadcast(socket.assigns.country, params) do
+      {:ok, _country} ->
+        {:noreply, reset_edit_form(socket)}
+
+      {:error, changeset} ->
+        socket = assign(socket, :form, to_form(changeset))
+        {:noreply, socket}
+    end
   end
 
   def handle_info({:update_country, updated_country}, socket) do

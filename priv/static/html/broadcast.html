@@ -1,0 +1,31 @@
+<p>This module uses Phoenix LiveView along with Phoenix PubSub to handle real-time broadcasts of changes in country data. It's designed to show changes to other connected users immediately, which is essential for applications where data consistency and real-time updates are critical.</p>
+<h3><code>mount/3</code></h3>
+<p>Sets up the LiveView session. It subscribes to updates for a predefined country (ID 228) to receive real-time notifications on any changes. The subscription is set up only if the socket is connected, which optimizes resource usage by avoiding unnecessary subscriptions when pre-rendering on the server side.</p>
+<ul>
+    <li><strong>Error Handling</strong>: Attempts to fetch the initial country data. If no country is found (handled via <code>Ecto.NoResultsError</code>), the view initializes with no country data, preventing crashes and managing empty states effectively.</li>
+</ul>
+<h3><code>terminate/2</code></h3>
+<p>Ensures cleanup by unsubscribing from the country updates when the LiveView session ends. This is crucial to free up resources and avoid memory leaks.</p>
+<h3><code>render/1</code></h3>
+<p>Outputs the HTML based on the assigned country data. If there's no country data (<code>country: nil</code>), it displays an alert informing the user. Otherwise, it renders detailed information about the country, which includes interactive elements for live editing of fields like population and government form.</p>
+<h3>Event Handling</h3>
+<h3><code>handle_event/3</code></h3>
+<ul>
+    <li><strong>"edit"</strong>: Prepares the form for updating fields by loading current country data into a changeset form, allowing users to make changes.</li>
+    <li><strong>"cancel"</strong>: Resets the form to its non-editable state, discarding any unsaved changes.</li>
+    <li><strong>"save"</strong>: Attempts to update the country in the database and broadcast these changes. If successful, it resets the edit form; if not, it re-renders the form with error messages.</li>
+</ul>
+<h3><code>handle_info/2</code></h3>
+<p>Responds to broadcast messages about country updates:</p>
+<ul>
+    <li>If the update is relevant to the currently viewed country and the country is being edited, it updates the displayed data and notifies the user of external changes.</li>
+    <li>If the country isn't being edited, it simply updates the country data in the background.</li>
+</ul>
+<h3>Subscription Management with Phoenix PubSub</h3>
+<ul>
+    <li><strong>Subscription Setup</strong>: On mounting, the view subscribes to updates for a specific country. This allows the LiveView to receive notifications of changes broadcasted via <code>Phoenix.PubSub</code>.</li>
+    <li><strong>Broadcasting Changes</strong>: Updates to a country are broadcasted to all subscribers, ensuring that any session viewing the country data receives updates in real time.</li>
+    <li><strong>Efficient Resource Management</strong>: By subscribing only when the LiveView is connected and unsubscribing on termination, the module manages resources effectively, ensuring that subscriptions are only active when necessary.</li>
+</ul>
+<h3>Practical Usage</h3>
+<p>This module is an example of how to implement real-time data broadcasting in a LiveView application, ensuring that updates are pushed to all relevant clients instantly. It demonstrates effective resource management, error handling, and user interaction within a real-time update context. This approach is particularly useful in applications where data integrity and timeliness are crucial, such as in collaborative environments or real-time monitoring systems.</p>
