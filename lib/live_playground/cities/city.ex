@@ -7,6 +7,7 @@ defmodule LivePlayground.Cities.City do
     field :district, :string
     field :name, :string
     field :population, :integer
+    field :lock_version, :integer, default: 0
   end
 
   @doc false
@@ -18,5 +19,6 @@ defmodule LivePlayground.Cities.City do
     |> validate_length(:district, min: 3, max: 100)
     |> validate_length(:countrycode, is: 3)
     |> validate_number(:population, greater_than: 1000)
+    |> optimistic_lock(:lock_version)
   end
 end

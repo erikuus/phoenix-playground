@@ -16,6 +16,10 @@ defmodule LivePlayground.Cities do
     Phoenix.PubSub.subscribe(@pubsub, @topic)
   end
 
+  def unsubscribe do
+    Phoenix.PubSub.unsubscribe(@pubsub, @topic)
+  end
+
   def broadcast({:ok, city}, event) do
     Phoenix.PubSub.broadcast(@pubsub, @topic, {event, city})
 
