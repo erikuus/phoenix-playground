@@ -240,12 +240,12 @@ defmodule LivePlaygroundWeb.Menus.Recipes do
           %{
             label: "Stream Update",
             path: ~p"/stream-update",
-            active: is_active?(current_path, ["/stream-update"])
+            active: is_active?(current_path, ["/stream-update", "/stream-update/edit"])
           },
           %{
             label: "Stream Reset",
             path: ~p"/stream-reset",
-            active: is_active?(current_path, ["/stream-reset"])
+            active: is_active?(current_path, ["/stream-reset", "/stream-reset/edit"])
           }
         ]
       },
@@ -272,12 +272,13 @@ defmodule LivePlaygroundWeb.Menus.Recipes do
           %{
             label: "Real-Time Updates with Stream",
             path: ~p"/broadcast-stream",
-            active: is_active?(current_path, ["/broadcast-stream"])
+            active: is_active?(current_path, ["/broadcast-stream", "/broadcast-stream/edit"])
           },
           %{
             label: "Real-Time Updates with Stream and Navigation",
             path: ~p"/broadcast-stream-reset",
-            active: is_active?(current_path, ["/broadcast-stream-reset"])
+            active:
+              is_active?(current_path, ["/broadcast-stream-reset", "/broadcast-stream-reset/edit"])
           }
         ]
       },
