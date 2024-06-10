@@ -19,7 +19,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Broadcast do
     end
   end
 
-  def terminate(_reason, socket) do
+  def terminate(_reason, _socket) do
     # Ensure we unsubscribe when the LiveView is terminated to clean up resources
     Countries.unsubscribe(@country_id)
     :ok
@@ -33,6 +33,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Broadcast do
       <:subtitle>
         Broadcasting Real-Time Updates in LiveView
       </:subtitle>
+
       <:actions>
         <.code_breakdown_link />
       </:actions>
