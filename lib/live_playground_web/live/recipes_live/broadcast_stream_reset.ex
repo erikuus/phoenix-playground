@@ -9,43 +9,70 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
     if connected?(socket), do: Cities.subscribe()
 
     countries = Countries.list_region_country("Baltic Countries")
-    selected_country = Countries.get_country!(country_id)
-    {:ok, init_tab(socket, countries, selected_country)}
+
+    try do
+      selected_country = Countries.get_country!(country_id)
+      cities = Cities.list_country_city(selected_country.code)
+      {:ok, init_tab(socket, countries, selected_country, cities)}
+    rescue
+      Ecto.NoResultsError ->
+        {:ok, init_tab(socket, countries, nil, [])}
+    end
   end
 
   def mount(_params, _session, socket) do
     if connected?(socket), do: Cities.subscribe()
 
     countries = Countries.list_region_country("Baltic Countries")
-    selected_country = hd(countries)
-    {:ok, init_tab(socket, countries, selected_country)}
+
+    case countries do
+      [] ->
+        {:ok, init_tab(socket, countries, nil, [])}
+
+      countries ->
+        selected_country = hd(countries)
+        cities = Cities.list_country_city(selected_country.code)
+        {:ok, init_tab(socket, countries, selected_country, cities)}
+    end
   end
 
-  defp init_tab(socket, countries, selected_country) do
+  def terminate(_reason, _socket) do
+    # Ensure we unsubscribe when the LiveView is terminated to clean up resources
+    Cities.unsubscribe()
+    :ok
+  end
+
+  defp init_tab(socket, countries, selected_country, cities) do
     socket
     |> assign(:countries, countries)
     |> assign(:selected_country, selected_country)
-    |> stream(:cities, Cities.list_country_city(selected_country.code))
+    |> assign(:cities_empty, Enum.empty?(cities))
+    |> stream(:cities, cities)
   end
 
   def handle_params(%{"country_id" => country_id} = params, _url, socket) do
-    socket =
-      if socket.assigns.selected_country.id != String.to_integer(country_id) do
-        change_tab(socket, country_id)
-      else
-        socket
-      end
+    try do
+      selected_country = Countries.get_country!(country_id)
 
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+      socket =
+        if socket.assigns.selected_country != selected_country do
+          change_tab(socket, selected_country)
+        else
+          socket
+        end
+
+      {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+    rescue
+      Ecto.NoResultsError ->
+        {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+    end
   end
 
   def handle_params(params, _url, socket) do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp change_tab(socket, country_id) do
-    selected_country = Countries.get_country!(country_id)
-
+  defp change_tab(socket, selected_country) do
     socket
     |> assign(:selected_country, selected_country)
     |> stream(:cities, Cities.list_country_city(selected_country.code), reset: true)
@@ -53,18 +80,22 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
 
   defp apply_action(socket, :index, _params) do
     city = %City{}
-
-    socket
-    |> assign(:btn_title, "Add")
-    |> assign(:city, city)
-    |> assign_form(Cities.change_city(city))
+    set_form(socket, "Add", city)
   end
 
   defp apply_action(socket, :edit, %{"city_id" => city_id}) do
-    city = Cities.get_city!(city_id)
+    try do
+      city = Cities.get_city!(city_id)
+      set_form(socket, "Update", city)
+    rescue
+      Ecto.NoResultsError ->
+        apply_action(socket, :index, %{})
+    end
+  end
 
+  defp set_form(socket, btn_title, city) do
     socket
-    |> assign(:btn_title, "Update")
+    |> assign(:btn_title, btn_title)
     |> assign(:city, city)
     |> assign_form(Cities.change_city(city))
   end
@@ -77,8 +108,17 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
       <:subtitle>
         Broadcasting Updates With Streams and Navigation in LiveView
       </:subtitle>
+      <:actions>
+        <.code_breakdown_link />
+      </:actions>
     </.header>
     <!-- end hiding from live code -->
+    <.alert :if={@countries == []} kind={:info} id="no-countries" class="mb-5">
+      No countries available.
+    </.alert>
+    <.alert :if={@cities_empty} kind={:info} id="no-cities" class="mb-5">
+      No cities available.
+    </.alert>
     <.tabs :if={@countries != []} class="mb-5">
       <:tab
         :for={country <- @countries}
@@ -89,6 +129,7 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
       </:tab>
     </.tabs>
     <.form
+      :if={@countries != []}
       for={@form}
       phx-change="validate"
       phx-submit="save"
@@ -100,6 +141,7 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
       <div>
         <.button phx-disable-with="" class="md:mt-8"><%= @btn_title %></.button>
       </div>
+
       <div :if={@live_action == :edit}>
         <.button_link
           kind={:secondary}
@@ -110,7 +152,7 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
         </.button_link>
       </div>
     </.form>
-    <.table id="cities" rows={@streams.cities}>
+    <.table :if={!@cities_empty} id="cities" rows={@streams.cities}>
       <:col :let={{_id, city}} label="Name">
         <%= city.name %>
         <dl class="font-normal md:hidden">
@@ -128,12 +170,10 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
       </:col>
       <:action :let={{id, city}}>
         <.link patch={~p"/broadcast-stream-reset/edit?#{[country_id: @selected_country.id, city_id: city.id]}"} class="md:mr-4">
-          <span class="hidden md:inline">Edit</span>
-          <.icon name="hero-pencil-square-mini" class="md:hidden h-6 w-6" />
+          <span class="hidden md:inline">Edit</span> <.icon name="hero-pencil-square-mini" class="md:hidden h-6 w-6" />
         </.link>
         <.link phx-click={JS.push("delete", value: %{city_id: city.id}) |> hide("##{id}")} data-confirm="Are you sure?">
-          <span class="hidden md:inline">Delete</span>
-          <.icon name="hero-trash-mini" class="md:hidden" />
+          <span class="hidden md:inline">Delete</span> <.icon name="hero-trash-mini" class="md:hidden" />
         </.link>
       </:action>
     </.table>
@@ -143,6 +183,7 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
       <.code_block filename="lib/live_playground/cities.ex" from="# broadcaststreamreset" to="# endbroadcaststreamreset" />
       <.code_block filename="lib/live_playground/countries.ex" from="# broadcaststreamreset" to="# endbroadcaststreamreset" />
     </div>
+    <.code_breakdown_slideover filename="priv/static/html/broadcast_stream_reset.html" />
     <!-- end hiding from live code -->
     """
   end
@@ -151,7 +192,7 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
     city = Cities.get_city!(city_id)
     {:ok, _} = Cities.delete_city_broadcast(city)
 
-    {:noreply, stream_delete(socket, :cities, city)}
+    {:noreply, socket}
   end
 
   def handle_event("validate", %{"city" => city_params}, socket) do
@@ -167,10 +208,10 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
     save_city(socket, socket.assigns.live_action, city_params)
   end
 
-  defp save_city(socket, :index, city_params) do
-    city_params = Map.put(city_params, "countrycode", socket.assigns.selected_country.code)
+  defp save_city(socket, :index, params) do
+    params = Map.put(params, "countrycode", socket.assigns.selected_country.code)
 
-    case Cities.create_city_broadcast(city_params) do
+    case Cities.create_city_broadcast(params) do
       {:ok, _city} ->
         {:noreply,
          push_patch(socket,
@@ -182,16 +223,29 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
     end
   end
 
-  defp save_city(socket, :edit, city_params) do
-    case Cities.update_city_broadcast(socket.assigns.city, city_params) do
-      {:ok, _city} ->
-        {:noreply,
-         push_patch(socket,
-           to: ~p"/broadcast-stream-reset?#{[country_id: socket.assigns.selected_country.id]}"
-         )}
+  defp save_city(socket, :edit, params) do
+    # Retrieve the city from the database using the ID stored in the socket's assigns
+    city = Cities.get_city!(socket.assigns.city.id)
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+    # Check if the lock_version from the database matches the version in the socket's assigns
+    # This is used to detect if the city has been modified by another user since it was last fetched
+    if city.lock_version != socket.assigns.city.lock_version do
+      # If the lock_version does not match, inform the user via a flash message
+      socket = put_flash(socket, :error, "This city has been modified by someone else.")
+      # Return without making any changes as the city data on the user's side is stale
+      {:noreply, socket}
+    else
+      # If the lock_version matches, proceed to update the city with the new parameters
+      case Cities.update_city_broadcast(city, params) do
+        {:ok, _city} ->
+          {:noreply,
+           push_patch(socket,
+             to: ~p"/broadcast-stream-reset?#{[country_id: socket.assigns.selected_country.id]}"
+           )}
+
+        {:error, %Ecto.Changeset{} = changeset} ->
+          {:noreply, assign_form(socket, changeset)}
+      end
     end
   end
 
@@ -200,7 +254,17 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
   end
 
   def handle_info({:update_city, city}, socket) do
-    {:noreply, stream_insert(socket, :cities, city)}
+    if city.id == socket.assigns.city.id && socket.assigns.live_action == :edit do
+      # Notify the user about the update
+      socket =
+        socket
+        |> stream_insert(:cities, city)
+        |> put_flash(:info, "This city's details have just been updated by another user.")
+
+      {:noreply, socket}
+    else
+      {:noreply, stream_insert(socket, :cities, city)}
+    end
   end
 
   def handle_info({:delete_city, city}, socket) do
