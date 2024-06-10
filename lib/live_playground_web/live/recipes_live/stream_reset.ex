@@ -116,6 +116,7 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamReset do
       </:tab>
     </.tabs>
     <.form
+      :if={@countries != []}
       for={@form}
       phx-change="validate"
       phx-submit="save"
@@ -151,12 +152,10 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamReset do
       </:col>
       <:action :let={{id, city}}>
         <.link patch={~p"/stream-reset/edit?#{[country_id: @selected_country.id, city_id: city.id]}"} class="md:mr-4">
-          <span class="hidden md:inline">Edit</span>
-          <.icon name="hero-pencil-square-mini" class="md:hidden h-6 w-6" />
+          <span class="hidden md:inline">Edit</span> <.icon name="hero-pencil-square-mini" class="md:hidden h-6 w-6" />
         </.link>
         <.link phx-click={JS.push("delete", value: %{city_id: city.id}) |> hide("##{id}")} data-confirm="Are you sure?">
-          <span class="hidden md:inline">Delete</span>
-          <.icon name="hero-trash-mini" class="md:hidden" />
+          <span class="hidden md:inline">Delete</span> <.icon name="hero-trash-mini" class="md:hidden" />
         </.link>
       </:action>
     </.table>
