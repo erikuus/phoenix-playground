@@ -16,16 +16,13 @@
     <li><strong>"save"</strong>: Attempts to update the country in the database and broadcast these changes. If successful, it resets the edit form; if not, it re-renders the form with error messages.</li>
 </ul>
 <h3><code>handle_info/2</code></h3>
-<p>Responds to broadcast messages about country updates:</p>
+<p>Handles broadcast messages for updates. Broadcasting, implemented in the <code>Countries</code> module, pushes changes to all subscribed clients in real time, ensuring all views are immediately updated to reflect the latest data:</p>
 <ul>
     <li>If the update is relevant to the currently viewed country and the country is being edited, it updates the displayed data and notifies the user of external changes.</li>
     <li>If the country isn't being edited, it simply updates the country data in the background.</li>
 </ul>
-<h3>Subscription Management with Phoenix PubSub</h3>
+<h3>Helper Functions</h3>
 <ul>
-    <li><strong>Subscription Setup</strong>: On mounting, the view subscribes to updates for a specific country. This allows the LiveView to receive notifications of changes broadcasted via <code>Phoenix.PubSub</code>.</li>
-    <li><strong>Broadcasting Changes</strong>: Updates to a country are broadcasted to all subscribers, ensuring that any session viewing the country data receives updates in real time.</li>
-    <li><strong>Efficient Resource Management</strong>: By subscribing only when the LiveView is connected and unsubscribing on termination, the module manages resources effectively, ensuring that subscriptions are only active when necessary.</li>
+    <li><strong><code>reset_edit_form/1</code></strong>: Resets the edit form in the socket by setting the <code>edit_field</code> and <code>form</code> assigns to <code>nil</code>. This clears any existing form data and exits edit mode.</li>
 </ul>
-<h3>Practical Usage</h3>
 <p>This module is an example of how to implement real-time data broadcasting in a LiveView application, ensuring that updates are pushed to all relevant clients instantly. It demonstrates effective resource management, error handling, and user interaction within a real-time update context. This approach is particularly useful in applications where data integrity and timeliness are crucial, such as in collaborative environments or real-time monitoring systems.</p>

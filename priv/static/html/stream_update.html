@@ -25,4 +25,8 @@
     <li><strong>Success</strong>: Inserts the updated city back into the stream and redirects to the main view with a success message, confirming the city was updated.</li>
     <li><strong>Failure</strong>: Reloads the form with validation errors and displays an error message to inform the user of the issue.</li>
 </ul>
+<h3>Helper Functions</h3>
+<ul>
+    <li><strong><code>get_city_form/1</code></strong>: Converts a <code>City</code> struct into a form changeset. This involves creating a changeset for the city using <code>Cities.change_city/1</code> and then converting that changeset into a form-friendly structure with <code>to_form/1</code>. This is used to prepare the form for editing city details.</li>
+</ul>
 <p>The <code>LivePlaygroundWeb.RecipesLive.StreamUpdate</code> module demonstrates how to update items in large collections efficiently using Phoenix LiveView's streams. This approach keeps server-side memory usage low and ensures that user interactions are responsive and smooth.</p>

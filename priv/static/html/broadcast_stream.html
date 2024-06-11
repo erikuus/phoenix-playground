@@ -18,8 +18,22 @@
 <h3><code>handle_event/3</code></h3>
 <p>Handles user actions such as saving edits, validating input, or deleting entries:</p>
 <ul>
-    <li><strong>Save</strong>: Uses the <code>save_city/3</code> helper to either add a new city or update an existing one. This function checks for version conflicts using optimistic locking, broadcasts successful updates, and handles any errors gracefully.</li>
     <li><strong>Delete</strong>: Removes a city and updates all client views immediately, maintaining data consistency.</li>
     <li><strong>Validate</strong>: Provides real-time validation feedback during form editing, helping users correct entries before submission.</li>
+    <li><strong>"save"</strong>: Uses the <code>save_city/3</code> helper to handle form submissions for adding or updating cities. It makes use of PubSub broadcasting implemented in the <code>Cities</code> module to notify all connected clients of changes.
+        <ul>
+            <li><strong>Optimistic Locking</strong>: Checks the <code>lock_version</code> field to ensure the city data has not been modified by another user since it was last fetched. If a version conflict is detected, it informs the user via a flash message and prevents data overwrite, maintaining data integrity.</li>
+        </ul>
+    </li>
+</ul>
+<h3><code>handle_info/2</code></h3>
+<p>Handles broadcast messages for city creation, updates, and deletions. Broadcasting, implemented in the <code>Cities</code> module, pushes these changes to all subscribed clients in real time, ensuring all views are immediately updated to reflect the latest data:</p>
+<ul>
+    <li><strong>Creation and Updates</strong>: Inserts or updates city data in the stream, ensuring real-time synchronization across all clients. If the city being edited is updated by another user, it notifies the current user of the change.</li>
+    <li><strong>Deletion</strong>: Removes the city from the stream, reflecting the change across all client views immediately.</li>
+</ul>
+<h3>Helper Functions</h3>
+<ul>
+    <li><strong><code>assign_form/2</code></strong>: Assigns a changeset to the socket as a form. This involves converting the changeset into a form-friendly structure using <code>to_form/1</code> and then assigning it to the <code>:form</code> key in the socket's assigns, making it ready for rendering in the form.</li>
 </ul>
 <p>The <code>LivePlaygroundWeb.RecipesLive.BroadcastStream</code> module is an effective solution for managing large data collections in real-time applications, showcasing how to integrate LiveView with PubSub for data consistency and how optimistic locking can be used to handle concurrent data updates securely. This approach minimizes server load and enhances user experience by ensuring that data interactions are handled efficiently and reliably.</p>

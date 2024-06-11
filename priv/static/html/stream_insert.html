@@ -24,4 +24,8 @@
     <li>Fetches the city by ID and deletes it from the database.</li>
     <li>The city is then removed from the stream, again only affecting the specific DOM element associated with that city, enhancing performance and user experience.</li>
 </ul>
+<h3>Helper Functions</h3>
+<ul>
+    <li><strong><code>get_empty_form/0</code></strong>: Prepares an empty form by initializing a <code>City</code> struct and transforming it into a form-compatible format using <code>Cities.change_city()</code> and <code>to_form()</code>. This function is used to reset the form after a successful submission or to initialize the form when the LiveView mounts.</li>
+</ul>
 <p>The <code>LivePlaygroundWeb.RecipesLive.StreamInsert</code> module exemplifies an advanced use of Phoenix LiveView for handling large datasets interactively and efficiently. By leveraging LiveView’s streaming capabilities, the application ensures that server memory is not overloaded by large datasets and that user interactions are smooth and responsive.</p>
