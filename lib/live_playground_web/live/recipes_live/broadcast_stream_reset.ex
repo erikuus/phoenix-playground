@@ -36,18 +36,18 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
     end
   end
 
-  def terminate(_reason, _socket) do
-    # Ensure we unsubscribe when the LiveView is terminated to clean up resources
-    Cities.unsubscribe()
-    :ok
-  end
-
   defp init_tab(socket, countries, selected_country, cities) do
     socket
     |> assign(:countries, countries)
     |> assign(:selected_country, selected_country)
     |> assign(:cities_empty, Enum.empty?(cities))
     |> stream(:cities, cities)
+  end
+
+  def terminate(_reason, _socket) do
+    # Ensure we unsubscribe when the LiveView is terminated to clean up resources
+    Cities.unsubscribe()
+    :ok
   end
 
   def handle_params(%{"country_id" => country_id} = params, _url, socket) do
