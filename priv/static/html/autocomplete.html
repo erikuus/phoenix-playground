@@ -18,4 +18,3 @@
     <li>The first clause matches when the query is an empty string, clearing the matches by assigning an empty list to <code>:matches</code>.</li>
     <li>The second clause is called when there is a query string. It fetches matching countries using <code>Countries.list_country(query)</code> and assigns the resulting list to <code>:matches</code>.</li>
 </ul>
-<p>By binding the input to the <code>suggest</code> event and using the <code>phx-debounce</code> attribute, this LiveView module effectively creates an autocomplete that suggests country names based on the user's input with minimal performance impact.</p>

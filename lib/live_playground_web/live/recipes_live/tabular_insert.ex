@@ -9,11 +9,17 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
 
     socket =
       socket
-      |> stream(:cities, Cities.list_country_city("EST"))
-      |> stream(:tabular_inputs, [])
       |> assign(:tabular_input_ids, [])
+      |> stream(:tabular_inputs, [])
+      |> stream(:cities, Cities.list_country_city("EST"))
 
     {:ok, socket}
+  end
+
+  def terminate(_reason, _socket) do
+    # Ensure we unsubscribe when the LiveView is terminated to clean up resources
+    Cities.unsubscribe()
+    :ok
   end
 
   def render(assigns) do
@@ -24,6 +30,9 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
       <:subtitle>
         Inserting Multiple Items via Stream and Broadcast in LiveView
       </:subtitle>
+      <:actions>
+        <.code_breakdown_link />
+      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <form phx-submit="save" class="space-y-6 md:space-y-4">
@@ -59,6 +68,7 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
         <.button :if={Enum.count(@tabular_input_ids) < 5} type="button" phx-click="add-tabular-input">
           Add
         </.button>
+
         <.button :if={Enum.count(@tabular_input_ids) > 0} type="submit">
           Save
         </.button>
@@ -69,10 +79,12 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
         <%= city.name %>
         <dl class="font-normal md:hidden">
           <dt class="sr-only">District</dt>
+
           <dd class="mt-1 truncate text-zinc-700"><%= city.district %></dd>
         </dl>
         <dl class="hidden md:block font-normal text-xs text-zinc-400">
           <dt>Stream inserted:</dt>
+
           <dd><%= Timex.now() %></dd>
         </dl>
       </:col>
@@ -82,8 +94,7 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
       </:col>
       <:action :let={{id, city}}>
         <.link phx-click={JS.push("delete", value: %{id: city.id}) |> hide("##{id}")} data-confirm="Are you sure?">
-          <span class="hidden md:inline">Delete</span>
-          <.icon name="hero-trash-mini" class="md:hidden" />
+          <span class="hidden md:inline">Delete</span> <.icon name="hero-trash-mini" class="md:hidden" />
         </.link>
       </:action>
     </.table>
@@ -92,6 +103,7 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
       <.code_block filename="lib/live_playground_web/live/recipes_live/tabular_insert.ex" />
       <.code_block filename="lib/live_playground/cities.ex" from="# tabularinsert" to="# endtabularinsert" />
     </div>
+    <.code_breakdown_slideover filename="priv/static/html/tabular_insert.html" />
     <!-- end hiding from live code -->
     """
   end
@@ -100,27 +112,33 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
     last_id = List.last(socket.assigns.tabular_input_ids, 0)
     new_id = last_id + 1
 
+    # Create a new tabular input with a unique ID and empty form
     tabular_input = %{
       id: new_id,
       form: get_empty_form()
     }
 
+    # Send message to add the new tabular input into stream
     send(self(), {:add_tabular_input, tabular_input})
 
+    # Update the socket state with the new tabular input ID
     {:noreply, update(socket, :tabular_input_ids, &(&1 ++ [new_id]))}
   end
 
   def handle_event("remove-tabular-input", %{"id" => id}, socket) do
     id = String.to_integer(id)
 
+    # Send message to remove the tabular input with the given ID from stream
     send(self(), {:remove_tabular_input, %{id: id}})
 
+    # Update the socket state by removing the tabular input ID
     {:noreply, update(socket, :tabular_input_ids, &List.delete(&1, id))}
   end
 
   def handle_event("save", %{"city" => tabular_params}, socket) do
     city_params = get_city_params(socket.assigns.tabular_input_ids, tabular_params)
 
+    # Validate each set of city parameters
     validations =
       for {id, params} <- city_params do
         changeset =
@@ -133,11 +151,13 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
           form: to_form(changeset)
         }
 
+        # Send message to update tabular input with validation results within stream
         send(self(), {:add_tabular_input, tabular_input})
 
         changeset.valid?
       end
 
+    # If all validations pass, save the cities and clear the inputs
     if Enum.all?(validations) do
       for {id, params} <- city_params do
         Cities.create_city_broadcast(params)
@@ -162,6 +182,12 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
   end
 
   def handle_info({:remove_tabular_input, tabular_input}, socket) do
+    # Remove the tabular input from the stream using a map with the key %{id: id}
+    # Note: stream_delete/3 does not necessarily assume an ID; it simply requires
+    # a unique identifier to locate and remove the element from the stream.
+    # Example: If the stream contains a list of maps with keys :code, :firstname, and :lastname,
+    # you can remove an entry by specifying the unique :code value
+    # Example usage: stream_delete(socket, :persons, %{code: unique_code})
     {:noreply, stream_delete(socket, :tabular_inputs, tabular_input)}
   end
 
@@ -173,30 +199,28 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
     {:noreply, stream_delete(socket, :cities, city)}
   end
 
-  @doc """
-  Converts map received from multiple inputs into list of tuples that can be used to validate and save data.
-
-  ## Parameters
-
-    - tabular_input_ids: List that represents the ids of added (and not removed) tabular inputs.
-    - tabular_params: Map that save event will receive from tabular inputs (from inputs where `multiple={true}`).
-
-  ## Example
-
-      iex> tabular_input_ids = [2, 5]
-      iex> tabular_params = %{
-        "name" => ["Tallinn", "Tartu"],
-        "district" => ["Tartu Maakond", "Harju Maakond"],
-        "population" => ["101 246", "403 981"]
-      }
-      iex> get_city_params(tabular_input_ids, tabular_params)
-      [
-        {2, %{"name" => "Tartu, "district" => "Tartu Maakond", population => "101 246", "countrycode" => "EST"}},
-        {5, %{"name" => "Tallinn, "district" => "Harju Maakond", population => "403 981", "countrycode" => "EST"}}
-      ]
-
-  """
-  def get_city_params(tabular_input_ids, tabular_params) do
+  defp get_city_params(tabular_input_ids, tabular_params) do
+    # Converts a map received from multiple inputs into a list of tuples that can be used to validate and save data.
+    #
+    # ## Parameters
+    #
+    #   - tabular_input_ids: List of IDs representing the added (and not removed) tabular inputs.
+    #   - tabular_params: Map received from tabular inputs in the save event (from inputs where `multiple={true}`).
+    #
+    # ## Example
+    #
+    #     iex> tabular_input_ids = [2, 5]
+    #     iex> tabular_params = %{
+    #       "name" => ["Tallinn", "Tartu"],
+    #       "district" => ["Tartu Maakond", "Harju Maakond"],
+    #       "population" => ["101 246", "403 981"]
+    #     }
+    #     iex> get_city_params(tabular_input_ids, tabular_params)
+    #     [
+    #       {2, %{"name" => "Tartu", "district" => "Tartu Maakond", "population" => "101 246", "countrycode" => "EST"}},
+    #       {5, %{"name" => "Tallinn", "district" => "Harju Maakond", "population" => "403 981", "countrycode" => "EST"}}
+    #     ]
+    #
     for {id, index} <- Enum.with_index(tabular_input_ids) do
       params =
         Enum.reduce(tabular_params, %{}, fn {k, v}, acc -> Map.put(acc, k, Enum.at(v, index)) end)

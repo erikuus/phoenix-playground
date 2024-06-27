@@ -19,4 +19,3 @@
     <li><strong><code>get_existing_page/3</code></strong>: Ensures the requested page number is valid after a change in <code>per_page</code> settings. It recalculates the maximum page number and adjusts the current page if necessary, ensuring users are never directed to a non-existent page.</li>
     <li><strong><code>ceil_div/2</code></strong>: Provides a utility for calculating the ceiling of an integer division, used here to determine the maximum number of pages based on the total count of items and the number per page. This function is designed for precision and efficiency in pagination calculations, avoiding floating-point arithmetic.</li>
 </ul>
-<p>This module exemplifies a robust implementation of pagination in a Phoenix LiveView application, showcasing real-time interactions with seamless updates to the user interface. It highlights best practices in handling user inputs, state management, and rendering dynamic content efficiently.</p>

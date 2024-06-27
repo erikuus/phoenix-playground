@@ -33,4 +33,3 @@
     <li><code>put_flash/3</code> is used to set a flash message to be displayed to the user.</li>
     <li><code>clear_flash/1</code> removes any existing flash messages from the socket.</li>
 </ul>
-<p>This module is structured to handle user search queries in a non-blocking way. By using <code>send/2</code> and <code>handle_info/2</code>, the module defers the execution of the search, freeing the LiveView process to continue handling other events and rendering. This approach also separates concerns within the code, keeping the event-handling logic clean and maintaining user responsiveness even when simulating longer-running operations.</p>

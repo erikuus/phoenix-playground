@@ -17,7 +17,7 @@
     <li><strong>Conditional Form Display</strong>: Shows an edit form if <code>live_action</code> is set to <code>:edit</code>, with fields for name, district, and population. These fields are debounced to optimize input handling.</li>
     <li><strong>City List Display</strong>: Streams city data into a dynamically updated table.</li>
     <li><strong>Edit and Cancel Actions</strong>: Provides dynamic links for editing each city, adjusting the URL to include city-specific parameters, and a cancel button to revert back to the main view.</li>
-    <li><strong>Real-Time Feedback</strong>: Timestamps within each city row visually demonstrate that only the affected parts of the LiveView are updated, enhancing the user's perception of real-time interaction without unnecessary page refreshes.</li>
+    <li><strong>Real-Time Feedback</strong>: Timestamps within each city row visually demonstrate that only the affected parts of the LiveView are updated.</li>
 </ul>
 <h3><code>handle_event/3</code> for "save"</h3>
 <p>Handles updates submitted via the edit form:</p>
@@ -29,4 +29,3 @@
 <ul>
     <li><strong><code>get_city_form/1</code></strong>: Converts a <code>City</code> struct into a form changeset. This involves creating a changeset for the city using <code>Cities.change_city/1</code> and then converting that changeset into a form-friendly structure with <code>to_form/1</code>. This is used to prepare the form for editing city details.</li>
 </ul>
-<p>The <code>LivePlaygroundWeb.RecipesLive.StreamUpdate</code> module demonstrates how to update items in large collections efficiently using Phoenix LiveView's streams. This approach keeps server-side memory usage low and ensures that user interactions are responsive and smooth.</p>
