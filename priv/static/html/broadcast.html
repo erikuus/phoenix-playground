@@ -1,4 +1,4 @@
-<p>This module uses LiveView's streaming capabilities along with Phoenix PubSub to handle real-time broadcasts of changes in country data. It's designed to show changes to other connected users immediately, which is essential for applications where data consistency and real-time updates are critical.</p>
+<p>The <code>Broadcast</code> module uses LiveView's streaming capabilities along with Phoenix PubSub to handle real-time broadcasts of changes in country data. It's designed to show changes to other connected users immediately, which is essential for applications where data consistency and real-time updates are critical.</p>
 <h3><code>mount/3</code></h3>
 <p>Sets up the LiveView session. It subscribes to updates for a predefined country (ID 228) to receive real-time notifications on any changes. The subscription is set up only if the socket is connected, which optimizes resource usage by avoiding unnecessary subscriptions when pre-rendering on the server side.</p>
 <ul>

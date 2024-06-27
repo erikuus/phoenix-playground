@@ -1,4 +1,4 @@
-<p>The <code>LivePlaygroundWeb.RecipesLive.Paginate</code> module in Phoenix LiveView is designed to enable efficient pagination for displaying city data within a dynamic web table. It handles user interactions related to changing the number of items displayed per page and navigating through pages. Here’s a detailed breakdown of the module:</p>
+<p>The <code>Paginate</code> module is designed to enable pagination for displaying city data within a dynamic web table. It handles user interactions related to changing the number of items displayed per page and navigating through pages. Here’s a detailed breakdown of the module:</p>
 <h3><code>mount/3</code></h3>
 <p>This function is the entry point for setting up the LiveView with initial state. It calculates the total number of cities in the "USA" with <code>Cities.count_country_city("USA")</code>, and initializes pagination settings (<code>page: 1, per_page: 10</code>). These initial settings are stored in the socket's assigns using <code>assign_pagination_options</code>, preparing the LiveView for the first render.</p>
 <h3><code>render/1</code></h3>

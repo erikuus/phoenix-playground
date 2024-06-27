@@ -1,4 +1,4 @@
-<p>The <code>LivePlaygroundWeb.RecipesLive.StreamUpdate</code> module uses Phoenix LiveView to handle city data updates dynamically. It's designed to minimize server load by using LiveView's streaming capabilities, which let us update large collections without hefty memory overhead.</p>
+<p>The <code>StreamUpdate</code> module is designed to minimize server load by using LiveView's streaming capabilities, which let us update large collections without hefty memory overhead.</p>
 <h3><code>mount/3</code></h3>
 <p>Initializes the LiveView, setting up a stream to deliver city data from the "EST" locale to the client, which allows for real-time updates without full page reloads.</p>
 <h3><code>handle_params/2</code> and <code>apply_action/2</code></h3>

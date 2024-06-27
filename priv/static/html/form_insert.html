@@ -1,4 +1,4 @@
-<p>The <code>LivePlaygroundWeb.RecipesLive.FormInsert</code> module is a Phoenix LiveView module designed for inserting new city records into a database. It combines form handling and dynamic updates to display new entries immediately upon submission. Here’s a detailed explanation of the key components and functionalities:</p>
+<p>The <code>FormInsert</code> module is designed for inserting new city records into a database. It combines form handling and dynamic updates to display new entries immediately upon submission. Here’s a detailed explanation of the key components and functionalities:</p>
 <h3><code>mount/3</code></h3>
 <p>This function initializes the LiveView by loading a list of cities from a specified country ("EST") using <code>Cities.list_country_city("EST")</code>. It also sets up an empty form for new city entries using <code>get_empty_form()</code>, which prepares a new <code>City</code> struct with initial values and assigns both the list of cities and the form to the socket.</p>
 <h3><code>render/1</code></h3>
