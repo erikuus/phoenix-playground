@@ -68,7 +68,6 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
         <.button :if={Enum.count(@tabular_input_ids) < 5} type="button" phx-click="add-tabular-input">
           Add
         </.button>
-
         <.button :if={Enum.count(@tabular_input_ids) > 0} type="submit">
           Save
         </.button>
@@ -79,12 +78,10 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
         <%= city.name %>
         <dl class="font-normal md:hidden">
           <dt class="sr-only">District</dt>
-
           <dd class="mt-1 truncate text-zinc-700"><%= city.district %></dd>
         </dl>
         <dl class="hidden md:block font-normal text-xs text-zinc-400">
           <dt>Stream inserted:</dt>
-
           <dd><%= Timex.now() %></dd>
         </dl>
       </:col>
