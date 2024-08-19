@@ -2,8 +2,8 @@ import Config
 
 # Configure your database
 config :live_playground, LivePlayground.Repo,
-  username: "postgres",
-  password: "postgres",
+  username: System.fetch_env!("LIVE_PLAYGROUND_USERNAME"),
+  password: System.fetch_env!("LIVE_PLAYGROUND_PASSWORD"),
   hostname: "localhost",
   database: "live_playground_dev",
   stacktrace: true,
@@ -23,7 +23,7 @@ config :live_playground, LivePlaygroundWeb.Endpoint,
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "SuhrcRVDJS1Ldq5q+Y8TKZ1HRbwKm2qlrvRZYnALZV93TneAxWndG3iL9OpmhfV6",
+  secret_key_base: System.fetch_env!("LIVE_PLAYGROUND_SECRET_KEY_BASE"),
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}

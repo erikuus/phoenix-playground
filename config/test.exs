@@ -6,8 +6,8 @@ import Config
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
 config :live_playground, LivePlayground.Repo,
-  username: "postgres",
-  password: "postgres",
+  username: System.fetch_env!("LIVE_PLAYGROUND_USERNAME"),
+  password: System.fetch_env!("LIVE_PLAYGROUND_PASSWORD"),
   hostname: "localhost",
   database: "live_playground_test#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,
@@ -17,7 +17,7 @@ config :live_playground, LivePlayground.Repo,
 # you can enable the server option below.
 config :live_playground, LivePlaygroundWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
-  secret_key_base: "ZYd2Hoo+xU2QoDv/korjUEZJRovE0PNiKavwY0zwu6C/N83eoHpeOPIsJ461TVCy",
+  secret_key_base: System.fetch_env!("LIVE_PLAYGROUND_SECRET_KEY_BASE"),
   server: false
 
 # In test we don't send emails.
