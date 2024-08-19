@@ -38,5 +38,5 @@ live_playground-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# Sublime workspace
 live_playground.sublime-workspace
-mix.lock
