@@ -40,3 +40,4 @@ npm-debug.log
 
 # Sublime workspace
 live_playground.sublime-workspace
+.DS_Store
