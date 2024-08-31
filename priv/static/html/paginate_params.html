@@ -1,41 +1,128 @@
-<p>The <code>PaginateParams</code> module utilizes Phoenix LiveView to manage pagination with dynamic updates through URL parameters, allowing for a stateful and interactive pagination experience that persists across page reloads. Here is a detailed breakdown of how this module operates:</p>
+<p>
+  The <code>PaginateParams</code> module utilizes Phoenix LiveView to manage
+  pagination with dynamic updates through URL parameters, allowing for a
+  stateful and interactive pagination experience that persists across page
+  reloads. Here is a detailed breakdown of how this module operates:
+</p>
 <h3><code>mount/3</code></h3>
-<p>This function initializes the LiveView session by counting the total number of cities in the "USA" using the <code>Cities.count_country_city("USA")</code> function. It assigns this count to the socket, setting the groundwork for pagination calculations.</p>
+<p>
+  This function initializes the LiveView session by counting the total number of
+  cities in the "USA" using the
+  <code>Cities.count_country_city("USA")</code> function. It assigns this count
+  to the socket, setting the groundwork for pagination calculations.
+</p>
 <h3><code>handle_params/3</code></h3>
-<p>This function is crucial for managing pagination state through URL parameters. It processes <code>page</code> and <code>per_page</code> parameters:</p>
+<p>
+  This function is crucial for managing pagination state through URL parameters.
+  It processes <code>page</code> and <code>per_page</code> parameters:
+</p>
 <ul>
-    <li>It converts received parameters to integers using <code>to_integer/2</code>, providing defaults if necessary.</li>
-    <li>Ensures that the requested <code>page</code> value is valid and adjusts it as necessary using <code>get_existing_page/3</code> to keep it within the bounds determined by the total count of cities. The <code>per_page</code> value is verified against a list of allowed values using <code>get_allowed_per_page/1</code> to ensure it conforms to predefined options. If it doesn't match any allowed value, a default setting is used.</li>
-    <li>The pagination settings are then updated in the socket's assigns, preparing for a page re-render with the new settings.</li>
+  <li>
+    It converts received parameters to integers using <code>to_integer/2</code>,
+    providing defaults if necessary.
+  </li>
+  <li>
+    Ensures that the requested <code>page</code> value is valid and adjusts it
+    as necessary using <code>get_existing_page/3</code> to keep it within the
+    bounds determined by the total count of cities. The
+    <code>per_page</code> value is verified against a list of allowed values
+    using <code>get_allowed_per_page/1</code> to ensure it conforms to
+    predefined options. If it doesn't match any allowed value, a default setting
+    is used.
+  </li>
+  <li>
+    The pagination settings are then updated in the socket's assigns, preparing
+    for a page re-render with the new settings.
+  </li>
 </ul>
 <p>There are two variants of this function:</p>
 <ol>
-    <li>One that specifically handles defined <code>page</code> and <code>per_page</code> parameters.</li>
-    <li>A fallback that sets defaults when these parameters are not present.</li>
+  <li>
+    One that specifically handles defined <code>page</code> and
+    <code>per_page</code> parameters.
+  </li>
+  <li>A fallback that sets defaults when these parameters are not present.</li>
 </ol>
 <h3><code>render/1</code></h3>
 <p>The render function constructs the HTML output, including:</p>
 <ul>
-    <li>A form that allows users to select the number of items per page. This form triggers the <code>update-pagination</code> event upon changes.</li>
-    <li>A table that displays cities' data only if the list is not empty. It includes responsive design elements for better display on different devices.</li>
-    <li>Pagination controls that are linked to the <code>update-pagination</code> event, allowing users to navigate through pages.</li>
+  <li>
+    A form that allows users to select the number of items per page. This form
+    triggers the <code>update-pagination</code> event upon changes.
+  </li>
+  <li>
+    A table that displays cities' data only if the list is not empty. It
+    includes responsive design elements for better display on different devices.
+  </li>
+  <li>
+    Pagination controls that are linked to the
+    <code>update-pagination</code> event, allowing users to navigate through
+    pages.
+  </li>
 </ul>
 <h3><code>handle_event/3</code> for "update-pagination"</h3>
-<p>This event handler manages updates triggered by user interactions with pagination controls and the per-page selector:</p>
+<p>
+  This event handler manages updates triggered by user interactions with
+  pagination controls and the per-page selector:
+</p>
 <ul>
-    <li>
-        <p><strong>URL and State Update</strong>: The function updates the URL parameters to reflect the selected options by using <code>push_patch/2</code>. This method not only updates the LiveView's URL but also triggers a call to <code>handle_params/3</code> with the new parameters. This is a crucial step as <code>handle_params/3</code> validates these parameters and, upon ensuring their validity, calls <code>assign_pagination_options/2</code> to update the LiveView state. This sequence ensures that the changes are accurately reflected both in the browser's URL and in the internal state of the LiveView.</p>
-    </li>
-    <li>
-        <p><strong>Parameter Processing</strong>: <code>update_params/2</code> plays a critical role in this process by preparing the pagination settings based on user input. This function adjusts either the <code>page</code> or <code>per_page</code> settings before they are used to update the URL and subsequently processed by <code>handle_params/3</code>.</p>
-    </li>
+  <li>
+    <p>
+      <strong>URL and State Update</strong>: The function updates the URL
+      parameters to reflect the selected options by using
+      <code>push_patch/2</code>. This method not only updates the LiveView's URL
+      but also triggers a call to <code>handle_params/3</code> with the new
+      parameters. This is a crucial step as
+      <code>handle_params/3</code> validates these parameters and, upon ensuring
+      their validity, calls <code>assign_pagination_options/2</code> to update
+      the LiveView state. This sequence ensures that the changes are accurately
+      reflected both in the browser's URL and in the internal state of the
+      LiveView.
+    </p>
+  </li>
+  <li>
+    <p>
+      <strong>Parameter Processing</strong>: <code>update_params/2</code> plays
+      a critical role in this process by preparing the pagination settings based
+      on user input. This function adjusts either the <code>page</code> or
+      <code>per_page</code> settings before they are used to update the URL and
+      subsequently processed by <code>handle_params/3</code>.
+    </p>
+  </li>
 </ul>
 <h3>Helper Functions</h3>
 <ul>
-    <li><strong><code>assign_pagination_options/2</code></strong>: Updates the LiveView's state with the current list of cities based on pagination settings and updates the socket assigns.</li>
-    <li><strong><code>get_pagination_url/1</code></strong>: Constructs the URL used for the <code>push_patch</code> function, appending current pagination parameters.</li>
-    <li><strong><code>get_allowed_per_page/1</code> and <code>get_per_page_options/0</code></strong>: Validate and provide options for the number of items per page.</li>
-    <li><strong><code>get_existing_page/3</code></strong>: Adjusts the current page to ensure it is valid after a change in <code>per_page</code>. This is crucial when the selected <code>per_page</code> increases or decreases the number of pages, potentially leaving the current page number out of range.</li>
-    <li><strong><code>ceil_div/2</code></strong>: Utility function for computing the ceiling of integer division, useful for calculating the total number of pages.</li>
-    <li><strong><code>to_integer/2</code></strong>: Safely parses integers from strings, providing a default if parsing fails.</li>
+  <li>
+    <strong><code>assign_pagination_options/2</code></strong
+    >: Updates the LiveView's state with the current list of cities based on
+    pagination settings and updates the socket assigns.
+  </li>
+  <li>
+    <strong><code>get_pagination_url/1</code></strong
+    >: Constructs the URL used for the <code>push_patch</code> function,
+    appending current pagination parameters.
+  </li>
+  <li>
+    <strong
+      ><code>get_allowed_per_page/1</code> and
+      <code>get_per_page_options/0</code></strong
+    >: Validate and provide options for the number of items per page.
+  </li>
+  <li>
+    <strong><code>get_existing_page/3</code></strong
+    >: Adjusts the current page to ensure it is valid after a change in
+    <code>per_page</code>. This is crucial when the selected
+    <code>per_page</code> increases or decreases the number of pages,
+    potentially leaving the current page number out of range.
+  </li>
+  <li>
+    <strong><code>ceil_div/2</code></strong
+    >: Utility function for computing the ceiling of integer division, useful
+    for calculating the total number of pages.
+  </li>
+  <li>
+    <strong><code>to_integer/2</code></strong
+    >: Safely parses integers from strings, providing a default if parsing
+    fails.
+  </li>
 </ul>

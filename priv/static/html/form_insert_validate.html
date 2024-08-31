@@ -1,25 +1,69 @@
-<p>The <code>FormInsertValidate</code> module is designed to interactively validate and insert city records into a database, ensuring real-time feedback on user input. Here’s a detailed breakdown of the module's functionality:</p>
+<p>
+  The <code>FormInsertValidate</code> module is designed to interactively
+  validate and insert city records into a database, ensuring real-time feedback
+  on user input. Here’s a detailed breakdown of the module's functionality:
+</p>
 <h3><code>mount/3</code></h3>
-<p>This function initializes the LiveView by loading a list of cities from a specified country ("EST") and setting up an empty form for new city entries using <code>get_empty_form()</code>. This prepares a new <code>City</code> struct with initial values and assigns both the list of cities and the form to the socket.</p>
+<p>
+  This function initializes the LiveView by loading a list of cities from a
+  specified country ("EST") and setting up an empty form for new city entries
+  using <code>get_empty_form()</code>. This prepares a new
+  <code>City</code> struct with initial values and assigns both the list of
+  cities and the form to the socket.
+</p>
 <h3><code>render/1</code></h3>
 <p>The rendering function constructs the HTML:</p>
 <ul>
-    <li>A form for city data input configured to handle both "validate" and "save" events. It includes input fields for the city's name, district, and population, each debounced to delay event firing for 2000 milliseconds, reducing the frequency of validation requests as the user types.</li>
-    <li>A table displaying the list of cities, conditionally shown if city data is present. Each city's details are formatted for both mobile and desktop views.</li>
+  <li>
+    A form for city data input configured to handle both "validate" and "save"
+    events. It includes input fields for the city's name, district, and
+    population, each debounced to delay event firing for 2000 milliseconds,
+    reducing the frequency of validation requests as the user types.
+  </li>
+  <li>
+    A table displaying the list of cities, conditionally shown if city data is
+    present. Each city's details are formatted for both mobile and desktop
+    views.
+  </li>
 </ul>
 <h3><code>handle_event/3</code> for "validate"</h3>
 <p>This event handler processes intermediate form validation:</p>
 <ul>
-    <li>It adds the necessary country code to the params and updates the form with the current values entered by the user.</li>
-    <li>The form data is passed through validation logic (<code>Cities.change_city(params)</code>), and the resulting form structure, which may include validation errors, is reassigned to the socket. This allows the form to display real-time feedback on the validity of the data being entered without waiting for form submission.</li>
+  <li>
+    It adds the necessary country code to the params and updates the form with
+    the current values entered by the user.
+  </li>
+  <li>
+    The form data is passed through validation logic
+    (<code>Cities.change_city(params)</code>), and the resulting form structure,
+    which may include validation errors, is reassigned to the socket. This
+    allows the form to display real-time feedback on the validity of the data
+    being entered without waiting for form submission.
+  </li>
 </ul>
 <h3><code>handle_event/3</code> for "save"</h3>
 <p>This event handler manages form submission:</p>
 <ul>
-    <li><strong>Success Path</strong>: If the city is successfully created (<code>Cities.create_city(params)</code>), the new city is added to the list of cities in the LiveView's state, the form is reset to an empty state, and a success message is displayed.</li>
-    <li><strong>Error Path</strong>: If there is a validation error, the changeset is converted back to a form state displaying errors, and the form is re-rendered with the user's input and corresponding error messages.</li>
+  <li>
+    <strong>Success Path</strong>: If the city is successfully created
+    (<code>Cities.create_city(params)</code>), the new city is added to the list
+    of cities in the LiveView's state, the form is reset to an empty state, and
+    a success message is displayed.
+  </li>
+  <li>
+    <strong>Error Path</strong>: If there is a validation error, the changeset
+    is converted back to a form state displaying errors, and the form is
+    re-rendered with the user's input and corresponding error messages.
+  </li>
 </ul>
 <h3>Helper Functions</h3>
 <ul>
-    <li><strong><code>get_empty_form/0</code></strong>: Initializes an empty form by creating a <code>City</code> struct and converting it to a form-compatible format using <code>Cities.change_city()</code>. This function is pivotal for setting up the form when the LiveView mounts and for resetting the form after a successful submission.</li>
+  <li>
+    <strong><code>get_empty_form/0</code></strong
+    >: Initializes an empty form by creating a <code>City</code> struct and
+    converting it to a form-compatible format using
+    <code>Cities.change_city()</code>. This function is pivotal for setting up
+    the form when the LiveView mounts and for resetting the form after a
+    successful submission.
+  </li>
 </ul>

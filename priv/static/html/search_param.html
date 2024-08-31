@@ -1,34 +1,88 @@
-<p>The <code>SearchParam</code> module enhances the search interface by integrating URL parameters to manage and reflect the search state. This approach allows the search state to be bookmarkable and shareable. Here's how the code works:</p>
+<p>
+  The <code>SearchParam</code> module enhances the search interface by
+  integrating URL parameters to manage and reflect the search state. This
+  approach allows the search state to be bookmarkable and shareable. Here's how
+  the code works:
+</p>
 <h3><code>mount/3</code></h3>
 <ul>
-    <li>Initializes the LiveView without setting any specific state.</li>
+  <li>Initializes the LiveView without setting any specific state.</li>
 </ul>
 <h3><code>handle_params/3</code></h3>
 <ul>
-    <li>This function is invoked every time there is a navigation event that changes the URL parameters. It's used here to process search queries (<code>"q"</code> parameter in the URL).</li>
-    <li>When the query is an empty string, it displays a message prompting the user to enter a search term.</li>
-    <li>With a non-empty query, it triggers an asynchronous search operation by sending a <code>{:find, query}</code> message to itself and indicates the loading state.</li>
-    <li>If the URL parameters do not contain a recognizable query, it resets the search state.</li>
+  <li>
+    This function is invoked every time there is a navigation event that changes
+    the URL parameters. It's used here to process search queries (<code
+      >"q"</code
+    >
+    parameter in the URL).
+  </li>
+  <li>
+    When the query is an empty string, it displays a message prompting the user
+    to enter a search term.
+  </li>
+  <li>
+    With a non-empty query, it triggers an asynchronous search operation by
+    sending a <code>{:find, query}</code> message to itself and indicates the
+    loading state.
+  </li>
+  <li>
+    If the URL parameters do not contain a recognizable query, it resets the
+    search state.
+  </li>
 </ul>
 <h3><code>render/1</code></h3>
 <ul>
-    <li>Constructs the HTML, with a form for the search input and two buttons—one to submit the search and another to clear the search and reset the interface.</li>
-    <li>When <code>@loading</code> is true, a loading indicator is displayed, and the input field and search button are disabled to prevent further input until the current search completes.</li>
-    <li>If the search yields results, a table is rendered showing the countries matching the search term. If there are no results, an alert is displayed.</li>
+  <li>
+    Constructs the HTML, with a form for the search input and two buttons—one to
+    submit the search and another to clear the search and reset the interface.
+  </li>
+  <li>
+    When <code>@loading</code> is true, a loading indicator is displayed, and
+    the input field and search button are disabled to prevent further input
+    until the current search completes.
+  </li>
+  <li>
+    If the search yields results, a table is rendered showing the countries
+    matching the search term. If there are no results, an alert is displayed.
+  </li>
 </ul>
 <h3><code>handle_event/3</code> for <code>"search"</code></h3>
 <ul>
-    <li>Responds to the <code>phx-submit</code> event from the form submission. It uses <code>push_patch/2</code> to update the URL with the query parameter without reloading the page, providing a way to reflect the current search state in the URL.</li>
-    <li>If the query has not changed from the current state, it does not update the URL or the state.</li>
+  <li>
+    Responds to the <code>phx-submit</code> event from the form submission. It
+    uses <code>push_patch/2</code> to update the URL with the query parameter
+    without reloading the page, providing a way to reflect the current search
+    state in the URL.
+  </li>
+  <li>
+    If the query has not changed from the current state, it does not update the
+    URL or the state.
+  </li>
 </ul>
 <h3><code>handle_info/2</code> for <code>{:find, query}</code></h3>
 <ul>
-    <li>This simulates a delay for demonstration purposes, then searches for countries matching the query.</li>
-    <li>If no matches are found, it sets a flash message indicating this and turns off the loading state.</li>
-    <li>If matches are found, it updates the <code>:countries</code> assign with the results and turns off the loading state.</li>
+  <li>
+    This simulates a delay for demonstration purposes, then searches for
+    countries matching the query.
+  </li>
+  <li>
+    If no matches are found, it sets a flash message indicating this and turns
+    off the loading state.
+  </li>
+  <li>
+    If matches are found, it updates the <code>:countries</code> assign with the
+    results and turns off the loading state.
+  </li>
 </ul>
 <h3>Helper Functions</h3>
 <ul>
-    <li><code>assign_empty_search/1</code> sets the assigns for an empty search state, clearing the query, countries, and loading state.</li>
-    <li><code>put_flash/3</code> and <code>clear_flash/1</code> manage flash messages used to display temporary alerts to the user.</li>
+  <li>
+    <code>assign_empty_search/1</code> sets the assigns for an empty search
+    state, clearing the query, countries, and loading state.
+  </li>
+  <li>
+    <code>put_flash/3</code> and <code>clear_flash/1</code> manage flash
+    messages used to display temporary alerts to the user.
+  </li>
 </ul>

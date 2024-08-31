@@ -1,23 +1,56 @@
-<p>The <code>KeyEvents</code> module creates an image carousel that users can control via keyboard input. Let's walk through the important parts:</p>
+<p>
+  The <code>KeyEvents</code> module creates an image carousel that users can
+  control via keyboard input. Let's walk through the important parts:
+</p>
 <h3><code>mount/3</code></h3>
-<p>Sets up initial state containing an array of image filenames, the index of the currently displayed image (<code>current</code>), and a <code>playing</code> boolean indicating if the slideshow is auto-advancing.</p>
+<p>
+  Sets up initial state containing an array of image filenames, the index of the
+  currently displayed image (<code>current</code>), and a
+  <code>playing</code> boolean indicating if the slideshow is auto-advancing.
+</p>
 <h3><code>render/1</code></h3>
-<p>Renders a text prompt and a numeric input for manual image selection, wrapped in a <code>div</code> with an event listener for keyup on the window (<code>phx-window-keyup="update"</code>). It also displays the current image from the <code>images</code> array using its index.</p>
+<p>
+  Renders a text prompt and a numeric input for manual image selection, wrapped
+  in a <code>div</code> with an event listener for keyup on the window
+  (<code>phx-window-keyup="update"</code>). It also displays the current image
+  from the <code>images</code> array using its index.
+</p>
 <h3><code>handle_event("set-current",...)</code></h3>
-<p>Handles the event when a user types an image index and presses "Enter". It parses the input to ensure it's a valid index within the range of available images. If valid, it updates the current image.</p>
+<p>
+  Handles the event when a user types an image index and presses "Enter". It
+  parses the input to ensure it's a valid index within the range of available
+  images. If valid, it updates the current image.
+</p>
 <h3><code>handle_event("update",...)</code></h3>
 <p>Responds to various keyup events:</p>
 <ul>
-    <li>"k" toggles play/pause for auto-advancing images.</li>
-    <li>"ArrowRight" moves to the next image.</li>
-    <li>"ArrowLeft" moves to the previous image.</li>
-    <li>Any other key is ignored.</li>
+  <li>"k" toggles play/pause for auto-advancing images.</li>
+  <li>"ArrowRight" moves to the next image.</li>
+  <li>"ArrowLeft" moves to the previous image.</li>
+  <li>Any other key is ignored.</li>
 </ul>
 <h3><code>handle_info(:tick,...)</code></h3>
-<p>Is called by a timer set when the slideshow is playing. It moves to the next image, making the carousel advance automatically.</p>
-<h3>Helper Functions (<code>toggle_play</code>, <code>next</code>, <code>prev</code>)</h3>
+<p>
+  Is called by a timer set when the slideshow is playing. It moves to the next
+  image, making the carousel advance automatically.
+</p>
+<h3>
+  Helper Functions (<code>toggle_play</code>, <code>next</code>,
+  <code>prev</code>)
+</h3>
 <ul>
-    <li><code>toggle_play</code> switches the slideshow between playing and paused states. If playing, it cancels the timer. If paused, it starts a timer that sends <code>:tick</code> messages to the LiveView process at a regular interval.</li>
-    <li><code>next</code> calculates the next image index, wrapping around to the start if currently at the end.</li>
-    <li><code>prev</code> calculates the previous image index, wrapping around to the end if currently at the start.</li>
+  <li>
+    <code>toggle_play</code> switches the slideshow between playing and paused
+    states. If playing, it cancels the timer. If paused, it starts a timer that
+    sends <code>:tick</code> messages to the LiveView process at a regular
+    interval.
+  </li>
+  <li>
+    <code>next</code> calculates the next image index, wrapping around to the
+    start if currently at the end.
+  </li>
+  <li>
+    <code>prev</code> calculates the previous image index, wrapping around to
+    the end if currently at the start.
+  </li>
 </ul>

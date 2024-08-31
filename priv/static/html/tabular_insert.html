@@ -1,76 +1,169 @@
-<p>The <code>TabularInsert</code> module demonstrates how to implement a tabular insert form using Phoenix LiveView streams. The module also uses streaming capabilities along with Phoenix PubSub to manage and update city data in real-time.</p>
+<p>
+  The <code>TabularInsert</code> module demonstrates how to implement a tabular
+  insert form using Phoenix LiveView streams. The module also uses streaming
+  capabilities along with Phoenix PubSub to manage and update city data in
+  real-time.
+</p>
 <h3><code>mount/3</code></h3>
 <p>Initializes the LiveView:</p>
 <ul>
-    <li><strong>Subscription</strong>: Subscribes to city updates if the socket is connected, allowing the LiveView to receive real-time updates.</li>
-    <li><strong>Initial State</strong>:<ul>
-            <li><code>tabular_input_ids</code> is set to an empty list to track dynamic form input IDs.</li>
-            <li>Initializes the <code>tabular_inputs</code> stream to manage dynamic form inputs.</li>
-            <li>Initializes the <code>cities</code> stream with a list of cities from Estonia (<code>"EST"</code>).</li>
-        </ul>
-    </li>
+  <li>
+    <strong>Subscription</strong>: Subscribes to city updates if the socket is
+    connected, allowing the LiveView to receive real-time updates.
+  </li>
+  <li>
+    <strong>Initial State</strong>:
+    <ul>
+      <li>
+        <code>tabular_input_ids</code> is set to an empty list to track dynamic
+        form input IDs.
+      </li>
+      <li>
+        Initializes the <code>tabular_inputs</code> stream to manage dynamic
+        form inputs.
+      </li>
+      <li>
+        Initializes the <code>cities</code> stream with a list of cities from
+        Estonia (<code>"EST"</code>).
+      </li>
+    </ul>
+  </li>
 </ul>
-<p>Tabular inputs are kept in a stream to ensure the text in inputs remains consistent when inputs are added or deleted, while their IDs are maintained in the state for easy management and tracking.</p>
+<p>
+  Tabular inputs are kept in a stream to ensure the text in inputs remains
+  consistent when inputs are added or deleted, while their IDs are maintained in
+  the state for easy management and tracking.
+</p>
 <h3><code>terminate/2</code></h3>
-<p>Cleans up by unsubscribing from city updates when the LiveView terminates. This ensures that resources are properly released.</p>
+<p>
+  Cleans up by unsubscribing from city updates when the LiveView terminates.
+  This ensures that resources are properly released.
+</p>
 <h3><code>render/1</code></h3>
 <p>Defines the HTML structure for the LiveView:</p>
 <ul>
-    <li>
-        <p><strong>Form Interaction</strong>: Contains dynamically added city input fields for name, district, and population. Each set of inputs can be removed individually. Includes "Add" button to add more input fields, limited to 5, and "Save" button to submit the form if there are inputs to save.</p>
-    </li>
-    <li>
-        <p><strong>Table Display</strong>: Streams current city data, incorporating real-time updates and deletions directly within the UI. Each table entry includes a timestamp showing when the city was last updated or inserted into the stream.</p>
-    </li>
+  <li>
+    <p>
+      <strong>Form Interaction</strong>: Contains dynamically added city input
+      fields for name, district, and population. Each set of inputs can be
+      removed individually. Includes "Add" button to add more input fields,
+      limited to 5, and "Save" button to submit the form if there are inputs to
+      save.
+    </p>
+  </li>
+  <li>
+    <p>
+      <strong>Table Display</strong>: Streams current city data, incorporating
+      real-time updates and deletions directly within the UI. Each table entry
+      includes a timestamp showing when the city was last updated or inserted
+      into the stream.
+    </p>
+  </li>
 </ul>
 <h3><code>handle_event/3</code></h3>
 <p>Manages user interactions:</p>
 <ul>
-    <li>
-        <p><strong>"add-tabular-input"</strong>:</p>
-        <ul>
-            <li>Generates a new, empty set of input fields with a unique ID.</li>
-            <li>Sends a message to handle the addition of the new input through <code>handle_info/2</code>.</li>
-        </ul>
-    </li>
-    <li>
-        <p><strong>"remove-tabular-input"</strong>:</p>
-        <ul>
-            <li>Identifies the specific set of city input fields to remove based on its ID.</li>
-            <li>Sends a message to handle the removal of the input through <code>handle_info/2</code>.</li>
-        </ul>
-    </li>
+  <li>
+    <p><strong>"add-tabular-input"</strong>:</p>
+    <ul>
+      <li>Generates a new, empty set of input fields with a unique ID.</li>
+      <li>
+        Sends a message to handle the addition of the new input through
+        <code>handle_info/2</code>.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>"remove-tabular-input"</strong>:</p>
+    <ul>
+      <li>
+        Identifies the specific set of city input fields to remove based on its
+        ID.
+      </li>
+      <li>
+        Sends a message to handle the removal of the input through
+        <code>handle_info/2</code>.
+      </li>
+    </ul>
+  </li>
 </ul>
-<p>Using <code>send/2</code> to delegate to <code>handle_info/2</code> for adding and removing inputs is a design choice to centralize stream operations.</p>
+<p>
+  Using <code>send/2</code> to delegate to <code>handle_info/2</code> for adding
+  and removing inputs is a design choice to centralize stream operations.
+</p>
 <ul>
-    <li>
-        <p><strong>"save"</strong>:</p>
-        <ul>
-            <li>Gathers the data from tabular input fields using <code>get_city_params/2</code> to convert the input data into a list of tuples. Each tuple consists of an input ID and a map of city fields.</li>
-            <li>Validates the data using the input ID to identify the input in the stream and the map to check the city fields. If validation fails, the stream is updated to show errors in the form. If all fields are valid, the data is saved to the database and the tabular inputs are removed from the stream.</li>
-            <li>The <code>Cities</code> module broadcasts new additions to all connected users.</li>
-            <li><code>handle_info/2</code> receives the broadcasted message and updates the stream with the new cities.</li>
-        </ul>
-    </li>
-    <li>
-        <p><strong>"delete"</strong>:</p>
-        <ul>
-            <li>Deletes a city from the database.</li>
-            <li>The <code>Cities</code> module broadcasts the change to all connected users.</li>
-            <li><code>handle_info/2</code> processes the broadcast and removes the city from the stream, ensuring other parts of the page are unaffected.</li>
-        </ul>
-    </li>
+  <li>
+    <p><strong>"save"</strong>:</p>
+    <ul>
+      <li>
+        Gathers the data from tabular input fields using
+        <code>get_city_params/2</code> to convert the input data into a list of
+        tuples. Each tuple consists of an input ID and a map of city fields.
+      </li>
+      <li>
+        Validates the data using the input ID to identify the input in the
+        stream and the map to check the city fields. If validation fails, the
+        stream is updated to show errors in the form. If all fields are valid,
+        the data is saved to the database and the tabular inputs are removed
+        from the stream.
+      </li>
+      <li>
+        The <code>Cities</code> module broadcasts new additions to all connected
+        users.
+      </li>
+      <li>
+        <code>handle_info/2</code> receives the broadcasted message and updates
+        the stream with the new cities.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>"delete"</strong>:</p>
+    <ul>
+      <li>Deletes a city from the database.</li>
+      <li>
+        The <code>Cities</code> module broadcasts the change to all connected
+        users.
+      </li>
+      <li>
+        <code>handle_info/2</code> processes the broadcast and removes the city
+        from the stream, ensuring other parts of the page are unaffected.
+      </li>
+    </ul>
+  </li>
 </ul>
 <h3><code>handle_info/2</code></h3>
 <p>Processes asynchronous messages to update streams:</p>
 <ul>
-    <li><strong><code>{:add_tabular_input, tabular_input}</code></strong>: Inserts a new tabular input into the stream.</li>
-    <li><strong><code>{:remove_tabular_input, tabular_input}</code></strong>: Removes a tabular input from the stream.</li>
-    <li><strong><code>{:create_city, city}</code></strong>: Inserts a new city into the stream at the top of the list.</li>
-    <li><strong><code>{:delete_city, city}</code></strong>: Removes a city from the stream.</li>
+  <li>
+    <strong><code>{:add_tabular_input, tabular_input}</code></strong
+    >: Inserts a new tabular input into the stream.
+  </li>
+  <li>
+    <strong><code>{:remove_tabular_input, tabular_input}</code></strong
+    >: Removes a tabular input from the stream.
+  </li>
+  <li>
+    <strong><code>{:create_city, city}</code></strong
+    >: Inserts a new city into the stream at the top of the list.
+  </li>
+  <li>
+    <strong><code>{:delete_city, city}</code></strong
+    >: Removes a city from the stream.
+  </li>
 </ul>
 <h3>Helper Functions</h3>
 <ul>
-    <li><strong><code>get_city_params/2</code></strong>: Converts the map received from tabular inputs (<code>multiple={true}</code>) into a list of tuples that can be validated and saved. This ensures that each set of inputs is correctly associated with a city.</li>
-    <li><strong><code>get_empty_form/0</code></strong>: Creates an empty form structure for new tabular inputs, ensuring that each new set of inputs starts with a blank form.</li>
+  <li>
+    <strong><code>get_city_params/2</code></strong
+    >: Converts the map received from tabular inputs
+    (<code>multiple={true}</code>) into a list of tuples that can be validated
+    and saved. This ensures that each set of inputs is correctly associated with
+    a city.
+  </li>
+  <li>
+    <strong><code>get_empty_form/0</code></strong
+    >: Creates an empty form structure for new tabular inputs, ensuring that
+    each new set of inputs starts with a blank form.
+  </li>
 </ul>

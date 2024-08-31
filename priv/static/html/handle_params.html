@@ -1,28 +1,75 @@
-<p>The <code>HandleParams</code> module is designed to render and manage a page that displays country details based on URL parameters. Here's a breakdown:</p>
+<p>
+  The <code>HandleParams</code> module is designed to render and manage a page
+  that displays country details based on URL parameters. Here's a breakdown:
+</p>
 <h3><code>mount/3</code></h3>
-<p>It initializes the LiveView with the list of countries in the "Baltic Countries" region by invoking <code>Countries.list_region_country/1</code>. The result is stored in the socket's assigns under the key <code>:countries</code>. This function runs once when the LiveView is mounted.</p>
+<p>
+  It initializes the LiveView with the list of countries in the "Baltic
+  Countries" region by invoking <code>Countries.list_region_country/1</code>.
+  The result is stored in the socket's assigns under the key
+  <code>:countries</code>. This function runs once when the LiveView is mounted.
+</p>
 <h3><code>handle_params/3</code></h3>
-<p>This function is triggered whenever there's a navigation event that changes the URL parameters. It has two clauses:</p>
+<p>
+  This function is triggered whenever there's a navigation event that changes
+  the URL parameters. It has two clauses:
+</p>
 <ol>
-    <li>
-        <p>The first clause handles a URL parameter with the key <code>id</code>. It attempts to fetch the details of the country with the given ID using <code>Countries.get_country!/1</code>. If the country exists, it assigns it to <code>:selected_country</code>. If the fetch fails (i.e., the country ID is not found), it sets <code>:selected_country</code> to <code>nil</code>.</p>
-    </li>
-    <li>
-        <p>The second clause serves as a fallback for when there are no URL parameters. It checks if there are any countries in the <code>:countries</code> assign. If not, it sets <code>:selected_country</code> to <code>nil</code>. If there are countries, it sets <code>:selected_country</code> to the first country in the list (<code>hd(countries)</code>).</p>
-    </li>
+  <li>
+    <p>
+      The first clause handles a URL parameter with the key <code>id</code>. It
+      attempts to fetch the details of the country with the given ID using
+      <code>Countries.get_country!/1</code>. If the country exists, it assigns
+      it to <code>:selected_country</code>. If the fetch fails (i.e., the
+      country ID is not found), it sets <code>:selected_country</code> to
+      <code>nil</code>.
+    </p>
+  </li>
+  <li>
+    <p>
+      The second clause serves as a fallback for when there are no URL
+      parameters. It checks if there are any countries in the
+      <code>:countries</code> assign. If not, it sets
+      <code>:selected_country</code> to <code>nil</code>. If there are
+      countries, it sets <code>:selected_country</code> to the first country in
+      the list (<code>hd(countries)</code>).
+    </p>
+  </li>
 </ol>
 <h3><code>render/1</code></h3>
-<p>The render function generates the HTML content using a HEEx template. It conditionally renders tabs for each country if there are any countries available. Each tab has a link with URL parameters corresponding to the country ID. It determines which tab is active based on whether the country is the selected country. It then calls <code>country_details/1</code> to render the details of the selected country.</p>
+<p>
+  The render function generates the HTML content using a HEEx template. It
+  conditionally renders tabs for each country if there are any countries
+  available. Each tab has a link with URL parameters corresponding to the
+  country ID. It determines which tab is active based on whether the country is
+  the selected country. It then calls <code>country_details/1</code> to render
+  the details of the selected country.
+</p>
 <h3><code>country_details/1</code></h3>
-<p>This helper function has three clauses, each generating different HEEx content based on the assigns:</p>
+<p>
+  This helper function has three clauses, each generating different HEEx content
+  based on the assigns:
+</p>
 <ol>
-    <li>
-        <p>If there are no countries in the <code>:countries</code> assign, it renders an alert indicating no countries were found in the specified region.</p>
-    </li>
-    <li>
-        <p>If <code>:selected_country</code> is <code>nil</code>, it renders an alert that no country was found for the provided ID.</p>
-    </li>
-    <li>
-        <p>If there is a selected country, it renders a list of country details, including the country's code, continent, region, year of independence, government form, head of state, population (formatted with delimiters for readability), GNP, and life expectancy.</p>
-    </li>
+  <li>
+    <p>
+      If there are no countries in the <code>:countries</code> assign, it
+      renders an alert indicating no countries were found in the specified
+      region.
+    </p>
+  </li>
+  <li>
+    <p>
+      If <code>:selected_country</code> is <code>nil</code>, it renders an alert
+      that no country was found for the provided ID.
+    </p>
+  </li>
+  <li>
+    <p>
+      If there is a selected country, it renders a list of country details,
+      including the country's code, continent, region, year of independence,
+      government form, head of state, population (formatted with delimiters for
+      readability), GNP, and life expectancy.
+    </p>
+  </li>
 </ol>

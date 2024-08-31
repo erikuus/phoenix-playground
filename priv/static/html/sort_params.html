@@ -1,17 +1,60 @@
-<p>The <code>SortParams</code> module provides real-time sorting functionality for city data displayed in a table. The sorting state is managed via URL parameters, allowing users to sort by name, district, or population, maintaining state between navigations.</p>
+<p>
+  The <code>SortParams</code> module provides real-time sorting functionality
+  for city data displayed in a table. The sorting state is managed via URL
+  parameters, allowing users to sort by name, district, or population,
+  maintaining state between navigations.
+</p>
 <h3><code>mount/3</code></h3>
-<p>The mount function sets up the LiveView without preset sorting parameters. The actual sorting options are determined by the URL parameters and set in the <code>handle_params/3</code> function.</p>
+<p>
+  The mount function sets up the LiveView without preset sorting parameters. The
+  actual sorting options are determined by the URL parameters and set in the
+  <code>handle_params/3</code> function.
+</p>
 <h3><code>handle_params/3</code></h3>
-<p>This function is key to the module's URL-driven sorting feature. It receives sorting parameters from the URL, validates them, and then uses them to set the LiveView's state. It relies on a pattern match to distinguish between cases where sort parameters are provided and when they are absent, defaulting to a predetermined order in the latter scenario.</p>
+<p>
+  This function is key to the module's URL-driven sorting feature. It receives
+  sorting parameters from the URL, validates them, and then uses them to set the
+  LiveView's state. It relies on a pattern match to distinguish between cases
+  where sort parameters are provided and when they are absent, defaulting to a
+  predetermined order in the latter scenario.
+</p>
 <h3><code>render/1</code></h3>
-<p>The render function generates the HTML for the page, creating a table with data rows based on the city information available in the assigns. The <code>sort_link/2</code> function is invoked for each column header, providing interactive sorting links.</p>
+<p>
+  The render function generates the HTML for the page, creating a table with
+  data rows based on the city information available in the assigns. The
+  <code>sort_link/2</code> function is invoked for each column header, providing
+  interactive sorting links.
+</p>
 <h3><code>sort_link/2</code></h3>
-<p>Instead of emitting events, this helper function constructs a URL for dynamic page patching. When a user interacts with the sorting links, the browser's URL is updated with the appropriate sort parameters, and the LiveView re-renders to reflect the new sort order. The links are designed to work with the <code>handle_params/3</code> function to update the page content without a full reload.</p>
+<p>
+  Instead of emitting events, this helper function constructs a URL for dynamic
+  page patching. When a user interacts with the sorting links, the browser's URL
+  is updated with the appropriate sort parameters, and the LiveView re-renders
+  to reflect the new sort order. The links are designed to work with the
+  <code>handle_params/3</code> function to update the page content without a
+  full reload.
+</p>
 <h3><code>assign_sorting_options/2</code></h3>
-<p>Updates the LiveView's assigns with the sorted list of cities and the current sorting options. This update triggers a re-render of the component with the newly sorted data.</p>
+<p>
+  Updates the LiveView's assigns with the sorted list of cities and the current
+  sorting options. This update triggers a re-render of the component with the
+  newly sorted data.
+</p>
 <h3>Helper Functions</h3>
 <ul>
-    <li><strong><code>get_indicator/2</code></strong>: Appends a visual indicator to the column headers to show the current sort direction (ascending or descending).</li>
-    <li><strong><code>get_sort_order/2</code></strong>: Determines the sort order that should be applied when a column header is clicked, toggling between ascending and descending.</li>
-    <li><strong><code>safe_to_atom/2</code></strong>: Converts the sort parameters from strings to atoms, ensuring they match a list of permitted values to safeguard against potential vulnerabilities.</li>
+  <li>
+    <strong><code>get_indicator/2</code></strong
+    >: Appends a visual indicator to the column headers to show the current sort
+    direction (ascending or descending).
+  </li>
+  <li>
+    <strong><code>get_sort_order/2</code></strong
+    >: Determines the sort order that should be applied when a column header is
+    clicked, toggling between ascending and descending.
+  </li>
+  <li>
+    <strong><code>safe_to_atom/2</code></strong
+    >: Converts the sort parameters from strings to atoms, ensuring they match a
+    list of permitted values to safeguard against potential vulnerabilities.
+  </li>
 </ul>

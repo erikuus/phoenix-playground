@@ -1,28 +1,72 @@
-<p>The <code>FilterParams</code> module demonstrates a filtering interface that uses URL query parameters to maintain the state of the filters. Here's how the code operates:</p>
+<p>
+  The <code>FilterParams</code> module demonstrates a filtering interface that
+  uses URL query parameters to maintain the state of the filters. Here's how the
+  code operates:
+</p>
 <h3><code>mount/3</code></h3>
 <ul>
-    <li>The LiveView is initialized without presetting any state, ready to handle incoming URL parameters.</li>
+  <li>
+    The LiveView is initialized without presetting any state, ready to handle
+    incoming URL parameters.
+  </li>
 </ul>
 <h3><code>handle_params/3</code></h3>
 <ul>
-    <li>This function processes the parameters from the URL query string. It normalizes the boolean values for the size filters (<code>sm</code>, <code>md</code>, <code>lg</code>) using <code>validate_bool/1</code> and updates the LiveView state with the filter criteria.</li>
-    <li>A default filter is applied when no or unrecognized parameters are present.</li>
+  <li>
+    This function processes the parameters from the URL query string. It
+    normalizes the boolean values for the size filters (<code>sm</code>,
+    <code>md</code>, <code>lg</code>) using <code>validate_bool/1</code> and
+    updates the LiveView state with the filter criteria.
+  </li>
+  <li>
+    A default filter is applied when no or unrecognized parameters are present.
+  </li>
 </ul>
 <h3><code>render/1</code></h3>
 <ul>
-    <li>The HTML markup includes a form for filtering, which upon changes, will trigger a <code>phx-change="filter"</code> event. Filters include a name input, district selector, and checkboxes for city sizes.</li>
-    <li>If there are no cities to display (<code>@cities</code> is empty), an alert with "No results" is shown; alternatively, if no filters are applied, it indicates that all records are being shown.</li>
-    <li>A table lists the cities that match the current filters.</li>
+  <li>
+    The HTML markup includes a form for filtering, which upon changes, will
+    trigger a <code>phx-change="filter"</code> event. Filters include a name
+    input, district selector, and checkboxes for city sizes.
+  </li>
+  <li>
+    If there are no cities to display (<code>@cities</code> is empty), an alert
+    with "No results" is shown; alternatively, if no filters are applied, it
+    indicates that all records are being shown.
+  </li>
+  <li>A table lists the cities that match the current filters.</li>
 </ul>
 <h3><code>handle_event/3</code> for <code>"filter"</code></h3>
 <ul>
-    <li>Responds to changes in the filter form, constructing a URL with the current filter settings and calling <code>push_patch/2</code> to update the browser's URL without a page reload. This enables bookmarkable and shareable filter states.</li>
+  <li>
+    Responds to changes in the filter form, constructing a URL with the current
+    filter settings and calling <code>push_patch/2</code> to update the
+    browser's URL without a page reload. This enables bookmarkable and shareable
+    filter states.
+  </li>
 </ul>
 <h3>Helper Functions</h3>
 <ul>
-    <li><code>validate_bool/1</code> checks the string representation of a boolean value ensuring that only "true" or "false" strings are used, defaulting to "false" for any invalid input.</li>
-    <li><code>assign_filter/2</code> assigns the updated filter to the socket and fetches the filtered city data using <code>Cities.list_country_city/2</code>.</li>
-    <li><code>no_filters_applied/1</code> checks if the default filters are applied, indicating no specific user-driven filtering.</li>
-    <li><code>district_options/0</code> retrieves distinct district options for the district select input.</li>
-    <li><code>size_options/0</code> prepares the size filter options to ensure correct state across LiveView re-renders.</li>
+  <li>
+    <code>validate_bool/1</code> checks the string representation of a boolean
+    value ensuring that only "true" or "false" strings are used, defaulting to
+    "false" for any invalid input.
+  </li>
+  <li>
+    <code>assign_filter/2</code> assigns the updated filter to the socket and
+    fetches the filtered city data using
+    <code>Cities.list_country_city/2</code>.
+  </li>
+  <li>
+    <code>no_filters_applied/1</code> checks if the default filters are applied,
+    indicating no specific user-driven filtering.
+  </li>
+  <li>
+    <code>district_options/0</code> retrieves distinct district options for the
+    district select input.
+  </li>
+  <li>
+    <code>size_options/0</code> prepares the size filter options to ensure
+    correct state across LiveView re-renders.
+  </li>
 </ul>

@@ -1,31 +1,89 @@
-<p>The <code>StreamUpdate</code> module is designed to minimize server load by using LiveView's streaming capabilities, which let us update large collections without hefty memory overhead.</p>
+<p>
+  The <code>StreamUpdate</code> module is designed to minimize server load by
+  using LiveView's streaming capabilities, which let us update large collections
+  without hefty memory overhead.
+</p>
 <h3><code>mount/3</code></h3>
-<p>Initializes the LiveView, setting up a stream to deliver city data from the "EST" locale to the client, which allows for real-time updates without full page reloads.</p>
+<p>
+  Initializes the LiveView, setting up a stream to deliver city data from the
+  "EST" locale to the client, which allows for real-time updates without full
+  page reloads.
+</p>
 <h3><code>handle_params/2</code> and <code>apply_action/2</code></h3>
-<p>These functions work together to route user interactions based on URL parameters, enhancing the module's responsiveness to user actions:</p>
+<p>
+  These functions work together to route user interactions based on URL
+  parameters, enhancing the module's responsiveness to user actions:
+</p>
 <ul>
-    <li><strong><code>handle_params/2</code></strong>: Extracts parameters from the URL and delegates action handling based on these parameters, using <code>apply_action/2</code>.</li>
-    <li><strong><code>apply_action/2</code></strong>: Differentiates actions such as viewing the main index or editing a specific city:<ul>
-            <li>For the <code>:edit</code> action, it retrieves the city by ID, sets up an edit form populated with the city's data, and updates the socket's assigns for rendering.</li>
-            <li>For the <code>:index</code> action, it simply maintains the current state without modifications. This centralization of action handling based on parameters simplifies routing logic and enhances maintainability.</li>
-        </ul>
-    </li>
+  <li>
+    <strong><code>handle_params/2</code></strong
+    >: Extracts parameters from the URL and delegates action handling based on
+    these parameters, using <code>apply_action/2</code>.
+  </li>
+  <li>
+    <strong><code>apply_action/2</code></strong
+    >: Differentiates actions such as viewing the main index or editing a
+    specific city:
+    <ul>
+      <li>
+        For the <code>:edit</code> action, it retrieves the city by ID, sets up
+        an edit form populated with the city's data, and updates the socket's
+        assigns for rendering.
+      </li>
+      <li>
+        For the <code>:index</code> action, it simply maintains the current
+        state without modifications. This centralization of action handling
+        based on parameters simplifies routing logic and enhances
+        maintainability.
+      </li>
+    </ul>
+  </li>
 </ul>
 <h3><code>render/1</code></h3>
 <p>Defines the HTML output, including:</p>
 <ul>
-    <li><strong>Conditional Form Display</strong>: Shows an edit form if <code>live_action</code> is set to <code>:edit</code>, with fields for name, district, and population. These fields are debounced to optimize input handling.</li>
-    <li><strong>City List Display</strong>: Streams city data into a dynamically updated table.</li>
-    <li><strong>Edit and Cancel Actions</strong>: Provides dynamic links for editing each city, adjusting the URL to include city-specific parameters, and a cancel button to revert back to the main view.</li>
-    <li><strong>Real-Time Feedback</strong>: Timestamps within each city row visually demonstrate that only the affected parts of the LiveView are updated.</li>
+  <li>
+    <strong>Conditional Form Display</strong>: Shows an edit form if
+    <code>live_action</code> is set to <code>:edit</code>, with fields for name,
+    district, and population. These fields are debounced to optimize input
+    handling.
+  </li>
+  <li>
+    <strong>City List Display</strong>: Streams city data into a dynamically
+    updated table.
+  </li>
+  <li>
+    <strong>Edit and Cancel Actions</strong>: Provides dynamic links for editing
+    each city, adjusting the URL to include city-specific parameters, and a
+    cancel button to revert back to the main view.
+  </li>
+  <li>
+    <strong>Real-Time Feedback</strong>: Timestamps within each city row
+    visually demonstrate that only the affected parts of the LiveView are
+    updated.
+  </li>
 </ul>
 <h3><code>handle_event/3</code> for "save"</h3>
 <p>Handles updates submitted via the edit form:</p>
 <ul>
-    <li><strong>Success</strong>: Inserts the updated city back into the stream and redirects to the main view with a success message, confirming the city was updated.</li>
-    <li><strong>Failure</strong>: Reloads the form with validation errors and displays an error message to inform the user of the issue.</li>
+  <li>
+    <strong>Success</strong>: Inserts the updated city back into the stream and
+    redirects to the main view with a success message, confirming the city was
+    updated.
+  </li>
+  <li>
+    <strong>Failure</strong>: Reloads the form with validation errors and
+    displays an error message to inform the user of the issue.
+  </li>
 </ul>
 <h3>Helper Functions</h3>
 <ul>
-    <li><strong><code>get_city_form/1</code></strong>: Converts a <code>City</code> struct into a form changeset. This involves creating a changeset for the city using <code>Cities.change_city/1</code> and then converting that changeset into a form-friendly structure with <code>to_form/1</code>. This is used to prepare the form for editing city details.</li>
+  <li>
+    <strong><code>get_city_form/1</code></strong
+    >: Converts a <code>City</code> struct into a form changeset. This involves
+    creating a changeset for the city using
+    <code>Cities.change_city/1</code> and then converting that changeset into a
+    form-friendly structure with <code>to_form/1</code>. This is used to prepare
+    the form for editing city details.
+  </li>
 </ul>

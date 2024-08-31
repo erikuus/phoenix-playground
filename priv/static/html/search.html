@@ -1,35 +1,89 @@
-<p>The <code>Search</code> module offers a search interface allowing users to search for countries without using URL parameters. Here's a breakdown:</p>
+<p>
+  The <code>Search</code> module offers a search interface allowing users to
+  search for countries without using URL parameters. Here's a breakdown:
+</p>
 <h3><code>mount/3</code></h3>
 <ul>
-    <li>Sets up initial state with empty search values using the <code>assign_empty_search/1</code> helper function.</li>
+  <li>
+    Sets up initial state with empty search values using the
+    <code>assign_empty_search/1</code> helper function.
+  </li>
 </ul>
 <h3><code>render/1</code></h3>
 <ul>
-    <li>Constructs the search form with an input field for the query and a button to submit the search.</li>
-    <li>The <code>phx-submit="search"</code> event is bound to the form submission, triggering the <code>"search"</code> event.</li>
-    <li>The <code>disabled={@loading}</code> property on the input and button elements ensures that users cannot interact with them while the search is processing.</li>
-    <li>An alert is conditionally displayed if there's a <code>"no_result"</code> flash message, indicating no results found or prompting for a search term.</li>
-    <li>A table displays search results using a custom table component with columns for country details.</li>
+  <li>
+    Constructs the search form with an input field for the query and a button to
+    submit the search.
+  </li>
+  <li>
+    The <code>phx-submit="search"</code> event is bound to the form submission,
+    triggering the <code>"search"</code> event.
+  </li>
+  <li>
+    The <code>disabled={@loading}</code> property on the input and button
+    elements ensures that users cannot interact with them while the search is
+    processing.
+  </li>
+  <li>
+    An alert is conditionally displayed if there's a
+    <code>"no_result"</code> flash message, indicating no results found or
+    prompting for a search term.
+  </li>
+  <li>
+    A table displays search results using a custom table component with columns
+    for country details.
+  </li>
 </ul>
 <h3><code>handle_event/3</code> for <code>"search"</code></h3>
 <ul>
-    <li>If the search query is empty, it sets a <code>"no_result"</code> flash message and resets the search-related assigns.</li>
-    <li>For a non-empty query, it:<ul>
-            <li>Sends a message to itself (<code>{:find, query}</code>) to process the search. This is used to simulate an asynchronous operation.</li>
-            <li>Clears any existing flash messages and sets the loading state to <code>true</code>.</li>
-        </ul>
-    </li>
+  <li>
+    If the search query is empty, it sets a <code>"no_result"</code> flash
+    message and resets the search-related assigns.
+  </li>
+  <li>
+    For a non-empty query, it:
+    <ul>
+      <li>
+        Sends a message to itself (<code>{:find, query}</code>) to process the
+        search. This is used to simulate an asynchronous operation.
+      </li>
+      <li>
+        Clears any existing flash messages and sets the loading state to
+        <code>true</code>.
+      </li>
+    </ul>
+  </li>
 </ul>
 <h3><code>handle_info/2</code> for <code>{:find, query}</code></h3>
 <ul>
-    <li>Simulates a delay to showcase the loading state (not typically used in production code).</li>
-    <li>Performs the actual search using <code>Countries.list_country(query)</code>.</li>
-    <li>If no results are found, a <code>"no_result"</code> flash is set, and the loading state is turned off.</li>
-    <li>If results are found, the <code>:countries</code> assign is updated with the results, and the loading state is turned off.</li>
+  <li>
+    Simulates a delay to showcase the loading state (not typically used in
+    production code).
+  </li>
+  <li>
+    Performs the actual search using <code>Countries.list_country(query)</code>.
+  </li>
+  <li>
+    If no results are found, a <code>"no_result"</code> flash is set, and the
+    loading state is turned off.
+  </li>
+  <li>
+    If results are found, the <code>:countries</code> assign is updated with the
+    results, and the loading state is turned off.
+  </li>
 </ul>
 <h3>Helper Functions</h3>
 <ul>
-    <li><code>assign_empty_search/1</code> sets up the socket assigns for an empty search state.</li>
-    <li><code>put_flash/3</code> is used to set a flash message to be displayed to the user.</li>
-    <li><code>clear_flash/1</code> removes any existing flash messages from the socket.</li>
+  <li>
+    <code>assign_empty_search/1</code> sets up the socket assigns for an empty
+    search state.
+  </li>
+  <li>
+    <code>put_flash/3</code> is used to set a flash message to be displayed to
+    the user.
+  </li>
+  <li>
+    <code>clear_flash/1</code> removes any existing flash messages from the
+    socket.
+  </li>
 </ul>

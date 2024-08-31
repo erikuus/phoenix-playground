@@ -1,18 +1,55 @@
-<p>The <code>SendInterval</code> module is designed to perform countdown functionality, updating the remaining time until a specified expiration time. It shows the server's ability to push updates to the client seamlessly, providing a dynamic, responsive user experience. Here's the functionality unpacked:</p>
+<p>
+  The <code>SendInterval</code> module is designed to perform countdown
+  functionality, updating the remaining time until a specified expiration time.
+  It shows the server's ability to push updates to the client seamlessly,
+  providing a dynamic, responsive user experience. Here's the functionality
+  unpacked:
+</p>
 <h3><code>mount/3</code></h3>
 <p>Initializes the LiveView with:</p>
 <ul>
-    <li>Starting a timer that sends <code>:tick</code> messages to the LiveView process every second if the LiveView is connected to the client.</li>
-    <li>Calculating an <code>expiration_time</code> which is set to 2 days from the current UTC time.</li>
-    <li>Assigning <code>expiration_time</code> and the initial <code>seconds_remaining</code> to the socket.</li>
+  <li>
+    Starting a timer that sends <code>:tick</code> messages to the LiveView
+    process every second if the LiveView is connected to the client.
+  </li>
+  <li>
+    Calculating an <code>expiration_time</code> which is set to 2 days from the
+    current UTC time.
+  </li>
+  <li>
+    Assigning <code>expiration_time</code> and the initial
+    <code>seconds_remaining</code> to the socket.
+  </li>
 </ul>
 <h3><code>render/1</code></h3>
-<p>Defines how to render the current state to HTML. It displays the remaining time in a human-readable format using the <code>format_duration/1</code> helper function.</p>
+<p>
+  Defines how to render the current state to HTML. It displays the remaining
+  time in a human-readable format using the
+  <code>format_duration/1</code> helper function.
+</p>
 <h3><code>handle_info/2</code> for <code>:tick</code></h3>
-<p>Receives the <code>:tick</code> messages from the timer. It recalculates the <code>seconds_remaining</code> and updates it in the socket's assigns if it has changed. This triggers a re-render of the template if necessary.</p>
+<p>
+  Receives the <code>:tick</code> messages from the timer. It recalculates the
+  <code>seconds_remaining</code> and updates it in the socket's assigns if it
+  has changed. This triggers a re-render of the template if necessary.
+</p>
 <h3><code>seconds_remaining/1</code></h3>
-<p>Calculates the difference in seconds between the <code>expiration_time</code> and the current UTC time, returning 0 if the expiration time has passed.</p>
+<p>
+  Calculates the difference in seconds between the
+  <code>expiration_time</code> and the current UTC time, returning 0 if the
+  expiration time has passed.
+</p>
 <h3><code>format_duration/1</code></h3>
-<p>Formats the duration from seconds into a human-readable string. It's using the <code>Timex</code> library's duration formatting capabilities. If the seconds are greater than zero, it converts the seconds to a <code>Duration</code> struct and then formats it. If the seconds are zero or less, it returns "Expired".</p>
+<p>
+  Formats the duration from seconds into a human-readable string. It's using the
+  <code>Timex</code> library's duration formatting capabilities. If the seconds
+  are greater than zero, it converts the seconds to a
+  <code>Duration</code> struct and then formats it. If the seconds are zero or
+  less, it returns "Expired".
+</p>
 <h3>Timer Usage</h3>
-<p>Using <code>:timer.send_interval/3</code> is a way to make the server send messages to itself at regular intervals. In this context, it's being used to update the countdown every second.</p>
+<p>
+  Using <code>:timer.send_interval/3</code> is a way to make the server send
+  messages to itself at regular intervals. In this context, it's being used to
+  update the countdown every second.
+</p>
