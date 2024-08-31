@@ -1,0 +1,193 @@
+<p>
+  The <code>JsHookPushEvent</code> module demonstrates how to push JavaScript
+  events from the frontend (using a JS Hook) back to Phoenix LiveView, enabling
+  real-time interaction between the map and the LiveView. The key focus here is
+  on handling map marker clicks and updating the LiveView based on these
+  interactions.
+</p>
+<h3><code>mount/3</code></h3>
+<p>This function initializes the LiveView and prepares the necessary data:</p>
+<ul>
+  <li>
+    <strong>Fetching Data</strong>: Retrieves a list of locations from the
+    database using <code>Locations.list_est_location/0</code>.
+  </li>
+  <li>
+    <strong>Assigning Data</strong>: Assigns the fetched locations to the socket
+    under the <code>:locations</code> key, making them available for rendering
+    in the <code>render/1</code> function.
+  </li>
+</ul>
+<h3><code>render/1</code></h3>
+<p>Defines the HTML structure sent to the client:</p>
+<ul>
+  <li>
+    <p><strong>Map Hook Element</strong>:</p>
+    <ul>
+      <li>
+        The <code>div</code> with <code>id="map-hook"</code> is the target for
+        the JS hook and must have a unique <code>id</code>.
+      </li>
+      <li>
+        The <code>phx-hook="MapPushEvents"</code> attribute attaches the JS hook
+        named <code>MapPushEvents</code> (which is defined in
+        <code>app.js</code>).
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>List of Locations</strong>:</p>
+    <ul>
+      <li>
+        Displays a list of location names with an <code>li</code> element for
+        each location.
+      </li>
+      <li>
+        The selected location is highlighted based on the state of
+        <code>@selected_location_id</code>, which is dynamically updated when a
+        marker is clicked.
+      </li>
+    </ul>
+  </li>
+</ul>
+<h3><code>handle_event/3</code></h3>
+<p>Handles events pushed from the frontend to the LiveView:</p>
+<ul>
+  <li>
+    <p><strong>"get-locations"</strong>:</p>
+    <ul>
+      <li>
+        This event is triggered when the map is initialized in the JS hook.
+      </li>
+      <li>
+        LiveView responds by pushing the <code>:locations</code> assign (the
+        list of locations) back to the frontend, where it’s used to populate the
+        map with markers and re-center the map based on the bounds of all
+        markers.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>"marker-clicked"</strong>:</p>
+    <ul>
+      <li>This event is triggered when a marker on the map is clicked.</li>
+      <li>
+        The event payload contains the <code>location_id</code> of the clicked
+        marker.
+      </li>
+      <li>
+        Updates the socket assigns to set <code>:selected_location_id</code>,
+        causing the corresponding location in the list to be highlighted.
+        Scrolling the location into view happens within the JS hook.
+      </li>
+    </ul>
+  </li>
+</ul>
+<h3>JavaScript Hook (<code>MapPushEvents</code>)</h3>
+<p>
+  The JS hook is critical for pushing events from the client-side to LiveView:
+</p>
+<ul>
+  <li>
+    <p><strong>Hook Registration (<code>app.js</code>)</strong>:</p>
+    <ul>
+      <li>
+        The <code>MapPushEvents</code> hook is registered in
+        <code>assets/js/app.js</code>.
+      </li>
+      <li>
+        This hook is made available to LiveView through the
+        <code>LiveSocket</code> configuration.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>
+      <strong>Hook Implementation (<code>map-push-events.js</code>)</strong>:
+    </p>
+    <ul>
+      <li>
+        <strong>Mounted Lifecycle</strong>: When the LiveView component is
+        mounted, the <code>mounted()</code> function in
+        <code>MapPushEvents</code> is triggered.
+        <ul>
+          <li>
+            <strong>Map Initialization</strong>: Inside the
+            <code>mounted()</code> function, the <code>Map</code> class is
+            instantiated, setting up the map with center coordinates and zoom
+            level. During this process, a callback function is added to handle
+            marker clicks. This callback triggers the
+            <code>pushEvent("marker-clicked")</code>, which in turn triggers the
+            corresponding event in LiveView. The specifics of how this is tied
+            to each marker are handled within the JavaScript, but the key point
+            is that clicking a marker sends the event back to LiveView for
+            further processing.
+          </li>
+          <li>
+            <strong>Requesting Location Data</strong>: Immediately after map
+            initialization, the hook calls
+            <code>this.pushEvent("get-locations")</code> to request location
+            data from LiveView. The LiveView handles this event and sends back
+            the location data.
+          </li>
+          <li>
+            <strong>Populating the Map</strong>: When the location data is
+            received from LiveView, markers are placed on the map based on the
+            location details.
+          </li>
+        </ul>
+      </li>
+      <li>
+        <strong>Scroll to View</strong>: After updating the selected location in
+        LiveView, the corresponding location in the list is scrolled into view
+        on the client-side using the <code>scrollIntoView()</code> method in the
+        JS hook.
+      </li>
+    </ul>
+  </li>
+</ul>
+<h3>Data Flow from LiveView to JS and Back</h3>
+<p>
+  Here’s how data and events flow between the Elixir backend and the JS map
+  library:
+</p>
+<ol>
+  <li>
+    <strong>LiveView to JS (Initial Setup)</strong>:
+    <ul>
+      <li>
+        After the LiveView is mounted, the JS hook immediately requests location
+        data by pushing the <code>"get-locations"</code> event to LiveView.
+      </li>
+      <li>
+        LiveView handles this event and pushes the location data back to the
+        frontend.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <strong>JS to LiveView</strong>:
+    <ul>
+      <li>
+        The JS hook processes the received location data and places markers on
+        the map.
+      </li>
+      <li>
+        When a marker is clicked, the JS hook pushes a
+        <code>"marker-clicked"</code> event back to LiveView, passing along the
+        <code>location_id</code>.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <strong>LiveView to DOM Update</strong>:
+    <ul>
+      <li>
+        LiveView handles the <code>"marker-clicked"</code> event, updates its
+        state (e.g., sets <code>@selected_location_id</code>), and re-renders
+        the DOM to highlight the selected location in the list. Scrolling the
+        selected location into view happens within the JS hook.
+      </li>
+    </ul>
+  </li>
+</ol>

@@ -21,6 +21,9 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapPushEvent do
       <:subtitle>
         Pushing JS Events to LiveView via Map Integrations
       </:subtitle>
+      <:actions>
+        <.code_breakdown_link />
+      </:actions>
     </.header>
     <.alert class="mb-6">
       Click on a marker to observe the scrolling of the list of locations, and take note of how the selected location gets highlighted.
@@ -64,6 +67,7 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapPushEvent do
       </.note>
     </div>
     <!-- end hiding from live code -->
+    <.code_breakdown_slideover filename="priv/static/html/js_hook_map_push_event.html" />
     """
   end
 

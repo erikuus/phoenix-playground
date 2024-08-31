@@ -1,0 +1,138 @@
+<p>
+  The <code>JsHookMapDataset</code> module demonstrates how to integrate a
+  JavaScript map library with Phoenix LiveView. The main focus here is on using
+  LiveView’s JS hooks to pass server-side location data to the client-side,
+  where it is rendered on a map using the Leaflet.js library.
+</p>
+<h3><code>mount/3</code></h3>
+<p>This function initializes the LiveView and prepares the necessary data:</p>
+<ul>
+  <li>
+    <strong>Fetching Data</strong>: Retrieves a list of locations from the
+    database using <code>Locations.list_est_location/0</code>.
+  </li>
+  <li>
+    <strong>Assigning Data</strong>: Assigns the fetched locations to the socket
+    under the <code>:locations</code> key, which will be used in the
+    <code>render/1</code> function.
+  </li>
+</ul>
+<h3><code>render/1</code></h3>
+<p>Defines the HTML structure that will be sent to the client:</p>
+<ul>
+  <li>
+    <strong>Map Hook Element</strong>:
+    <ul>
+      <li>
+        The <code>div</code> with <code>id="map-hook"</code> is the target for
+        the JS hook and must have a unique <code>id</code>.
+      </li>
+      <li>
+        The <code>phx-hook="MapDataset"</code> attribute attaches the JS hook
+        named <code>MapDataset</code> (which is defined in <code>app.js</code>).
+      </li>
+      <li>
+        The <code>data-locations</code> attribute embeds the location data as a
+        JSON string. This is how the server-side data is passed to the frontend.
+      </li>
+      <li>
+        <strong>JSON Encoding</strong>: The location data is passed to the
+        frontend using <code>Jason.encode!(@locations)</code>. The
+        <code>@derive {Jason.Encoder, only: [:id, :name, :lat, :lng]}</code>
+        annotation in <code>Location</code> schema ensures that only the
+        specified fields (id, name, latitude, longitude) are included when the
+        data is encoded to JSON. This is crucial for the correct transfer of
+        data to the client-side.
+      </li>
+    </ul>
+  </li>
+</ul>
+<h3>JavaScript Hook (<code>MapDataset</code>)</h3>
+<p>The JS hook is central to integrating the map with LiveView:</p>
+<ul>
+  <li>
+    <p><strong>Hook Registration (<code>app.js</code>)</strong>:</p>
+    <ul>
+      <li>
+        The <code>MapDataset</code> hook is registered in
+        <code>assets/js/app.js</code>.
+      </li>
+      <li>
+        This hook is made available to LiveView through the
+        <code>LiveSocket</code> configuration.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>Hook Implementation (<code>map-dataset.js</code>)</strong>:</p>
+    <ul>
+      <li>
+        <strong>Mounted Lifecycle</strong>: When the LiveView component is
+        mounted on the client-side, the <code>mounted()</code> function in
+        <code>MapDataset</code> is triggered.
+        <ul>
+          <li>
+            <strong>Map Initialization</strong>: The <code>Map</code> class is
+            instantiated, setting up the map with center coordinates and zoom
+            level.
+          </li>
+          <li>
+            <strong>Extracting Data</strong>: The
+            <code>data-locations</code> attribute is extracted from
+            <code>div#map-hook</code>, parsed into a JavaScript object
+            containing the location details.
+          </li>
+          <li>
+            <strong>Adding Markers</strong>: The parsed location data is
+            iterated over, and for each location, a marker is added to the map
+            at the specified latitude and longitude.
+          </li>
+          <li>
+            <strong>Auto-Fitting Markers</strong>: After all markers are added,
+            the map adjusts its view to ensure all markers are visible.
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<p>
+  Note: We will not go into the specifics of the Leaflet.js library here, as the
+  focus is on how it integrates with Phoenix LiveView through the JS hook.
+</p>
+<h3>Data Flow from LiveView to JS</h3>
+<p>
+  Here’s how the location data is passed from the Elixir backend to the JS map
+  library:
+</p>
+<ol>
+  <li>
+    <strong>LiveView to DOM</strong>:
+    <ul>
+      <li>
+        The server-side <code>render/1</code> function embeds the location data
+        into the <code>div#map-hook</code> as a
+        <code>data-locations</code> attribute.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <strong>DOM to JS</strong>:
+    <ul>
+      <li>
+        The JS hook <code>MapDataset</code> reads this
+        <code>data-locations</code> attribute when the LiveView is mounted on
+        the client-side.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <strong>JS to Map</strong>:
+    <ul>
+      <li>
+        The <code>MapDataset</code> hook processes this data, using the Leaflet
+        library to render markers on the map corresponding to each location.
+      </li>
+    </ul>
+  </li>
+</ol>
