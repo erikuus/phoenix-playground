@@ -4,9 +4,11 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapPushEvent do
   alias LivePlayground.Locations
 
   def mount(_params, _session, socket) do
+    locations = Locations.list_est_location()
+
     socket =
       assign(socket,
-        locations: Locations.list_est_location(),
+        locations: locations,
         selected: nil
       )
 
