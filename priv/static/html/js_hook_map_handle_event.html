@@ -1,0 +1,193 @@
+<p>
+  The <code>JsHookMapHandleEvent</code> module demonstrates how a user
+  interaction in LiveView triggers a LiveView event, which then triggers
+  corresponding actions in a JavaScript (JS) Hook. Specifically, this example
+  focuses on how selecting a location in the LiveView list triggers the addition
+  or highlighting of markers on a map managed by a JS Hook.
+</p>
+<h3><code>mount/3</code></h3>
+<p>This function initializes the LiveView and prepares the necessary data:</p>
+<ul>
+  <li>
+    <strong>Fetching Data</strong>: Retrieves a list of locations from the
+    database using <code>Locations.list_est_location/0</code>.
+  </li>
+  <li>
+    <strong>Assigning Data</strong>:
+    <ul>
+      <li>
+        <code>:locations</code> is assigned the fetched locations to be used in
+        the LiveView template.
+      </li>
+      <li>
+        <code>:selected</code> is initialized as an empty list. This list will
+        store all locations that have been clicked on and for which a marker has
+        been added to the map.
+      </li>
+    </ul>
+  </li>
+</ul>
+<h3><code>render/1</code></h3>
+<p>Defines the HTML structure sent to the client:</p>
+<ul>
+  <li>
+    <p><strong>Map Hook Element</strong>:</p>
+    <ul>
+      <li>
+        The <code>div</code> with <code>id="map"</code> is the target for the JS
+        hook and must have a unique <code>id</code>.
+      </li>
+      <li>
+        The <code>phx-hook="MapHandleEvents"</code> attribute attaches the JS
+        hook named <code>MapHandleEvents</code> (which is defined in
+        <code>app.js</code>).
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>List of Locations</strong>:</p>
+    <ul>
+      <li>
+        Displays a list of location names with an <code>li</code> element for
+        each location.
+      </li>
+      <li>
+        The <code>phx-click="select-location"</code> attribute triggers the
+        <code>select-location</code> event in LiveView when a location is
+        clicked.
+      </li>
+      <li>
+        For locations in the <code>@selected</code> list, a marker icon is
+        displayed next to the name, indicating that a marker has already been
+        added to the map for that location.
+      </li>
+    </ul>
+  </li>
+</ul>
+<h3><code>handle_event/3</code></h3>
+<p>Handles events triggered by user interactions in the LiveView:</p>
+<ul>
+  <li>
+    <strong>"select-location"</strong>:
+    <ul>
+      <li>This event is triggered when a location in the list is clicked.</li>
+      <li>
+        <strong>Marker Already Exists</strong>: If the location is already in
+        the <code>:selected</code> list, the <code>highlight-marker</code> event
+        is pushed to the JS hook, which highlights the corresponding marker on
+        the map.
+      </li>
+      <li>
+        <strong>Marker Does Not Exist</strong>: If the location is not in the
+        <code>:selected</code> list, the location is added to
+        <code>:selected</code>, and the <code>add-marker</code> event is pushed
+        to the JS hook. This event adds a new marker to the map and highlights
+        it.
+      </li>
+    </ul>
+  </li>
+</ul>
+<h3>JavaScript Hook (<code>MapHandleEvents</code>)</h3>
+<p>
+  The JS hook is essential for handling the map's interaction logic and linking
+  it to LiveView events:
+</p>
+<ul>
+  <li>
+    <p><strong>Hook Registration (<code>app.js</code>)</strong>:</p>
+    <ul>
+      <li>
+        The <code>MapHandleEvents</code> hook is registered in
+        <code>assets/js/app.js</code>.
+      </li>
+      <li>
+        This hook is made available to LiveView through the
+        <code>LiveSocket</code> configuration.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>
+      <strong>Hook Implementation (<code>map-handle-events.js</code>)</strong>:
+    </p>
+    <ul>
+      <li>
+        <strong>Mounted Lifecycle</strong>: When the LiveView component is
+        mounted, the <code>mounted()</code> function in
+        <code>MapHandleEvents</code> is triggered.
+        <ul>
+          <li>
+            <strong>Map Initialization</strong>: The <code>Map</code> class is
+            instantiated inside <code>mounted()</code>, setting up the map with
+            center coordinates and zoom level.
+          </li>
+          <li>
+            <strong>Event Handling Setup</strong>: The JS hook is configured to
+            listen for two custom events: <code>"add-marker"</code> and
+            <code>"highlight-marker"</code>.
+          </li>
+        </ul>
+      </li>
+      <li>
+        <strong>Handling <code>"add-marker"</code> Event</strong>:
+        <ul>
+          <li>
+            When this event is received, the JS hook calls
+            <code>this.map.addMarker(location)</code> to add a new marker to the
+            map at the specified location.
+          </li>
+          <li>
+            After adding the marker,
+            <code>this.map.highlightMarker(location)</code> is called to
+            highlight the newly added marker.
+          </li>
+        </ul>
+      </li>
+      <li>
+        <strong>Handling <code>"highlight-marker"</code> Event</strong>:
+        <ul>
+          <li>
+            When this event is received, the JS hook calls
+            <code>this.map.highlightMarker(location)</code> to highlight the
+            existing marker on the map corresponding to the selected location.
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<h3>Data Flow from LiveView to JS and Back</h3>
+<p>
+  Here’s how data and events flow between the Elixir backend and the JS map
+  library:
+</p>
+<ol>
+  <li>
+    <strong>User Click in LiveView</strong>:
+    <ul>
+      <li>
+        When a user clicks on a location in the LiveView list, the
+        <code>select-location</code> event is triggered.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <strong>LiveView to JS</strong>:
+    <ul>
+      <li>
+        Depending on whether a marker already exists for the selected location,
+        LiveView either pushes the <code>"add-marker"</code> or
+        <code>"highlight-marker"</code> event to the JS hook.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <strong>JS Handles the Event</strong>:
+    <ul>
+      <li>
+        The JS hook processes the event by adding or highlighting the marker on
+        the map.
+      </li>
+    </ul>
+  </li>
+</ol>

@@ -4,9 +4,11 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapHandleEvent do
   alias LivePlayground.Locations
 
   def mount(_params, _session, socket) do
+    locations = Locations.list_est_location()
+
     socket =
       assign(socket,
-        locations: Locations.list_est_location(),
+        locations: locations,
         selected: []
       )
 
@@ -21,6 +23,9 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapHandleEvent do
       <:subtitle>
         Integrating a Map Library and Handling Events in JavaScript With LiveView
       </:subtitle>
+      <:actions>
+        <.code_breakdown_link />
+      </:actions>
     </.header>
     <.alert class="mb-6">
       Click on a location in the list to add a marker on the map. Observe how the marker gets highlighted after being added.
@@ -61,6 +66,7 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapHandleEvent do
         <p class="mt-4 font-semibold">Link stylesheet in root.html.heex as follows:</p>
         <p class="font-mono">&lt;link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.cs" /&gt;</p>
       </.note>
+      <.code_breakdown_slideover filename="priv/static/html/js_hook_map_handle_event.html" />
     </div>
     <!-- end hiding from live code -->
     """
@@ -69,14 +75,19 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapHandleEvent do
   def handle_event("select-location", %{"id" => id}, socket) do
     location = find_location(socket, String.to_integer(id))
 
-    if location in socket.assigns.selected do
-      {:noreply, push_event(socket, "highlight-marker", location)}
-    else
+    if location do
       socket =
-        socket
-        |> update(:selected, &[location | &1])
-        |> push_event("add-marker", location)
+        if location in socket.assigns.selected do
+          push_event(socket, "highlight-marker", location)
+        else
+          socket
+          |> update(:selected, &[location | &1])
+          |> push_event("add-marker", location)
+        end
 
+      {:noreply, socket}
+    else
+      # If location is not found, do nothing.
       {:noreply, socket}
     end
   end
