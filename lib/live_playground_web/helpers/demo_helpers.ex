@@ -154,7 +154,7 @@ defmodule LivePlaygroundWeb.DemoHelpers do
       }
     >
       <:title><%= @title %></:title>
-      <div class="mr-2 prose">
+      <div class="mr-2 prose prose-sm">
         <%= @html_code %>
       </div>
     </.slideover>
