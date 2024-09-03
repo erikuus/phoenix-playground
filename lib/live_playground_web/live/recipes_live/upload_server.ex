@@ -35,6 +35,9 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadServer do
       <:subtitle>
         Uploading Files to a Server in LiveView
       </:subtitle>
+      <:actions>
+        <.code_breakdown_link />
+      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <.form for={@form} phx-submit="save" phx-change="validate" class="space-y-6">
@@ -60,8 +63,8 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadServer do
         </div>
       </:col>
       <:action :let={{_id, location}}>
-        <.link phx-click={JS.push("remove", value: %{id: location.id})} data-confirm="Are you sure?">
-          <span class="hidden md:inline">Remove</span>
+        <.link :if={location.photos != []} phx-click={JS.push("remove", value: %{id: location.id})} data-confirm="Are you sure?">
+          <span class="hidden md:inline">Remove Images</span>
           <.icon name="hero-trash-mini" class="md:hidden" />
         </.link>
       </:action>
@@ -70,6 +73,7 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadServer do
     <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/recipes_live/upload_server.ex" />
       <.code_block filename="lib/live_playground/locations.ex" from="# uploadserver" to="# enduploadserver" />
+      <.code_block filename="lib/live_playground/locations/location.ex" from="# uploadserver" to="# enduploadserver" />
       <.code_block filename="lib/live_playground_web.ex" from="# uploadserver" to="# enduploadserver" />
       <.code_block
         filename="config/dev.exs"
@@ -77,6 +81,7 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadServer do
         to="# Enable dev routes for dashboard and mailbox"
       />
     </div>
+    <.code_breakdown_slideover filename="priv/static/html/upload_server.html" />
     <!-- end hiding from live code -->
     """
   end

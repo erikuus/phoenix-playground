@@ -11,7 +11,9 @@ defmodule LivePlayground.Locations.Location do
     field :countrycode, :string
     field :lat, :float
     field :lng, :float
+    # uploadserver
     field :photos, {:array, :string}, default: []
+    # enduploadserver
     field :photos_s3, {:array, :string}, default: []
   end
 

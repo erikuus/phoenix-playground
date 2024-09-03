@@ -1,0 +1,324 @@
+<p>
+  The <code>UploadToServer</code> module demonstrates a complete file upload
+  workflow in Phoenix LiveView, covering everything from creating the file
+  upload UI to handling file uploads on the server. Specifically, it showcases
+  how users can upload and manage images associated with specific locations
+  (Estonian cities). This functionality enables users to select a location,
+  upload images, and remove those images when needed. The uploaded images are
+  then displayed in a table alongside the location name.
+</p>
+<h3><code>mount/3</code></h3>
+<p>
+  This function initializes the LiveView and configures the socket for handling
+  file uploads and managing location data:
+</p>
+<ul>
+  <li>
+    <strong>Subscription</strong>: The LiveView process subscribes to updates
+    using <code>Locations.subscribe/0</code>, ensuring it receives real-time
+    broadcasts about location changes.
+  </li>
+  <li>
+    <strong>Form Initialization</strong>: The socket is assigned a form using
+    <code>Locations.change_location/1</code>, which prepares a changeset for
+    managing data related to a <code>Location</code> struct. This form handles
+    the state management for both location data and file uploads.
+  </li>
+  <li>
+    <strong>Enabling File Uploads</strong>:
+    <code>allow_upload/3</code> configures the file upload process for
+    <code>:photos</code>, accepting <code>.png</code> and
+    <code>.jpg</code> files, with a limit of 8 files and a maximum size of 10
+    MB.
+  </li>
+</ul>
+<h3><code>render/1</code></h3>
+<p>
+  The <code>render/1</code> function generates the HTML structure for the page,
+  including the file upload interface and the display of uploaded images:
+</p>
+<ul>
+  <li>
+    <p><strong>Location Selection</strong>:</p>
+    <ul>
+      <li>
+        A dropdown menu allows users to select a location (city) from a list of
+        Estonian cities.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>File Upload and Preview Components</strong>:</p>
+    <ul>
+      <li>
+        <strong><code>&lt;.uploads_upload_area /&gt;</code></strong
+        >: Handles the drag-and-drop area and file selection interface.
+      </li>
+      <li>
+        <strong><code>&lt;.uploads_photo_preview_area /&gt;</code></strong
+        >: Manages the display of file previews, showing thumbnails for accepted
+        files and errors for rejected ones.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <strong>General Error Display</strong>:
+    <ul>
+      <li>
+        Before the file previews are rendered, any general errors related to the
+        file uploads, such as exceeding the maximum number of files, are
+        displayed using the <code>&lt;.error&gt;</code> component.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>Uploaded Files Display</strong>:</p>
+    <ul>
+      <li>
+        A table displays the locations along with any associated images:
+        <ul>
+          <li>
+            <strong>Location Name</strong>: Shows the name of the location.
+          </li>
+          <li>
+            <strong>Thumbnails</strong>: Displays thumbnails of the uploaded
+            images.
+          </li>
+          <li>
+            <strong>Remove Images</strong>: Provides a link to delete all images
+            associated with a location. This operation removes only the images,
+            leaving the location intact.
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<h3><code>handle_event/3</code></h3>
+<p>
+  This function handles user interactions related to file uploads, form
+  submission, and image management:
+</p>
+<ul>
+  <li>
+    <p><strong>"cancel" Event</strong>:</p>
+    <ul>
+      <li>
+        Triggered when a user clicks the trash icon next to an uploading file.
+        This event removes the file from the upload queue using
+        <code>cancel_upload/3</code>.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>"validate" Event</strong>:</p>
+    <ul>
+      <li>
+        Validates the form as the user interacts with it, ensuring that the file
+        upload UI functions correctly and that the selected files meet the
+        validation criteria.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>"save" Event</strong>:</p>
+    <ul>
+      <li>
+        This event is triggered when the user submits the form to upload images
+        for the selected location:
+        <ol>
+          <li>
+            <strong>Retrieve Location</strong>: The
+            <code>location_id</code> from the form is used to fetch the selected
+            location from the database.
+          </li>
+          <li>
+            <strong>Consume Uploads</strong>: The
+            <code>consume_uploaded_entries/3</code> function processes each
+            uploaded image:
+            <ul>
+              <li>
+                The <code>filename/1</code> helper generates a unique filename
+                using the entry’s UUID and original client name.
+              </li>
+              <li>
+                Files are saved to the specified destination on the server.
+              </li>
+              <li>Returns a list of filenames of the uploaded images.</li>
+            </ul>
+          </li>
+          <li>
+            <strong>Update Location</strong>: The new image paths are added to
+            the photos attribute, which is stored as a list of strings in the
+            database (<code>field :photos, {:array, :string}, default: []</code
+            >). This allows each location to have multiple associated images.
+          </li>
+          <li>
+            <strong>Cleanup</strong>: If the update is successful, the old
+            photos associated with the location are removed from the server
+            using <code>remove_photos/1</code>. This cleanup ensures that only
+            the newly uploaded images remain associated with the location. If
+            there's an error, the form is re-rendered with the appropriate error
+            messages using <code>assign_form/2</code>.
+          </li>
+        </ol>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>"remove_images" Event</strong>:</p>
+    <ul>
+      <li>
+        Triggered when the user clicks "Remove Images" next to a location in the
+        table:
+        <ol>
+          <li>
+            <strong>Retrieve Location</strong>: The <code>location_id</code> is
+            used to fetch the selected location.
+          </li>
+          <li>
+            <strong>Clear Images</strong>: The <code>photos</code> attribute is
+            set to an empty list, and the location is updated in the database.
+          </li>
+          <li>
+            <strong>Cleanup</strong>: The associated images are removed from the
+            server using <code>remove_photos/1</code>. If there's an error, the
+            form is re-rendered with the appropriate error messages using
+            <code>assign_form/2</code>.
+          </li>
+        </ol>
+      </li>
+    </ul>
+  </li>
+</ul>
+<h3><code>handle_info/2</code></h3>
+<p>
+  The <code>handle_info/2</code> function is used to handle messages broadcasted
+  to the LiveView process. In this module, it specifically handles updates to
+  location data that have been broadcasted using Phoenix PubSub:
+</p>
+<ul>
+  <li>
+    <p>
+      <strong>Purpose</strong>: When a location is updated (for example, when
+      new images are uploaded or existing ones are removed), this update is
+      broadcasted to all connected clients. The
+      <code>handle_info/2</code> function ensures that each client's view is
+      updated in real-time to reflect these changes.
+    </p>
+  </li>
+  <li>
+    <p><strong>Functionality</strong>:</p>
+    <ul>
+      <li>
+        The function pattern matches on the
+        <code>{:update_location, location}</code> message, which contains the
+        updated location data.
+      </li>
+      <li>
+        It then uses <code>stream_insert/3</code> to insert the updated location
+        into the <code>:locations</code> stream within the socket.
+      </li>
+      <li>
+        This real-time update ensures that all connected users immediately see
+        the changes to the location in the UI without needing to refresh the
+        page.
+      </li>
+    </ul>
+  </li>
+</ul>
+<h3>Helper Functions</h3>
+<p>
+  These private helper functions assist in processing uploads and managing form
+  state:
+</p>
+<ul>
+  <li>
+    <p>
+      <strong><code>assign_form/2</code></strong
+      >:
+    </p>
+    <ul>
+      <li>
+        Updates the form in the socket with the given changeset, allowing the
+        form to reflect the latest validation state and errors.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>
+      <strong><code>filename/1</code></strong
+      >:
+    </p>
+    <ul>
+      <li>
+        Generates a unique filename for each uploaded image by combining the
+        entry’s UUID with the original client name, ensuring that files do not
+        overwrite each other on the server.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>
+      <strong><code>remove_photos/1</code></strong
+      >:
+    </p>
+    <ul>
+      <li>
+        Deletes the specified photos from the server. This function is called
+        both when updating a location with new images and when removing images
+        entirely, ensuring that the server's file system is kept in sync with
+        the database.
+      </li>
+    </ul>
+  </li>
+</ul>
+<h3>Backend Logic and Broadcasting</h3>
+<p>
+  After successfully updating the database, it broadcasts the change to all
+  connected clients using Phoenix PubSub. The
+  <code>handle_info/2</code> function listens for these broadcast messages.
+</p>
+<h3>Static Paths Configuration</h3>
+<p>
+  To ensure that uploaded images are correctly served by the Phoenix server, you
+  need to add the "uploads" directory to the list of static paths:
+</p>
+<ul>
+  <li>
+    <p>
+      <strong><code>lib/live_playground_web.ex</code></strong
+      >:
+    </p>
+    <ul>
+      <li>
+        The <code>static_paths/0</code> function defines which directories
+        Phoenix will serve static files from. By adding <code>uploads</code> to
+        this list, you ensure that any files stored in the
+        <code>uploads</code> directory are accessible via the web. If you fail
+        to add <code>uploads</code> here, the images won't be served to the
+        client, meaning that the uploaded images won't display in the browser.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>
+      <strong><code>config/dev.exs</code></strong
+      >:
+    </p>
+    <ul>
+      <li>
+        The live reload configuration specifies which files and directories
+        should trigger a live reload when changed. The regex pattern
+        <code>~r"priv/static/(?!uploads).*(js|css|png|jpeg|jpg|gif|svg)$"</code>
+        excludes the <code>uploads</code> directory from triggering a live
+        reload when files within it are changed. This is intentional because
+        uploaded files might change frequently, and you typically don't want
+        every image upload to trigger a full live reload. However, ensuring the
+        <code>uploads</code> directory is listed in
+        <code>static_paths/0</code> guarantees that these files are served
+        properly even without triggering live reloads.
+      </li>
+    </ul>
+  </li>
+</ul>
