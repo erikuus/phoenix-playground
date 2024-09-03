@@ -1,11 +1,11 @@
 <p>
-  The <code>LivePlaygroundWeb.RecipesLive.Upload</code> module demonstrates how
-  to create file upload controls and previews in Phoenix LiveView. This example
-  focuses on building a user interface for image uploads, including a
-  drag-and-drop area, file selection link, and real-time previews that depend on
-  whether the file was accepted based on type and size. No actual file upload
-  process occurs in this module—only the user interface for managing file
-  selection and validation is implemented.
+  The <code>Upload</code> module demonstrates how to create file upload controls
+  and previews in Phoenix LiveView. This example focuses on building a user
+  interface for image uploads, including a drag-and-drop area, file selection
+  link, and real-time previews that depend on whether the file was accepted
+  based on type and size. No actual file upload process occurs in this
+  module—only the user interface for managing file selection and validation is
+  implemented.
 </p>
 <h3><code>mount/3</code></h3>
 <p>
@@ -34,10 +34,6 @@
         Limits the number of files to 4 and sets a maximum file size of 10 MB.
       </li>
     </ul>
-  </li>
-  <li>
-    The socket is returned with these configurations, making it ready for
-    rendering the file upload UI.
   </li>
 </ul>
 <h3><code>render/1</code></h3>
@@ -90,16 +86,6 @@
         Before the file previews are rendered, any general errors related to the
         file uploads, such as exceeding the maximum number of files, are
         displayed using the <code>&lt;.error&gt;</code> component.
-      </li>
-      <li>
-        This component iterates over
-        <code>upload_errors(@uploads.photos)</code> and displays human-readable
-        error messages using <code>Phoenix.Naming.humanize/1</code>.
-      </li>
-      <li>
-        This ensures that users are immediately informed of issues affecting the
-        entire upload process, such as trying to upload too many files at once
-        or unsupported file types.
       </li>
     </ul>
   </li>
