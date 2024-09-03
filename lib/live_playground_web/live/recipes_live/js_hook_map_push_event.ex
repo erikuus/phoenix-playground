@@ -68,8 +68,8 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapPushEvent do
         <p class="font-mono">&lt;link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.cs" /&gt;</p>
       </.note>
     </div>
-    <!-- end hiding from live code -->
     <.code_breakdown_slideover filename="priv/static/html/js_hook_map_push_event.html" />
+    <!-- end hiding from live code -->
     """
   end
 
