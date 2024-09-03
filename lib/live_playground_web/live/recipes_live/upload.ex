@@ -6,13 +6,9 @@ defmodule LivePlaygroundWeb.RecipesLive.Upload do
 
   def mount(_params, _session, socket) do
     socket =
-      assign(socket,
-        form: to_form(Locations.change_location(%Location{}))
-      )
-
-    socket =
-      allow_upload(
-        socket,
+      socket
+      |> assign(form: to_form(Locations.change_location(%Location{})))
+      |> allow_upload(
         :photos,
         accept: ~w(.png .jpg),
         max_entries: 4,
@@ -30,6 +26,9 @@ defmodule LivePlaygroundWeb.RecipesLive.Upload do
       <:subtitle>
         Creating File Upload Controls and Previews in LiveView
       </:subtitle>
+      <:actions>
+        <.code_breakdown_link />
+      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <.form for={@form} phx-submit="save" phx-change="validate" class="space-y-6">
@@ -42,14 +41,14 @@ defmodule LivePlaygroundWeb.RecipesLive.Upload do
           <.icon name="hero-photo" class="mx-auto h-12 w-12 text-zinc-300" />
           <div class="mt-4 flex text-sm leading-6 text-zinc-600">
             <label for={@uploads.photos.ref} class="relative cursor-pointer rounded-md bg-white font-semibold">
-              <span>Upload a file</span> <.live_file_input upload={@uploads.photos} class="sr-only" />
+              <span>Upload a file</span>
+              <.live_file_input upload={@uploads.photos} class="sr-only" />
             </label>
             <p class="pl-1">or drag and drop</p>
           </div>
-
           <p class="text-xs leading-5 text-zinc-600">
             <%= @uploads.photos.max_entries %>
-            <%= format_accept(@uploads.photos.accept) %> files up to <%= trunc(@uploads.photos.max_file_size / 1_000_000) %> MB each
+            <%= format_accept(@uploads.photos.accept) %> files up to <%= format_max_file_size(@uploads.photos.max_file_size) %> MB each
           </p>
         </div>
       </div>
@@ -111,6 +110,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Upload do
         we will encapsulate the Upload UI within our own streamlined and efficient components.
       </.note>
     </div>
+    <.code_breakdown_slideover filename="priv/static/html/upload.html" />
     <!-- end hiding from live code -->
     """
   end
@@ -134,6 +134,10 @@ defmodule LivePlaygroundWeb.RecipesLive.Upload do
     |> Enum.map(&String.trim_leading(&1, "."))
     |> Enum.map(&String.upcase/1)
     |> Enum.join(", ")
+  end
+
+  defp format_max_file_size(size) do
+    trunc(size / 1_000_000)
   end
 
   defp get_circumference(radius) do
