@@ -30,6 +30,31 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadCloud do
     {:ok, socket}
   end
 
+  defp presign_upload(entry, socket) do
+    config = %{
+      region: @s3_region,
+      access_key_id: System.fetch_env!("AWS_ACCESS_KEY_ID"),
+      secret_access_key: System.fetch_env!("AWS_SECRET_ACCESS_KEY")
+    }
+
+    {:ok, fields} =
+      SimpleS3Upload.sign_form_upload(config, @s3_bucket,
+        key: filename(entry),
+        content_type: entry.client_type,
+        max_file_size: socket.assigns.uploads.photos.max_file_size,
+        expires_in: :timer.hours(1)
+      )
+
+    metadata = %{
+      uploader: "S3",
+      key: filename(entry),
+      url: @s3_url,
+      fields: fields
+    }
+
+    {:ok, metadata, socket}
+  end
+
   def render(assigns) do
     ~H"""
     <!-- start hiding from live code -->
@@ -38,6 +63,9 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadCloud do
       <:subtitle>
         Uploading Files to Cloud Storage via LiveView
       </:subtitle>
+      <:actions>
+        <.code_breakdown_link />
+      </:actions>
     </.header>
     <!-- end hiding from live code -->
     <.form for={@form} phx-submit="save" phx-change="validate" class="space-y-6">
@@ -68,8 +96,8 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadCloud do
         </div>
       </:col>
       <:action :let={{_id, location}}>
-        <.link phx-click={JS.push("remove", value: %{id: location.id})} data-confirm="Are you sure?">
-          <span class="hidden md:inline">Remove</span>
+        <.link :if={location.photos_s3 != []} phx-click={JS.push("remove", value: %{id: location.id})} data-confirm="Are you sure?">
+          <span class="hidden md:inline">Remove Images</span>
           <.icon name="hero-trash-mini" class="md:hidden" />
         </.link>
       </:action>
@@ -104,6 +132,7 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadCloud do
         </div>
       </.note>
     </div>
+    <.code_breakdown_slideover filename="priv/static/html/upload_cloud.html" />
     <!-- end hiding from live code -->
     """
   end
@@ -149,31 +178,6 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadCloud do
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
     assign(socket, :form, to_form(changeset))
-  end
-
-  defp presign_upload(entry, socket) do
-    config = %{
-      region: @s3_region,
-      access_key_id: System.fetch_env!("AWS_ACCESS_KEY_ID"),
-      secret_access_key: System.fetch_env!("AWS_SECRET_ACCESS_KEY")
-    }
-
-    {:ok, fields} =
-      SimpleS3Upload.sign_form_upload(config, @s3_bucket,
-        key: filename(entry),
-        content_type: entry.client_type,
-        max_file_size: socket.assigns.uploads.photos.max_file_size,
-        expires_in: :timer.hours(1)
-      )
-
-    metadata = %{
-      uploader: "S3",
-      key: filename(entry),
-      url: @s3_url,
-      fields: fields
-    }
-
-    {:ok, metadata, socket}
   end
 
   defp filename(entry) do
