@@ -20,9 +20,14 @@
   </li>
   <li>
     <strong>Form Initialization</strong>: The socket is assigned a form using
-    <code>Locations.change_location/1</code>, which prepares a changeset for
-    managing data related to a <code>Location</code> struct. This form handles
-    the state management for both location data and file uploads.
+    <code>Locations.change_location/1</code>, which generates a changeset for
+    handling location updates, including the selected location and any images
+    being uploaded. The form tracks both the location data and file uploads,
+    ensuring that when the form is submitted, both the location and the
+    associated images are updated together. Additionally,
+    <code>stream/2</code> is used to manage the list of locations in real-time,
+    allowing any updates to the locations (including image uploads) to be
+    reflected instantly in the UI without requiring a page refresh.
   </li>
   <li>
     <strong>Enabling File Uploads</strong>:
@@ -135,16 +140,23 @@
           <li>
             <strong>Consume Uploads</strong>: The
             <code>consume_uploaded_entries/3</code> function processes each
-            uploaded image:
+            uploaded image after it has been uploaded to a
+            <strong>temporary location</strong> on the server, managed by
+            Phoenix LiveView. This temporary file path is provided in the
+            <code>meta.path</code> field.
             <ul>
               <li>
-                The <code>filename/1</code> helper generates a unique filename
-                using the entry’s UUID and original client name.
+                Once the file is confirmed as uploaded, LiveView automatically
+                triggers <code>consume_uploaded_entries/3</code>. The function
+                copies the file from the temporary location to a permanent
+                storage directory on the server, ensuring the image is saved and
+                accessible.
               </li>
               <li>
-                Files are saved to the specified destination on the server.
+                The function returns a list of filenames of the uploaded images,
+                which are then used to update the location's record in the
+                database.
               </li>
-              <li>Returns a list of filenames of the uploaded images.</li>
             </ul>
           </li>
           <li>
