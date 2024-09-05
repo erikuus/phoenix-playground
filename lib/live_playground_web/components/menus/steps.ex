@@ -31,27 +31,27 @@ defmodule LivePlaygroundWeb.Menus.Steps do
         title: "Generate",
         description:
           "Run mix phx.gen.live command to generate LiveViews, components, and context for a resource.",
-        path: "/languages"
+        path: "/steps/generated"
       },
       %{
         title: "Step 2",
-        description: "Goming soon",
-        path: "/click-buttons"
+        description: "Coming soon",
+        path: "/steps/coming-soon"
       },
       %{
         title: "Step 3",
-        description: "Goming soon",
-        path: "/click-buttons"
+        description: "Coming soon",
+        path: "/steps/coming-soon"
       },
       %{
         title: "Step 4",
-        description: "Goming soon",
-        path: "/click-buttons"
+        description: "Coming soon",
+        path: "/steps/coming-soon"
       }
     ]
   end
 
   defp is_active?(current_path, step) do
-    if String.starts_with?(current_path, step.path), do: true, else: false
+    String.starts_with?(current_path, step.path)
   end
 end

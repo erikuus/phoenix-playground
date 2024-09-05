@@ -141,11 +141,11 @@ defmodule LivePlaygroundWeb.Router do
     scope "/", LivePlaygroundWeb do
       pipe_through :browser
 
-      live "/languages", LanguageLive.Index, :index
-      live "/languages/new", LanguageLive.Index, :new
-      live "/languages/:id/edit", LanguageLive.Index, :edit
-      live "/languages/:id", LanguageLive.Show, :show
-      live "/languages/:id/show/edit", LanguageLive.Show, :edit
+      live "/steps/generated", StepsLive.Generated.Index, :index
+      live "/steps/generated/new", StepsLive.Generated.Index, :new
+      live "/steps/generated/:id/edit", StepsLive.Generated.Index, :edit
+      live "/steps/generated/:id", StepsLive.Generated.Show, :show
+      live "/steps/generated/:id/show/edit", StepsLive.Generated.Show, :edit
     end
   end
 

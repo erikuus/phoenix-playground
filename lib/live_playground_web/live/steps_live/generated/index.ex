@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.LanguageLive.Index do
+defmodule LivePlaygroundWeb.StepsLive.Generated.Index do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Languages
@@ -33,7 +33,10 @@ defmodule LivePlaygroundWeb.LanguageLive.Index do
   end
 
   @impl true
-  def handle_info({LivePlaygroundWeb.LanguageLive.FormComponent, {:saved, language}}, socket) do
+  def handle_info(
+        {LivePlaygroundWeb.StepsLive.Generated.FormComponent, {:saved, language}},
+        socket
+      ) do
     {:noreply, stream_insert(socket, :languages, language)}
   end
 

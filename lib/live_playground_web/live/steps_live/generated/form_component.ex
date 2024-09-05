@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.LanguageLive.FormComponent do
+defmodule LivePlaygroundWeb.StepsLive.Generated.FormComponent do
   use LivePlaygroundWeb, :live_component
 
   alias LivePlayground.Languages

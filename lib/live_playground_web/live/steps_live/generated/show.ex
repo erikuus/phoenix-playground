@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.LanguageLive.Show do
+defmodule LivePlaygroundWeb.StepsLive.Generated.Show do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Languages

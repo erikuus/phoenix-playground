@@ -71,7 +71,7 @@ defmodule LivePlaygroundWeb.Menus.Sidebar do
       %{
         icon: "hero-check-circle",
         label: "Steps",
-        path: ~p"/languages",
+        path: ~p"/steps/generated",
         layout: :steps
       }
     ]
