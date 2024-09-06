@@ -76,10 +76,10 @@ defmodule LivePlaygroundWeb.CompsLive.StepsNavigation do
   end
 
   defp is_checked?(current_step, step) do
-    if current_step >= step, do: true, else: false
+    current_step >= step
   end
 
   defp is_active?(current_step, step) do
-    if current_step == step, do: true, else: false
+    current_step == step
   end
 end

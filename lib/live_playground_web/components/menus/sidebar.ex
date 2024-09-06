@@ -79,6 +79,6 @@ defmodule LivePlaygroundWeb.Menus.Sidebar do
 
   # Determines if a menu item is active based on the current layout.
   defp is_active?(current_layout, item) do
-    if current_layout == item.layout, do: true, else: false
+    current_layout == item.layout
   end
 end

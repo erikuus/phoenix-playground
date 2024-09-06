@@ -352,6 +352,6 @@ defmodule LivePlaygroundWeb.Menus.Recipes do
   end
 
   defp is_active?(current_path, paths) do
-    if current_path in paths, do: true, else: false
+    current_path in paths
   end
 end
