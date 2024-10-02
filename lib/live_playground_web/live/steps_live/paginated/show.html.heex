@@ -1,0 +1,29 @@
+<.header>
+  Language <%= @language.id %>
+  <:subtitle>This is a language record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/steps/paginated/#{@language}/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit language</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Countrycode"><%= @language.countrycode %></:item>
+  <:item title="Isofficial"><%= @language.isofficial %></:item>
+  <:item title="Language"><%= @language.language %></:item>
+  <:item title="Percentage"><%= @language.percentage %></:item>
+</.list>
+
+<.back navigate={~p"/steps/paginated"}>Back to languages</.back>
+
+<.modal :if={@live_action == :edit} id="language-modal" show on_cancel={JS.patch(~p"/steps/paginated/#{@language}")}>
+  <.live_component
+    module={LivePlaygroundWeb.StepsLive.Paginated.FormComponent}
+    id={@language.id}
+    title={@page_title}
+    action={@live_action}
+    language={@language}
+    patch={~p"/steps/paginated/#{@language}"}
+  />
+</.modal>

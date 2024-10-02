@@ -57,9 +57,6 @@ defmodule LivePlaygroundWeb.Router do
       live "/upload", RecipesLive.Upload
       live "/upload-cloud", RecipesLive.UploadCloud
       live "/upload-server", RecipesLive.UploadServer
-      live "/cities", CityLive.Index, :index
-      live "/cities/new", CityLive.Index, :new
-      live "/cities/edit", CityLive.Index, :edit
     end
   end
 
@@ -146,6 +143,12 @@ defmodule LivePlaygroundWeb.Router do
       live "/steps/generated/:id/edit", StepsLive.Generated.Index, :edit
       live "/steps/generated/:id", StepsLive.Generated.Show, :show
       live "/steps/generated/:id/show/edit", StepsLive.Generated.Show, :edit
+
+      live "/steps/paginated", StepsLive.Paginated.Index, :index
+      live "/steps/paginated/new", StepsLive.Paginated.Index, :new
+      live "/steps/paginated/:id/edit", StepsLive.Paginated.Index, :edit
+      live "/steps/paginated/:id", StepsLive.Paginated.Show, :show
+      live "/steps/paginated/:id/show/edit", StepsLive.Paginated.Show, :edit
     end
   end
 

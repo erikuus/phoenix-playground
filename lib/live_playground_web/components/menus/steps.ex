@@ -30,14 +30,13 @@ defmodule LivePlaygroundWeb.Menus.Steps do
     [
       %{
         title: "Generated",
-        description:
-          "Run mix phx.gen.live command to generate LiveViews, components, and context for a resource.",
+        description: "by mix phx.gen.live command",
         path: "/steps/generated",
         order: 1
       },
       %{
-        title: "Paginated",
-        description: "Add pagination to generated LiveView",
+        title: "Pagination",
+        description: "added to generated code",
         path: "/steps/paginated",
         order: 2
       },

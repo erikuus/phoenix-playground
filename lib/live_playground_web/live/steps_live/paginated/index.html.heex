@@ -1,0 +1,68 @@
+<.header>
+  Listing Languages
+  <:subtitle>
+    Add pagination to generated LiveView
+  </:subtitle>
+  <:actions>
+    <.link patch={get_pagination_url(@options, ~p"/steps/paginated/new")}>
+      <.button>New Language</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<form phx-change="update-pagination" class="flex md:flex-row-reverse md:-mb-10">
+  <.input type="select" name="per_page" label="Languages per page" options={[5, 10, 20, 50, 100]} value={@options.per_page} />
+</form>
+
+<.table
+  id="languages"
+  rows={@streams.languages}
+  row_click={fn {_id, language} -> JS.navigate(get_pagination_url(@options, ~p"/steps/paginated/#{language}")) end}
+  row_class={fn {_id, language} -> row_class(language) end}
+>
+  <:col :let={{_id, language}} label="Countrycode">
+    <%= language.countrycode %>
+    <span
+      :if={Map.get(language, :new, false)}
+      class="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20"
+    >
+      New
+    </span>
+    <dl class="hidden md:block font-normal text-xs text-zinc-400">
+      <dt>Stream inserted:</dt>
+      <dd><%= Timex.now() %></dd>
+    </dl>
+  </:col>
+  <:col :let={{_id, language}} label="Isofficial"><%= language.isofficial %></:col>
+  <:col :let={{_id, language}} label="Language"><%= language.language %></:col>
+  <:col :let={{_id, language}} label="Percentage"><%= language.percentage %></:col>
+  <:action :let={{_id, language}}>
+    <div class="sr-only">
+      <.link navigate={get_pagination_url(@options, ~p"/steps/paginated/#{language}")}>Show</.link>
+    </div>
+    <.link patch={get_pagination_url(@options, ~p"/steps/paginated/#{language}/edit")}>Edit</.link>
+  </:action>
+  <:action :let={{id, language}}>
+    <.link phx-click={JS.push("delete", value: %{id: language.id}) |> hide("##{id}")} data-confirm="Are you sure?">
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.pagination event="update-pagination" page={@options.page} per_page={@options.per_page} count_all={@count} />
+
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="language-modal"
+  show
+  on_cancel={JS.patch(get_pagination_url(@options, ~p"/steps/paginated"))}
+>
+  <.live_component
+    module={LivePlaygroundWeb.StepsLive.Paginated.FormComponent}
+    id={@language.id || :new}
+    title={@page_title}
+    action={@live_action}
+    language={@language}
+    patch={get_pagination_url(@options, ~p"/steps/paginated")}
+  />
+</.modal>
