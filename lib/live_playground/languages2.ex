@@ -23,7 +23,7 @@ defmodule LivePlayground.Languages2 do
   """
   def list_languages(options \\ %{}) do
     from(Language)
-    |> order_by({:asc, :countrycode})
+    |> order_by([l], [{:asc, l.countrycode}, {:desc, l.percentage}])
     |> paginate(options)
     |> Repo.all()
   end

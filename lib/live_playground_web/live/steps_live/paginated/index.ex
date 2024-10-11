@@ -35,21 +35,14 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
   end
 
   @impl true
-  def handle_params(%{"page" => page, "per_page" => per_page} = params, _url, socket) do
-    page = to_integer(page, 1)
-    per_page = to_integer(per_page, @per_page)
-    existing_page = get_existing_page(page, per_page, socket.assigns.count)
-    allowed_per_page = get_allowed_per_page(per_page)
+  def handle_params(%{"sort" => "reset"} = params, _url, socket) do
+    socket = update_page(params, socket, true)
+    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+  end
 
-    options = %{page: existing_page, per_page: allowed_per_page}
-
-    socket =
-      if options != socket.assigns.options do
-        change_page(socket, options)
-      else
-        socket
-      end
-
+  @impl true
+  def handle_params(%{"page" => _page, "per_page" => _per_page} = params, _url, socket) do
+    socket = update_page(params, socket)
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
@@ -58,10 +51,33 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp change_page(socket, options) do
+  defp update_page(params, socket, reset_stream \\ false) do
+    options = socket.assigns.options || %{}
+    count = Languages2.count_languages()
+    per_page = to_integer(params["per_page"] || options.per_page || @per_page, @per_page)
+    page = to_integer(params["page"] || options.page || 1, 1)
+
+    # Recalculate the existing page based on the new count
+    existing_page = get_existing_page(page, per_page, count)
+    allowed_per_page = get_allowed_per_page(per_page)
+
+    new_options = Map.merge(options, %{page: existing_page, per_page: allowed_per_page})
+
+    languages = Languages2.list_languages(new_options)
+
+    socket =
+      socket
+      |> assign(:count, count)
+      |> assign(:options, new_options)
+
+    socket =
+      if reset_stream or new_options != options do
+        socket |> stream(:languages, languages, reset: true)
+      else
+        socket
+      end
+
     socket
-    |> assign(:options, options)
-    |> stream(:languages, Languages2.list_languages(options), reset: true)
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
@@ -95,7 +111,15 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     language = Languages2.get_language!(id)
     {:ok, _} = Languages2.delete_language(language)
 
-    {:noreply, stream_delete(socket, :languages, language)}
+    {:noreply,
+     socket
+     |> put_flash(
+       :info,
+       flash_message_with_reset_link(
+         "Item deleted. It will be removed from the list when you navigate away or refresh. ",
+         get_pagination_url(%{sort: "reset"}, ~p"/steps/paginated")
+       )
+     )}
   end
 
   def handle_event("update-pagination", params, socket) do
@@ -125,10 +149,19 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     [5, 10, 20, 50, 100]
   end
 
+  def get_page_summary(count, page, per_page) do
+    start = (page - 1) * per_page + 1
+    ending = min(page * per_page, count)
+
+    "Showing #{start} - #{ending} of #{count}"
+  end
+
   defp get_existing_page(page, per_page, count) do
     max_page = ceil_div(count, per_page)
 
     cond do
+      # When there are no items, stay on page 1
+      max_page == 0 -> 1
       page > max_page -> max_page
       page < 1 -> 1
       true -> page
@@ -139,12 +172,16 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     div(num + denom - 1, denom)
   end
 
-  defp to_integer(value, default_value) do
+  defp to_integer(value, _default_value) when is_integer(value), do: value
+
+  defp to_integer(value, default_value) when is_binary(value) do
     case Integer.parse(value) do
       {i, _} -> i
       :error -> default_value
     end
   end
+
+  defp to_integer(_value, default_value), do: default_value
 
   def row_class(language) do
     cond do
@@ -152,5 +189,17 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
       Map.get(language, :edit, false) -> "bg-blue-50"
       true -> ""
     end
+  end
+
+  defp flash_message_with_reset_link(message, reset_patch) do
+    link =
+      link(
+        "Click here to reload and sort now",
+        to: reset_patch,
+        data: [phx_link: "patch", phx_link_state: "push"],
+        class: "underline"
+      )
+
+    [message, link]
   end
 end

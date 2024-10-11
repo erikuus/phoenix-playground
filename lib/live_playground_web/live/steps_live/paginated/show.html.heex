@@ -1,6 +1,5 @@
 <.header>
-  Language <%= @language.id %>
-  <:subtitle>This is a language record from your database.</:subtitle>
+  <%= @language.language %>
   <:actions>
     <.link patch={~p"/steps/paginated/#{@language}/edit"} phx-click={JS.push_focus()}>
       <.button>Edit language</.button>
@@ -11,11 +10,10 @@
 <.list>
   <:item title="Countrycode"><%= @language.countrycode %></:item>
   <:item title="Isofficial"><%= @language.isofficial %></:item>
-  <:item title="Language"><%= @language.language %></:item>
   <:item title="Percentage"><%= @language.percentage %></:item>
 </.list>
 
-<.back navigate={~p"/steps/paginated"}>Back to languages</.back>
+<.back navigate={get_back_url(@options)}>Back to languages</.back>
 
 <.modal :if={@live_action == :edit} id="language-modal" show on_cancel={JS.patch(~p"/steps/paginated/#{@language}")}>
   <.live_component

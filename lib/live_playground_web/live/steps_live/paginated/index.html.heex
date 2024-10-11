@@ -10,8 +10,10 @@
   </:actions>
 </.header>
 
-<form phx-change="update-pagination" class="flex md:flex-row-reverse md:-mb-10">
-  <.input type="select" name="per_page" label="Languages per page" options={[5, 10, 20, 50, 100]} value={@options.per_page} />
+<form phx-change="update-pagination" class="flex items-center justify-start md:justify-end">
+  <label for="rows-per-page" class="mr-2 text-zinc-900 text-sm">Rows per page:</label>
+  <.input type="select" name="per_page" options={[5, 10, 20, 50, 100]} value={@options.per_page} />
+  <span class="ml-4 text-zinc-900 text-sm"><%= get_page_summary(@count, @options.page, @options.per_page) %></span>
 </form>
 
 <.table
@@ -24,7 +26,8 @@
     <%= language.countrycode %>
     <span
       :if={Map.get(language, :new, false)}
-      class="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20"
+      id={"new-badge-#{language.id}"}
+      class="badge-new inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20"
     >
       New
     </span>
@@ -37,15 +40,33 @@
   <:col :let={{_id, language}} label="Language"><%= language.language %></:col>
   <:col :let={{_id, language}} label="Percentage"><%= language.percentage %></:col>
   <:action :let={{_id, language}}>
-    <div class="sr-only">
+    <div class="action sr-only">
       <.link navigate={get_pagination_url(@options, ~p"/steps/paginated/#{language}")}>Show</.link>
     </div>
-    <.link patch={get_pagination_url(@options, ~p"/steps/paginated/#{language}/edit")}>Edit</.link>
+    <.link class="action" patch={get_pagination_url(@options, ~p"/steps/paginated/#{language}/edit")}>Edit</.link>
   </:action>
   <:action :let={{id, language}}>
-    <.link phx-click={JS.push("delete", value: %{id: language.id}) |> hide("##{id}")} data-confirm="Are you sure?">
+    <.link
+      class="action"
+      phx-click={
+        JS.push("delete", value: %{id: language.id})
+        |> hide("##{id} .action")
+        |> hide("#new-badge-#{language.id}")
+        |> JS.show(to: "#new-badge-#{language.id}", display: "inline-flex")
+        |> JS.add_class("bg-zinc-50 text-zinc-300 line-through", to: "##{id}")
+        |> JS.add_class("bg-zinc-50 text-zinc-300 line-through", to: "##{id} span")
+      }
+      data-confirm="Are you sure?"
+    >
       Delete
     </.link>
+    <span
+      :if={Map.get(language, :new, false)}
+      id={"deleted-badge-#{language.id}"}
+      class="hidden items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10"
+    >
+      Deleted
+    </span>
   </:action>
 </.table>
 
@@ -64,5 +85,6 @@
     action={@live_action}
     language={@language}
     patch={get_pagination_url(@options, ~p"/steps/paginated")}
+    reset_patch={get_pagination_url(%{sort: "reset"}, ~p"/steps/paginated")}
   />
 </.modal>
