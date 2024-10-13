@@ -11,9 +11,13 @@
 </.header>
 
 <form phx-change="update-pagination" class="flex items-center justify-start md:justify-end">
-  <label for="rows-per-page" class="mr-2 text-zinc-900 text-sm">Rows per page:</label>
+  <span class={["mr-4 text-sm", @item_deleted && "text-zinc-400", !@item_deleted && "text-zinc-900"]}>
+    <%= get_page_summary(@count_all, @options.page, @options.per_page, @count_view) %>
+  </span>
+  <label for="rows-per-page" class="mr-2 text-zinc-900 text-sm">
+    Rows per page:
+  </label>
   <.input type="select" name="per_page" options={[5, 10, 20, 50, 100]} value={@options.per_page} />
-  <span class="ml-4 text-zinc-900 text-sm"><%= get_page_summary(@count, @options.page, @options.per_page) %></span>
 </form>
 
 <.table
@@ -27,9 +31,15 @@
     <span
       :if={Map.get(language, :new, false)}
       id={"new-badge-#{language.id}"}
-      class="badge-new inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20"
+      class="badge-new ml-1 inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20"
     >
       New
+    </span>
+    <span
+      id={"deleted-badge-#{language.id}"}
+      class="hidden ml-1 items-center rounded-full bg-zinc-50 px-2 py-1 text-xs font-medium text-zinc-400 ring-1 ring-inset ring-zinc-500/10"
+    >
+      Deleted
     </span>
     <dl class="hidden md:block font-normal text-xs text-zinc-400">
       <dt>Stream inserted:</dt>
@@ -52,25 +62,17 @@
         JS.push("delete", value: %{id: language.id})
         |> hide("##{id} .action")
         |> hide("#new-badge-#{language.id}")
-        |> JS.show(to: "#new-badge-#{language.id}", display: "inline-flex")
-        |> JS.add_class("bg-zinc-50 text-zinc-300 line-through", to: "##{id}")
-        |> JS.add_class("bg-zinc-50 text-zinc-300 line-through", to: "##{id} span")
+        |> JS.show(to: "#deleted-badge-#{language.id}", display: "inline-flex")
+        |> JS.add_class("bg-zinc-50 text-zinc-400 line-through", to: "##{id} span:not(#deleted-badge-#{language.id})")
       }
       data-confirm="Are you sure?"
     >
       Delete
     </.link>
-    <span
-      :if={Map.get(language, :new, false)}
-      id={"deleted-badge-#{language.id}"}
-      class="hidden items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10"
-    >
-      Deleted
-    </span>
   </:action>
 </.table>
 
-<.pagination event="update-pagination" page={@options.page} per_page={@options.per_page} count_all={@count} />
+<.pagination event="update-pagination" page={@options.page} per_page={@options.per_page} count_all={@count_all} />
 
 <.modal
   :if={@live_action in [:new, :edit]}

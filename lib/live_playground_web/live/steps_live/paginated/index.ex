@@ -8,73 +8,70 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
 
   @impl true
   def mount(%{"page" => page, "per_page" => per_page}, _session, socket) do
-    count = Languages2.count_languages()
+    options = %{page: page, per_page: per_page}
 
-    page = to_integer(page, 1)
-    per_page = to_integer(per_page, @per_page)
-    existing_page = get_existing_page(page, per_page, count)
-    allowed_per_page = get_allowed_per_page(per_page)
-    options = %{page: existing_page, per_page: allowed_per_page}
-
-    {:ok, init_page(socket, count, options)}
+    {:ok, assign(socket, :options, options)}
   end
 
   @impl true
   def mount(_params, _session, socket) do
-    count = Languages2.count_languages()
     options = %{page: 1, per_page: @per_page}
 
-    {:ok, init_page(socket, count, options)}
-  end
-
-  defp init_page(socket, count, options) do
-    socket
-    |> assign(:count, count)
-    |> assign(:options, options)
-    |> stream(:languages, Languages2.list_languages(options))
+    {:ok, assign(socket, :options, options)}
   end
 
   @impl true
   def handle_params(%{"sort" => "reset"} = params, _url, socket) do
-    socket = update_page(params, socket, true)
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
-  end
-
-  @impl true
-  def handle_params(%{"page" => _page, "per_page" => _per_page} = params, _url, socket) do
-    socket = update_page(params, socket)
+    socket = apply_options(params, socket, true)
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
   @impl true
   def handle_params(params, _url, socket) do
+    socket = apply_options(params, socket)
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp update_page(params, socket, reset_stream \\ false) do
-    options = socket.assigns.options || %{}
-    count = Languages2.count_languages()
+  defp apply_options(params, socket, reset_stream \\ false) do
+    options = socket.assigns.options
+    count_all = Languages2.count_languages()
     per_page = to_integer(params["per_page"] || options.per_page || @per_page, @per_page)
     page = to_integer(params["page"] || options.page || 1, 1)
 
-    # Recalculate the existing page based on the new count
-    existing_page = get_existing_page(page, per_page, count)
+    existing_page = get_existing_page(page, per_page, count_all)
     allowed_per_page = get_allowed_per_page(per_page)
 
     new_options = Map.merge(options, %{page: existing_page, per_page: allowed_per_page})
 
     languages = Languages2.list_languages(new_options)
+    count_view = length(languages)
 
     socket =
       socket
-      |> assign(:count, count)
+      |> assign(:count_all, count_all)
       |> assign(:options, new_options)
+      |> assign(:item_deleted, false)
+      |> assign(:count_view, count_view)
 
+    # Reset the stream if:
+    # 1. `reset_stream` is explicitly flagged or options have changed.
+    # 2. The selected page becomes invalid due to a change in the total number of items, such as after deletions.
+    #    This handles an edge case where the user deletes all items on a page (e.g., page 10 of 11), reducing the
+    #    total number of pages. If the user then attempts to navigate to the now non-existent last page (page 11),
+    #    the system recalculates the selected page to ensure it falls within the valid range (now page 10).
+    #    Because the pagination options themselves (like `per_page` and `page`) are unchanged, we introduce this
+    #    extra condition to force the reset when the selected page is recalculated, ensuring the stream shows valid
+    #    data for the updated page.
     socket =
-      if reset_stream or new_options != options do
-        socket |> stream(:languages, languages, reset: true)
-      else
-        socket
+      cond do
+        reset_stream or new_options != options or page != existing_page ->
+          socket |> stream(:languages, languages, reset: true)
+
+        not Map.has_key?(socket.assigns[:streams] || %{}, :languages) ->
+          socket |> stream(:languages, languages)
+
+        true ->
+          socket
       end
 
     socket
@@ -100,10 +97,21 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
 
   @impl true
   def handle_info(
-        {LivePlaygroundWeb.StepsLive.Paginated.FormComponent, {:saved, language}},
+        {LivePlaygroundWeb.StepsLive.Paginated.FormComponent, {:new, language}},
         socket
       ) do
-    {:noreply, stream_insert(socket, :languages, language, at: 0)}
+    {:noreply,
+     socket
+     |> update(:count_view, &(&1 + 1))
+     |> stream_insert(:languages, language, at: 0)}
+  end
+
+  @impl true
+  def handle_info(
+        {LivePlaygroundWeb.StepsLive.Paginated.FormComponent, {:edited, language}},
+        socket
+      ) do
+    {:noreply, stream_insert(socket, :languages, language)}
   end
 
   @impl true
@@ -113,6 +121,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
 
     {:noreply,
      socket
+     |> assign(:item_deleted, true)
      |> put_flash(
        :info,
        flash_message_with_reset_link(
@@ -149,15 +158,15 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     [5, 10, 20, 50, 100]
   end
 
-  def get_page_summary(count, page, per_page) do
+  defp get_page_summary(count_all, page, per_page, stream_size) do
     start = (page - 1) * per_page + 1
-    ending = min(page * per_page, count)
+    ending = min(start + stream_size - 1, count_all)
 
-    "Showing #{start} - #{ending} of #{count}"
+    "Showing #{start} - #{ending} of #{count_all}."
   end
 
-  defp get_existing_page(page, per_page, count) do
-    max_page = ceil_div(count, per_page)
+  defp get_existing_page(page, per_page, count_all) do
+    max_page = ceil_div(count_all, per_page)
 
     cond do
       # When there are no items, stay on page 1
