@@ -12,7 +12,7 @@
 
 <form phx-change="update-pagination" class="flex items-center justify-start md:justify-end">
   <span class={["mr-4 text-sm", @item_deleted && "text-zinc-400", !@item_deleted && "text-zinc-900"]}>
-    <%= get_page_summary(@count_all, @options.page, @options.per_page, @count_view) %>
+    <%= get_page_summary(@count_all_visible, @options.page, @options.per_page, @count_view) %>
   </span>
   <label for="rows-per-page" class="mr-2 text-zinc-900 text-sm">
     Rows per page:
@@ -72,7 +72,7 @@
   </:action>
 </.table>
 
-<.pagination event="update-pagination" page={@options.page} per_page={@options.per_page} count_all={@count_all} />
+<.pagination event="update-pagination" page={@options.page} per_page={@options.per_page} count_all={@count_all_visible} />
 
 <.modal
   :if={@live_action in [:new, :edit]}
