@@ -10,28 +10,24 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
   def mount(%{"page" => page, "per_page" => per_page}, _session, socket) do
     options = %{page: page, per_page: per_page}
 
-    count_all_real = Languages2.count_languages()
-    count_all_visible = count_all_real
-
-    {:ok,
-     socket
-     |> assign(:options, options)
-     |> assign(:count_all_real, count_all_real)
-     |> assign(:count_all_visible, count_all_visible)}
+    {:ok, init(socket, options)}
   end
 
   @impl true
   def mount(_params, _session, socket) do
     options = %{page: 1, per_page: @per_page}
 
+    {:ok, init(socket, options)}
+  end
+
+  defp init(socket, options) do
     count_all_real = Languages2.count_languages()
     count_all_visible = count_all_real
 
-    {:ok,
-     socket
-     |> assign(:options, options)
-     |> assign(:count_all_real, count_all_real)
-     |> assign(:count_all_visible, count_all_visible)}
+    socket
+    |> assign(:options, options)
+    |> assign(:count_all_real, count_all_real)
+    |> assign(:count_all_visible, count_all_visible)
   end
 
   @impl true
@@ -214,7 +210,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
 
   defp to_integer(_value, default_value), do: default_value
 
-  def row_class(language) do
+  defp row_class(language) do
     cond do
       Map.get(language, :new, false) -> "bg-green-50"
       Map.get(language, :edit, false) -> "bg-blue-50"
