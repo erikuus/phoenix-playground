@@ -4,4 +4,8 @@ defmodule LivePlaygroundWeb.PageController do
   def home(conn, _params) do
     render(conn, :home, layout: {LivePlaygroundWeb.Layouts, :home})
   end
+
+  def rules(conn, _params) do
+    render(conn, :rules, layout: {LivePlaygroundWeb.Layouts, :page})
+  end
 end

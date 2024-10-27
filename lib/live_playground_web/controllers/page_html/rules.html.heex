@@ -1,0 +1,100 @@
+<.header class="mb-6 xl:mb-8 2xl:mb-10">
+  Coding Conventions
+  <:subtitle>
+    Guidelines for Consistent and Readable Code in LiveView
+  </:subtitle>
+  <:actions>
+    <.link phx-click={show_slideover("ai-coding-instructions")}>
+      AI Agent Coding Instructions
+    </.link>
+  </:actions>
+</.header>
+<.slideover id="ai-coding-instructions" on_confirm={hide_slideover("ai-coding-instructions")}>
+  <:title>AI Agent Coding Instructions</:title>
+  <:subtitle>Copy these settings to align AI-generated code with playground conventions</:subtitle>
+  Organize functions as follows: start with Documentation/Imports, followed by mount and handle_params,
+  each with its immediate helpers, then Render, handle_event, handle_info, and end with remaining helpers.
+  Place helpers shared by mount, handle_params, or other helpers directly after the highest-level function
+  that uses them. Assign state before streaming data to ensure dependent code references the latest state.
+  When assigning values to the socket, use expanded code for multiple assignments: first assign values to
+  variables, then to socket in distinct steps. For single assignments, a concise one-liner directly in the
+  socket assignment is sufficient. Name helpers with verbs; prefix value-retrieving functions with get_
+</.slideover>
+<div class="space-y-6 xl:space-y-8 2xl:space-y-10 mb-6 xl:mb-8 2xl:mb-10">
+  <section class="prose">
+    <h2>Function Ordering Convention</h2>
+    <ol>
+      <li>Documentation and Imports</li>
+      <li><code>mount/3</code>, any helpers it uses placed directly after</li>
+      <li><code>handle_params/3</code>, any helpers it uses placed directly after</li>
+      <ul>
+        <li>
+          For helpers shared between <code>mount</code>
+          and <code>handle_params</code>, place them right after the highest-level function that uses them.
+        </li>
+      </ul>
+      <li><code>render/1</code> (if present)</li>
+      <li><code>handle_event/3</code></li>
+      <li><code>handle_info/2</code></li>
+      <li>Helpers for <code>render</code>, <code>handle_event</code>, and <code>handle_info</code>, placed at the end.</li>
+      <ul>
+        <li>
+          For helpers shared between helpers, place them right after the highest-level function that uses them.
+        </li>
+      </ul>
+    </ol>
+    <p>
+      This structure follows LiveView’s lifecycle and feels intuitive for me, though I’m flexible with alternative conventions if they suit specific module needs better.
+    </p>
+  </section>
+  <section class="prose">
+    <h2>Convention for Ordering <code>assign</code> and <code>stream</code> Calls</h2>
+    <p>
+      Update core UI-related state before handling data streams. This ensures that any code referencing assigned values works with the latest state before the stream update is applied.
+    </p>
+    <div class="not-prose rounded overflow-auto overscroll-auto bg-[#f8f8f8] text-xs p-3">
+      <%= Makeup.highlight("socket
+|> assign(:options, options)
+|> stream(:data, items, reset: true)
+") |> raw() %>
+    </div>
+  </section>
+  <section class="prose">
+    <h2>Convention for Choosing Between Concise and Expanded Code</h2>
+    <p>
+      Use an expanded version if setting multiple variables or performing complex logic. This approach makes it easier to follow and modify each part.
+    </p>
+    <div class="not-prose rounded overflow-auto overscroll-auto bg-[#f8f8f8] text-xs p-3">
+      <%= Makeup.highlight("data = fetch_data(params)
+count = count_items(data)
+
+socket =
+  socket
+  |> assign(:count, count)
+  |> assign(:data, data)
+") |> raw() %>
+    </div>
+    <p>For a single variable or straightforward logic, a concise version keeps code simple and focused.</p>
+    <div class="not-prose rounded overflow-auto overscroll-auto bg-[#f8f8f8] text-xs p-3">
+      <%= Makeup.highlight("socket
+|> assign(:data, fetch_data(params))
+") |> raw() %>
+    </div>
+  </section>
+  <section class="prose">
+    <h2>Naming Convention for Helper Functions</h2>
+    <p>
+      For <strong>State-Manipulating Functions</strong>
+      (returning <code>socket</code>) use action-oriented verbs (e.g., <code>init</code>, <code>apply_options</code>, <code>apply_action</code>).
+    </p>
+    <p>
+      For <strong>Data Transformation Functions</strong>
+      (modifying variables or data structures) use verbs indicating the transformation (e.g., <code>update_params</code>, <code>to_integer</code>).
+    </p>
+    <p>
+      For <strong>Value-Retrieving Functions:</strong>
+      use the <code>get_</code>
+      prefix for value retrieval (e.g., <code>get_existing_page</code>, <code>get_pagination_url</code>, <code>get_allowed_per_page</code>).
+    </p>
+  </section>
+</div>

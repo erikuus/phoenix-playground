@@ -73,6 +73,12 @@ defmodule LivePlaygroundWeb.Menus.Sidebar do
         label: "Steps",
         path: ~p"/steps/generated",
         layout: :steps
+      },
+      %{
+        icon: "hero-clipboard-document-check",
+        label: "Rules",
+        path: ~p"/rules",
+        layout: :page
       }
     ]
   end

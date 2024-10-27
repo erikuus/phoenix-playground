@@ -156,6 +156,7 @@ defmodule LivePlaygroundWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/rules", PageController, :rules
   end
 
   # Other scopes may use custom stacks.
