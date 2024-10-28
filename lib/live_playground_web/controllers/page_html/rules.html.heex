@@ -1,7 +1,7 @@
 <.header class="mb-6 xl:mb-8 2xl:mb-10">
   Coding Conventions
   <:subtitle>
-    Guidelines for Consistent and Readable Code in LiveView
+    These conventions aren’t universal rules but rather practices I follow in this playground for readability and maintainability in LiveView modules
   </:subtitle>
   <:actions>
     <.link phx-click={show_slideover("ai-coding-instructions")}>
@@ -11,14 +11,26 @@
 </.header>
 <.slideover id="ai-coding-instructions" on_confirm={hide_slideover("ai-coding-instructions")}>
   <:title>AI Agent Coding Instructions</:title>
-  <:subtitle>Copy these settings to align AI-generated code with playground conventions</:subtitle>
-  Organize functions as follows: start with Documentation/Imports, followed by mount and handle_params,
-  each with its immediate helpers, then Render, handle_event, handle_info, and end with remaining helpers.
-  Place helpers shared by mount, handle_params, or other helpers directly after the highest-level function
-  that uses them. Assign state before streaming data to ensure dependent code references the latest state.
-  When assigning values to the socket, use expanded code for multiple assignments: first assign values to
-  variables, then to socket in distinct steps. For single assignments, a concise one-liner directly in the
-  socket assignment is sufficient. Name helpers with verbs; prefix value-retrieving functions with get_
+  <:subtitle>
+    Copy the following text into your AI coding agent’s custom instructions to ensure code formatting and style align with playground conventions
+  </:subtitle>
+  <div class="rounded-lg bg-white border border-gray-200 text-sm xl:text-base">
+    <div class="flex justify-end items-center px-4 py-3 sm:px-6 text-gray-400">
+      <span id="#copy-message" class="text-sm mr-2"></span>
+      <.link
+        id="#copy-link"
+        phx-hook="CopyToClipboard"
+        data-target-container="#copy-target"
+        data-message-container="#copy-message"
+        class="flex rounded-full p-2 hover:bg-gray-200"
+      >
+        <.icon name="hero-clipboard-document" class="w-4 h-4" />
+      </.link>
+    </div>
+    <div id="#copy-target" class="font-mono text-sm bg-[#f8f8f8] px-4 py-5 sm:p-6">
+      Organize functions as follows: start with Documentation/Imports, followed by mount and handle_params, each with its immediate helpers, then Render, handle_event, handle_info, and end with remaining helpers. Place helpers shared by mount, handle_params, or other helpers directly after the highest-level function that uses them. Assign state before streaming data to ensure dependent code references the latest state. When assigning values to the socket, use expanded code for multiple assignments: first assign values to variables, then to socket in distinct steps. For single assignments, a concise one-liner directly in the socket assignment is sufficient. Name helpers with verbs; prefix value-retrieving functions with get_
+    </div>
+  </div>
 </.slideover>
 <div class="space-y-6 xl:space-y-8 2xl:space-y-10 mb-6 xl:mb-8 2xl:mb-10">
   <section class="prose">
@@ -92,9 +104,9 @@ socket =
       (modifying variables or data structures) use verbs indicating the transformation (e.g., <code>update_params</code>, <code>to_integer</code>).
     </p>
     <p>
-      For <strong>Value-Retrieving Functions:</strong>
+      For <strong>Value-Retrieving Functions</strong>
       use the <code>get_</code>
-      prefix for value retrieval (e.g., <code>get_existing_page</code>, <code>get_pagination_url</code>, <code>get_allowed_per_page</code>).
+      prefix (e.g., <code>get_existing_page</code>, <code>get_pagination_url</code>, <code>get_allowed_per_page</code>).
     </p>
   </section>
 </div>
