@@ -28,7 +28,7 @@
       </.link>
     </div>
     <div id="#copy-target" class="font-mono text-sm bg-[#f8f8f8] px-4 py-5 sm:p-6">
-      Organize functions as follows: start with Documentation/Imports, followed by mount and handle_params, each with its immediate helpers, then Render, handle_event, handle_info, and end with remaining helpers. Place helpers shared by mount, handle_params, or other helpers directly after the highest-level function that uses them. Assign state before streaming data to ensure dependent code references the latest state. When assigning values to the socket, use expanded code for multiple assignments: first assign values to variables, then to socket in distinct steps. For single assignments, a concise one-liner directly in the socket assignment is sufficient. Name helpers with verbs; prefix value-retrieving functions with get_
+      Organize functions as follows: start with Documentation/Imports, followed by mount and handle_params, each with its immediate helpers, then Render, handle_event, handle_info, and end with remaining helpers. Place helpers shared by mount, handle_params, or other helpers directly after the highest-level function that uses them. Assign state before streaming data to ensure dependent code references the latest state. When assigning values to the socket, use expanded code for multiple assignments: first assign values to variables, then to socket in distinct steps. For single assignments, a concise one-liner directly in the socket assignment is sufficient. Name helpers with verbs; prefix value-retrieving functions with get_. Handle missing items with get_item! in a try block to avoid creating redundant functions, and catch exceptions for graceful handling. Avoid logging validation errors, as they are generally expected and do not need error-level logging.
     </div>
   </div>
 </.slideover>
@@ -108,5 +108,23 @@ socket =
       use the <code>get_</code>
       prefix (e.g., <code>get_existing_page</code>, <code>get_pagination_url</code>, <code>get_allowed_per_page</code>).
     </p>
+  </section>
+  <section class="prose">
+    <h2>Coding Convention for Handling Missing Items</h2>
+    <p>
+      When using generated <code>get_item!</code>
+      functions, handling missing items with <code>try do</code>
+      is a preferred approach. This avoids the need to create additional
+      functions, keeping the generated ones relevant and maintaining concise code.
+    </p>
+    <div class="not-prose rounded overflow-auto overscroll-auto bg-[#f8f8f8] text-xs p-3">
+      <%= Makeup.highlight("try do
+  selected_item = Items.get_item!(id)
+  {:noreply, assign(socket, :selected_item, selected_item)}
+rescue
+  Ecto.NoResultsError ->
+    {:noreply, assign(socket, :selected_item, nil)}
+") |> raw() %>
+    </div>
   </section>
 </div>
