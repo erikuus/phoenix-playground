@@ -142,7 +142,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
      |> assign(:item_deleted, true)
      |> put_flash(
        :info,
-       flash_message_with_reset_link(
+       get_flash_message_with_reset_link(
          "Item deleted. It will be removed from the list when you navigate away or refresh. ",
          get_pagination_url(%{sort: "reset"}, ~p"/steps/paginated")
        )
@@ -210,7 +210,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
 
   defp to_integer(_value, default_value), do: default_value
 
-  defp row_class(language) do
+  defp get_row_class(language) do
     cond do
       Map.get(language, :new, false) -> "bg-green-50"
       Map.get(language, :edit, false) -> "bg-blue-50"
@@ -218,7 +218,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     end
   end
 
-  defp flash_message_with_reset_link(message, reset_patch) do
+  defp get_flash_message_with_reset_link(message, reset_patch) do
     link =
       link(
         "Click here to reload and sort now",

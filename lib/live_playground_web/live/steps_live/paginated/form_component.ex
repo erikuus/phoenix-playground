@@ -75,7 +75,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
          socket
          |> put_flash(
            :info,
-           flash_message_with_reset_link(
+           get_flash_message_with_reset_link(
              "Language created successfully. It has been temporarily added to the top of the list and will be sorted to its correct position on the next page load. ",
              socket.assigns.reset_patch
            )
@@ -93,7 +93,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
 
-  defp flash_message_with_reset_link(message, reset_patch) do
+  defp get_flash_message_with_reset_link(message, reset_patch) do
     link =
       link(
         "Click here to reload and sort now",

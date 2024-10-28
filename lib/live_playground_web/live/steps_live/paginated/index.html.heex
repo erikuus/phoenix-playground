@@ -24,7 +24,7 @@
   id="languages"
   rows={@streams.languages}
   row_click={fn {_id, language} -> JS.navigate(get_pagination_url(@options, ~p"/steps/paginated/#{language}")) end}
-  row_class={fn {_id, language} -> row_class(language) end}
+  row_class={fn {_id, language} -> get_row_class(language) end}
 >
   <:col :let={{_id, language}} label="Countrycode">
     <%= language.countrycode %>
