@@ -99,9 +99,9 @@ defmodule LivePlaygroundWeb.DemoHelpers do
 
   def goto_definition(assigns) do
     ~H"""
-    <a class="flex items-center" target="_blank" href={"#{github_url(assigns.filename)}#:~:text=#{@definition}"}>
+    <a class="flex items-center font-medium" target="_blank" href={"#{github_url(assigns.filename)}#:~:text=#{@definition}"}>
       <span><%= render_slot(@inner_block) %></span>
-      <.icon name="hero-arrow-top-right-on-square" class="ml-1 w-4 h-4" />
+      <.icon name="hero-arrow-top-right-on-square" class="ml-1 w-5 h-5" />
     </a>
     """
   end
@@ -118,7 +118,7 @@ defmodule LivePlaygroundWeb.DemoHelpers do
     ~H"""
     <.link
       id="open-code-breakdown"
-      class="flex items-center"
+      class="flex items-center font-medium"
       phx-click={
         show_slideover(
           JS.add_class("xl:pr-96 2xl:pr-[36rem]", to: "#multi-column-layout-main-container") |> hide("#open-code-breakdown"),
@@ -127,7 +127,8 @@ defmodule LivePlaygroundWeb.DemoHelpers do
         )
       }
     >
-      <%= @title %>
+      <span><%= @title %></span>
+      <.icon name="hero-arrow-left-on-rectangle" class="ml-1 w-5 h-5" />
     </.link>
     """
   end
