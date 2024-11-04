@@ -57,7 +57,13 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
 
         {:noreply,
          socket
-         |> put_flash(:info, "Language updated successfully")
+         |> put_flash(
+           :info,
+           get_flash_message_with_reset_link(
+             "Language updated successfully. ",
+             socket.assigns.reset_patch
+           )
+         )
          |> push_patch(to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
