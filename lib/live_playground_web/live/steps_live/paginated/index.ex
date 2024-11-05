@@ -35,13 +35,13 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
   end
 
   defp init(socket) do
-    count_all_real = Languages2.count_languages()
-    count_all_visible = count_all_real
-    count_view = min(count_all_real, @per_page)
+    count_all = Languages2.count_languages()
+    count_view = min(count_all, @per_page)
 
     socket
-    |> assign(:count_all_real, count_all_real)
-    |> assign(:count_all_visible, count_all_visible)
+    |> assign(:count_all, count_all)
+    |> assign(:count_all_summary, count_all)
+    |> assign(:count_all_pagination, count_all)
     |> assign(:count_view, count_view)
     |> assign(:item_deleted, false)
   end
@@ -50,7 +50,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     per_page = to_integer(options.per_page, @per_page)
     page = to_integer(options.page, 1)
 
-    existing_page = get_existing_page(page, per_page, socket.assigns.count_all_real)
+    existing_page = get_existing_page(page, per_page, socket.assigns.count_all)
     allowed_per_page = get_allowed_per_page(per_page)
 
     Map.merge(options, %{page: existing_page, per_page: allowed_per_page})
@@ -60,8 +60,8 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
 
   defp to_integer(value, default_value) when is_binary(value) do
     case Integer.parse(value) do
-      {i, _} -> i
-      :error -> default_value
+      {i, _} when i > 0 -> i
+      _ -> default_value
     end
   end
 
@@ -120,17 +120,19 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
 
     per_page = params["per_page"] || options.per_page || @per_page
     page = params["page"] || options.page || 1
+    page_before_validation = to_integer(page, 1)
     new_options = validate_options(socket, %{page: page, per_page: per_page})
 
     socket =
-      if reset_stream or new_options != options do
+      if reset_stream or new_options != options or new_options.page != page_before_validation do
         languages = Languages2.list_languages(new_options)
         count_view = length(languages)
 
         socket
         |> assign(:options, new_options)
         |> assign(:count_view, count_view)
-        |> assign(:count_all_visible, socket.assigns.count_all_real)
+        |> assign(:count_all_summary, socket.assigns.count_all)
+        |> assign(:count_all_pagination, socket.assigns.count_all)
         |> assign(:item_deleted, false)
         |> stream(:languages, languages, reset: true)
       else
@@ -169,9 +171,9 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
       ) do
     {:noreply,
      socket
+     |> update(:count_all, &(&1 + 1))
      |> update(:count_view, &(&1 + 1))
-     |> update(:count_all_real, &(&1 + 1))
-     |> update(:count_all_visible, &(&1 + 1))
+     |> update(:count_all_summary, &(&1 + 1))
      |> stream_insert(:languages, language, at: 0)}
   end
 
@@ -190,7 +192,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
 
     {:noreply,
      socket
-     |> update(:count_all_real, &(&1 - 1))
+     |> update(:count_all, &(&1 - 1))
      |> assign(:item_deleted, true)
      |> put_flash(
        :info,
