@@ -29,7 +29,7 @@
       </.link>
     </div>
     <div id="#copy-target" class="font-mono text-sm bg-[#f8f8f8] px-4 py-5 sm:p-6">
-      Organize functions as follows: start with Documentation/Imports, followed by mount and handle_params, each with its immediate helpers, then Render, handle_event, handle_info, and end with remaining helpers. Place helpers shared by mount, handle_params, or other helpers directly after the highest-level function that uses them. Assign state before streaming data to ensure dependent code references the latest state. When assigning values to the socket, use expanded code for multiple assignments: first assign values to variables, then to socket in distinct steps. For single assignments, a concise one-liner directly in the socket assignment is sufficient. Name helpers with verbs; prefix value-retrieving functions with get_. When using a data retrieval function that raises an error for missing items (e.g., get_item!(id) in Phoenix), rely on the framework’s automatic 404 Not Found handling. Avoid logging validation errors, as they are generally expected and do not need error-level logging.
+      Organize functions as follows: start with Documentation/Imports, followed by mount and handle_params, each with its immediate helpers, then Render, handle_event, handle_info, and end with remaining helpers. Place helpers shared by mount, handle_params, or other helpers directly after the highest-level function that uses them. Assign state before streaming data to ensure dependent code references the latest state. When assigning values to the socket, use expanded code for multiple assignments: first assign values to variables, then to socket in distinct steps. For single assignments, a concise one-liner directly in the socket assignment is sufficient. Name helpers with verbs; prefix value-retrieving functions with get_. When using a data retrieval function that raises an error for missing items (e.g., get_item!(id) in Phoenix), rely on the framework’s automatic 404 Not Found handling. Avoid logging validation errors, as they are generally expected and do not need error-level logging. Always structure broadcasted messages as a tuple containing the module name, event, and resource.
     </div>
   </div>
 </.slideover>
@@ -109,5 +109,17 @@ socket =
       use the <code>get_</code>
       prefix (e.g., <code>get_existing_page</code>, <code>get_pagination_url</code>, <code>get_allowed_per_page</code>).
     </p>
+  </section>
+  <section class="prose">
+    <h2>Convention for Including Module Names in Phoenix PubSub Messages</h2>
+    <p>
+      Always structure broadcasted messages as a tuple containing the module name, event, and resource.
+    </p>
+    <div class="not-prose rounded overflow-auto overscroll-auto bg-[#f8f8f8] text-xs p-3">
+      <%= Makeup.highlight("def broadcast({:ok, resource}, event) do
+  Phoenix.PubSub.broadcast(@pubsub, @topic, {__MODULE__, {event, resource}})
+  {:ok, resource}
+end") |> raw() %>
+    </div>
   </section>
 </div>
