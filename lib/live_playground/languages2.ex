@@ -8,6 +8,28 @@ defmodule LivePlayground.Languages2 do
 
   alias LivePlayground.Languages.Language
 
+  @pubsub LivePlayground.PubSub
+  @topic inspect(__MODULE__)
+
+  def subscribe do
+    Phoenix.PubSub.subscribe(@pubsub, @topic)
+  end
+
+  def unsubscribe do
+    Phoenix.PubSub.unsubscribe(@pubsub, @topic)
+  end
+
+  def broadcast({:ok, language}, event) do
+    IO.puts("Broadcasting event: #{inspect(event)} for language: #{inspect(language)}")
+    Phoenix.PubSub.broadcast(@pubsub, @topic, {__MODULE__, {event, language}})
+
+    {:ok, language}
+  end
+
+  def broadcast({:error, changeset}, _event) do
+    {:error, changeset}
+  end
+
   def count_languages do
     from(Language)
     |> Repo.aggregate(:count, :id)
@@ -72,6 +94,7 @@ defmodule LivePlayground.Languages2 do
     %Language{}
     |> Language.changeset(attrs)
     |> Repo.insert()
+    |> broadcast(:created)
   end
 
   @doc """
@@ -90,6 +113,7 @@ defmodule LivePlayground.Languages2 do
     language
     |> Language.changeset(attrs)
     |> Repo.update()
+    |> broadcast(:updated)
   end
 
   @doc """
@@ -106,6 +130,7 @@ defmodule LivePlayground.Languages2 do
   """
   def delete_language(%Language{} = language) do
     Repo.delete(language)
+    |> broadcast(:deleted)
   end
 
   @doc """

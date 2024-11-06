@@ -1,7 +1,7 @@
 defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
   use LivePlaygroundWeb, :live_component
 
-  alias LivePlayground.Languages
+  alias LivePlayground.Languages2
 
   @impl true
   def render(assigns) do
@@ -27,7 +27,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
 
   @impl true
   def update(%{language: language} = assigns, socket) do
-    changeset = Languages.change_language(language)
+    changeset = Languages2.change_language(language)
 
     {:ok,
      socket
@@ -39,7 +39,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
   def handle_event("validate", %{"language" => language_params}, socket) do
     changeset =
       socket.assigns.language
-      |> Languages.change_language(language_params)
+      |> Languages2.change_language(language_params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign_form(socket, changeset)}
@@ -50,21 +50,11 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
   end
 
   defp save_language(socket, :edit, language_params) do
-    case Languages.update_language(socket.assigns.language, language_params) do
+    case Languages2.update_language(socket.assigns.language, language_params) do
       {:ok, language} ->
-        language = Map.put(language, :edit, true)
-        notify_parent({:edited, language})
-
-        {:noreply,
-         socket
-         |> put_flash(
-           :info,
-           get_flash_message_with_reset_link(
-             "Language updated successfully. ",
-             socket.assigns.reset_patch
-           )
-         )
-         |> push_patch(to: socket.assigns.patch)}
+        language = Map.put(language, :updated, true)
+        notify_parent({:updated, language})
+        {:noreply, push_patch(socket, to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}
@@ -72,21 +62,11 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
   end
 
   defp save_language(socket, :new, language_params) do
-    case Languages.create_language(language_params) do
+    case Languages2.create_language(language_params) do
       {:ok, language} ->
-        language = Map.put(language, :new, true)
-        notify_parent({:new, language})
-
-        {:noreply,
-         socket
-         |> put_flash(
-           :info,
-           get_flash_message_with_reset_link(
-             "Language created successfully. It has been temporarily added to the top of the list and will be sorted to its correct position on the next page load. ",
-             socket.assigns.reset_patch
-           )
-         )
-         |> push_patch(to: socket.assigns.patch)}
+        language = Map.put(language, :created, true)
+        notify_parent({:created, language})
+        {:noreply, push_patch(socket, to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}
@@ -98,16 +78,4 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
-
-  defp get_flash_message_with_reset_link(message, reset_patch) do
-    link =
-      link(
-        "Click here to reload and sort now",
-        to: reset_patch,
-        data: [phx_link: "patch", phx_link_state: "push"],
-        class: "underline"
-      )
-
-    [message, link]
-  end
 end
