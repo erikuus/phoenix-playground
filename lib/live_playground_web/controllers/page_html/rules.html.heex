@@ -116,10 +116,7 @@ socket =
       Always structure broadcasted messages as a tuple containing the module name, event, and resource.
     </p>
     <div class="not-prose rounded overflow-auto overscroll-auto bg-[#f8f8f8] text-xs p-3">
-      <%= Makeup.highlight("def broadcast({:ok, resource}, event) do
-  Phoenix.PubSub.broadcast(@pubsub, @topic, {__MODULE__, {event, resource}})
-  {:ok, resource}
-end") |> raw() %>
+      <%= Makeup.highlight("{__MODULE__, {event, resource}}") |> raw() %>
     </div>
   </section>
 </div>
