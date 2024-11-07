@@ -11,8 +11,8 @@
 </.header>
 
 <form phx-change="update-pagination" class="flex flex-col gap-y-2 items-end justify-end md:flex-row md:gap-y-0 md:justify-between">
-  <div class={["text-sm", @item_deleted && "text-zinc-300", !@item_deleted && "text-zinc-600"]}>
-    <%= get_page_summary(@count_all_summary, @options.page, @options.per_page, @count_view) %>
+  <div class={["text-sm", @pending_deletion && "text-zinc-300", !@pending_deletion && "text-zinc-600"]}>
+    <%= get_page_summary(@count_all_summary, @options.page, @options.per_page, @count_visible_rows) %>
   </div>
   <div class="flex items-center">
     <label for="rows-per-page" class="mr-2 text-zinc-600 text-sm">
