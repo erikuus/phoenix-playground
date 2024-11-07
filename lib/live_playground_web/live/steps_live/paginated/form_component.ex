@@ -52,7 +52,6 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
   defp save_language(socket, :edit, language_params) do
     case Languages2.update_language(socket.assigns.language, language_params) do
       {:ok, language} ->
-        language = Map.put(language, :updated, true)
         notify_parent({:updated, language})
         {:noreply, push_patch(socket, to: socket.assigns.patch)}
 
@@ -64,7 +63,6 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
   defp save_language(socket, :new, language_params) do
     case Languages2.create_language(language_params) do
       {:ok, language} ->
-        language = Map.put(language, :created, true)
         notify_parent({:created, language})
         {:noreply, push_patch(socket, to: socket.assigns.patch)}
 

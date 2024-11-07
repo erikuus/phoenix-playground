@@ -20,8 +20,7 @@ defmodule LivePlayground.Languages2 do
   end
 
   def broadcast({:ok, language}, event) do
-    IO.puts("Broadcasting event: #{inspect(event)} for language: #{inspect(language)}")
-    Phoenix.PubSub.broadcast(@pubsub, @topic, {__MODULE__, {event, language}})
+    Phoenix.PubSub.broadcast_from(@pubsub, self(), @topic, {__MODULE__, {event, language}})
 
     {:ok, language}
   end

@@ -32,21 +32,19 @@
     <%= language.countrycode %>
     <span
       :if={Map.get(language, :created, false)}
-      id={"created-badge-#{language.id}"}
       class="ml-1 inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20"
     >
       New
     </span>
     <span
       :if={Map.get(language, :updated, false)}
-      id={"updated-badge-#{language.id}"}
       class="ml-1 inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20"
     >
       Edited
     </span>
     <span
-      id={"deleted-badge-#{language.id}"}
-      class="ml-1 hidden items-center rounded-full bg-zinc-50 px-2 py-1 text-xs font-medium text-zinc-400 ring-1 ring-inset ring-zinc-500/10"
+      :if={Map.get(language, :deleted, false)}
+      class="ml-1 inline-flex items-center rounded-full bg-zinc-50 px-2 py-1 text-xs font-medium text-zinc-400 ring-1 ring-inset ring-zinc-500/10"
     >
       Deleted
     </span>
@@ -59,22 +57,17 @@
   <:col :let={{_id, language}} label="Language"><%= language.language %></:col>
   <:col :let={{_id, language}} label="Percentage"><%= language.percentage %></:col>
   <:action :let={{_id, language}}>
-    <div class="action sr-only">
+    <div class="sr-only">
       <.link navigate={get_pagination_url(@options, ~p"/steps/paginated/#{language}")}>Show</.link>
     </div>
-    <.link class="action" patch={get_pagination_url(@options, ~p"/steps/paginated/#{language}/edit")}>Edit</.link>
+    <.link :if={!Map.get(language, :deleted, false)} patch={get_pagination_url(@options, ~p"/steps/paginated/#{language}/edit")}>
+      Edit
+    </.link>
   </:action>
-  <:action :let={{id, language}}>
+  <:action :let={{_id, language}}>
     <.link
-      class="action"
-      phx-click={
-        JS.push("delete", value: %{id: language.id})
-        |> hide("##{id} .action")
-        |> hide("#created-badge-#{language.id}")
-        |> hide("#updated-badge-#{language.id}")
-        |> JS.show(to: "#deleted-badge-#{language.id}", display: "inline-flex")
-        |> JS.add_class("bg-zinc-50 text-zinc-400 line-through", to: "##{id} span:not(#deleted-badge-#{language.id})")
-      }
+      :if={!Map.get(language, :deleted, false)}
+      phx-click={JS.push("delete", value: %{id: language.id})}
       data-confirm="Are you sure?"
     >
       Delete

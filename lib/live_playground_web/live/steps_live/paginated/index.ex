@@ -11,15 +11,10 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     if connected?(socket), do: Languages2.subscribe()
     options = %{page: page, per_page: per_page}
 
-    socket = init(socket)
+    socket = assign(socket, :count_all, Languages2.count_languages())
     options = validate_options(socket, options)
 
-    socket =
-      socket
-      |> assign(:options, options)
-      |> init_stream()
-
-    {:ok, socket}
+    {:ok, init(socket, options)}
   end
 
   @impl true
@@ -27,25 +22,23 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     if connected?(socket), do: Languages2.subscribe()
     options = %{page: 1, per_page: @per_page}
 
-    socket =
-      socket
-      |> init()
-      |> assign(:options, options)
-      |> init_stream()
+    socket = assign(socket, :count_all, Languages2.count_languages())
 
-    {:ok, socket}
+    {:ok, init(socket, options)}
   end
 
-  defp init(socket) do
-    count_all = Languages2.count_languages()
-    count_view = min(count_all, @per_page)
+  defp init(socket, options) do
+    count_all = socket.assigns.count_all
+    per_page = options.per_page
+    count_view = min(count_all, per_page)
 
     socket
-    |> assign(:count_all, count_all)
+    |> assign(:options, options)
     |> assign(:count_all_summary, count_all)
     |> assign(:count_all_pagination, count_all)
     |> assign(:count_view, count_view)
     |> assign(:item_deleted, false)
+    |> stream(:languages, Languages2.list_languages(options))
   end
 
   defp validate_options(socket, options) do
@@ -93,45 +86,36 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     [5, 10, 20, 50, 100]
   end
 
-  defp init_stream(socket) do
-    stream(socket, :languages, Languages2.list_languages(socket.assigns.options))
-  end
-
-  @impl true
-  def handle_params(%{"sort" => "reset"} = params, _url, socket) do
-    socket =
-      socket
-      |> apply_options(socket.assigns.live_action, params, true)
-      |> apply_action(socket.assigns.live_action, params)
-
-    {:noreply, socket}
-  end
-
   @impl true
   def handle_params(params, _url, socket) do
-    socket =
-      socket
-      |> apply_options(socket.assigns.live_action, params, false)
-      |> apply_action(socket.assigns.live_action, params)
-
-    {:noreply, socket}
-  end
-
-  defp apply_options(socket, :index, params, reset_stream) do
-    options = socket.assigns.options
-
+    options = socket.assigns.options || %{}
     per_page = params["per_page"] || options.per_page || @per_page
     page = params["page"] || options.page || 1
     page_before_validation = to_integer(page, 1)
     new_options = validate_options(socket, %{page: page, per_page: per_page})
 
+    if new_options.page != page_before_validation do
+      {:noreply, push_patch(socket, to: get_pagination_url(new_options))}
+    else
+      socket =
+        socket
+        |> apply_options(socket.assigns.live_action, new_options, false)
+        |> apply_action(socket.assigns.live_action, params)
+
+      {:noreply, socket}
+    end
+  end
+
+  defp apply_options(socket, :index, options, reset_stream) do
+    old_options = socket.assigns.options
+
     socket =
-      if reset_stream or new_options != options or new_options.page != page_before_validation do
-        languages = Languages2.list_languages(new_options)
+      if reset_stream or options != old_options do
+        languages = Languages2.list_languages(options)
         count_view = length(languages)
 
         socket
-        |> assign(:options, new_options)
+        |> assign(:options, options)
         |> assign(:count_view, count_view)
         |> assign(:count_all_summary, socket.assigns.count_all)
         |> assign(:count_all_pagination, socket.assigns.count_all)
@@ -144,7 +128,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     socket
   end
 
-  defp apply_options(socket, _, _, _) do
+  defp apply_options(socket, _action, _options, _reset_stream) do
     socket
   end
 
@@ -174,18 +158,27 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
   end
 
   @impl true
+  def handle_event("reset-stream", _params, socket) do
+    socket =
+      socket
+      |> clear_flash()
+      |> apply_options(:index, socket.assigns.options, true)
+
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     language = Languages2.get_language!(id)
     {:ok, _} = Languages2.delete_language(language)
 
     socket =
       socket
-      |> handle_deleted()
+      |> handle_deleted(language)
       |> put_flash(
         :info,
         get_flash_message_with_reset_link(
-          "Item deleted. It will be removed from the list when you navigate away or refresh. ",
-          get_pagination_url(%{sort: "reset"}, ~p"/steps/paginated")
+          "Language deleted. It will be removed from the list when you navigate away or refresh."
         )
       )
 
@@ -203,8 +196,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
       |> put_flash(
         :info,
         get_flash_message_with_reset_link(
-          "Language created successfully. It has been temporarily added to the top of the list and will be sorted to its correct position on the next page load. ",
-          get_pagination_url(%{sort: "reset"}, ~p"/steps/paginated")
+          "Language created successfully. It has been temporarily added to the top of the list and will be sorted to its correct position on the next page load."
         )
       )
 
@@ -221,10 +213,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
       |> handle_updated(language)
       |> put_flash(
         :info,
-        get_flash_message_with_reset_link(
-          "Language updated successfully. ",
-          get_pagination_url(%{sort: "reset"}, ~p"/steps/paginated")
-        )
+        get_flash_message_with_reset_link("Language updated successfully.")
       )
 
     {:noreply, socket}
@@ -235,16 +224,13 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
         {LivePlayground.Languages2, {:created, language}},
         socket
       ) do
-    language = Map.put(language, :created, true)
-
     socket =
       socket
       |> handle_created(language)
       |> put_flash(
         :info,
         get_flash_message_with_reset_link(
-          "A new language was added by another user. It has been temporarily added to the top of the list and will be sorted to its correct position on the next page load. ",
-          get_pagination_url(%{sort: "reset"}, ~p"/steps/paginated")
+          "A new language was added by another user. It has been temporarily added to the top of the list and will be sorted to its correct position on the next page load."
         )
       )
 
@@ -256,17 +242,12 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
         {LivePlayground.Languages2, {:updated, language}},
         socket
       ) do
-    language = Map.put(language, :updated, true)
-
     socket =
       socket
       |> handle_updated(language)
       |> put_flash(
         :info,
-        get_flash_message_with_reset_link(
-          "A language was updated by another user. ",
-          get_pagination_url(%{sort: "reset"}, ~p"/steps/paginated")
-        )
+        get_flash_message_with_reset_link("A language was updated by another user.")
       )
 
     {:noreply, socket}
@@ -274,17 +255,16 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
 
   @impl true
   def handle_info(
-        {LivePlayground.Languages2, {:deleted, _language}},
+        {LivePlayground.Languages2, {:deleted, language}},
         socket
       ) do
     socket =
       socket
-      |> handle_deleted()
+      |> handle_deleted(language)
       |> put_flash(
         :info,
         get_flash_message_with_reset_link(
-          "A language was deleted by another user. It will be removed from the list when you navigate away or refresh. ",
-          get_pagination_url(%{sort: "reset"}, ~p"/steps/paginated")
+          "A language was deleted by another user. It will be removed from the list when you navigate away or refresh."
         )
       )
 
@@ -292,6 +272,8 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
   end
 
   defp handle_created(socket, language) do
+    language = Map.put(language, :created, true)
+
     socket
     |> update(:count_all, &(&1 + 1))
     |> update(:count_view, &(&1 + 1))
@@ -300,13 +282,17 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
   end
 
   defp handle_updated(socket, language) do
+    language = Map.put(language, :updated, true)
     stream_insert(socket, :languages, language)
   end
 
-  defp handle_deleted(socket) do
+  defp handle_deleted(socket, language) do
+    language = Map.put(language, :deleted, true)
+
     socket
     |> update(:count_all, &(&1 - 1))
     |> assign(:item_deleted, true)
+    |> stream_insert(:languages, language)
   end
 
   defp update_params(%{"per_page" => per_page}, options) do
@@ -333,19 +319,19 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     cond do
       Map.get(language, :created, false) -> "bg-green-50"
       Map.get(language, :updated, false) -> "bg-blue-50"
+      Map.get(language, :deleted, false) -> "bg-zinc-50 text-zinc-400 line-through"
       true -> ""
     end
   end
 
-  defp get_flash_message_with_reset_link(message, reset_patch) do
+  defp get_flash_message_with_reset_link(message) do
     link =
-      link(
-        "Click here to reload and sort now",
-        to: reset_patch,
-        data: [phx_link: "patch", phx_link_state: "push"],
+      link("Click here to reload and sort now",
+        to: "#",
+        phx_click: "reset-stream",
         class: "underline"
       )
 
-    [message, link]
+    [message, " ", link]
   end
 end
