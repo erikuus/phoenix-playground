@@ -12,10 +12,14 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
 
     socket = assign(socket, :count_all, Languages2.count_languages())
 
-    options = %{page: page, per_page: per_page}
-    options = validate_options(socket, options)
+    page_before_validation = to_integer(page, 1)
+    options = validate_options(socket, %{page: page, per_page: per_page})
 
-    {:ok, init(socket, options)}
+    if options.page != page_before_validation do
+      {:ok, push_navigate(socket, to: get_pagination_url(options))}
+    else
+      {:ok, init(socket, options)}
+    end
   end
 
   @impl true
@@ -105,25 +109,28 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     page_before_validation = to_integer(page, 1)
     new_options = validate_options(socket, %{page: page, per_page: per_page})
 
+    if new_options.page != page_before_validation do
+      IO.puts("XXX")
+    end
+
     socket =
-      cond do
-        new_options.page != page_before_validation ->
-          push_patch(socket, to: get_pagination_url(new_options))
+      if reset_stream or new_options != options or new_options.page != page_before_validation do
+        languages = Languages2.list_languages(new_options)
+        count_visible_rows = length(languages)
 
-        reset_stream or new_options != options ->
-          languages = Languages2.list_languages(new_options)
-          count_visible_rows = length(languages)
-
-          socket
-          |> assign(:options, new_options)
-          |> assign(:count_visible_rows, count_visible_rows)
-          |> assign(:count_all_summary, socket.assigns.count_all)
-          |> assign(:count_all_pagination, socket.assigns.count_all)
-          |> assign(:pending_deletion, false)
-          |> stream(:languages, languages, reset: true)
-
-        true ->
-          socket
+        socket
+        |> assign(:options, new_options)
+        |> assign(:count_visible_rows, count_visible_rows)
+        |> assign(:count_all_summary, socket.assigns.count_all)
+        |> assign(:count_all_pagination, socket.assigns.count_all)
+        |> assign(:pending_deletion, false)
+        |> stream(:languages, languages, reset: true)
+        |> (&if(new_options.page != page_before_validation,
+              do: push_patch(&1, to: get_pagination_url(new_options)),
+              else: &1
+            )).()
+      else
+        socket
       end
 
     socket
@@ -320,7 +327,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     cond do
       Map.get(language, :created, false) -> "bg-green-50"
       Map.get(language, :updated, false) -> "bg-blue-50"
-      Map.get(language, :deleted, false) -> "bg-zinc-50 text-zinc-400 line-through"
+      Map.get(language, :deleted, false) -> "bg-zinc-50 !text-zinc-400 line-through"
       true -> ""
     end
   end
