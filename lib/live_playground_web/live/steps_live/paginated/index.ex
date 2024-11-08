@@ -109,10 +109,6 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     page_before_validation = to_integer(page, 1)
     new_options = validate_options(socket, %{page: page, per_page: per_page})
 
-    if new_options.page != page_before_validation do
-      IO.puts("XXX")
-    end
-
     socket =
       if reset_stream or new_options != options or new_options.page != page_before_validation do
         languages = Languages2.list_languages(new_options)

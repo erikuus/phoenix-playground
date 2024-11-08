@@ -111,7 +111,7 @@ defmodule LivePlayground.Languages2 do
   def update_language(%Language{} = language, attrs) do
     language
     |> Language.changeset(attrs)
-    |> Repo.update()
+    |> Repo.update(stale_error_field: :lock_version)
     |> broadcast(:updated)
   end
 

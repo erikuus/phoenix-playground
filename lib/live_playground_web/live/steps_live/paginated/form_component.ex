@@ -50,13 +50,26 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
   end
 
   defp save_language(socket, :edit, language_params) do
-    case Languages2.update_language(socket.assigns.language, language_params) do
-      {:ok, language} ->
-        notify_parent({:updated, language})
+    language = socket.assigns.language
+
+    case Languages2.update_language(language, language_params) do
+      {:ok, updated_language} ->
+        notify_parent({:updated, updated_language})
         {:noreply, push_patch(socket, to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        if changeset.errors[:lock_version] do
+          # Handle stale entry error
+          socket =
+            socket
+            |> put_flash(:error, "This language has been modified by someone else.")
+            |> push_patch(to: socket.assigns.patch)
+
+          {:noreply, socket}
+        else
+          # Handle other validation errors
+          {:noreply, assign_form(socket, changeset)}
+        end
     end
   end
 
