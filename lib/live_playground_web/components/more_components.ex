@@ -742,49 +742,122 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   This component displays 'Previous' and 'Next' navigation links along with direct links
   to individual pages based on the current page, items per page, and the total count of items.
-  It supports dynamic updating through Phoenix LiveView events.
+
+  ## Features
+    * Supports both event-based and URL-based (LiveView patches) navigation
+    * Configurable URL parameters
+    * Maintains existing query parameters
+    * Handles options maps
+    * Customizable styling
 
   ## Parameters
 
-    - `:class` (optional): Additional CSS classes to apply to the toolbar.
-    - `:event`: The LiveView event to handle page changes.
-    - `:page`: The current page number.
-    - `:per_page`: Number of items per page.
-    - `:count_all`: Total count of items across all pages.
-    - `:limit`: Maximum number of page links to show around the current page.
+    * `:class` (optional) - Additional CSS classes to apply to the toolbar.
+    * `:event` - The LiveView event to handle page changes (used when patch_path is not provided).
+    * `:patch_path` (optional) - Base path for URL-based navigation.
+    * `:page` - The current page number.
+    * `:per_page` - Number of items per page.
+    * `:count_all` - Total count of items across all pages.
+    * `:limit` - Maximum number of page links to show around the current page.
+    * `:params_key` (optional) - Key to use for page parameter in URL. Defaults to "page".
+    * `:params_per_page_key` (optional) - Key to use for per_page parameter in URL. When nil, per_page is not included.
+    * `:keep_params` (optional) - A map of parameters to maintain in the URL when navigating.
 
-  ## Example
-
+  ## Basic usage with event (no URL parameters):
       <.pagination
-        event="select-page"
+        event="paginate"
         page={@page}
         per_page={@per_page}
         count_all={@count}
-        limit={5}
       />
+
+  ## Basic usage with only page parameter in URL:
+      <.pagination
+        patch_path="/items"
+        page={@page}
+        per_page={@per_page}
+        count_all={@count}
+      />
+      # Results in: /items?page=2
+
+  ## Including both page and per_page in URL:
+      <.pagination
+        patch_path="/items"
+        page={@page}
+        per_page={@per_page}
+        count_all={@count}
+        params_per_page_key="per_page"
+      />
+      # Results in: /items?page=2&per_page=10
+
+  ## Using with options map and maintaining other parameters:
+      # In your LiveView:
+      @impl true
+      def mount(_params, _session, socket) do
+        options = %{
+          page: 1,
+          per_page: 5,
+          sort: "name",
+          filter: "active"
+        }
+
+        {:ok, assign(socket, options: options)}
+      end
+
+      # In your template:
+      <.pagination
+        patch_path="/items"
+        page={@options.page}
+        per_page={@options.per_page}
+        count_all={@count}
+        keep_params={Map.take(@options, [:sort, :filter])}
+      />
+      # Results in: /items?page=2&sort=name&filter=active
   """
   attr :class, :string, default: nil
-  attr :event, :string, required: true
+  attr :event, :string, default: nil
+  attr :patch_path, :string, default: nil
   attr :page, :integer, required: true
   attr :per_page, :integer, required: true
   attr :count_all, :integer, required: true
   attr :limit, :integer, default: 5
+  attr :params_key, :string, default: "page"
+  attr :params_per_page_key, :string, default: nil
+  attr :keep_params, :map, default: %{}
 
   def pagination(assigns) do
+    assigns =
+      assign_new(assigns, :use_patch?, fn ->
+        not is_nil(assigns[:patch_path])
+      end)
+
     ~H"""
     <nav :if={@count_all > 0} class={["flex items-center justify-between border-t border-gray-200 px-4 sm:px-0", @class]}>
       <div class="-mt-px flex w-0 flex-1">
-        <.link
-          :if={@page > 1}
-          phx-click={@event}
-          phx-value-page={@page - 1}
-          class={[
-            "inline-flex items-center border-t-2 pt-4 text-sm font-medium pr-4",
-            "border-transparent text-zinc-400 hover:border-zinc-300"
-          ]}
-        >
-          <.icon name="hero-arrow-long-left" class="mr-3 h-5 w-5 text-gray-400" /> Previous
-        </.link>
+        <%= if @page > 1 do %>
+          <%= if @use_patch? do %>
+            <.link
+              patch={build_pagination_path(@patch_path, @page - 1, @per_page, @params_key, @params_per_page_key, @keep_params)}
+              class={[
+                "inline-flex items-center border-t-2 pt-4 text-sm font-medium pr-4",
+                "border-transparent text-zinc-400 hover:border-zinc-300"
+              ]}
+            >
+              <.icon name="hero-arrow-long-left" class="mr-3 h-5 w-5 text-gray-400" /> Previous
+            </.link>
+          <% else %>
+            <.link
+              phx-click={@event}
+              phx-value-page={@page - 1}
+              class={[
+                "inline-flex items-center border-t-2 pt-4 text-sm font-medium pr-4",
+                "border-transparent text-zinc-400 hover:border-zinc-300"
+              ]}
+            >
+              <.icon name="hero-arrow-long-left" class="mr-3 h-5 w-5 text-gray-400" /> Previous
+            </.link>
+          <% end %>
+        <% end %>
       </div>
 
       <div class="hidden lg:-mt-px lg:flex">
@@ -794,40 +867,80 @@ defmodule LivePlaygroundWeb.MoreComponents do
               <%= page %>
             </span>
           <% else %>
-            <.link
-              phx-click={@event}
-              phx-value-page={page}
-              class="inline-flex items-center border-t-2 pt-4 text-sm font-medium px-4 border-transparent text-zinc-400 hover:border-zinc-300"
-            >
-              <%= page %>
-            </.link>
+            <%= if @use_patch? do %>
+              <.link
+                patch={build_pagination_path(@patch_path, page, @per_page, @params_key, @params_per_page_key, @keep_params)}
+                class="inline-flex items-center border-t-2 pt-4 text-sm font-medium px-4 border-transparent text-zinc-400 hover:border-zinc-300"
+              >
+                <%= page %>
+              </.link>
+            <% else %>
+              <.link
+                phx-click={@event}
+                phx-value-page={page}
+                class="inline-flex items-center border-t-2 pt-4 text-sm font-medium px-4 border-transparent text-zinc-400 hover:border-zinc-300"
+              >
+                <%= page %>
+              </.link>
+            <% end %>
           <% end %>
         <% end %>
       </div>
 
       <div class="-mt-px flex w-0 flex-1 justify-end">
-        <.link
-          :if={@page * @per_page < @count_all}
-          phx-click={@event}
-          phx-value-page={@page + 1}
-          class={[
-            "inline-flex items-center border-t-2 pt-4 text-sm font-medium pl-4",
-            "border-transparent text-zinc-400 hover:border-zinc-300"
-          ]}
-        >
-          Next <.icon name="hero-arrow-long-right" class="ml-3 h-5 w-5 text-gray-400" />
-        </.link>
+        <%= if @page * @per_page < @count_all do %>
+          <%= if @use_patch? do %>
+            <.link
+              patch={build_pagination_path(@patch_path, @page + 1, @per_page, @params_key, @params_per_page_key, @keep_params)}
+              class={[
+                "inline-flex items-center border-t-2 pt-4 text-sm font-medium pl-4",
+                "border-transparent text-zinc-400 hover:border-zinc-300"
+              ]}
+            >
+              Next <.icon name="hero-arrow-long-right" class="ml-3 h-5 w-5 text-gray-400" />
+            </.link>
+          <% else %>
+            <.link
+              phx-click={@event}
+              phx-value-page={@page + 1}
+              class={[
+                "inline-flex items-center border-t-2 pt-4 text-sm font-medium pl-4",
+                "border-transparent text-zinc-400 hover:border-zinc-300"
+              ]}
+            >
+              Next <.icon name="hero-arrow-long-right" class="ml-3 h-5 w-5 text-gray-400" />
+            </.link>
+          <% end %>
+        <% end %>
       </div>
     </nav>
     """
   end
 
   defp get_pages(page, per_page, count_all, limit) do
-    # This function is preferred over ceil(num / denom) to avoid potential precision and efficiency issues.
     page_count = div(count_all + per_page - 1, per_page)
-
-    # Test each element in the enumerable. Only elements for which function returns true are included in the result.
     Enum.filter((page - limit)..(page + limit), &(&1 > 0 and &1 <= page_count))
+  end
+
+  defp build_pagination_path(
+         base_path,
+         page,
+         per_page,
+         params_key,
+         params_per_page_key,
+         keep_params
+       ) do
+    params = Map.put(keep_params, params_key, page)
+
+    params =
+      if params_per_page_key do
+        Map.put(params, params_per_page_key, per_page)
+      else
+        params
+      end
+
+    query_string = URI.encode_query(params)
+    "#{base_path}?#{query_string}"
   end
 
   @doc """
