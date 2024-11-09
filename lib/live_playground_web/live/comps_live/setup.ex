@@ -1,10 +1,10 @@
-defmodule LivePlaygroundWeb.CompsLive.Integration do
+defmodule LivePlaygroundWeb.CompsLive.Setup do
   use LivePlaygroundWeb, :live_view
 
   def render(assigns) do
     ~H"""
     <.header class="mb-6">
-      Integration
+      Setup
       <:subtitle>
         Setting Up Core and MoreComponents
       </:subtitle>

@@ -66,7 +66,7 @@ defmodule LivePlaygroundWeb.Router do
     scope "/", LivePlaygroundWeb do
       pipe_through :browser
 
-      live "/integration", CompsLive.Integration
+      live "/comps-setup", CompsLive.Setup
       live "/header", CompsLive.Header
       live "/header-demo", CompsLive.HeaderDemo
       live "/modal", CompsLive.Modal
@@ -125,6 +125,9 @@ defmodule LivePlaygroundWeb.Router do
       live "/stats", CopmsLive.Stats
       live "/loading", CompsLive.Loading
       live "/pagination", CompsLive.Pagination
+      live "/pagination-page", CompsLive.PaginationPage
+      live "/pagination-per-page", CompsLive.PaginationPerPage
+      live "/pagination-options", CompsLive.PaginationOptions
       live "/editable", CompsLive.Editable
       live "/circular-progress-bar", CompsLive.CircularProgressBar
       live "/uploads-upload-area", CompsLive.UploadsUploadArea

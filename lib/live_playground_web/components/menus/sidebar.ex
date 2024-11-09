@@ -57,16 +57,16 @@ defmodule LivePlaygroundWeb.Menus.Sidebar do
         layout: :home
       },
       %{
+        icon: "hero-puzzle-piece",
+        label: "Comps",
+        path: ~p"/comps-setup",
+        layout: :comps
+      },
+      %{
         icon: "hero-book-open",
         label: "Recipes",
         path: ~p"/click-buttons",
         layout: :recipes
-      },
-      %{
-        icon: "hero-puzzle-piece",
-        label: "Comps",
-        path: ~p"/integration",
-        layout: :comps
       },
       %{
         icon: "hero-chart-bar",
