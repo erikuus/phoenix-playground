@@ -868,7 +868,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
       </div>
 
       <div class={[
-        "flex flex-nowrap overflow-x-hidden mx-24 min-w-0 scroll-snap-x",
+        "flex flex-nowrap overflow-x-hidden mx-24",
         @modifier && "hidden #{@modifier}:-mt-px #{@modifier}:flex"
       ]}>
         <%= for page <- get_pages(@page, @per_page, @count_all, @limit) do %>

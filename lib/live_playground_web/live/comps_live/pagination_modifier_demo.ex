@@ -14,8 +14,8 @@ defmodule LivePlaygroundWeb.CompsLive.PaginationModifierDemo do
 
   def render(assigns) do
     ~H"""
-    <.pagination class="mx-10 my-20" event="select-page" page={@page} per_page={@per_page} count_all={@count_all} />
-    <.pagination class="mx-10 my-20" modifier="md" event="select-page" page={@page} per_page={@per_page} count_all={@count_all} />
+    <.pagination class="mx-10 my-16" event="select-page" page={@page} per_page={@per_page} count_all={@count_all} />
+    <.pagination class="mx-10 my-16" modifier="md" event="select-page" page={@page} per_page={@per_page} count_all={@count_all} />
     """
   end
 
