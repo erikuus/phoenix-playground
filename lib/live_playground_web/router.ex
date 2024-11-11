@@ -128,6 +128,8 @@ defmodule LivePlaygroundWeb.Router do
       live "/pagination-page", CompsLive.PaginationPage
       live "/pagination-per-page", CompsLive.PaginationPerPage
       live "/pagination-options", CompsLive.PaginationOptions
+      live "/pagination-modifier", CompsLive.PaginationModifier
+      live "/pagination-modifier-demo", CompsLive.PaginationModifierDemo
       live "/editable", CompsLive.Editable
       live "/circular-progress-bar", CompsLive.CircularProgressBar
       live "/uploads-upload-area", CompsLive.UploadsUploadArea

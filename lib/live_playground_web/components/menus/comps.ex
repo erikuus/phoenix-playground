@@ -20,10 +20,10 @@ defmodule LivePlaygroundWeb.Menus.Comps do
   defp get_items(current_path) do
     [
       %{
-        icon: "hero-information-circle",
-        label: "Integration",
-        path: ~p"/integration",
-        active: is_active?(current_path, ["/integration"])
+        icon: "hero-rocket-launch",
+        label: "Setup",
+        path: ~p"/comps-setup",
+        active: is_active?(current_path, ["/comps-setup"])
       },
       %{
         section: %{
@@ -310,6 +310,47 @@ defmodule LivePlaygroundWeb.Menus.Comps do
           },
           %{
             expandable: %{
+              id: "pagination",
+              icon: "hero-arrows-right-left",
+              label: "Pagination",
+              open:
+                is_active?(current_path, [
+                  "/pagination",
+                  "/pagination-page",
+                  "/pagination-per-page",
+                  "/pagination-options"
+                ])
+            },
+            expandable_items: [
+              %{
+                label: "Pagination with Event",
+                path: ~p"/pagination",
+                active: is_active?(current_path, ["/pagination"])
+              },
+              %{
+                label: "Pagination with Page",
+                path: ~p"/pagination-page",
+                active: is_active?(current_path, ["/pagination-page"])
+              },
+              %{
+                label: "Pagination with PerPage",
+                path: ~p"/pagination-per-page",
+                active: is_active?(current_path, ["/pagination-per-page"])
+              },
+              %{
+                label: "Pagination with Options",
+                path: ~p"/pagination-options",
+                active: is_active?(current_path, ["/pagination-options"])
+              },
+              %{
+                label: "Pagination with Modifier",
+                path: ~p"/pagination-modifier",
+                active: is_active?(current_path, ["/pagination-modifier"])
+              }
+            ]
+          },
+          %{
+            expandable: %{
               id: "slideover",
               icon: "hero-arrow-left-on-rectangle",
               label: "Slideover",
@@ -446,12 +487,6 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             label: "Tabs",
             path: ~p"/tabs",
             active: is_active?(current_path, ["/tabs"])
-          },
-          %{
-            icon: "hero-arrows-right-left",
-            label: "Pagination",
-            path: ~p"/pagination",
-            active: is_active?(current_path, ["/pagination"])
           },
           %{
             icon: "hero-pencil-square",

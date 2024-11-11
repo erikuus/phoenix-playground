@@ -602,7 +602,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   attr :modifier, :string,
     default: nil,
     doc:
-      "tailwind modifier to specify screen breakpoint at which the tabs is shown instead of dropdown"
+      "Tailwind modifier to set the screen breakpoint where tabs are displayed instead of a dropdown."
 
   slot :tab, required: true do
     attr :path, :any, required: true
@@ -820,10 +820,17 @@ defmodule LivePlaygroundWeb.MoreComponents do
   attr :page, :integer, required: true
   attr :per_page, :integer, required: true
   attr :count_all, :integer, required: true
-  attr :limit, :integer, default: 5
   attr :params_key, :string, default: "page"
   attr :params_per_page_key, :string, default: nil
   attr :keep_params, :map, default: %{}
+
+  attr :limit, :integer,
+    default: 5,
+    doc: "The maximum number of page links displayed to the left and right of the current page."
+
+  attr :modifier, :string,
+    default: nil,
+    doc: "Tailwind modifier to define the screen breakpoint for displaying page links."
 
   def pagination(assigns) do
     assigns =
@@ -833,7 +840,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
     ~H"""
     <nav :if={@count_all > 0} class={["flex items-center justify-between border-t border-gray-200 px-4 sm:px-0", @class]}>
-      <div class="-mt-px flex w-0 flex-1">
+      <div class="-mt-px flex w-0 flex-1 flex-shrink-0">
         <%= if @page > 1 do %>
           <%= if @use_patch? do %>
             <.link
@@ -860,7 +867,10 @@ defmodule LivePlaygroundWeb.MoreComponents do
         <% end %>
       </div>
 
-      <div class="hidden lg:-mt-px lg:flex">
+      <div class={[
+        "flex flex-nowrap overflow-x-hidden mx-24 min-w-0 scroll-snap-x",
+        @modifier && "hidden #{@modifier}:-mt-px #{@modifier}:flex"
+      ]}>
         <%= for page <- get_pages(@page, @per_page, @count_all, @limit) do %>
           <%= if @page == page do %>
             <span class="inline-flex items-center border-t-2 pt-4 text-sm font-medium px-4 border-zinc-500 text-zinc-600">
@@ -887,7 +897,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         <% end %>
       </div>
 
-      <div class="-mt-px flex w-0 flex-1 justify-end">
+      <div class="-mt-px flex w-0 flex-1 justify-end flex-shrink-0">
         <%= if @page * @per_page < @count_all do %>
           <%= if @use_patch? do %>
             <.link
