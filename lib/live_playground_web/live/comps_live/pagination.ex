@@ -2,16 +2,21 @@ defmodule LivePlaygroundWeb.CompsLive.Pagination do
   use LivePlaygroundWeb, :live_view
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :page, 1)}
+    {:ok,
+     assign(socket,
+       page: 1,
+       per_page: 10,
+       count_all: 45
+     )}
   end
 
   def render(assigns) do
     ~H"""
     <!-- start hiding from live code -->
     <.header class="mb-6">
-      Pagination
+      Pagination with Event
       <:subtitle>
-        Paginating Content in LiveView
+        Implementing Pagination with Event (no URL parameters) in LiveView
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def pagination">
@@ -20,7 +25,7 @@ defmodule LivePlaygroundWeb.CompsLive.Pagination do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <.pagination event="select-page" page={@page} per_page={10} count_all={45} />
+    <.pagination event="select-page" page={@page} per_page={@per_page} count_all={@count_all} />
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/comps_live/pagination.ex" />
