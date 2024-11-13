@@ -34,7 +34,7 @@ defmodule LivePlaygroundWeb.CompsLive.InputTextbox do
     </.header>
     <!-- end hiding from live code -->
     <.form for={@form} phx-change="demo" class="space-y-5">
-      <.input label="Name" name="name" value={@name} errors={["Oops!"]} />
+      <.input label="Name" id="name" name="name" value={@name} errors={["Oops!"]} />
       <.input label="Country" field={@form[:countrycode]} />
     </.form>
     <!-- start hiding from live code -->

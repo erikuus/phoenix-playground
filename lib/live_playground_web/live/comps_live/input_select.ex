@@ -39,7 +39,8 @@ defmodule LivePlaygroundWeb.CompsLive.InputSelect do
       <.input
         label="Age"
         type="select"
-        name="age"
+        id="age1"
+        name="age1"
         options={[Five: 5, Ten: 10, Twenty: 20, Fifty: 50, Ninety: 90]}
         value={@age}
         errors={["Oops!"]}
@@ -47,13 +48,21 @@ defmodule LivePlaygroundWeb.CompsLive.InputSelect do
       <.input
         label="Age By Group"
         type="select"
-        name="age"
+        id="age2"
+        name="age2"
         options={[Child: [Five: 5, Ten: 10], Adult: [Twenty: 50, Fifty: 50, Ninety: 90]]}
         value={@age}
         errors={["Oops!"]}
       />
       <.input label="Language" type="select" field={@form[:id]} options={options(@languages)} prompt="" />
-      <.input label="Language By Country" type="select" field={@form[:id]} options={grouped_options(@languages)} prompt="" />
+      <.input
+        label="Language By Country"
+        id="language2"
+        type="select"
+        field={@form[:id]}
+        options={grouped_options(@languages)}
+        prompt=""
+      />
     </.form>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">

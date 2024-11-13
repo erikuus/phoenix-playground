@@ -54,14 +54,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
     ~H"""
     <div id={@id} phx-mounted={@show && show_modal(@id)} phx-remove={hide_modal(@id)} class="relative z-50 hidden">
       <div id={"#{@id}-bg"} class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" />
-      <div
-        class="fixed inset-0 overflow-y-auto"
-        aria-labelledby={"#{@id}-title"}
-        aria-describedby={"#{@id}-description"}
-        role="dialog"
-        aria-modal="true"
-        tabindex="0"
-      >
+      <div class="fixed inset-0 overflow-y-auto" aria-labelledby={"#{@id}-title"} role="dialog" aria-modal="true" tabindex="0">
         <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
           <div class="relative overflow-hidden rounded-lg bg-white text-left shadow-xl sm:my-8 sm:p-0">
             <.focus_wrap
@@ -72,7 +65,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
               phx-click-away={hide_modal(@on_cancel, @id)}
             >
               <div class="absolute top-0 right-0 hidden pt-4 pr-4 sm:block">
-                <.link phx-click={hide_modal(@on_cancel, @id)}>
+                <.link phx-click={hide_modal(@on_cancel, @id)} aria-label="Close">
                   <.icon name="hero-x-mark-solid" class="w-6 h-6 text-gray-400 hover:text-gray-500" />
                 </.link>
               </div>
@@ -275,7 +268,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
       type={@type}
       class={[
         "phx-submit-loading:opacity-75",
-        "inline-flex inline-flex items-center justify-center rounded-lg py-2 px-5 ring-inset",
+        "inline-flex items-center justify-center rounded-lg py-2 px-5 ring-inset",
         "text-sm font-semibold leading-6",
         @kind == :primary && "bg-zinc-900 hover:bg-zinc-700 text-white active:text-white/80",
         @kind == :secondary && "border border-zinc-200 bg-zinc-100 hover:bg-zinc-200 text-gray-700 active:text-gray-800",

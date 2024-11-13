@@ -10,7 +10,7 @@ defmodule LivePlaygroundWeb.CompsLive.PaginationModifier do
     <.header class="mb-6">
       Pagination with Tailwind CSS Modifier
       <:subtitle>
-        Adding Tailwind Modifier to Define Screen Breakpoints for Displaying Page Links
+        Adding Tailwind Modifier to Define Screen Breakpoint for Displaying Page Links
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def pagination_modifier">

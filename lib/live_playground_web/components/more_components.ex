@@ -39,19 +39,24 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   def multi_column_layout(assigns) do
     ~H"""
-    <div class="fixed inset-y-0 flex flex-col pl-1.5 pr-1.5 py-1.5 space-y-1 items-center overflow-y-auto bg-zinc-700 w-14 md:w-20 z-20">
+    <div
+      class="fixed inset-y-0 flex flex-col pl-1.5 pr-1.5 py-1.5 space-y-1 items-center overflow-y-auto bg-zinc-700 w-14 md:w-20 z-20"
+      role="complementary"
+      aria-label="Sidebar"
+    >
       <%= render_slot(@narrow_sidebar) %>
     </div>
     <div :if={@mobile_menu != [] && @desktop_menu != []} class="pl-14 md:pl-20">
-      <div id={"#{@id}-mobile-menu"} class="relative z-40 hidden" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-gray-600 bg-opacity-75"></div>
+      <div id={"#{@id}-mobile-menu"} class="relative z-40 hidden" role="dialog" aria-modal="true" aria-label="Mobile Menu">
+        <div class="fixed inset-0 bg-gray-600 bg-opacity-75" aria-hidden="true"></div>
         <div class="fixed inset-0 z-40 flex">
-          <div class="relative flex w-full max-w-xs flex-1 flex-col bg-white">
+          <div class="relative flex w-full max-w-xs flex-1 flex-col bg-white" role="document">
             <div class="absolute top-0 right-0 -mr-12 pt-2">
               <button
                 phx-click={JS.hide(to: "##{@id}-mobile-menu")}
                 type="button"
                 class="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                aria-label="Close sidebar"
               >
                 <span class="sr-only">Close sidebar</span> <.icon name="hero-x-mark" class="h-6 w-6 text-white" />
               </button>
@@ -67,18 +72,19 @@ defmodule LivePlaygroundWeb.MoreComponents do
               </.focus_wrap>
             </div>
           </div>
-          <div class="w-14 flex-shrink-0">
+          <div class="w-14 flex-shrink-0" aria-hidden="true">
             <!-- Force sidebar to shrink to fit close icon -->
           </div>
         </div>
       </div>
-      <div class="relative hidden lg:fixed lg:inset-y-0 lg:flex lg:flex-col">
+      <div class="relative hidden lg:fixed lg:inset-y-0 lg:flex lg:flex-col" role="complementary" aria-label="Desktop Menu">
         <div class="flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white">
           <div
             :for={desktop_menu <- @desktop_menu}
             id={"#{@id}-desktop-menu-content"}
             phx-hook={Map.get(desktop_menu, :hook, nil)}
             class="flex flex-1 flex-col overflow-y-auto pb-4 lg:w-64"
+            role="navigation"
           >
             <%= render_slot(desktop_menu) %>
           </div>
@@ -90,16 +96,18 @@ defmodule LivePlaygroundWeb.MoreComponents do
           }
           class="absolute inset-y-0 left-full cursor-pointer items-center px-2 flex group"
           title="Click to toggle sidebar"
+          aria-label="Toggle sidebar"
         >
           <div class="h-6 w-1 rounded-full bg-gray-300 group-hover:bg-gray-400"></div>
         </div>
       </div>
-      <div id={"#{@id}-main-container"} class="flex flex-1 flex-col lg:pl-64">
+      <div id={"#{@id}-main-container"} class="flex flex-1 flex-col lg:pl-64" role="main" aria-label="Main Content">
         <div class="sticky top-0 z-10 bg-white pl-2.5 pt-2 lg:hidden">
           <button
             phx-click={JS.show(to: "##{@id}-mobile-menu")}
             type="button"
             class="-mt-0.5 inline-flex h-12 w-12 items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-100"
+            aria-label="Open sidebar"
           >
             <span class="sr-only">Open sidebar</span> <.icon name="hero-bars-3" class="h-6 w-6" />
           </button>
@@ -142,6 +150,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         item.active == true && "bg-zinc-600 bg-opacity-50 text-white",
         item.active == false && "text-zinc-100 hover:bg-zinc-600 hover:bg-opacity-50 hover:text-white"
       ]}
+      aria-label={item.label}
     >
       <.icon :if={item.icon} name={item.icon} class="h-6 w-6" /> <span class="mt-1 hidden md:block"><%= item.label %></span>
     </.link>
@@ -204,7 +213,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   def vertical_navigation(assigns) do
     ~H"""
-    <nav class={["mt-4 bg-white space-y-1", @class]}>
+    <nav class={["mt-4 bg-white space-y-1", @class]} aria-label="Vertical Navigation">
       <.vertical_navigation_item :for={item <- @items} id={@id} item={item} />
     </nav>
     """
@@ -273,8 +282,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   def vertical_navigation_item(%{item: %{section: %{}, section_items: [%{} | _]}} = assigns) do
     ~H"""
-    <div class={["space-y-1", Map.has_key?(@item.section, :class) && @item.section.class]}>
-      <div class="ml-2 font-semibold leading-6 text-gray-400 text-xs">
+    <div class={["space-y-1", Map.has_key?(@item.section, :class) && @item.section.class]} role="group">
+      <div class="ml-2 font-semibold leading-6 text-gray-500 text-xs">
         <%= @item.section.label %>
       </div>
       <.vertical_navigation_item :for={section_item <- @item.section_items} id={@id} item={section_item} />
@@ -288,11 +297,16 @@ defmodule LivePlaygroundWeb.MoreComponents do
       :if={Map.has_key?(@item.expandable, :id)}
       id={"#{@id}-#{@item.expandable.id}"}
       class={["space-y-1", Map.has_key?(@item.expandable, :class) && @item.expandable.class]}
+      role="group"
+      aria-labelledby={"#{@id}-#{@item.expandable.id}-label"}
     >
       <button
         phx-click={toggle_expandable("#{@id}-#{@item.expandable.id}")}
         type="button"
         class={["group flex items-center px-2 py-2 rounded-md text-sm w-full text-left", @item_class]}
+        aria-expanded={@item.expandable.open}
+        aria-controls={"#{@id}-#{@item.expandable.id}-content"}
+        id={"#{@id}-#{@item.expandable.id}-label"}
       >
         <.icon
           :if={Map.has_key?(@item.expandable, :icon)}
@@ -320,7 +334,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
           ]}
         />
       </button>
-      <div class={["ver-nav-exp space-y-1", @item.expandable.open == false && "hidden"]}>
+      <div id={"#{@id}-#{@item.expandable.id}-content"} class={["ver-nav-exp space-y-1", @item.expandable.open == false && "hidden"]}>
         <.vertical_navigation_item
           :for={expandable_item <- @item.expandable_items}
           item={expandable_item}
@@ -342,6 +356,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         @item.active == false && @item_class,
         @item.active == true && @item_active_class
       ]}
+      aria-label={@item.label}
     >
       <.icon
         :if={Map.has_key?(@item, :icon) && Map.has_key?(@item, :active)}
@@ -398,6 +413,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         @class
       ]}
       {@rest}
+      role="button"
     >
       <%= render_slot(@inner_block) %>
     </.link>
@@ -435,6 +451,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
         @kind == :error && "bg-red-50 text-red-700",
         @class
       ]}
+      role="alert"
+      aria-labelledby={"#{@id}-title"}
     >
       <div class="flex items-start">
         <div :if={@icon} class="flex-shrink-0">
@@ -442,12 +460,12 @@ defmodule LivePlaygroundWeb.MoreComponents do
         </div>
 
         <div class={["flex-1", @icon != nil && "ml-3"]}>
-          <h3 :if={@title} class="font-medium mb-2"><%= @title %></h3>
+          <h3 :if={@title} id={"#{@id}-title"} class="font-medium mb-2"><%= @title %></h3>
 
           <p><%= render_slot(@inner_block) %></p>
         </div>
 
-        <button :if={@close} type="button" class="flex-shrink-0 ml-4" }>
+        <button :if={@close} type="button" class="flex-shrink-0 ml-4" aria-label="Close alert">
           <.icon name="hero-x-mark-solid" class="w-5 h-5 opacity-40 group-hover:opacity-70" />
         </button>
       </div>
@@ -468,7 +486,10 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   def note(assigns) do
     ~H"""
-    <div class={["flex flex-col sm:flex-row px-4 py-5 sm:p-6 overflow-hidden shadow-sm border border-gray-200 rounded-md ", @class]}>
+    <div
+      class={["flex flex-col sm:flex-row px-4 py-5 sm:p-6 overflow-hidden shadow-sm border border-gray-200 rounded-md ", @class]}
+      role="note"
+    >
       <div :if={@icon} class="flex-shrink-0">
         <.icon name={@icon} class="h-6 w-6" />
       </div>
@@ -497,9 +518,9 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   def simple_list(assigns) do
     ~H"""
-    <div class={@class}>
+    <div class={@class} role="list">
       <dl class="divide-y divide-zinc-100">
-        <div :for={item <- @item} class={["flex gap-4 py-4 sm:gap-8", Map.get(item, :class)]}>
+        <div :for={item <- @item} class={["flex gap-4 py-4 sm:gap-8", Map.get(item, :class)]} role="listitem">
           <%= render_slot(item) %>
         </div>
       </dl>
@@ -544,7 +565,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
     ~H"""
     <ul role="list" class={["mt-4 bg-white px-3", @class]}>
-      <li :for={step <- @step} class="relative flex gap-x-2">
+      <li :for={step <- @step} class="relative flex gap-x-2" role="listitem">
         <div class={[
           "absolute mt-2 left-0 top-0 flex w-6 justify-center",
           step == @last_step && "h-6",
@@ -611,32 +632,38 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   def tabs(assigns) do
     ~H"""
-    <div class={[
-      "border-b border-gray-200",
-      @modifier && "hidden #{@modifier}:block",
-      @class
-    ]}>
+    <div
+      class={[
+        "border-b border-gray-200",
+        @modifier && "hidden #{@modifier}:block",
+        @class
+      ]}
+      role="tablist"
+    >
       <nav class="-mb-px flex space-x-8 flex-wrap md:flex-nowrap">
         <.link
           :for={tab <- @tab}
           navigate={tab.path}
           class={[
             "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium",
-            tab.active == false && "border-transparent text-zinc-400 hover:border-zinc-300",
-            tab.active == true && "border-zinc-500 text-zinc-600"
+            tab.active == false && "border-transparent text-zinc-500 hover:border-zinc-300",
+            tab.active == true && "border-zinc-500 text-zinc-700"
           ]}
+          role="tab"
+          aria-selected={tab.active}
         >
           <%= render_slot(tab) %>
         </.link>
       </nav>
     </div>
 
-    <div :if={@modifier} class={["block #{@modifier}:hidden", @class]}>
+    <div :if={@modifier} class={["block #{@modifier}:hidden", @class]} role="tabpanel">
       <button
         id={"#{@id}-open"}
         phx-click={JS.show(to: "##{@id}-dropdown") |> JS.hide(to: "##{@id}-open") |> JS.show(to: "##{@id}-close")}
         type="button"
         class="text-zinc-600 py-4 px-1 text-sm font-medium"
+        aria-label="Open tabs"
       >
         <span class="sr-only">Open tabs</span> <.icon name="hero-ellipsis-vertical" class="h-6 w-6 text-zinc-600" />
       </button>
@@ -645,6 +672,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         type="button"
         phx-click={JS.hide(to: "##{@id}-dropdown") |> JS.hide(to: "##{@id}-close") |> JS.show(to: "##{@id}-open")}
         class="hidden text-zinc-600 py-4 px-1 text-sm font-medium"
+        aria-label="Close tabs"
       >
         <span class="sr-only">Close tabs</span> <.icon name="hero-x-mark" class="h-6 w-6 text-zinc-600" />
       </button>
@@ -653,6 +681,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         id={"#{@id}-dropdown"}
         phx-click-away={JS.hide(to: "##{@id}-dropdown") |> JS.hide(to: "##{@id}-close") |> JS.show(to: "##{@id}-open")}
         class="hidden absolute z-10 -mt-3 rounded-md shadow-lg py-1 border border-gray-200 bg-white"
+        role="menu"
       >
         <li
           :for={tab <- @tab}
@@ -661,6 +690,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
             tab.active == false && "hover:bg-zinc-300",
             tab.active == true && "bg-zinc-500 text-white"
           ]}
+          role="menuitem"
         >
           <.link navigate={tab.path} class="block py-2 px-8">
             <%= render_slot(tab) %>
@@ -698,8 +728,12 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   def stats(assigns) do
     ~H"""
-    <dl class={["grid grid-cols-1 gap-5 sm:grid-cols-3 xl:grid-cols-4", @class]}>
-      <div :for={card <- @card} class="relative overflow-hidden rounded-lg shadow-sm border border-gray-200 bg-white px-4 py-5 sm:p-6">
+    <dl class={["grid grid-cols-1 gap-5 sm:grid-cols-3 xl:grid-cols-4", @class]} role="list">
+      <div
+        :for={card <- @card}
+        class="relative overflow-hidden rounded-lg shadow-sm border border-gray-200 bg-white px-4 py-5 sm:p-6"
+        role="listitem"
+      >
         <dt class="truncate text-sm font-medium text-gray-500"><%= card.title %></dt>
         <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900">
           <%= render_slot(card) %>
@@ -724,7 +758,14 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   def loading(assigns) do
     ~H"""
-    <svg class={["animate-spin", @class]} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+    <svg
+      class={["animate-spin", @class]}
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      role="img"
+      aria-label="Loading"
+    >
       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
 
       <path
@@ -839,7 +880,11 @@ defmodule LivePlaygroundWeb.MoreComponents do
       end)
 
     ~H"""
-    <nav :if={@count_all > 0} class={["flex items-center justify-between border-t border-gray-200 px-4 sm:px-0", @class]}>
+    <nav
+      :if={@count_all > 0}
+      class={["flex items-center justify-between border-t border-gray-200 px-4 sm:px-0", @class]}
+      aria-label="Pagination"
+    >
       <div class="-mt-px flex w-0 flex-1 flex-shrink-0">
         <%= if @page > 1 do %>
           <%= if @use_patch? do %>
@@ -847,10 +892,11 @@ defmodule LivePlaygroundWeb.MoreComponents do
               patch={build_pagination_path(@patch_path, @page - 1, @per_page, @params_key, @params_per_page_key, @keep_params)}
               class={[
                 "inline-flex items-center border-t-2 pt-4 text-sm font-medium pr-4",
-                "border-transparent text-zinc-400 hover:border-zinc-300"
+                "border-transparent text-zinc-500 hover:border-zinc-300"
               ]}
+              aria-label="Previous page"
             >
-              <.icon name="hero-arrow-long-left" class="mr-3 h-5 w-5 text-gray-400" /> Previous
+              <.icon name="hero-arrow-long-left" class="mr-3 h-5 w-5 text-gray-500" /> Previous
             </.link>
           <% else %>
             <.link
@@ -858,10 +904,11 @@ defmodule LivePlaygroundWeb.MoreComponents do
               phx-value-page={@page - 1}
               class={[
                 "inline-flex items-center border-t-2 pt-4 text-sm font-medium pr-4",
-                "border-transparent text-zinc-400 hover:border-zinc-300"
+                "border-transparent text-zinc-500 hover:border-zinc-300"
               ]}
+              aria-label="Previous page"
             >
-              <.icon name="hero-arrow-long-left" class="mr-3 h-5 w-5 text-gray-400" /> Previous
+              <.icon name="hero-arrow-long-left" class="mr-3 h-5 w-5 text-gray-500" /> Previous
             </.link>
           <% end %>
         <% end %>
@@ -873,14 +920,18 @@ defmodule LivePlaygroundWeb.MoreComponents do
       ]}>
         <%= for page <- get_pages(@page, @per_page, @count_all, @limit) do %>
           <%= if @page == page do %>
-            <span class="inline-flex items-center border-t-2 pt-4 text-sm font-medium px-4 border-zinc-500 text-zinc-600">
+            <span
+              class="inline-flex items-center border-t-2 pt-4 text-sm font-bold px-4 border-zinc-500 text-zinc-600"
+              aria-current="page"
+            >
               <%= page %>
             </span>
           <% else %>
             <%= if @use_patch? do %>
               <.link
                 patch={build_pagination_path(@patch_path, page, @per_page, @params_key, @params_per_page_key, @keep_params)}
-                class="inline-flex items-center border-t-2 pt-4 text-sm font-medium px-4 border-transparent text-zinc-400 hover:border-zinc-300"
+                class="inline-flex items-center border-t-2 pt-4 text-sm font-medium px-4 border-transparent text-zinc-500 hover:border-zinc-300"
+                aria-label={"Page #{page}"}
               >
                 <%= page %>
               </.link>
@@ -888,7 +939,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
               <.link
                 phx-click={@event}
                 phx-value-page={page}
-                class="inline-flex items-center border-t-2 pt-4 text-sm font-medium px-4 border-transparent text-zinc-400 hover:border-zinc-300"
+                class="inline-flex items-center border-t-2 pt-4 text-sm font-medium px-4 border-transparent text-zinc-500 hover:border-zinc-300"
+                aria-label={"Page #{page}"}
               >
                 <%= page %>
               </.link>
@@ -904,10 +956,11 @@ defmodule LivePlaygroundWeb.MoreComponents do
               patch={build_pagination_path(@patch_path, @page + 1, @per_page, @params_key, @params_per_page_key, @keep_params)}
               class={[
                 "inline-flex items-center border-t-2 pt-4 text-sm font-medium pl-4",
-                "border-transparent text-zinc-400 hover:border-zinc-300"
+                "border-transparent text-zinc-500 hover:border-zinc-300"
               ]}
+              aria-label="Next page"
             >
-              Next <.icon name="hero-arrow-long-right" class="ml-3 h-5 w-5 text-gray-400" />
+              Next <.icon name="hero-arrow-long-right" class="ml-3 h-5 w-5 text-gray-500" />
             </.link>
           <% else %>
             <.link
@@ -915,10 +968,11 @@ defmodule LivePlaygroundWeb.MoreComponents do
               phx-value-page={@page + 1}
               class={[
                 "inline-flex items-center border-t-2 pt-4 text-sm font-medium pl-4",
-                "border-transparent text-zinc-400 hover:border-zinc-300"
+                "border-transparent text-zinc-500 hover:border-zinc-300"
               ]}
+              aria-label="Next page"
             >
-              Next <.icon name="hero-arrow-long-right" class="ml-3 h-5 w-5 text-gray-400" />
+              Next <.icon name="hero-arrow-long-right" class="ml-3 h-5 w-5 text-gray-500" />
             </.link>
           <% end %>
         <% end %>
@@ -988,13 +1042,14 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   def editable(assigns) do
     ~H"""
-    <div :if={!@edit} class="w-full flex items-center justify-between">
+    <div :if={!@edit} class="w-full flex items-center justify-between" role="region" aria-label="Editable Content">
       <div id={@id}>
         <%= render_slot(@inner_block) %>
       </div>
 
-      <.link phx-click={@edit_event} phx-value-field={@id}>
-        <span class="hidden md:inline font-bold">Edit</span> <.icon name="hero-pencil-square-mini" class="md:hidden h-6 w-6" />
+      <.link phx-click={@edit_event} phx-value-field={@id} aria-label="Edit">
+        <span class="hidden md:inline font-bold">Edit</span>
+        <.icon name="hero-pencil-square-mini" class="md:hidden h-6 w-6" />
       </.link>
     </div>
 
@@ -1003,6 +1058,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
       for={@form}
       phx-submit={@save_event}
       class="flex flex-col space-x-0 space-y-2 md:flex-row md:space-x-2 md:space-y-0"
+      aria-label="Edit Form"
     >
       <%= render_slot(@input_block) %>
       <div>
@@ -1055,15 +1111,13 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   def slideover(assigns) do
     ~H"""
-    <div
-      class="relative z-50"
-      aria-labelledby={"#{@id}-title"}
-      aria-describedby={"#{@id}-description"}
-      role="dialog"
-      aria-modal="true"
-      tabindex="0"
-    >
-      <div :if={!@enable_main_content} id={"#{@id}-bg"} class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity hidden" />
+    <div class="relative z-50" aria-labelledby={"#{@id}-title"} role="dialog" aria-modal="true" tabindex="0">
+      <div
+        :if={!@enable_main_content}
+        id={"#{@id}-bg"}
+        class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity hidden"
+        aria-hidden="true"
+      />
       <div
         id={@id}
         phx-mounted={@show && show_slideover(@id)}
@@ -1093,7 +1147,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
                   </header>
 
                   <div class="ml-3 flex h-7">
-                    <.link phx-click={hide_slideover(@on_cancel, @id)}>
+                    <.link phx-click={hide_slideover(@on_cancel, @id)} aria-label="Close">
                       <.icon name="hero-x-mark-solid" class="w-6 h-6 text-gray-400 hover:text-gray-500" />
                     </.link>
                   </div>
@@ -1112,6 +1166,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
                       "py-2 px-5 text-sm font-semibold leading-6 text-gray-700 active:text-gray-800",
                       "w-full sm:w-auto sm:ml-3"
                     ]}
+                    aria-label="Cancel"
                   >
                     <%= render_slot(cancel) %>
                   </.link>
@@ -1122,6 +1177,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
                     id={"#{@id}-confirm"}
                     phx-disable-with
                     class={"w-full sm:w-auto mt-3 sm:mt-0 #{Map.get(confirm, :class, nil)}"}
+                    aria-label="Confirm"
                   >
                     <%= render_slot(confirm) %>
                   </.button>
@@ -1192,12 +1248,18 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   def uploads_upload_area(assigns) do
     ~H"""
-    <div phx-drop-target={@uploads_name.ref} class="flex justify-center rounded-lg border border-dashed border-zinc-900/25 px-6 py-10">
+    <div
+      phx-drop-target={@uploads_name.ref}
+      class="flex justify-center rounded-lg border border-dashed border-zinc-900/25 px-6 py-10"
+      role="region"
+      aria-label="File Upload Area"
+    >
       <div class="text-center">
         <.icon name="hero-photo" class="mx-auto h-12 w-12 text-zinc-300" />
         <div class="mt-4 flex text-sm leading-6 text-zinc-600">
           <label for={@uploads_name.ref} class="relative cursor-pointer bg-transparent font-semibold">
-            <span>Upload a file</span> <.live_file_input upload={@uploads_name} class="sr-only" />
+            <span>Upload a file</span>
+            <.live_file_input upload={@uploads_name} class="sr-only" />
           </label>
 
           <p class="pl-1">or drag and drop</p>
@@ -1238,15 +1300,17 @@ defmodule LivePlaygroundWeb.MoreComponents do
   def uploads_photo_preview_area(assigns) do
     ~H"""
     <ul role="list" class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 xl:grid-cols-4">
-      <li :for={entry <- @uploads_name.entries}>
+      <li :for={entry <- @uploads_name.entries} role="listitem">
         <.live_img_preview
           :if={:not_accepted not in upload_errors(@uploads_name, entry)}
           entry={entry}
           class="object-contain w-full h-28 sm:h-44 rounded-lg bg-zinc-200"
+          aria-label="Image preview"
         />
         <div
           :if={:not_accepted in upload_errors(@uploads_name, entry)}
           class="flex items-center justify-center text-xs w-full h-28 sm:h-44 rounded-lg bg-zinc-100 text-ellipsis truncate"
+          aria-label="File not accepted"
         >
           <%= entry.client_name %>
         </div>
@@ -1254,7 +1318,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         <div class="flex justify-between items-center space-x-2">
           <div :if={upload_errors(@uploads_name, entry) == []} class="mt-3 flex gap-3 text-sm leading-6">
             <.circular_progress_bar progress={entry.progress} stroke_width={3} radius={7.5} svg_class="mt-0.5 w-5 h-5 flex-none" />
-            <div :if={entry.progress > 0}>
+            <div :if={entry.progress > 0} aria-label="Upload progress">
               <%= entry.progress %>%
             </div>
           </div>
@@ -1263,7 +1327,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
             <%= Phoenix.Naming.humanize(err) %>
           </.error>
 
-          <.link phx-click="cancel" phx-value-ref={entry.ref} phx-target={@target} class="mt-2">
+          <.link phx-click="cancel" phx-value-ref={entry.ref} phx-target={@target} class="mt-2" aria-label="Cancel upload">
             <.icon name="hero-trash" class="w-5 h-5 text-zinc-400 hover:text-zinc-600" />
           </.link>
         </div>
@@ -1293,7 +1357,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
       |> assign_new(:circumference, fn -> 2 * Math.pi() * assigns.radius end)
 
     ~H"""
-    <svg class={@svg_class}>
+    <svg class={@svg_class} role="img" aria-label="Progress">
       <circle
         class={@bg_circle_class}
         stroke-width={@stroke_width}

@@ -29,7 +29,7 @@ defmodule LivePlaygroundWeb.CompsLive.StepsNavigation do
         <p class="text-sm text-gray-900 font-medium">
           <%= menu.title %>
         </p>
-        <p class="text-xs text-gray-500">
+        <p class="text-xs text-gray-600">
           <%= menu.description %>
         </p>
       </:step>

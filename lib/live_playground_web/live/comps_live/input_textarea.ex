@@ -34,7 +34,7 @@ defmodule LivePlaygroundWeb.CompsLive.InputTextarea do
     </.header>
     <!-- end hiding from live code -->
     <.form for={@form} phx-change="demo" class="space-y-5">
-      <.input label="Name" type="textarea" rows="3" name="name" value={@name} errors={["Oops!"]} />
+      <.input label="Name" type="textarea" rows="3" id="name" name="name" value={@name} errors={["Oops!"]} />
       <.input label="Language" type="textarea" rows="3" field={@form[:language]} />
     </.form>
     <!-- start hiding from live code -->

@@ -33,7 +33,12 @@ defmodule LivePlaygroundWeb.DemoHelpers do
     <div id={"#{@id}-ruler"} class="w-full"></div>
     <div id={"#{@id}-container"} class="relative">
       <div id={"#{@id}-overlay"} class={[@height, "iframe-overlay absolute w-full overflow-hidden"]}></div>
-      <iframe class={[@height, "w-full h-96 overflow-hidden rounded-lg ring-1 ring-slate-900/10"]} src={@src}></iframe>
+      <iframe
+        class={[@height, "w-full h-96 overflow-hidden rounded-lg ring-1 ring-slate-900/10"]}
+        src={@src}
+        aria-label="Resizable Frame"
+      >
+      </iframe>
       <div
         id={"#{@id}-handler"}
         data-ruler={"#{@id}-ruler"}
@@ -42,9 +47,11 @@ defmodule LivePlaygroundWeb.DemoHelpers do
         phx-hook={@hook}
         class="absolute inset-y-0 left-full hidden cursor-ew-resize items-center px-2 sm:flex group"
         title="Drag to adjust size"
+        aria-label="Resize handler"
+        role="slider"
       >
         <div class="h-6 w-1 rounded-full bg-gray-300 group-hover:bg-gray-400"></div>
-        <span class="hidden 2xl:inline ml-2 w-16 text-gray-200 text-xs group-hover:hidden">
+        <span class="hidden 2xl:inline ml-2 w-16 text-gray-500 text-xs group-hover:hidden">
           Drag to adjust size
         </span>
       </div>
@@ -77,7 +84,7 @@ defmodule LivePlaygroundWeb.DemoHelpers do
       end)
 
     ~H"""
-    <a target="_blank" class="underline" href={@url}><%= render_slot(@inner_block) %></a>
+    <a target="_blank" class="underline" href={@url} aria-label="GitHub link"><%= render_slot(@inner_block) %></a>
     """
   end
 
@@ -102,7 +109,12 @@ defmodule LivePlaygroundWeb.DemoHelpers do
 
   def goto_definition(assigns) do
     ~H"""
-    <a class="flex items-center font-medium" target="_blank" href={"#{github_url(assigns.filename)}#:~:text=#{@definition}"}>
+    <a
+      class="flex items-center font-medium"
+      target="_blank"
+      href={"#{github_url(assigns.filename)}#:~:text=#{@definition}"}
+      aria-label="Go to function definition"
+    >
       <span><%= render_slot(@inner_block) %></span>
       <.icon name="hero-arrow-top-right-on-square" class="ml-1 w-5 h-5" />
     </a>
@@ -129,6 +141,7 @@ defmodule LivePlaygroundWeb.DemoHelpers do
           true
         )
       }
+      aria-label="Open code breakdown"
     >
       <span><%= @title %></span>
       <.icon name="hero-arrow-left-on-rectangle" class="ml-1 w-5 h-5" />
@@ -196,8 +209,8 @@ defmodule LivePlaygroundWeb.DemoHelpers do
       end)
 
     ~H"""
-    <div class="rounded-lg bg-white border border-gray-200 text-sm xl:text-base">
-      <div class="flex justify-between items-center px-4 py-3 sm:px-6 text-gray-400">
+    <div class="rounded-lg bg-[#f9f9f9] border border-gray-200 text-xs xl:text-sm" aria-label="Code block">
+      <div class="flex justify-between items-center px-4 py-3 sm:px-6 text-gray-500">
         <div class="overflow-hidden text-ellipsis font-mono">
           <%= responsive_filename(assigns.filename) |> raw() %>
         </div>
@@ -209,20 +222,26 @@ defmodule LivePlaygroundWeb.DemoHelpers do
             data-target-container={"#{@id}-target"}
             data-message-container={"#{@id}-message"}
             class="flex rounded-full p-2 hover:bg-gray-200"
+            aria-label="Copy to clipboard"
           >
             <.icon name="hero-clipboard-document" class="w-4 h-4" />
           </.link>
-          <a target="_blank" href={github_url(assigns.filename)} class="flex rounded-full p-2 hover:bg-gray-200">
+          <a
+            target="_blank"
+            href={github_url(assigns.filename)}
+            class="flex rounded-full p-2 hover:bg-gray-200"
+            aria-label="Open in GitHub"
+          >
             <.icon name="hero-arrow-top-right-on-square" class="w-4 h-4" />
           </a>
         </div>
       </div>
-      <div class="overflow-auto overscroll-auto bg-[#f8f8f8] px-4 py-5 sm:p-6">
-        <div class="text-lg text-gray-400 tracking-widest -mt-2 mb-3">...</div>
+      <div class="overflow-auto overscroll-auto bg-white px-4 py-5 sm:p-6">
+        <div class="text-lg text-gray-500 tracking-widest -mt-2 mb-3">...</div>
         <div id={"#{@id}-target"}>
           <%= @highlighted_code %>
         </div>
-        <div class="text-lg text-gray-400 tracking-widest mb-1">...</div>
+        <div class="text-lg text-gray-500 tracking-widest mb-1">...</div>
       </div>
     </div>
     """
@@ -240,8 +259,8 @@ defmodule LivePlaygroundWeb.DemoHelpers do
       end)
 
     ~H"""
-    <div class="rounded-lg bg-white border border-gray-200 text-sm xl:text-base">
-      <div class="flex justify-between items-center px-4 py-3 sm:px-6 text-gray-400">
+    <div class="rounded-lg bg-[#f9f9f9] border border-gray-200 text-xs xl:text-sm" aria-label="Code block">
+      <div class="flex justify-between items-center px-4 py-3 sm:px-6 text-gray-500">
         <div class="overflow-hidden text-ellipsis font-mono">
           <%= responsive_filename(assigns.filename) |> raw() %>
         </div>
@@ -253,15 +272,21 @@ defmodule LivePlaygroundWeb.DemoHelpers do
             data-target-container={"#{@id}-target"}
             data-message-container={"#{@id}-message"}
             class="flex rounded-full p-2 hover:bg-gray-200"
+            aria-label="Copy to clipboard"
           >
             <.icon name="hero-clipboard-document" class="w-4 h-4" />
           </.link>
-          <a target="_blank" href={github_url(assigns.filename)} class="flex rounded-full p-2 hover:bg-gray-200">
+          <a
+            target="_blank"
+            href={github_url(assigns.filename)}
+            class="flex rounded-full p-2 hover:bg-gray-200"
+            aria-label="Open in GitHub"
+          >
             <.icon name="hero-arrow-top-right-on-square" class="w-4 h-4" />
           </a>
         </div>
       </div>
-      <div id={"#{@id}-target"} class="overflow-auto overscroll-auto bg-[#f8f8f8] px-4 py-5 sm:p-6">
+      <div id={"#{@id}-target"} class="overflow-auto overscroll-auto bg-white px-4 py-5 sm:p-6">
         <%= @highlighted_code %>
       </div>
     </div>
