@@ -6,7 +6,7 @@ defmodule LivePlayground.Languages2 do
   import Ecto.Query, warn: false
   alias LivePlayground.Repo
 
-  alias LivePlayground.Languages.Language
+  alias LivePlayground.Languages2.Language
 
   @pubsub LivePlayground.PubSub
   @topic inspect(__MODULE__)
@@ -141,7 +141,7 @@ defmodule LivePlayground.Languages2 do
       %Ecto.Changeset{data: %Language{}}
 
   """
-  def change_language(%Language{} = language, attrs \\ %{}) do
-    Language.changeset(language, attrs)
+  def change_language(%Language{} = language, attrs \\ %{}, opts \\ []) do
+    Language.changeset(language, attrs, opts)
   end
 end

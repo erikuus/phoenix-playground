@@ -9,8 +9,11 @@
 
 <.list>
   <:item title="Countrycode"><%= @language.countrycode %></:item>
-  <:item title="Isofficial"><%= @language.isofficial %></:item>
-  <:item title="Percentage"><%= @language.percentage %></:item>
+  <:item title="Isofficial">
+    <.icon :if={@language.isofficial} name="hero-check" />
+    <.icon :if={!@language.isofficial} name="hero-minus" />
+  </:item>
+  <:item title="Percentage"><%= format_percentage(@language.percentage) %></:item>
 </.list>
 
 <.back navigate={get_back_url(@options)}>Back to languages</.back>

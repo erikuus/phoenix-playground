@@ -28,4 +28,8 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Show do
     query_string = URI.encode_query(params)
     "#{base_path}?#{query_string}"
   end
+
+  def format_percentage(value, precision \\ 1) do
+    Number.Percentage.number_to_percentage(value, precision: precision)
+  end
 end

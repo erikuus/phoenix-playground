@@ -68,6 +68,14 @@ defmodule LivePlayground.Countries do
 
   # endclickbuttons # endhandleparams # endstreamreset # endbroadcaststreamreset
 
+  def list_code_country(code) do
+    q = "#{code}%"
+
+    from(Country)
+    |> where([c], ilike(c.code, ^q))
+    |> Repo.all()
+  end
+
   @doc """
   Gets a single country.
 

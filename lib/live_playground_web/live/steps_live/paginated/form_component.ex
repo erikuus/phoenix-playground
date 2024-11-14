@@ -2,6 +2,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
   use LivePlaygroundWeb, :live_component
 
   alias LivePlayground.Languages2
+  alias LivePlayground.Countries
 
   @impl true
   def render(assigns) do
@@ -13,14 +14,17 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
       </.header>
 
       <.simple_form for={@form} id="language-form" phx-target={@myself} phx-change="validate" phx-submit="save">
-        <.input field={@form[:countrycode]} type="text" label="Countrycode" />
+        <.input field={@form[:countrycode]} type="text" label="Countrycode" autocomplete="off" list="matches" phx-debounce="500" />
         <.input field={@form[:isofficial]} type="checkbox" label="Isofficial" />
-        <.input field={@form[:language]} type="text" label="Language" />
-        <.input field={@form[:percentage]} type="number" label="Percentage" step="any" />
+        <.input field={@form[:language]} type="text" label="Language" phx-debounce="500" />
+        <.input field={@form[:percentage]} type="number" label="Percentage" step="any" min={0} max={100} />
         <:actions>
           <.button phx-disable-with="Saving...">Save Language</.button>
         </:actions>
       </.simple_form>
+      <datalist id="matches">
+        <option :for={match <- @matches} value={match.code} />
+      </datalist>
     </div>
     """
   end
@@ -32,19 +36,33 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
+     |> assign(:matches, [])
      |> assign_form(changeset)}
   end
 
   @impl true
   def handle_event("validate", %{"language" => language_params}, socket) do
+    # Suggestions logic
+    countrycode = Map.get(language_params, "countrycode", "")
+    matches = if countrycode == "", do: [], else: Countries.list_code_country(countrycode)
+    validate_countrycode_exists = matches == []
+
+    # Validation logic
     changeset =
       socket.assigns.language
-      |> Languages2.change_language(language_params)
+      |> Languages2.change_language(language_params,
+        validate_countrycode_exists: validate_countrycode_exists
+      )
       |> Map.put(:action, :validate)
 
-    {:noreply, assign_form(socket, changeset)}
+    # Update socket
+    {:noreply,
+     socket
+     |> assign_form(changeset)
+     |> assign(:matches, matches)}
   end
 
+  @impl true
   def handle_event("save", %{"language" => language_params}, socket) do
     save_language(socket, socket.assigns.action, language_params)
   end

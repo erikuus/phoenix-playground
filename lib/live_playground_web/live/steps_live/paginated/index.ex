@@ -2,7 +2,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Languages2
-  alias LivePlayground.Languages.Language
+  alias LivePlayground.Languages2.Language
 
   @per_page 10
 
@@ -80,9 +80,8 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     end
   end
 
-  defp ceil_div(num, denom) do
-    div(num + denom - 1, denom)
-  end
+  defp ceil_div(_num, 0), do: 0
+  defp ceil_div(num, denom), do: div(num + denom - 1, denom)
 
   defp get_allowed_per_page(per_page) do
     if per_page in get_per_page_options(), do: per_page, else: @per_page
@@ -155,9 +154,10 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
   end
 
   @impl true
-  def handle_event("update-pagination", params, socket) do
-    params = update_params(params, socket.assigns.options)
-    socket = push_patch(socket, to: get_pagination_url(params))
+  def handle_event("change-per-page", params, socket) do
+    per_page = params["per_page"] || @per_page
+    options = %{socket.assigns.options | per_page: per_page}
+    socket = push_patch(socket, to: get_pagination_url(options))
     {:noreply, socket}
   end
 
@@ -299,17 +299,20 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     |> stream_insert(:languages, language)
   end
 
-  defp update_params(%{"per_page" => per_page}, options) do
-    %{options | per_page: to_integer(per_page, @per_page)}
-  end
-
-  defp update_params(%{"page" => page}, options) do
-    %{options | page: to_integer(page, 1)}
-  end
-
   defp get_pagination_url(params, base_path \\ "/steps/paginated") do
     query_string = URI.encode_query(params)
     "#{base_path}?#{query_string}"
+  end
+
+  defp get_flash_message_with_reset_link(message) do
+    link =
+      link("Click here to reload and sort now",
+        to: "#",
+        phx_click: "reset-stream",
+        class: "underline"
+      )
+
+    [message, " ", link]
   end
 
   defp get_page_summary(count_all, page, per_page, stream_size) do
@@ -328,14 +331,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     end
   end
 
-  defp get_flash_message_with_reset_link(message) do
-    link =
-      link("Click here to reload and sort now",
-        to: "#",
-        phx_click: "reset-stream",
-        class: "underline"
-      )
-
-    [message, " ", link]
+  def format_percentage(value, precision \\ 1) do
+    Number.Percentage.number_to_percentage(value, precision: precision)
   end
 end
