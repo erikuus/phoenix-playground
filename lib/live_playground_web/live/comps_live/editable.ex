@@ -44,7 +44,7 @@ defmodule LivePlaygroundWeb.CompsLive.Editable do
         >
           <%= @language.percentage %>
           <:input_block>
-            <.input field={@form[:percentage]} type="text" class="flex-auto md:-ml-3" />
+            <.input field={@form[:percentage]} type="text" title="Percentage" class="flex-auto md:-ml-3" />
           </:input_block>
         </.editable>
       </:item>

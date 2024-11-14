@@ -9,10 +9,10 @@ defmodule LivePlaygroundWeb.Menus.Steps do
     ~H"""
     <.steps>
       <:step :for={step <- get_steps(@current_path)} path={step.path} active={step.active} checked={step.checked}>
-        <p class="text-sm text-gray-900 font-medium">
+        <p class="text-sm text-zinc-900 font-medium">
           <%= step.title %>
         </p>
-        <p class="text-xs text-gray-500">
+        <p class="text-xs text-zinc-600">
           <%= step.description %>
         </p>
       </:step>
