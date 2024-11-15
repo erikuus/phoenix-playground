@@ -471,6 +471,12 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             active: is_active?(current_path, ["/alert"])
           },
           %{
+            icon: "hero-tag",
+            label: "Badge",
+            path: ~p"/badge",
+            active: is_active?(current_path, ["/badge"])
+          },
+          %{
             icon: "hero-light-bulb",
             label: "Note",
             path: ~p"/note",

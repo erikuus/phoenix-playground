@@ -388,6 +388,38 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
+  Renders a badge with different color themes.
+
+  ## Examples
+
+      <.badge>Badge</.badge>
+      <.badge kind={:red}>Badge</.badge>
+      <.badge kind={:yellow}>Badge</.badge>
+  """
+  attr :kind, :atom, default: :gray
+  attr :class, :string, default: "text-xs font-medium px-2 py-1"
+  slot :inner_block, required: true
+
+  def badge(assigns) do
+    ~H"""
+    <span class={[
+      "inline-flex items-center rounded-full ring-1 ring-inset",
+      @kind == :gray && "bg-gray-50 text-gray-600 ring-gray-500/10",
+      @kind == :red && "bg-red-50 text-red-700 ring-red-600/10",
+      @kind == :yellow && "bg-yellow-50 text-yellow-800 ring-yellow-600/20",
+      @kind == :green && "bg-green-50 text-green-700 ring-green-600/20",
+      @kind == :blue && "bg-blue-50 text-blue-700 ring-blue-700/10",
+      @kind == :indigo && "bg-indigo-50 text-indigo-700 ring-indigo-700/10",
+      @kind == :purple && "bg-purple-50 text-purple-700 ring-purple-700/10",
+      @kind == :pink && "bg-pink-50 text-pink-700 ring-pink-700/10",
+      @class
+    ]}>
+      <%= render_slot(@inner_block) %>
+    </span>
+    """
+  end
+
+  @doc """
   Renders a link that is designed to look like a button.
 
   ## Examples

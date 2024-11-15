@@ -30,24 +30,9 @@
 >
   <:col :let={{_id, language}} label="Countrycode">
     <%= language.countrycode %>
-    <span
-      :if={Map.get(language, :created, false)}
-      class="ml-1 inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20"
-    >
-      New
-    </span>
-    <span
-      :if={Map.get(language, :updated, false)}
-      class="ml-1 inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20"
-    >
-      Edited
-    </span>
-    <span
-      :if={Map.get(language, :deleted, false)}
-      class="ml-1 inline-flex items-center rounded-full bg-zinc-50 px-2 py-1 text-xs font-medium text-zinc-400 ring-1 ring-inset ring-zinc-500/10"
-    >
-      Deleted
-    </span>
+    <.badge :if={Map.get(language, :created, false)} kind={:green}>New</.badge>
+    <.badge :if={Map.get(language, :updated, false)} kind={:blue}>Edited</.badge>
+    <.badge :if={Map.get(language, :deleted, false)} kind={:gray}>Deleted</.badge>
     <dl class="hidden md:block font-normal text-xs text-zinc-500">
       <dt>Stream inserted:</dt>
       <dd><%= Timex.now() %></dd>

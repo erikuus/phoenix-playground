@@ -116,6 +116,7 @@ defmodule LivePlaygroundWeb.Router do
       live "/slideover-navigate", CompsLive.SlideoverNavigate
       live "/button-link", CompsLive.ButtonLink
       live "/alert", CompsLive.Alert
+      live "/badge", CompsLive.Badge
       live "/note", CompsLive.Note
       live "/simple-list", CompsLive.SimpleList
       live "/steps-navigation", CompsLive.StepsNavigation
