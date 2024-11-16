@@ -174,19 +174,25 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     language = Languages2.get_language!(id)
-    {:ok, _} = Languages2.delete_language(language)
 
-    socket =
-      socket
-      |> handle_deleted(language)
-      |> put_flash(
-        :info,
-        get_flash_message_with_reset_link(
-          "Language deleted. It will be removed from the list when you navigate away or refresh."
-        )
-      )
+    case Languages2.delete_language(language) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> handle_deleted(language)
+         |> put_flash(
+           :info,
+           get_flash_message_with_reset_link(
+             "Language deleted. It will be removed from the list when you navigate away or refresh."
+           )
+         )}
 
-    {:noreply, socket}
+      {:error, changeset} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Failed to delete language.")
+         |> assign(:changeset, changeset)}
+    end
   end
 
   @impl true

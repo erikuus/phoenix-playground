@@ -9,7 +9,7 @@ defmodule LivePlayground.Languages2 do
   alias LivePlayground.Languages2.Language
 
   @pubsub LivePlayground.PubSub
-  @topic inspect(__MODULE__)
+  @topic "languages"
 
   def subscribe do
     Phoenix.PubSub.subscribe(@pubsub, @topic)

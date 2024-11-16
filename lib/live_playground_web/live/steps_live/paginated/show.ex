@@ -1,7 +1,7 @@
 defmodule LivePlaygroundWeb.StepsLive.Paginated.Show do
   use LivePlaygroundWeb, :live_view
 
-  alias LivePlayground.Languages
+  alias LivePlayground.Languages2
 
   @impl true
   def mount(_params, _session, socket) do
@@ -10,13 +10,13 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Show do
 
   @impl true
   def handle_params(%{"id" => id} = params, _, socket) do
-    language = Languages.get_language!(id)
-
+    page_title = page_title(socket.assigns.live_action)
+    language = Languages2.get_language!(id)
     options = Map.delete(params, "id")
 
     {:noreply,
      socket
-     |> assign(:page_title, page_title(socket.assigns.live_action))
+     |> assign(:page_title, page_title)
      |> assign(:language, language)
      |> assign(:options, options)}
   end
