@@ -1,6 +1,11 @@
 defmodule LivePlaygroundWeb.Menus.Steps do
   use Phoenix.Component
 
+  use Phoenix.VerifiedRoutes,
+    endpoint: LivePlaygroundWeb.Endpoint,
+    router: LivePlaygroundWeb.Router,
+    statics: LivePlaygroundWeb.static_paths()
+
   import LivePlaygroundWeb.MoreComponents
 
   attr :current_path, :string
@@ -29,29 +34,38 @@ defmodule LivePlaygroundWeb.Menus.Steps do
   defp get_steps() do
     [
       %{
-        title: "Generated",
-        description: "by mix phx.gen.live command",
-        path: "/steps/generated",
+        title: "Generate",
+        description: "Create the foundation with mix phx.gen.live",
+        path: ~p"/steps/generated",
         order: 1
       },
       %{
-        title: "Pagination",
-        description: "added to generated code",
-        path: "/steps/paginated",
+        title: "Add Pagination",
+        description: "Enhance with advanced pagination",
+        path: ~p"/steps/paginated",
         order: 2
       },
       %{
-        title: "Step 3",
-        description: "Coming soon",
-        path: "/steps/coming-soon",
+        title: "Extract Pagination Logic",
+        description: "Refactor pagination into a helper module",
+        path: "/3",
         order: 3
       },
+      # Refactor pagination-specific code into a reusable helper module for cleaner, more maintainable code.
       %{
-        title: "Step 4",
-        description: "Coming soon",
-        path: "/steps/coming-soon",
+        title: "Add Sorting",
+        description: "Implement dynamic column ordering",
+        path: "/4",
         order: 4
+      },
+      # Introduce sorting functionality to allow users to reorder data columns
+      %{
+        title: "Add Filtering",
+        description: "Implement filtering to narrow results",
+        path: "/5",
+        order: 5
       }
+      # Implement filtering options so users can find specific data based on search criteria or categories.
     ]
   end
 

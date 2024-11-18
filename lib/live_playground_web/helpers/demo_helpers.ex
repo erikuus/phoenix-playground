@@ -286,7 +286,7 @@ defmodule LivePlaygroundWeb.DemoHelpers do
           </a>
         </div>
       </div>
-      <div id={"#{@id}-target"} class="overflow-auto overscroll-auto bg-white px-4 py-5 sm:p-6">
+      <div id={"#{@id}-target"} class="overflow-auto overscroll-auto bg-white px-4 py-5 sm:p-6 rounded-b-lg">
         <%= @highlighted_code %>
       </div>
     </div>
