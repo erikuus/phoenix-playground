@@ -33,6 +33,10 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
   def update(%{language: language} = assigns, socket) do
     changeset = Languages2.change_language(language)
 
+    if assigns.action == :edit do
+      Languages2.broadcast_edit_started(language.id)
+    end
+
     {:ok,
      socket
      |> assign(assigns)
@@ -72,12 +76,15 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
 
     case Languages2.update_language(language, language_params) do
       {:ok, updated_language} ->
+        Languages2.broadcast_edit_ended(language.id)
         notify_parent({:updated, updated_language})
         {:noreply, push_patch(socket, to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         if changeset.errors[:lock_version] do
           # Handle stale entry error
+          Languages2.broadcast_edit_ended(language.id)
+
           socket =
             socket
             |> put_flash(:error, "This language has been modified by someone else.")
@@ -107,4 +114,11 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
+
+  @impl true
+  def terminate(_reason, socket) do
+    if socket.assigns.action == :edit do
+      Languages2.broadcast_edit_ended(socket.assigns.language.id)
+    end
+  end
 end

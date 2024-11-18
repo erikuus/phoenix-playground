@@ -29,6 +29,24 @@ defmodule LivePlayground.Languages2 do
     {:error, changeset}
   end
 
+  def broadcast_edit_started(language_id) do
+    Phoenix.PubSub.broadcast_from(
+      @pubsub,
+      self(),
+      @topic,
+      {__MODULE__, {:edit_started, language_id}}
+    )
+  end
+
+  def broadcast_edit_ended(language_id) do
+    Phoenix.PubSub.broadcast_from(
+      @pubsub,
+      self(),
+      @topic,
+      {__MODULE__, {:edit_ended, language_id}}
+    )
+  end
+
   def count_languages do
     from(Language)
     |> Repo.aggregate(:count, :id)

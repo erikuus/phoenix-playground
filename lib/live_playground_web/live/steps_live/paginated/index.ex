@@ -44,6 +44,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     |> assign(:count_all_pagination, count_all)
     |> assign(:count_visible_rows, count_visible_rows)
     |> assign(:pending_deletion, false)
+    |> assign(:languages_being_edited, MapSet.new())
     |> stream(:languages, Languages2.list_languages(options))
   end
 
@@ -175,23 +176,36 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
   def handle_event("delete", %{"id" => id}, socket) do
     language = Languages2.get_language!(id)
 
-    case Languages2.delete_language(language) do
-      {:ok, _} ->
-        {:noreply,
-         socket
-         |> handle_deleted(language)
-         |> put_flash(
-           :info,
-           get_flash_message_with_reset_link(
-             "Language deleted. It will be removed from the list when you navigate away or refresh."
-           )
-         )}
+    if MapSet.member?(socket.assigns.languages_being_edited, language.id) do
+      {:noreply,
+       socket
+       |> put_flash(:error, "Cannot delete language while it is being edited by another user.")}
+    else
+      case Languages2.delete_language(language) do
+        {:ok, deleted_language} ->
+          {:noreply,
+           socket
+           |> handle_deleted(deleted_language)
+           |> put_flash(
+             :info,
+             get_flash_message_with_reset_link(
+               "Language deleted. It will be removed from the list when you navigate away or refresh."
+             )
+           )}
 
-      {:error, changeset} ->
-        {:noreply,
-         socket
-         |> put_flash(:error, "Failed to delete language.")
-         |> assign(:changeset, changeset)}
+        {:error, %Ecto.Changeset{errors: [lock_version: _]}} ->
+          {:noreply,
+           socket
+           |> put_flash(
+             :error,
+             "Could not delete language. It has been modified by another user. Please refresh and try again."
+           )}
+
+        {:error, _changeset} ->
+          {:noreply,
+           socket
+           |> put_flash(:error, "Failed to delete language due to internal error.")}
+      end
     end
   end
 
@@ -279,6 +293,32 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
       )
 
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(
+        {LivePlayground.Languages2, {:edit_started, language_id}},
+        socket
+      ) do
+    {:noreply,
+     socket
+     |> assign(
+       :languages_being_edited,
+       MapSet.put(socket.assigns.languages_being_edited, language_id)
+     )}
+  end
+
+  @impl true
+  def handle_info(
+        {LivePlayground.Languages2, {:edit_ended, language_id}},
+        socket
+      ) do
+    {:noreply,
+     socket
+     |> assign(
+       :languages_being_edited,
+       MapSet.delete(socket.assigns.languages_being_edited, language_id)
+     )}
   end
 
   defp handle_created(socket, language) do
