@@ -114,11 +114,4 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
-
-  @impl true
-  def terminate(_reason, socket) do
-    if socket.assigns.action == :edit do
-      Languages2.broadcast_edit_ended(socket.assigns.language.id)
-    end
-  end
 end
