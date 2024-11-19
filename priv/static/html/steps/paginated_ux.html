@@ -1,0 +1,235 @@
+<h3>
+  <strong>General Principles</strong>
+</h3>
+<ol>
+  <li>
+    <p>
+      <strong>Keeping Key Items Always in View</strong><br />Newly added,
+      edited, or deleted items remain visible in the current view, even if they
+      don’t naturally belong to the page based on sorting or pagination. This
+      ensures users always see immediate feedback for their actions, maintaining
+      trust and a consistent interface. Deleted items are not removed abruptly
+      but marked visually until the user navigates away or refreshes.
+    </p>
+  </li>
+  <li>
+    <p><strong>Handling Simultaneous User Actions</strong></p>
+    <ul>
+      <li>
+        If an item is modified by another user after the form is opened, saving
+        displays an error:
+        <strong>“This language has been modified by someone else.”</strong>
+      </li>
+      <li>
+        If an item is being edited, it cannot be deleted by another user.
+        Attempting to delete shows the error:
+        <strong
+          >“Cannot delete language while it is being edited by another
+          user.”</strong
+        >
+      </li>
+    </ul>
+  </li>
+</ol>
+<hr />
+<h3><strong>Additions</strong></h3>
+<ul>
+  <li>
+    When a new item is added, it is temporarily placed at the top of the list,
+    regardless of its actual sorted position.
+  </li>
+  <li>
+    The new item is highlighted with a green background and a
+    <strong>“New” badge</strong>. These indicators remain until the user
+    navigates away, refreshes, or reloads the page to sort the item into its
+    correct position.
+  </li>
+  <li>
+    The user who adds the item sees:
+    <strong
+      >“Item created successfully. It has been temporarily added to the top of
+      the list. <u>Click here to reload and sort now</u>.”</strong
+    >
+  </li>
+  <li>
+    Other users see:
+    <strong
+      >“A new item has been added to the list by another user.
+      <u>Click here to reload and sort now</u>.”</strong
+    >
+  </li>
+</ul>
+<hr />
+<h3><strong>Edits</strong></h3>
+<ul>
+  <li>
+    Edited items are updated in place and remain in their current position until
+    reset or navigation.
+  </li>
+  <li>
+    Edited items are highlighted with a blue background and marked with an
+    <strong>“Edited” badge</strong> for easy identification.
+  </li>
+  <li>
+    The user who edits the item sees:
+    <strong
+      >“Item updated successfully.
+      <u>Click here to reload and sort now</u>.”</strong
+    >
+  </li>
+  <li>
+    Other users see:
+    <strong
+      >“An item has been updated by another user.
+      <u>Click here to reload and sort now</u>.”</strong
+    >
+  </li>
+</ul>
+<hr />
+<h3><strong>Deletions</strong></h3>
+<ul>
+  <li>
+    Deleted items remain visible but are marked with a gray background, a
+    strikethrough, and a <strong>“Deleted” badge</strong>.
+  </li>
+  <li>
+    Items are only fully removed when the user navigates away or refreshes the
+    page.
+  </li>
+  <li>
+    The user who deletes the item sees:
+    <strong
+      >“Item deleted. It will be removed from the list when you navigate away or
+      refresh. <u>Click here to reload and sort now</u>.”</strong
+    >
+  </li>
+  <li>
+    Other users see:
+    <strong
+      >“An item has been deleted by another user.
+      <u>Click here to reload and sort now</u>.”</strong
+    >
+  </li>
+</ul>
+<hr />
+<h3><strong>Summary</strong></h3>
+<p>
+  The summary (e.g., "1 - 6 of 101") reflects the visible rows and total count.
+</p>
+<ul>
+  <li>
+    <p>
+      <strong>After an Addition</strong>: The summary updates immediately to
+      reflect the new total count but adjusts after a refresh to reflect the
+      correct sorted position of the new item. For example:
+    </p>
+    <ul>
+      <li>Before addition: <strong>“1 - 5 of 100”</strong></li>
+      <li>After addition: <strong>“1 - 6 of 101”</strong></li>
+      <li>After refresh: <strong>“1 - 5 of 101”</strong></li>
+    </ul>
+  </li>
+  <li>
+    <p>
+      <strong>After a Deletion</strong>: The summary remains gray to indicate
+      that it is temporarily out of sync with the actual total until a refresh
+      or navigation resolves it. For example:
+    </p>
+    <ul>
+      <li>Before deletion: <strong>“1 - 5 of 100”</strong></li>
+      <li>After deletion: <strong>“1 - 5 of 100”</strong> (with gray text)</li>
+      <li>After refresh: <strong>“1 - 5 of 99”</strong></li>
+    </ul>
+  </li>
+</ul>
+<hr />
+<h3><strong>Pagination</strong></h3>
+<p>
+  The pagination reflects the total number of pages based on the number of items
+  and items per page. Updates occur after a refresh or navigation.
+</p>
+<ul>
+  <li>
+    <p>
+      <strong>After an Addition</strong>:<br />The pagination does not change
+      immediately but adjusts after a refresh if the total number of pages
+      increases due to the addition.
+    </p>
+    <ul>
+      <li>
+        <strong>Before addition</strong>: 100 items in 5 pages (20 items per
+        page).
+      </li>
+      <li><strong>After addition</strong>: Pagination still shows 5 pages.</li>
+      <li>
+        <strong>After refresh</strong>: 101 items in 6 pages (20 items per
+        page).
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>
+      <strong>After a Deletion</strong>:<br />The pagination does not change
+      immediately but adjusts after a refresh if the total number of pages
+      decreases due to the deletion.
+    </p>
+    <ul>
+      <li>
+        <strong>Before deletion</strong>: 101 items in 6 pages (20 items per
+        page).
+      </li>
+      <li>
+        <strong>After deletion</strong>: Pagination still shows 6 pages with
+        items marked as deleted.
+      </li>
+      <li>
+        <strong>After refresh</strong>: 100 items in 5 pages (20 items per
+        page).
+      </li>
+    </ul>
+  </li>
+</ul>
+<p><strong>Edge Cases</strong>:</p>
+<ol>
+  <li>
+    <p><strong>Deleting all items on the penultimate page</strong>:</p>
+    <ul>
+      <li>
+        <strong>Before deletion</strong>: 101 items in 6 pages (20 items per
+        page).
+      </li>
+      <li>
+        <strong>After deletion of all items in page 5</strong>: Pagination still
+        shows page 6, with items in page 5 marked as deleted.
+      </li>
+      <li>
+        <strong>After refresh</strong>: Displays the single item from page 6 in
+        page 5, which is now the last page.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>Deleting the only item on the last page</strong>:</p>
+    <ul>
+      <li>
+        <strong>Before deletion</strong>: 101 items in 6 pages (20 items per
+        page, last page has 1 item).
+      </li>
+      <li>
+        <strong>After deletion of the single item in page 6</strong>: Pagination
+        still shows page 6, with the item marked as deleted.
+      </li>
+      <li>
+        <strong>After refresh</strong>: User is directed to page 5, which is now
+        the last page.
+      </li>
+    </ul>
+  </li>
+</ol>
+<hr />
+<p>
+  This strategy ensures a seamless user experience, balancing real-time
+  responsiveness, clarity of feedback, and stability of the interface. It
+  accounts for both individual and collaborative actions in a multi-user
+  environment.
+</p>

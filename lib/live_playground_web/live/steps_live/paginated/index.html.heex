@@ -1,19 +1,20 @@
 <!-- start hiding from live code -->
 <.header>
   Listing Languages
-  <:subtitle class="pr-20">
+  <:subtitle>
     Enhance the generated code with advanced pagination, including immediate feedback for additions, graceful handling of deletions, and dynamic summary updates.
-    <.link phx-click={show_modal("ux-strategy")} class="underline">
-      Read more
-    </.link>
   </:subtitle>
-  <:actions>
-    <.link patch={get_pagination_url(@options, ~p"/steps/paginated/new")}>
-      <.button>New Language</.button>
-    </.link>
+  <:actions class="items-center gap-x-5">
+    <.code_breakdown_link slideover_id="ux" title="UX Startegy" />
+    <.code_breakdown_link />
   </:actions>
 </.header>
 <!-- end hiding from live code -->
+<div class="flex justify-end my-6">
+  <.link patch={get_pagination_url(@options, ~p"/steps/paginated/new")}>
+    <.button>New Language</.button>
+  </.link>
+</div>
 <form phx-change="change-per-page" class="flex flex-col gap-y-2 items-end justify-end md:flex-row md:gap-y-0 md:justify-between">
   <div class={["text-sm", @pending_deletion && "text-zinc-300", !@pending_deletion && "text-zinc-600"]}>
     <%= get_page_summary(@count_all_summary, @options.page, @options.per_page, @count_visible_rows) %>
@@ -92,9 +93,6 @@
   />
 </.modal>
 <!-- start hiding from live code -->
-<.modal id="ux-strategy" width_class="prose max-w-5xl">
-  <%= read_file("priv/static/html/steps/pagination_ux_strategy.html") |> raw() %>
-</.modal>
 <div class="mt-10 space-y-6">
   <.code_block filename="lib/live_playground_web/live/steps_live/paginated/index.ex" />
   <.code_block filename="lib/live_playground_web/live/steps_live/paginated/index.html.heex" />
@@ -104,4 +102,6 @@
   <.code_block filename="lib/live_playground/languages2.ex" />
   <.code_block filename="lib/live_playground/languages2/language.ex" />
 </div>
+<.code_breakdown_slideover id="ux" filename="priv/static/html/steps/paginated_ux.html" title="UX Startegy" />
+<.code_breakdown_slideover filename="priv/static/html/steps/paginated_test.html" />
 <!-- end hiding from live code -->
