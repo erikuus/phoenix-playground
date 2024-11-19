@@ -125,19 +125,22 @@ defmodule LivePlaygroundWeb.DemoHelpers do
   Displays a link that opens a code breakdown slideover in an unobstructed mode.
 
   ## Example
-      <.code_breakdown_link />
+      <.code_breakdown_link slideover_id="my-breakdown" />
   """
   attr :title, :string, default: "Code Breakdown"
+  attr :slideover_id, :string, default: "code-breakdown"
+  attr :main_container_id, :string, default: "multi-column-layout-main-container"
 
   def code_breakdown_link(assigns) do
     ~H"""
     <.link
-      id="open-code-breakdown"
-      class="flex items-center font-medium"
+      id={"open-#{@slideover_id}"}
+      class="slideover-link flex items-center font-medium"
       phx-click={
         show_slideover(
-          JS.add_class("xl:pr-96 2xl:pr-[36rem]", to: "#multi-column-layout-main-container") |> hide("#open-code-breakdown"),
-          "code-breakdown",
+          JS.add_class("xl:pr-96 2xl:pr-[36rem]", to: "##{@main_container_id}")
+          |> hide(".slideover-link"),
+          @slideover_id,
           true
         )
       }
@@ -153,22 +156,22 @@ defmodule LivePlaygroundWeb.DemoHelpers do
   Renders a code breakdown slideover in an unobstructed mode.
 
   ## Example
-      <.code_breakdown_slideover filename="..." />
+      <.code_breakdown_slideover id="my-breakdown" filename="..." />
   """
   attr :title, :string, default: "Code Breakdown"
   attr :filename, :string, required: true
+  attr :id, :string, default: "code-breakdown"
+  attr :main_container_id, :string, default: "multi-column-layout-main-container"
 
   def code_breakdown_slideover(assigns) do
     assigns = assigns |> assign_new(:html_code, fn -> read_file(assigns.filename) |> raw() end)
 
     ~H"""
     <.slideover
-      id="code-breakdown"
+      id={@id}
       enable_main_content={true}
       width_class="w-96 2xl:w-[36rem]"
-      on_cancel={
-        JS.remove_class("xl:pr-96 2xl:pr-[36rem]", to: "#multi-column-layout-main-container") |> show("#open-code-breakdown")
-      }
+      on_cancel={JS.remove_class("xl:pr-96 2xl:pr-[36rem]", to: "##{@main_container_id}") |> show(".slideover-link")}
     >
       <:title><%= @title %></:title>
       <div class="mr-2 prose prose-sm">
