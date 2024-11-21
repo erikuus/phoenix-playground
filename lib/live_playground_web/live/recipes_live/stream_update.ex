@@ -33,7 +33,7 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamUpdate do
         Updating Items in Large Collections Without Server-Side Memory Storage in LiveView
       </:subtitle>
       <:actions>
-        <.code_breakdown_link />
+        <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
       </:actions>
     </.header>
     <!-- end hiding from live code -->
@@ -83,7 +83,7 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamUpdate do
       <.code_block filename="lib/live_playground_web/live/recipes_live/stream_update.ex" />
       <.code_block filename="lib/live_playground/cities.ex" from="# streamupdate" to="# endstreamupdate" />
     </div>
-    <.code_breakdown_slideover filename="priv/static/html/stream_update.html" />
+    <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/stream_update.html" />
     <!-- end hiding from live code -->
     """
   end

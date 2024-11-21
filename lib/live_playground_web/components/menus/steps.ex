@@ -79,7 +79,7 @@ defmodule LivePlaygroundWeb.Menus.Steps do
 
   defp get_order_by_path(path) do
     get_steps()
-    |> Enum.find(%{order: 0}, fn step -> step.path == path end)
+    |> Enum.find(%{order: 0}, fn step -> is_active?(path, step) end)
     |> Map.get(:order)
   end
 end

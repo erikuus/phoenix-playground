@@ -53,7 +53,7 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStream do
         Broadcasting Updates With Streams and Optimistic Locking in LiveView
       </:subtitle>
       <:actions>
-        <.code_breakdown_link />
+        <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
       </:actions>
     </.header>
     <!-- end hiding from live code -->
@@ -108,7 +108,7 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStream do
       <.code_block filename="lib/live_playground/cities.ex" from="# broadcaststream_" to="# endbroadcaststream_" />
       <.code_block filename="lib/live_playground/cities/city.ex" />
     </div>
-    <.code_breakdown_slideover filename="priv/static/html/broadcast_stream.html" />
+    <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/broadcast_stream.html" />
     <!-- end hiding from live code -->
     """
   end

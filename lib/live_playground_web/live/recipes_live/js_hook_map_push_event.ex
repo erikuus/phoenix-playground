@@ -24,7 +24,7 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapPushEvent do
         Pushing JS Events to LiveView via Map Integrations
       </:subtitle>
       <:actions>
-        <.code_breakdown_link />
+        <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
       </:actions>
     </.header>
     <.alert class="mb-6">
@@ -68,7 +68,7 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapPushEvent do
         <p class="font-mono">&lt;link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.cs" /&gt;</p>
       </.note>
     </div>
-    <.code_breakdown_slideover filename="priv/static/html/js_hook_map_push_event.html" />
+    <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/js_hook_map_push_event.html" />
     <!-- end hiding from live code -->
     """
   end

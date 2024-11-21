@@ -24,7 +24,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Filter do
         Filtering Data Without URL Parameters in LiveView
       </:subtitle>
       <:actions>
-        <.code_breakdown_link />
+        <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
       </:actions>
     </.header>
     <!-- end hiding from live code -->
@@ -56,7 +56,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Filter do
       <.code_block filename="lib/live_playground_web/live/recipes_live/filter.ex" />
       <.code_block filename="lib/live_playground/cities.ex" from="# filter" to="# endfilter" />
     </div>
-    <.code_breakdown_slideover filename="priv/static/html/filter.html" />
+    <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/filter.html" />
     <!-- end hiding from live code -->
     """
   end

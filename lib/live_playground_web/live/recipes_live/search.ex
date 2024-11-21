@@ -16,7 +16,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Search do
         Creating a Search Interface Without URL Parameters in LiveView
       </:subtitle>
       <:actions>
-        <.code_breakdown_link />
+        <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
       </:actions>
     </.header>
     <!-- end hiding from live code -->
@@ -45,7 +45,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Search do
       <.code_block filename="lib/live_playground_web/live/recipes_live/search.ex" />
       <.code_block filename="lib/live_playground/countries.ex" from="# search" to="# endsearch" />
     </div>
-    <.code_breakdown_slideover filename="priv/static/html/search.html" />
+    <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/search.html" />
     <!-- end hiding from live code -->
     """
   end

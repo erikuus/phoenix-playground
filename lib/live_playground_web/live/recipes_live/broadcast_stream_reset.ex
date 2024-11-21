@@ -109,7 +109,7 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
         Broadcasting Updates With Streams and Navigation in LiveView
       </:subtitle>
       <:actions>
-        <.code_breakdown_link />
+        <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
       </:actions>
     </.header>
     <!-- end hiding from live code -->
@@ -185,7 +185,7 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
       <.code_block filename="lib/live_playground/cities.ex" from="# broadcaststreamreset" to="# endbroadcaststreamreset" />
       <.code_block filename="lib/live_playground/countries.ex" from="# broadcaststreamreset" to="# endbroadcaststreamreset" />
     </div>
-    <.code_breakdown_slideover filename="priv/static/html/broadcast_stream_reset.html" />
+    <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/broadcast_stream_reset.html" />
     <!-- end hiding from live code -->
     """
   end

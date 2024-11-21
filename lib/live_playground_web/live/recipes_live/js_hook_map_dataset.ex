@@ -17,7 +17,7 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapDataset do
         Integrating a Map Library via Dataset in LiveView
       </:subtitle>
       <:actions>
-        <.code_breakdown_link />
+        <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
       </:actions>
     </.header>
     <!-- end hiding from live code -->
@@ -49,7 +49,7 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapDataset do
         <p class="mt-4 font-semibold">Link stylesheet in root.html.heex as follows:</p>
         <p class="font-mono">&lt;link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.cs" /&gt;</p>
       </.note>
-      <.code_breakdown_slideover filename="priv/static/html/js_hook_map_dataset.html" />
+      <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/js_hook_map_dataset.html" />
     </div>
     <!-- end hiding from live code -->
     """

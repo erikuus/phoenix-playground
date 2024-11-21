@@ -5,12 +5,12 @@
     Enhance the generated code with advanced pagination, including immediate feedback for additions, graceful handling of deletions, and dynamic summary updates.
   </:subtitle>
   <:actions class="items-center gap-x-5">
-    <.code_breakdown_link slideover_id="ux" title="UX Startegy" />
-    <.code_breakdown_link />
+    <.slideout_link slideout_id="ux-strategy" title="UX Startegy" />
+    <.slideout_link slideout_id="test-cases" title="Test Cases" />
   </:actions>
 </.header>
 <!-- end hiding from live code -->
-<div class="flex justify-end my-6">
+<div class="flex justify-end my-5">
   <.link patch={get_pagination_url(@options, ~p"/steps/paginated/new")}>
     <.button>New Language</.button>
   </.link>
@@ -97,11 +97,9 @@
   <.code_block filename="lib/live_playground_web/live/steps_live/paginated/index.ex" />
   <.code_block filename="lib/live_playground_web/live/steps_live/paginated/index.html.heex" />
   <.code_block filename="lib/live_playground_web/live/steps_live/paginated/form_component.ex" />
-  <.code_block filename="lib/live_playground_web/live/steps_live/paginated/show.ex" />
-  <.code_block filename="lib/live_playground_web/live/steps_live/paginated/show.html.heex" />
   <.code_block filename="lib/live_playground/languages2.ex" />
   <.code_block filename="lib/live_playground/languages2/language.ex" />
 </div>
-<.code_breakdown_slideover id="ux" filename="priv/static/html/steps/paginated_ux.html" title="UX Startegy" />
-<.code_breakdown_slideover filename="priv/static/html/steps/paginated_test.html" />
+<.slideout title="UX Strategy" id="ux-strategy" filename="priv/static/html/steps/paginated_ux.html" />
+<.slideout title="Test Cases" id="test-cases" filename="priv/static/html/steps/paginated_test.html" />
 <!-- end hiding from live code -->

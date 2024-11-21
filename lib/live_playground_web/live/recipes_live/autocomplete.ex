@@ -16,7 +16,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Autocomplete do
         Creating an Autocomplete Field With HTML5 Datalist in LiveView
       </:subtitle>
       <:actions>
-        <.code_breakdown_link />
+        <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
       </:actions>
     </.header>
     <!-- end hiding from live code -->
@@ -42,7 +42,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Autocomplete do
       <.code_block filename="lib/live_playground_web/live/recipes_live/autocomplete.ex" />
       <.code_block filename="lib/live_playground/countries.ex" from="# search" to="# endsearch" />
     </div>
-    <.code_breakdown_slideover filename="priv/static/html/autocomplete.html" />
+    <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/autocomplete.html" />
     <!-- end hiding from live code -->
     """
   end

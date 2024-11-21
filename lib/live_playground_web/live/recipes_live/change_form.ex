@@ -20,7 +20,7 @@ defmodule LivePlaygroundWeb.RecipesLive.ChangeForm do
         Handling Form Changes in LiveView
       </:subtitle>
       <:actions>
-        <.code_breakdown_link />
+        <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
       </:actions>
     </.header>
     <!-- end hiding from live code -->
@@ -39,7 +39,7 @@ defmodule LivePlaygroundWeb.RecipesLive.ChangeForm do
     <div class="mt-10">
       <.code_block filename="lib/live_playground_web/live/recipes_live/change_form.ex" />
     </div>
-    <.code_breakdown_slideover filename="priv/static/html/change_form.html" />
+    <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/change_form.html" />
     <!-- end hiding from live code -->
     """
   end

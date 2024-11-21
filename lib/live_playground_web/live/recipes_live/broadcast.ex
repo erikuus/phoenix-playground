@@ -35,7 +35,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Broadcast do
       </:subtitle>
 
       <:actions>
-        <.code_breakdown_link />
+        <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
       </:actions>
     </.header>
     <!-- end hiding from live code -->
@@ -45,7 +45,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Broadcast do
       <.code_block filename="lib/live_playground_web/live/recipes_live/broadcast.ex" />
       <.code_block filename="lib/live_playground/countries.ex" from="# broadcast" to="# endbroadcast" />
     </div>
-    <.code_breakdown_slideover filename="priv/static/html/broadcast.html" />
+    <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/broadcast.html" />
     <!-- end hiding from live code -->
     """
   end

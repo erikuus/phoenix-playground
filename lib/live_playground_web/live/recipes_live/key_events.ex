@@ -21,7 +21,7 @@ defmodule LivePlaygroundWeb.RecipesLive.KeyEvents do
         Managing Key Events in LiveView
       </:subtitle>
       <:actions>
-        <.code_breakdown_link />
+        <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
       </:actions>
     </.header>
     <!-- end hiding from live code -->
@@ -36,7 +36,7 @@ defmodule LivePlaygroundWeb.RecipesLive.KeyEvents do
     <div class="mt-10">
       <.code_block filename="lib/live_playground_web/live/recipes_live/key_events.ex" />
     </div>
-    <.code_breakdown_slideover filename="priv/static/html/key_events.html" />
+    <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/key_events.html" />
     <!-- end hiding from live code -->
     """
   end

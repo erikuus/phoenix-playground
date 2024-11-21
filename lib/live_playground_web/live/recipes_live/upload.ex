@@ -27,7 +27,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Upload do
         Creating File Upload Controls and Previews in LiveView
       </:subtitle>
       <:actions>
-        <.code_breakdown_link />
+        <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
       </:actions>
     </.header>
     <!-- end hiding from live code -->
@@ -110,7 +110,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Upload do
         we will encapsulate the Upload UI within our own streamlined and efficient components.
       </.note>
     </div>
-    <.code_breakdown_slideover filename="priv/static/html/upload.html" />
+    <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/upload.html" />
     <!-- end hiding from live code -->
     """
   end

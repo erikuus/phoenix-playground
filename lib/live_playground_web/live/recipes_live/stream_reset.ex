@@ -100,7 +100,7 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamReset do
         Resetting Streams With Navigation in LiveView
       </:subtitle>
       <:actions>
-        <.code_breakdown_link />
+        <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
       </:actions>
     </.header>
     <!-- end hiding from live code -->
@@ -165,7 +165,7 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamReset do
       <.code_block filename="lib/live_playground/cities.ex" from="# streamreset" to="# endstreamreset" />
       <.code_block filename="lib/live_playground/countries.ex" from="# streamreset" to="# endstreamreset" />
     </div>
-    <.code_breakdown_slideover filename="priv/static/html/stream_reset.html" />
+    <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/stream_reset.html" />
     <!-- end hiding from live code -->
     """
   end

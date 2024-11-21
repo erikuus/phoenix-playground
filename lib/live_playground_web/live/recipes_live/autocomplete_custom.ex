@@ -22,7 +22,7 @@ defmodule LivePlaygroundWeb.RecipesLive.AutocompleteCustom do
         Creating a Custom Dropdown Autocomplete in LiveView
       </:subtitle>
       <:actions>
-        <.code_breakdown_link />
+        <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
       </:actions>
     </.header>
     <!-- end hiding from live code -->
@@ -64,7 +64,7 @@ defmodule LivePlaygroundWeb.RecipesLive.AutocompleteCustom do
       <.code_block filename="lib/live_playground_web/live/recipes_live/autocomplete_custom.ex" />
       <.code_block filename="lib/live_playground/countries.ex" from="# search" to="# endsearch" />
     </div>
-    <.code_breakdown_slideover filename="priv/static/html/autocomplete_custom.html" />
+    <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/autocomplete_custom.html" />
     <!-- end hiding from live code -->
     """
   end

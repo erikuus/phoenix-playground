@@ -24,7 +24,7 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapHandleEvent do
         Integrating a Map Library and Handling Events in JavaScript With LiveView
       </:subtitle>
       <:actions>
-        <.code_breakdown_link />
+        <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
       </:actions>
     </.header>
     <.alert class="mb-6">
@@ -66,7 +66,7 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapHandleEvent do
         <p class="mt-4 font-semibold">Link stylesheet in root.html.heex as follows:</p>
         <p class="font-mono">&lt;link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.cs" /&gt;</p>
       </.note>
-      <.code_breakdown_slideover filename="priv/static/html/js_hook_map_handle_event.html" />
+      <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/js_hook_map_handle_event.html" />
     </div>
     <!-- end hiding from live code -->
     """

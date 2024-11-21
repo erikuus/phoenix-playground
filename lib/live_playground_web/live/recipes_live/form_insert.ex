@@ -23,7 +23,7 @@ defmodule LivePlaygroundWeb.RecipesLive.FormInsert do
         Creating Forms That Validate on Submit in LiveView
       </:subtitle>
       <:actions>
-        <.code_breakdown_link />
+        <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
       </:actions>
     </.header>
     <!-- end hiding from live code -->
@@ -53,7 +53,7 @@ defmodule LivePlaygroundWeb.RecipesLive.FormInsert do
       <.code_block filename="lib/live_playground_web/live/recipes_live/form_insert.ex" />
       <.code_block filename="lib/live_playground/cities.ex" from="# form" to="# endform" />
     </div>
-    <.code_breakdown_slideover filename="priv/static/html/form_insert.html" />
+    <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/form_insert.html" />
     <!-- end hiding from live code -->
     """
   end

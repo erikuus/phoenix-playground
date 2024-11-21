@@ -38,7 +38,7 @@ defmodule LivePlaygroundWeb.RecipesLive.HandleParams do
         Managing URL Parameters in LiveView
       </:subtitle>
       <:actions>
-        <.code_breakdown_link />
+        <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
       </:actions>
     </.header>
     <!-- end hiding from live code -->
@@ -53,7 +53,7 @@ defmodule LivePlaygroundWeb.RecipesLive.HandleParams do
       <.code_block filename="lib/live_playground_web/live/recipes_live/handle_params.ex" />
       <.code_block filename="lib/live_playground/countries.ex" from="# handleparams" to="# endhandleparams" />
     </div>
-    <.code_breakdown_slideover filename="priv/static/html/handle_params.html" />
+    <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/handle_params.html" />
     <!-- end hiding from live code -->
     """
   end

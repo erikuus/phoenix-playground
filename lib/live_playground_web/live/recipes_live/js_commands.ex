@@ -10,7 +10,7 @@ defmodule LivePlaygroundWeb.RecipesLive.JsCommands do
         Using JavaScript Commands to Toggle Elements in LiveView
       </:subtitle>
       <:actions>
-        <.code_breakdown_link />
+        <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
       </:actions>
     </.header>
     <!-- end hiding from live code -->
@@ -58,7 +58,7 @@ defmodule LivePlaygroundWeb.RecipesLive.JsCommands do
         >slideover component</.link>.
       </.note>
     </div>
-    <.code_breakdown_slideover filename="priv/static/html/js_commands.html" />
+    <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/js_commands.html" />
     <!-- end hiding from live code -->
     """
   end

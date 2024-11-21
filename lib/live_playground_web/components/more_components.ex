@@ -23,6 +23,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         <:narrow_sidebar></:narrow_sidebar>
         <:mobile_menu></:mobile_menu>
         <:desktop_menu></:desktop_menu>
+        <:slideouts></:slideouts>
         <%= @inner_content %>
       </.multi_column_layout>
   """
@@ -1105,24 +1106,28 @@ defmodule LivePlaygroundWeb.MoreComponents do
   end
 
   @doc """
-  Renders a slideover (a UI component that slides from right over the existing content).
+  Renders a slideover - a UI panel that slides in from the right edge to overlay existing content.
 
   ## Examples
 
+      # Basic usage with content:
       <.slideover id="menu">
-        ...
+        Menu content here
       </.slideover>
 
-  JS commands can be included in the `:on_cancel` and `on_confirm` attributes.
-  These commands are triggered when the confirm or cancel buttons are clicked.
-
-      <.slideover id="confirm" on_confirm={JS.push("delete")} on_cancel={JS.navigate(~p"/items")}>
-        Are you sure to delete these items?
-        ...
-        <:confirm>OK</:confirm>
-        <:cancel>Cancel</:cancel>
+      # Advanced usage with custom button actions:
+      <.slideover id="confirm"
+        on_confirm={JS.push("delete")}
+        on_cancel={JS.navigate(~p"/items")}>
+        Are you sure you want to delete these items?
+        <:confirm>Delete</:confirm>
+        <:cancel>Go Back</:cancel>
       </.slideover>
-  </.slideover>
+
+      # To trigger the slideover, use a button with phx-click:
+      <.button_link phx-click={show_slideover("menu")}>
+        Open Menu
+      </.button_link>
   """
   attr :id, :string, required: true
   attr :show, :boolean, default: false
@@ -1143,7 +1148,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   def slideover(assigns) do
     ~H"""
-    <div class="relative z-50" aria-labelledby={"#{@id}-title"} role="dialog" aria-modal="true" tabindex="0">
+    <div class="relative z-40" aria-labelledby={"#{@id}-title"} role="dialog" aria-modal="true" tabindex="0">
       <div
         :if={!@enable_main_content}
         id={"#{@id}-bg"}
@@ -1228,7 +1233,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
     |> JS.show(
       to: "##{id}",
       transition: {
-        "ease-in-out duration-700 sm:duration-800",
+        "ease-in-out",
         "translate-x-full",
         "translate-x-0"
       }
@@ -1257,7 +1262,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
     |> JS.hide(
       to: "##{id}",
       transition: {
-        "ease-in-out duration-700 sm:duration-800",
+        "ease-in-out",
         "translate-x-0",
         "translate-x-full"
       }

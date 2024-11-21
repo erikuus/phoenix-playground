@@ -122,29 +122,31 @@ defmodule LivePlaygroundWeb.DemoHelpers do
   end
 
   @doc """
-  Displays a link that opens a code breakdown slideover in an unobstructed mode.
+  Displays a link that opens a slideout.
 
   ## Example
-      <.code_breakdown_link slideover_id="my-breakdown" />
+      <.slideout_link target_id="mycode-breakdown" />
   """
-  attr :title, :string, default: "Code Breakdown"
-  attr :slideover_id, :string, default: "code-breakdown"
+  attr :title, :string, required: true
+  attr :slideout_id, :string, required: true
   attr :main_container_id, :string, default: "multi-column-layout-main-container"
 
-  def code_breakdown_link(assigns) do
+  def slideout_link(assigns) do
     ~H"""
     <.link
-      id={"open-#{@slideover_id}"}
-      class="slideover-link flex items-center font-medium"
+      id={"open-#{@slideout_id}"}
+      class="slideout-link flex items-center font-medium"
       phx-click={
         show_slideover(
-          JS.add_class("xl:pr-96 2xl:pr-[36rem]", to: "##{@main_container_id}")
-          |> hide(".slideover-link"),
-          @slideover_id,
+          JS.add_class("xl:pr-96 2xl:pr-[36rem] ease-in-out duration-200",
+            to: "##{@main_container_id}"
+          )
+          |> hide(".slideout-link"),
+          @slideout_id,
           true
         )
       }
-      aria-label="Open code breakdown"
+      aria-label="Open slideout"
     >
       <span><%= @title %></span>
       <.icon name="hero-arrow-left-on-rectangle" class="ml-1 w-5 h-5" />
@@ -153,17 +155,18 @@ defmodule LivePlaygroundWeb.DemoHelpers do
   end
 
   @doc """
-  Renders a code breakdown slideover in an unobstructed mode.
+  Renders a slideout panel component used for displaying code breakdowns and additional documentation.
+  The slideout is a UI element that appears from the side of the screen when triggered.
 
   ## Example
-      <.code_breakdown_slideover id="my-breakdown" filename="..." />
+      <.slideout id="code-breakdown" filename="..." />
   """
-  attr :title, :string, default: "Code Breakdown"
+  attr :title, :string, required: true
   attr :filename, :string, required: true
-  attr :id, :string, default: "code-breakdown"
+  attr :id, :string, required: true
   attr :main_container_id, :string, default: "multi-column-layout-main-container"
 
-  def code_breakdown_slideover(assigns) do
+  def slideout(assigns) do
     assigns = assigns |> assign_new(:html_code, fn -> read_file(assigns.filename) |> raw() end)
 
     ~H"""
@@ -171,7 +174,7 @@ defmodule LivePlaygroundWeb.DemoHelpers do
       id={@id}
       enable_main_content={true}
       width_class="w-96 2xl:w-[36rem]"
-      on_cancel={JS.remove_class("xl:pr-96 2xl:pr-[36rem]", to: "##{@main_container_id}") |> show(".slideover-link")}
+      on_cancel={JS.remove_class("xl:pr-96 2xl:pr-[36rem]", to: "##{@main_container_id}") |> show(".slideout-link")}
     >
       <:title><%= @title %></:title>
       <div class="mr-2 prose prose-sm">

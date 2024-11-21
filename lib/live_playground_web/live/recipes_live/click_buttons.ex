@@ -22,7 +22,7 @@ defmodule LivePlaygroundWeb.RecipesLive.ClickButtons do
         Handling Button Click Events in LiveView
       </:subtitle>
       <:actions>
-        <.code_breakdown_link />
+        <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
       </:actions>
     </.header>
     <!-- end hiding from live code -->
@@ -42,7 +42,7 @@ defmodule LivePlaygroundWeb.RecipesLive.ClickButtons do
       <.code_block filename="lib/live_playground_web/live/recipes_live/click_buttons.ex" />
       <.code_block filename="lib/live_playground/countries.ex" from="# clickbuttons" to="# endclickbuttons" />
     </div>
-    <.code_breakdown_slideover filename="priv/static/html/click_buttons.html" />
+    <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/click_buttons.html" />
     <!-- end hiding from live code -->
     """
   end

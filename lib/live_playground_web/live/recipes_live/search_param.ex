@@ -44,7 +44,7 @@ defmodule LivePlaygroundWeb.RecipesLive.SearchParam do
         Developing a Search Interface With URL Parameters in LiveView
       </:subtitle>
       <:actions>
-        <.code_breakdown_link />
+        <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
       </:actions>
     </.header>
     <!-- end hiding from live code -->
@@ -75,7 +75,7 @@ defmodule LivePlaygroundWeb.RecipesLive.SearchParam do
       <.code_block filename="lib/live_playground_web/live/recipes_live/search_param.ex" />
       <.code_block filename="lib/live_playground/countries.ex" from="# search" to="# endsearch" />
     </div>
-    <.code_breakdown_slideover filename="priv/static/html/search_param.html" />
+    <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/search_param.html" />
     <!-- end hiding from live code -->
     """
   end

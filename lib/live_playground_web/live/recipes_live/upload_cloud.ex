@@ -64,7 +64,7 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadCloud do
         Uploading Files to Cloud Storage via LiveView
       </:subtitle>
       <:actions>
-        <.code_breakdown_link />
+        <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
       </:actions>
     </.header>
     <!-- end hiding from live code -->
@@ -132,7 +132,7 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadCloud do
         </div>
       </.note>
     </div>
-    <.code_breakdown_slideover filename="priv/static/html/upload_cloud.html" />
+    <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/upload_cloud.html" />
     <!-- end hiding from live code -->
     """
   end

@@ -36,7 +36,7 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadServer do
         Uploading Files to a Server in LiveView
       </:subtitle>
       <:actions>
-        <.code_breakdown_link />
+        <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
       </:actions>
     </.header>
     <!-- end hiding from live code -->
@@ -81,7 +81,7 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadServer do
         to="# Enable dev routes for dashboard and mailbox"
       />
     </div>
-    <.code_breakdown_slideover filename="priv/static/html/upload_server.html" />
+    <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/upload_server.html" />
     <!-- end hiding from live code -->
     """
   end
