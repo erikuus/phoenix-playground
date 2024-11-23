@@ -205,7 +205,13 @@ defmodule LivePlaygroundWeb.DemoHelpers do
   def code_block(%{filename: filename, from: from, to: to} = assigns) do
     assigns =
       assigns
-      |> assign_new(:id, fn -> String.replace(assigns.filename, "/", "-") end)
+      |> assign_new(:id, fn ->
+        assigns.filename
+        |> String.replace("/", "-")
+        |> String.replace(".", "-")
+        |> String.replace(" ", "-")
+        |> String.replace(~r/[^a-zA-Z0-9_-]/, "")
+      end)
       |> assign_new(:highlighted_code, fn ->
         read_file(filename)
         |> show_marked(from, to, Map.get(assigns, :elixir, true))
@@ -217,8 +223,18 @@ defmodule LivePlaygroundWeb.DemoHelpers do
     ~H"""
     <div class="rounded-lg bg-[#f9f9f9] border border-gray-200 text-xs xl:text-sm" aria-label="Code block">
       <div class="flex justify-between items-center px-4 py-3 sm:px-6 text-gray-500">
-        <div class="overflow-hidden text-ellipsis font-mono">
-          <%= responsive_filename(assigns.filename) |> raw() %>
+        <div class="flex items-center">
+          <button
+            phx-click={JS.toggle(to: "##{@id}-content") |> JS.toggle(to: "##{@id}-show") |> JS.toggle(to: "##{@id}-hide")}
+            class="-ml-3 mr-1 flex rounded-full p-2 hover:bg-gray-200"
+            aria-label="Toggle code visibility"
+          >
+            <.icon id={"#{@id}-hide"} name="hero-chevron-down" class="w-4 h-4" />
+            <.icon id={"#{@id}-show"} name="hero-chevron-right" class="hidden w-4 h-4" />
+          </button>
+          <div class="overflow-hidden text-ellipsis font-mono">
+            <%= responsive_filename(assigns.filename) |> raw() %>
+          </div>
         </div>
         <div class="flex items-center">
           <span id={"#{@id}-message"} class="text-sm mr-2"></span>
@@ -242,7 +258,7 @@ defmodule LivePlaygroundWeb.DemoHelpers do
           </a>
         </div>
       </div>
-      <div class="overflow-auto overscroll-auto bg-white px-4 py-5 sm:p-6">
+      <div id={"#{@id}-content"} class="overflow-auto overscroll-auto bg-white px-4 py-5 sm:p-6 rounded-b-lg">
         <div class="text-lg text-gray-500 tracking-widest -mt-2 mb-3">...</div>
         <div id={"#{@id}-target"}>
           <%= @highlighted_code %>
@@ -256,7 +272,13 @@ defmodule LivePlaygroundWeb.DemoHelpers do
   def code_block(assigns) do
     assigns =
       assigns
-      |> assign_new(:id, fn -> String.replace(assigns.filename, "/", "-") end)
+      |> assign_new(:id, fn ->
+        assigns.filename
+        |> String.replace("/", "-")
+        |> String.replace(".", "-")
+        |> String.replace(" ", "-")
+        |> String.replace(~r/[^a-zA-Z0-9_-]/, "")
+      end)
       |> assign_new(:highlighted_code, fn ->
         read_file(assigns.filename)
         |> hide_marked()
@@ -267,8 +289,18 @@ defmodule LivePlaygroundWeb.DemoHelpers do
     ~H"""
     <div class="rounded-lg bg-[#f9f9f9] border border-gray-200 text-xs xl:text-sm" aria-label="Code block">
       <div class="flex justify-between items-center px-4 py-3 sm:px-6 text-gray-500">
-        <div class="overflow-hidden text-ellipsis font-mono">
-          <%= responsive_filename(assigns.filename) |> raw() %>
+        <div class="flex items-center">
+          <button
+            phx-click={JS.toggle(to: "##{@id}-content") |> JS.toggle(to: "##{@id}-show") |> JS.toggle(to: "##{@id}-hide")}
+            class="-ml-3 mr-1 flex rounded-full p-2 hover:bg-gray-200"
+            aria-label="Toggle code visibility"
+          >
+            <.icon id={"#{@id}-hide"} name="hero-chevron-down" class="w-4 h-4" />
+            <.icon id={"#{@id}-show"} name="hero-chevron-right" class="hidden w-4 h-4" />
+          </button>
+          <div class="overflow-hidden text-ellipsis font-mono">
+            <%= responsive_filename(assigns.filename) |> raw() %>
+          </div>
         </div>
         <div class="flex items-center">
           <span id={"#{@id}-message"} class="text-sm mr-2"></span>
@@ -292,8 +324,10 @@ defmodule LivePlaygroundWeb.DemoHelpers do
           </a>
         </div>
       </div>
-      <div id={"#{@id}-target"} class="overflow-auto overscroll-auto bg-white px-4 py-5 sm:p-6 rounded-b-lg">
-        <%= @highlighted_code %>
+      <div id={"#{@id}-content"} class="overflow-auto overscroll-auto bg-white px-4 py-5 sm:p-6 rounded-b-lg">
+        <div id={"#{@id}-target"}>
+          <%= @highlighted_code %>
+        </div>
       </div>
     </div>
     """
