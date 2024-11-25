@@ -111,12 +111,9 @@
       to inconsistencies. Consider the following scenario:
     </p>
     <ul>
+      <li>There are 100 items distributed over 5 pages (20 items per page).</li>
       <li>
-        <strong>Initial State</strong>: There are 100 items distributed over 5
-        pages (20 items per page).
-      </li>
-      <li>
-        <strong>After Adding an Item</strong>:
+        After adding an item:
         <ul>
           <li><code>:count_all</code> increases to 101.</li>
           <li>
@@ -160,15 +157,6 @@
       the database. When this flag is true, the summary section is grayed out to
       indicate that the displayed counts may not accurately reflect the current
       data.
-    </p>
-  </li>
-  <li>
-    <p>
-      The <code>:languages_being_edited</code> uses a <code>MapSet</code> to
-      track the IDs of languages that are currently being edited, meaning their
-      edit modals are open. When a user starts editing a language, its ID is
-      added to this set. Before attempting to delete a language, we check if its
-      ID is in the set to prevent deletion while it’s being edited.
     </p>
   </li>
   <li>
@@ -377,7 +365,6 @@
     </ul>
   </li>
 </ul>
-<p><strong>Abstracted Functions for Handling Changes</strong></p>
 <p>
   The functions <code>handle_deleted/2</code>, <code>handle_created/2</code>,
   and <code>handle_updated/2</code> are abstracted into separate functions to
