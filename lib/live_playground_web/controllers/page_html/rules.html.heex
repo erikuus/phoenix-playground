@@ -1,7 +1,7 @@
 <.header class="mb-6 xl:mb-8 2xl:mb-10">
   Coding Conventions
   <:subtitle>
-    These conventions aren’t universal rules but rather practices I follow in this playground for readability and maintainability in LiveView modules
+    These conventions showcase how I keep code consistent in this LiveView playground.
   </:subtitle>
 </.header>
 <div class="space-y-6 xl:space-y-8 2xl:space-y-10 mb-6 xl:mb-8 2xl:mb-10">
@@ -13,8 +13,8 @@
       <li><code>handle_params/3</code>, any helpers it uses placed directly after</li>
       <ul>
         <li>
-          For helpers shared between <code>mount</code>
-          and <code>handle_params</code>, place them right after the highest-level function that uses them.
+          For helpers shared between <code>mount</code> and <code>handle_params</code>,
+          and for helpers shared between helpers, place them right after the highest-level function that uses them.
         </li>
       </ul>
       <li><code>render/1</code> (if present)</li>
@@ -28,7 +28,7 @@
       </ul>
     </ol>
     <p>
-      This structure follows LiveView’s lifecycle and feels intuitive for me, though I’m flexible with alternative conventions if they suit specific module needs better.
+      While this order may not suit every application, it works well for this playground, where I aim to present code breakdowns alongside the code. By following the stepdown rule—where each function is immediately followed by those it directly depends on—the code breakdown remains easy to read top-to-bottom.
     </p>
   </section>
   <section class="prose">
