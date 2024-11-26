@@ -50,6 +50,36 @@
   </li>
   <li>We call the <code>init/2</code> function with these default options.</li>
 </ul>
+<h3><code>validate_options/2</code></h3>
+<p>
+  Ensures that <code>page</code> and <code>per_page</code> are valid integers
+  within acceptable ranges.
+</p>
+<ul>
+  <li>
+    <p>
+      The <code>validate_options/2</code> function sanitizes the pagination
+      parameters. Instead of using <code>String.to_integer/1</code>, it employs
+      a custom <code>to_integer/2</code> function. This custom function safely
+      parses integers and defaults to specified values if parsing fails,
+      preventing errors from invalid input.
+    </p>
+    <p>
+      After parsing, the function calls <code>get_existing_page/3</code>, which
+      uses <code>ceil_div/2</code> to calculate the maximum number of pages
+      based on the total item count and the <code>per_page</code> value. For
+      example, if there are 45 items and <code>per_page</code> is set to 10,
+      <code>ceil_div</code> computes that there should be 5 pages. If a user
+      requests page 6, <code>get_existing_page</code>
+      adjusts the page number to 5 to ensure it doesn't exceed the available
+      range.
+    </p>
+  </li>
+  <li>
+    If <code>per_page</code> is not one of the allowed options, it defaults to
+    <code>@per_page</code>.
+  </li>
+</ul>
 <h3><code>init/2</code></h3>
 <p>
   We use two separate <code>mount/3</code> functions to handle scenarios with
@@ -169,36 +199,6 @@
     </p>
   </li>
 </ol>
-<h3><code>validate_options/2</code></h3>
-<p>
-  Ensures that <code>page</code> and <code>per_page</code> are valid integers
-  within acceptable ranges.
-</p>
-<ul>
-  <li>
-    <p>
-      The <code>validate_options/2</code> function sanitizes the pagination
-      parameters. Instead of using <code>String.to_integer/1</code>, it employs
-      a custom <code>to_integer/2</code> function. This custom function safely
-      parses integers and defaults to specified values if parsing fails,
-      preventing errors from invalid input.
-    </p>
-    <p>
-      After parsing, the function calls <code>get_existing_page/3</code>, which
-      uses <code>ceil_div/2</code> to calculate the maximum number of pages
-      based on the total item count and the <code>per_page</code> value. For
-      example, if there are 45 items and <code>per_page</code> is set to 10,
-      <code>ceil_div</code> computes that there should be 5 pages. If a user
-      requests page 6, <code>get_existing_page</code>
-      adjusts the page number to 5 to ensure it doesn't exceed the available
-      range.
-    </p>
-  </li>
-  <li>
-    If <code>per_page</code> is not one of the allowed options, it defaults to
-    <code>@per_page</code>.
-  </li>
-</ul>
 <h3><code>handle_param/3</code></h3>
 <p>
   Manages updates to URL parameters and handles LiveView actions such as
@@ -207,19 +207,25 @@
 <p>Specifically, it performs two main tasks:</p>
 <ul>
   <li>
+    The <code>apply_action/3</code> function sets the appropriate state and data
+    for listing, editing, or creating languages.
+  </li>
+  <li>
     The <code>apply_options/4</code> function updates pagination options and
     reloads the language list when necessary. Refer to the explanation below for
     more details.
   </li>
-  <li>
-    The <code>apply_action/3</code> function configures the socket based on the
-    current LiveView action. Depending on whether the user is viewing the index,
-    editing a language, or creating a new one, this function assigns the
-    appropriate state and data to the socket. For instance, if the user
-    initiates an edit action, <code>apply_action/3</code> sets up the socket
-    with the specific language data to be edited.
-  </li>
 </ul>
+<h3><code>apply_action/3</code></h3>
+<p>
+  This function configures the socket based on the current LiveView action.
+  Depending on whether the user is viewing the index, editing a language, or
+  creating a new one, this function assigns the appropriate state and data to
+  the socket. For instance, if the user initiates an edit action,
+  <code>apply_action/3</code> sets up the socket with the specific language data
+  to be edited.
+</p>
+
 <h3><code>apply_options/4</code></h3>
 <p>
   The <code>apply_options/4</code> function updates pagination options and
@@ -325,204 +331,163 @@
   <li>
     <strong>"reset-stream"</strong>
     <p>
-      Reloads and sorts the language list, clearing any temporary states, and is
-      called from a link in flash messages displayed after additions, edits, or
-      deletions. These messages are shown both for current user actions and
-      broadcasted actions.
+      This action is triggered by a link displayed in flash messages after
+      adding, editing, or deleting a language. The purpose is to refresh the
+      view, ensuring new and edited items are sorted into their correct
+      positions and items marked as deleted are removed from the list.
     </p>
     <ul>
-      <li>Clears flash messages to remove outdated notifications.</li>
+      <li>Clears outdated flash messages to avoid confusion.</li>
       <li>
-        Calls <code>apply_options/4</code> with <code>reset_stream</code> set to
-        <code>true</code>, reloading the data and resetting the stream.
+        Reloads the data stream by calling <code>apply_options/4</code> with
+        <code>reset_stream</code> set to <code>true</code>, ensuring the list
+        reflects the latest server state.
       </li>
       <li>
-        Ensures that users see items in their correct sorted positions after
-        actions, maintaining consistency between the displayed data and the
-        server state.
+        Guarantees a consistent view where all items appear in their proper
+        places, providing a seamless user experience.
       </li>
     </ul>
   </li>
   <li>
     <strong>"delete"</strong>
-    <p>Deletes a language while handling concurrency and providing feedback.</p>
+    <p>Deletes a language and updates the UI to reflect the change.</p>
     <ul>
       <li>
-        Checks if the language is being edited by another user using
-        <code>:languages_being_edited</code>. If so, deletion is prevented, and
-        the user is notified.
-      </li>
-      <li>
-        Uses optimistic locking to handle cases where the language was modified
-        by someone else before deletion. If a conflict occurs, the user is
-        informed to refresh and try again.
-      </li>
-      <li>
         Upon successful deletion, calls <code>handle_deleted/2</code> to update
-        counts, set the <code>:pending_deletion</code> flag, and mark the
-        language as deleted in the UI.
+        counts, sets the <code>:pending_deletion</code> flag, and marks the
+        language as deleted in the UI. The deleted language is not removed from
+        the stream but marked with a <code>:deleted</code> flag, allowing it to
+        remain visible until the user navigates away or refreshes.
+      </li>
+      <li>
+        A flash message is displayed, including a link for the user to reload
+        and sort the list. This encourages the user to update their view for
+        consistency after changes.
       </li>
     </ul>
   </li>
 </ul>
+<h3><code>handle_info/2</code></h3>
+<p>
+  The <code>handle_info/2</code> functions handle asynchronous messages sent as
+  tuples containing the sender module and the message itself. These messages can
+  originate from form actions (like creating or updating a language) or from
+  broadcasts triggered by other users' actions.
+</p>
+<h4>Form Updates</h4>
+<ul>
+  <li>
+    <strong>Created by Current User:</strong>
+    <p>
+      When the form component emits a
+      <code>{FormComponent, {:created, language}}</code> message, the LiveView
+      invokes <code>handle_created/2</code> to update counts and insert the new
+      language into the stream. A flash message with a reset link is then
+      displayed, allowing the user to refresh and sort the list.
+    </p>
+  </li>
+  <li>
+    <strong>Updated by Current User:</strong>
+    <p>
+      Similarly, when the form component sends a
+      <code>{FormComponent, {:updated, language}}</code> message,
+      <code>handle_updated/2</code> is called to update the language in the
+      stream. A flash message confirms the successful update to the user.
+    </p>
+  </li>
+</ul>
+<h4>Broadcasted Updates</h4>
+<ul>
+  <li>
+    <strong>Created by Another User:</strong>
+    <p>
+      When another user creates a language, a
+      <code>{Languages2, {:created, language}}</code> broadcast is received. The
+      LiveView uses <code>handle_created/2</code> to update counts and add the
+      new language to the stream. A flash message with a reset link notifies the
+      user of the new addition and prompts them to refresh and sort the list.
+    </p>
+  </li>
+  <li>
+    <strong>Updated by Another User:</strong>
+    <p>
+      Upon receiving a
+      <code>{Languages2, {:updated, language}}</code> broadcast,
+      <code>handle_updated/2</code> updates the language in the stream. A flash
+      message informs the user that a language was updated by another user.
+    </p>
+  </li>
+  <li>
+    <strong>Deleted by Another User:</strong>
+    <p>
+      If a language is deleted by another user, a
+      <code>{Languages2, {:deleted, language}}</code> message is received. The
+      LiveView calls <code>handle_deleted/2</code> to update counts and mark the
+      language as deleted in the stream. If the deleted language was being
+      edited by the current user, a flash message notifies them of the deletion
+      and closes the edit modal. Otherwise, a general flash message informs the
+      user that the language has been deleted and will be removed upon
+      navigation or refresh.
+    </p>
+  </li>
+</ul>
+<h3>
+  <code>handle_deleted/2</code>, <code>handle_created/2</code>, and
+  <code>handle_updated/2</code>
+</h3>
 <p>
   The functions <code>handle_deleted/2</code>, <code>handle_created/2</code>,
   and <code>handle_updated/2</code> are abstracted into separate functions to
   avoid code duplication. Both <code>handle_event/3</code> (user-initiated
   actions) and <code>handle_info/2</code> (broadcasted actions from other users)
-  use these functions.
+  utilize these functions.
 </p>
-
-<p><strong>Real-Time Updates and Concurrency</strong></p>
+<h4>Core Concepts</h4>
 <ul>
   <li>
-    <p><strong>Handling Additions</strong></p>
-    <ul>
-      <li>
-        <strong>Counts Updated</strong>:
-        <ul>
-          <li>
-            <code>:count_all</code>: Incremented to reflect the new total in the
-            database.
-          </li>
-          <li>
-            <code>:count_all_summary</code>: Incremented to update the summary
-            immediately.
-          </li>
-          <li>
-            <code>:count_visible_rows</code>: Incremented because we display the
-            new item on the current page.
-          </li>
-        </ul>
-      </li>
-      <li>
-        <strong>Visual Feedback</strong>:
-        <ul>
-          <li>
-            We add the <code>:created</code> flag to the language, which is used
-            to highlight the item in the UI.
-          </li>
-          <li>
-            The new language is inserted at the top of the list, keeping it in
-            view.
-          </li>
-        </ul>
-      </li>
-    </ul>
+    <strong>Flagging Items:</strong>
+    <p>
+      Each function adds a specific flag to the language
+      struct—<code>:created</code>, <code>:updated</code>, or
+      <code>:deleted</code>. These flags enable the UI to visually distinguish
+      items by applying badges and colors, providing immediate feedback on their
+      status.
+    </p>
   </li>
   <li>
-    <p><strong>Handling Deletions</strong></p>
-    <ul>
-      <li>
-        <strong>Counts Updated</strong>:
-        <ul>
-          <li>
-            <code>:count_all</code>: Decremented to reflect the new total in the
-            database.
-          </li>
-          <li>
-            <code>:count_all_summary</code>: Remains the same until the user
-            refreshes, as the item is still visible.
-          </li>
-        </ul>
-      </li>
-      <li>
-        <strong>Pending Deletion</strong>:
-        <ul>
-          <li>
-            <code>:pending_deletion</code> is set to <code>true</code>, which
-            triggers UI changes like graying out the summary.
-          </li>
-        </ul>
-      </li>
-      <li>
-        <strong>Visual Feedback</strong>:
-        <ul>
-          <li>
-            The <code>:deleted</code> flag is added to the language, styling it
-            differently (e.g., gray background, strikethrough).
-          </li>
-          <li>
-            The item remains visible until the user navigates away or refreshes.
-          </li>
-        </ul>
-      </li>
-    </ul>
+    <strong>Updating Counts:</strong>
+    <p>
+      They adjust various count assignments such as <code>:count_all</code>,
+      <code>:count_all_summary</code>, and <code>:count_all_pagination</code>.
+      These counts ensure that summaries and pagination controls accurately
+      reflect the current state of the data. For a detailed explanation of how
+      these counts work, refer to the <code>init/2</code> section.
+    </p>
   </li>
 </ul>
-<hr />
-<p><strong>Visual Indicators and Helper Functions</strong></p>
-<ol>
+<h3>Helper Functions</h3>
+<ul>
   <li>
-    <p><strong>Row Styling</strong></p>
-    <ul>
-      <li>
-        <strong>Purpose</strong>: Applies CSS classes to language rows based on
-        their state.
-      </li>
-      <li>
-        <strong>States</strong>:
-        <ul>
-          <li><code>:created</code>: Highlighted with a green background.</li>
-          <li><code>:updated</code>: Highlighted with a blue background.</li>
-          <li><code>:deleted</code>: Grayed out with a strikethrough.</li>
-        </ul>
-      </li>
-      <li>
-        <strong>Reason</strong>: Provides immediate visual feedback to users
-        about the status of each item, enhancing the user experience.
-      </li>
-    </ul>
+    <strong><code>get_pagination_url/2</code></strong>
+    <p>
+      Generates URLs for accessing the current page, used when opening or
+      closing modals, navigating back, and other pagination-related actions.
+    </p>
   </li>
   <li>
-    <p><strong>Summary Generation</strong></p>
-    <ul>
-      <li>
-        <strong>Purpose</strong>: Generates the summary text displayed to the
-        user.
-      </li>
-      <li>
-        <strong>Behavior</strong>:
-        <ul>
-          <li>
-            <strong>After an Addition</strong>: The summary updates immediately
-            to reflect the new total count and increased number of visible rows.
-          </li>
-          <li>
-            <strong>After a Deletion</strong>: The summary remains the same but
-            may be grayed out if <code>:pending_deletion</code> is
-            <code>true</code>.
-          </li>
-        </ul>
-      </li>
-      <li>
-        <strong>Example</strong>:
-        <ul>
-          <li>Before addition: "Showing 1 - 5 of 100"</li>
-          <li>After addition: "Showing 1 - 6 of 101"</li>
-        </ul>
-      </li>
-      <li>
-        <strong>Reason</strong>: Keeps the user informed about the current view,
-        aligning with the UX strategy.
-      </li>
-    </ul>
+    <strong><code>get_page_summary/4</code></strong>
+    <p>
+      Creates the summary text displayed above the data table, such as "Showing
+      1 - 5 of 100."
+    </p>
   </li>
   <li>
-    <p><strong>Flash Messages with Reset Link</strong></p>
-    <ul>
-      <li>
-        <strong>Purpose</strong>: Generates flash messages that include a link
-        for users to reset the stream.
-      </li>
-      <li>
-        <strong>Behavior</strong>: Encourages users to refresh the data to see
-        items in their correct sorted positions.
-      </li>
-      <li>
-        <strong>Reason</strong>: Provides a call to action for users to update
-        their view, especially after additions or edits.
-      </li>
-    </ul>
+    <strong><code>format_percentage/2</code></strong>
+    <p>
+      Formats numerical values into percentage strings with specified precision.
+      Applied within table cells and detailed views to present percentage data
+      clearly.
+    </p>
   </li>
-</ol>
+</ul>
