@@ -7,25 +7,27 @@
       <strong>Keeping Key Items Always in View</strong><br />Newly added,
       edited, or deleted items remain visible in the current view, even if they
       don’t naturally belong to the page based on sorting or pagination. This
-      ensures users always see immediate feedback for their actions, maintaining
-      trust and a consistent interface. Deleted items are not removed abruptly
-      but marked visually until the user navigates away or refreshes.
+      ensures users always see immediate feedback for their actions. Deleted
+      items are not removed abruptly but marked visually until the user
+      navigates away or refreshes.
     </p>
   </li>
   <li>
     <p><strong>Handling Simultaneous User Actions</strong></p>
     <ul>
       <li>
-        If an item is modified by another user after the form is opened, saving
-        displays an error:
-        <strong>“This language has been modified by someone else.”</strong>
+        If another user modifies a language after you have opened the edit form,
+        saving your changes will display an error:
+        <strong
+          >“This {item} has been modified. We've loaded the latest version.
+          Please review and submit again.”</strong
+        >
       </li>
       <li>
-        If an item is being edited, it cannot be deleted by another user.
-        Attempting to delete shows the error:
+        If another user deletes a language while you are editing it, the edit
+        modal will close automatically, and a flash message will notify you:
         <strong
-          >“Cannot delete language while it is being edited by another
-          user.”</strong
+          >“The {item} you were editing was deleted by another user.”</strong
         >
       </li>
     </ul>
@@ -47,15 +49,17 @@
   <li>
     The user who adds the item sees:
     <strong
-      >“Item created successfully. It has been temporarily added to the top of
-      the list. <u>Click here to reload and sort now</u>.”</strong
+      >“{Item} created successfully. It has been temporarily added to the top of
+      the list and will be sorted to its correct position on the next page load.
+      <u>Click here to reload and sort now</u>.”</strong
     >
   </li>
   <li>
     Other users see:
     <strong
-      >“A new item has been added to the list by another user.
-      <u>Click here to reload and sort now</u>.”</strong
+      >“A new {item} was added by another user. It has been temporarily added to
+      the top of the list and will be sorted to its correct position on the next
+      page load. <u>Click here to reload and sort now</u>.”</strong
     >
   </li>
 </ul>
@@ -73,14 +77,14 @@
   <li>
     The user who edits the item sees:
     <strong
-      >“Item updated successfully.
+      >“{Item} updated successfully.
       <u>Click here to reload and sort now</u>.”</strong
     >
   </li>
   <li>
     Other users see:
     <strong
-      >“An item has been updated by another user.
+      >“An {item} has been updated by another user.
       <u>Click here to reload and sort now</u>.”</strong
     >
   </li>
@@ -99,14 +103,14 @@
   <li>
     The user who deletes the item sees:
     <strong
-      >“Item deleted. It will be removed from the list when you navigate away or
-      refresh. <u>Click here to reload and sort now</u>.”</strong
+      >“{Item} deleted. It will be removed from the list when you navigate away
+      or refresh. <u>Click here to reload and sort now</u>.”</strong
     >
   </li>
   <li>
     Other users see:
     <strong
-      >“An item has been deleted by another user.
+      >“An {item} has been deleted by another user.
       <u>Click here to reload and sort now</u>.”</strong
     >
   </li>
@@ -166,6 +170,12 @@
         page).
       </li>
     </ul>
+    <p>
+      This is because the new item fits into the existing pages by temporarily
+      displaying 21 items on the current page (1-21), keeping all items within
+      the original 5 pages. The 6th page only appears when the user resorts the
+      list or navigates away and returns.
+    </p>
   </li>
   <li>
     <p>
@@ -178,54 +188,19 @@
         <strong>Before deletion</strong>: 101 items in 6 pages (20 items per
         page).
       </li>
-      <li>
-        <strong>After deletion</strong>: Pagination still shows 6 pages with
-        items marked as deleted.
-      </li>
+      <li><strong>After deletion</strong>: Pagination still shows 6 pages.</li>
       <li>
         <strong>After refresh</strong>: 100 items in 5 pages (20 items per
         page).
       </li>
     </ul>
+    <p>
+      This is because the deleted item is initially just marked for deletion but
+      remains visible. The deletion takes effect and the language disappears
+      completely when you navigate away or refresh the page.
+    </p>
   </li>
 </ul>
-<p><strong>Edge Cases</strong>:</p>
-<ol>
-  <li>
-    <p><strong>Deleting all items on the penultimate page</strong>:</p>
-    <ul>
-      <li>
-        <strong>Before deletion</strong>: 101 items in 6 pages (20 items per
-        page).
-      </li>
-      <li>
-        <strong>After deletion of all items in page 5</strong>: Pagination still
-        shows page 6, with items in page 5 marked as deleted.
-      </li>
-      <li>
-        <strong>After refresh</strong>: Displays the single item from page 6 in
-        page 5, which is now the last page.
-      </li>
-    </ul>
-  </li>
-  <li>
-    <p><strong>Deleting the only item on the last page</strong>:</p>
-    <ul>
-      <li>
-        <strong>Before deletion</strong>: 101 items in 6 pages (20 items per
-        page, last page has 1 item).
-      </li>
-      <li>
-        <strong>After deletion of the single item in page 6</strong>: Pagination
-        still shows page 6, with the item marked as deleted.
-      </li>
-      <li>
-        <strong>After refresh</strong>: User is directed to page 5, which is now
-        the last page.
-      </li>
-    </ul>
-  </li>
-</ol>
 <hr />
 <p>
   This strategy ensures a seamless user experience, balancing real-time
