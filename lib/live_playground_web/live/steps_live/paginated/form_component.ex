@@ -12,8 +12,11 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
         <%= @title %>
         <:subtitle>Use this form to manage language records in your database.</:subtitle>
       </.header>
-
+      <.alert :if={@flash["lock"]} title="Concurrent update detected" kind={:error} close={false} class="mt-6 text-sm">
+        <%= live_flash(@flash, :lock) %>
+      </.alert>
       <.simple_form for={@form} id="language-form" phx-target={@myself} phx-change="validate" phx-submit="save">
+        <.input field={@form[:lock_version]} type="hidden" />
         <.input field={@form[:countrycode]} type="text" label="Countrycode" autocomplete="off" list="matches" phx-debounce="500" />
         <.input field={@form[:isofficial]} type="checkbox" label="Isofficial" />
         <.input field={@form[:language]} type="text" label="Language" phx-debounce="500" />
@@ -77,11 +80,17 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
 
       {:error, %Ecto.Changeset{} = changeset} ->
         if changeset.errors[:lock_version] do
-          # Handle stale entry error
+          # Fetch the latest version and merge with current changes
+          latest_language = Languages2.get_language!(language.id)
+
           socket =
             socket
-            |> put_flash(:error, "This language has been modified by someone else.")
-            |> push_patch(to: socket.assigns.patch)
+            |> assign(:language, latest_language)
+            |> assign_form(Languages2.change_language(latest_language))
+            |> put_flash(
+              :lock,
+              "This record has been modified. We've loaded the latest version. Please review and submit again."
+            )
 
           {:noreply, socket}
         else
