@@ -43,9 +43,7 @@ defmodule LivePlayground.Languages do
       ** (Ecto.NoResultsError)
 
   """
-  # list
   def get_language!(id), do: Repo.get!(Language, id)
-  # endlist
 
   @doc """
   Creates a language.
