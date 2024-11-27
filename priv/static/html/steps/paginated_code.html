@@ -437,11 +437,9 @@
   <code>handle_updated/2</code>
 </h3>
 <p>
-  The functions <code>handle_deleted/2</code>, <code>handle_created/2</code>,
-  and <code>handle_updated/2</code> are abstracted into separate functions to
-  avoid code duplication. Both <code>handle_event/3</code> (user-initiated
-  actions) and <code>handle_info/2</code> (broadcasted actions from other users)
-  utilize these functions.
+  Both <code>handle_event/3</code> (user-initiated actions) and
+  <code>handle_info/2</code> (broadcasted actions from other users) utilize
+  these functions.
 </p>
 <h4>Core Concepts</h4>
 <ul>
