@@ -1,177 +1,9 @@
-<h3><strong>Test Cases for Additions</strong></h3>
-<p><strong>Test Case 1: Adding a New Item to the First Page</strong></p>
-<ul>
-  <li>
-    <strong>Scenario</strong>: Add a new item while viewing the first page of
-    the list.
-  </li>
-  <li>
-    <strong>Steps</strong>:
-    <ol>
-      <li>Navigate to the first page.</li>
-      <li>Add a new item.</li>
-    </ol>
-  </li>
-  <li>
-    <strong>Expected Outcome</strong>:
-    <ul>
-      <li>
-        The new item is displayed at the top of the list with a green background
-        and a “New” badge.
-      </li>
-      <li>
-        The summary updates immediately (e.g., “1 - 6 of 101” if 5 items were
-        visible before).
-      </li>
-      <li>
-        Pagination remains unchanged (e.g., still showing 5 pages if
-        applicable).
-      </li>
-    </ul>
-  </li>
-</ul>
 <p>
-  <strong>Test Case 2: Adding a New Item That Belongs to Another Page</strong>
+  Below are the test cases focusing on edge scenarios and manual URL
+  manipulations. These tests cover conditions that may not occur during typical
+  usage but are critical for ensuring robustness.
 </p>
-<ul>
-  <li>
-    <strong>Scenario</strong>: Add a new item that should naturally be sorted
-    into a different page.
-  </li>
-  <li>
-    <strong>Steps</strong>:
-    <ol>
-      <li>
-        Navigate to any page except the one where the item would belong (based
-        on sorting).
-      </li>
-      <li>Add a new item.</li>
-    </ol>
-  </li>
-  <li>
-    <strong>Expected Outcome</strong>:
-    <ul>
-      <li>
-        The new item is displayed at the top of the current page with a green
-        background and a “New” badge.
-      </li>
-      <li>
-        The item is sorted into its correct position after refresh or
-        navigation.
-      </li>
-      <li>The summary reflects the addition immediately.</li>
-    </ul>
-  </li>
-</ul>
-<hr />
-<h3><strong>Test Cases for Deletions</strong></h3>
-<p><strong>Test Case 3: Deleting a Single Item from a Full Page</strong></p>
-<ul>
-  <li>
-    <strong>Scenario</strong>: Delete a single item from a page with the maximum
-    number of visible rows (e.g., 20 items per page).
-  </li>
-  <li>
-    <strong>Steps</strong>:
-    <ol>
-      <li>Navigate to a page with 20 items.</li>
-      <li>Delete one item.</li>
-    </ol>
-  </li>
-  <li>
-    <strong>Expected Outcome</strong>:
-    <ul>
-      <li>
-        The deleted item is marked with a gray background and a “Deleted” badge.
-      </li>
-      <li>The summary remains gray to indicate a mismatch until refresh.</li>
-      <li>Pagination remains unchanged until navigation or refresh.</li>
-    </ul>
-  </li>
-</ul>
-<p><strong>Test Case 4: Deleting All Items on a Page</strong></p>
-<ul>
-  <li><strong>Scenario</strong>: Delete all items from a single page.</li>
-  <li>
-    <strong>Steps</strong>:
-    <ol>
-      <li>Navigate to a page with items.</li>
-      <li>Delete all items on that page.</li>
-    </ol>
-  </li>
-  <li>
-    <strong>Expected Outcome</strong>:
-    <ul>
-      <li>All items are marked as deleted.</li>
-      <li>
-        Pagination still displays the same number of pages until refresh or
-        navigation.
-      </li>
-      <li>
-        After refresh, items are fully removed, and the pagination recalculates.
-      </li>
-    </ul>
-  </li>
-</ul>
-<p>
-  <strong>Test Case 5: Deleting All Items on the Penultimate Page</strong>
-</p>
-<ul>
-  <li>
-    <strong>Scenario</strong>: Delete all items on the second-to-last page.
-  </li>
-  <li>
-    <strong>Steps</strong>:
-    <ol>
-      <li>Navigate to the penultimate page (e.g., page 5 of 6).</li>
-      <li>Delete all items on that page.</li>
-    </ol>
-  </li>
-  <li>
-    <strong>Expected Outcome</strong>:
-    <ul>
-      <li>
-        After deletion: Pagination still shows page 6, with items in page 5
-        marked as deleted.
-      </li>
-      <li>
-        After refresh: The single item from page 6 moves to page 5, which
-        becomes the last page.
-      </li>
-    </ul>
-  </li>
-</ul>
-<p><strong>Test Case 6: Deleting the Only Item on the Last Page</strong></p>
-<ul>
-  <li><strong>Scenario</strong>: Delete the only item on the last page.</li>
-  <li>
-    <strong>Steps</strong>:
-    <ol>
-      <li>Navigate to the last page with only one item.</li>
-      <li>Delete the item.</li>
-    </ol>
-  </li>
-  <li>
-    <strong>Expected Outcome</strong>:
-    <ul>
-      <li>
-        After deletion: Pagination still shows the last page, with the item
-        marked as deleted.
-      </li>
-      <li>
-        After refresh: The user is redirected to the penultimate page, which
-        becomes the last page.
-      </li>
-    </ul>
-  </li>
-</ul>
-<hr />
-<h3><strong>Test Cases for Pagination</strong></h3>
-<p>
-  <strong
-    >Test Case 7: Navigating to a Nonexistent Last Page After Deletion</strong
-  >
-</p>
+<p><strong>1. Navigating to a Nonexistent Last Page After Deletion</strong></p>
 <ul>
   <li>
     <strong>Scenario</strong>: Delete all items on the penultimate page and
@@ -188,40 +20,31 @@
   <li>
     <strong>Expected Outcome</strong>:
     <ul>
-      <li>The user is redirected to the last valid page (e.g., page 5).</li>
-      <li>
-        After refresh, pagination recalculates, and the last page is updated.
-      </li>
+      <li>The user is redirected to the last valid page (5).</li>
+      <li>Pagination recalculates and shows 5 pages.</li>
     </ul>
   </li>
 </ul>
-<p><strong>Test Case 8: Refreshing After a Stream Reset</strong></p>
+<p><strong>2. Deleting the Only Item on the Last Page</strong></p>
 <ul>
-  <li>
-    <strong>Scenario</strong>: Refresh the page after multiple additions and
-    deletions.
-  </li>
+  <li><strong>Scenario</strong>: Delete the only item on the last page.</li>
   <li>
     <strong>Steps</strong>:
     <ol>
-      <li>Perform several additions and deletions.</li>
-      <li>Refresh the page.</li>
+      <li>Navigate to the last page with only one item.</li>
+      <li>Delete the item.</li>
+      <li>Reload page from the link displayed in the flash message.</li>
     </ol>
   </li>
   <li>
     <strong>Expected Outcome</strong>:
     <ul>
-      <li>All visible items are correctly sorted and paginated.</li>
-      <li>Deleted items are fully removed.</li>
-      <li>Pagination and summary align with the total number of items.</li>
+      <li>User is directed to page 5, which is now the last page.</li>
+      <li>Pagination and summary are recalculated accordingly.</li>
     </ul>
   </li>
 </ul>
-<p>
-  <strong
-    >Test Case 9: Manually Manipulating the URL for a Nonexistent Page</strong
-  >
-</p>
+<p><strong>3. Manually Manipulating the URL for a Nonexistent Page</strong></p>
 <ul>
   <li>
     <strong>Scenario</strong>: A user manipulates the URL to navigate to a
@@ -244,12 +67,11 @@
       <li>
         Pagination and summary reflect the correct number of items and pages.
       </li>
+      <li>The URL is updated to match the corrected state.</li>
     </ul>
   </li>
 </ul>
-<p>
-  <strong>Test Case 10: Manually Changing Per-Page Value in the URL</strong>
-</p>
+<p><strong>4. Manually Changing Per-Page Value in the URL</strong></p>
 <ul>
   <li>
     <strong>Scenario</strong>: A user manipulates the URL to set an invalid or
@@ -269,155 +91,9 @@
   <li>
     <strong>Expected Outcome</strong>:
     <ul>
-      <li>
-        The <code>per_page</code> value is validated and set to the nearest
-        valid option (e.g., 20, 50).
-      </li>
+      <li>The <code>per_page</code> value is set to the default value (10).</li>
       <li>Pagination and summary are recalculated accordingly.</li>
-    </ul>
-  </li>
-</ul>
-<hr />
-
-<h3><strong>Test Cases for Real-Time Updates</strong></h3>
-<p><strong>Test Case 11: Real-Time Addition by Another User</strong></p>
-<ul>
-  <li>
-    <strong>Scenario</strong>: Another user adds a new item while you’re viewing
-    the list.
-  </li>
-  <li>
-    <strong>Steps</strong>:
-    <ol>
-      <li>Stay on a page.</li>
-      <li>Simulate another user adding a new item.</li>
-    </ol>
-  </li>
-  <li>
-    <strong>Expected Outcome</strong>:
-    <ul>
-      <li>
-        The new item is displayed at the top of the page with a green background
-        and a “New” badge.
-      </li>
-      <li>
-        A message appears:
-        <strong>“A new item has been added by another user.”</strong>
-      </li>
-      <li>Pagination remains unchanged until refresh.</li>
-    </ul>
-  </li>
-</ul>
-<p><strong>Test Case 12: Stream Inserted Times for Additions</strong></p>
-<ul>
-  <li>
-    <strong>Scenario</strong>: Verify that only added, deleted, or edited rows
-    are updated in the stream.
-  </li>
-  <li>
-    <strong>Steps</strong>:
-    <ol>
-      <li>Add a new item to the list.</li>
-      <li>Delete an item from the list.</li>
-      <li>Edit an item in the list.</li>
-    </ol>
-  </li>
-  <li>
-    <strong>Expected Outcome</strong>:
-    <ul>
-      <li>
-        The stream-inserted timestamp for rows reflects updates only for the
-        affected items.
-      </li>
-      <li>
-        Other rows retain their original timestamps, ensuring efficient DOM
-        updates.
-      </li>
-    </ul>
-  </li>
-</ul>
-<p><strong>Test Case 13: Real-Time Deletion by Another User</strong></p>
-<ul>
-  <li>
-    <strong>Scenario</strong>: Another user deletes an item while you’re viewing
-    the list.
-  </li>
-  <li>
-    <strong>Steps</strong>:
-    <ol>
-      <li>Stay on a page with the item visible.</li>
-      <li>Simulate another user deleting the item.</li>
-    </ol>
-  </li>
-  <li>
-    <strong>Expected Outcome</strong>:
-    <ul>
-      <li>The item is marked with a gray background and a “Deleted” badge.</li>
-      <li>
-        A message appears:
-        <strong>“An item has been deleted by another user.”</strong>
-      </li>
-      <li>Pagination remains unchanged until refresh.</li>
-    </ul>
-  </li>
-</ul>
-<hr />
-<h3><strong>Test Cases for Concurrency</strong></h3>
-<p>
-  <strong
-    >Test Case 14: Editing an Item That Was Modified by Another User</strong
-  >
-</p>
-<ul>
-  <li>
-    <strong>Scenario</strong>: Attempt to save changes to an item that was
-    modified by another user after you opened the edit form.
-  </li>
-  <li>
-    <strong>Steps</strong>:
-    <ol>
-      <li>Open the edit form for an item.</li>
-      <li>Simulate another user modifying the same item.</li>
-      <li>Attempt to save your changes.</li>
-    </ol>
-  </li>
-  <li>
-    <strong>Expected Outcome</strong>:
-    <ul>
-      <li>
-        An error message is displayed:
-        <strong>“This language has been modified by someone else.”</strong>
-      </li>
-    </ul>
-  </li>
-</ul>
-<p>
-  <strong
-    >Test Case 15: Deleting an Item That Is Being Edited by Another User</strong
-  >
-</p>
-<ul>
-  <li>
-    <strong>Scenario</strong>: Attempt to delete an item that is currently being
-    edited by another user.
-  </li>
-  <li>
-    <strong>Steps</strong>:
-    <ol>
-      <li>Simulate another user opening the edit form for an item.</li>
-      <li>Attempt to delete the same item.</li>
-    </ol>
-  </li>
-  <li>
-    <strong>Expected Outcome</strong>:
-    <ul>
-      <li>
-        An error message is displayed:
-        <strong
-          >“Cannot delete language while it is being edited by another
-          user.”</strong
-        >
-      </li>
+      <li>The URL reflects the updated <code>per_page</code> value.</li>
     </ul>
   </li>
 </ul>
