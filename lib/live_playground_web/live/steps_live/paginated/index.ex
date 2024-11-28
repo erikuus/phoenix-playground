@@ -12,13 +12,16 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
 
     socket = assign(socket, :count_all, Languages2.count_languages())
 
-    page_before_validation = to_integer(page, 1)
-    options = validate_options(socket, %{page: page, per_page: per_page})
+    page = to_integer(page, 1)
+    per_page = to_integer(per_page, @per_page)
+    options = %{page: page, per_page: per_page}
 
-    if options.page != page_before_validation do
-      {:ok, push_navigate(socket, to: get_pagination_url(options))}
+    valid_options = validate_options(socket, options)
+
+    if options != valid_options do
+      {:ok, push_navigate(socket, to: get_pagination_url(valid_options))}
     else
-      {:ok, init(socket, options)}
+      {:ok, init(socket, valid_options)}
     end
   end
 
@@ -33,16 +36,6 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     {:ok, init(socket, options)}
   end
 
-  defp validate_options(socket, options) do
-    per_page = to_integer(options.per_page, @per_page)
-    page = to_integer(options.page, 1)
-
-    existing_page = get_existing_page(page, per_page, socket.assigns.count_all)
-    allowed_per_page = get_allowed_per_page(per_page)
-
-    Map.merge(options, %{page: existing_page, per_page: allowed_per_page})
-  end
-
   defp to_integer(value, _default_value) when is_integer(value), do: value
 
   defp to_integer(value, default_value) when is_binary(value) do
@@ -53,6 +46,13 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
   end
 
   defp to_integer(_value, default_value), do: default_value
+
+  defp validate_options(socket, options) do
+    existing_page = get_existing_page(options.page, options.per_page, socket.assigns.count_all)
+    allowed_per_page = get_allowed_per_page(options.per_page)
+
+    Map.merge(options, %{page: existing_page, per_page: allowed_per_page})
+  end
 
   defp get_existing_page(page, per_page, count_all) do
     max_page = ceil_div(count_all, per_page)
@@ -121,25 +121,29 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
 
   defp apply_options(socket, :index, params, reset_stream) do
     options = socket.assigns.options
-    per_page = params["per_page"] || options.per_page || @per_page
+
     page = params["page"] || options.page || 1
-    page_before_validation = to_integer(page, 1)
-    new_options = validate_options(socket, %{page: page, per_page: per_page})
+    per_page = params["per_page"] || options.per_page || @per_page
+
+    page = to_integer(page, 1)
+    per_page = to_integer(per_page, @per_page)
+
+    valid_options = validate_options(socket, %{page: page, per_page: per_page})
 
     socket =
-      if reset_stream or new_options != options or new_options.page != page_before_validation do
-        languages = Languages2.list_languages(new_options)
+      if reset_stream or valid_options != options or valid_options.page != page do
+        languages = Languages2.list_languages(valid_options)
         count_visible_rows = length(languages)
 
         socket
-        |> assign(:options, new_options)
+        |> assign(:options, valid_options)
         |> assign(:count_visible_rows, count_visible_rows)
         |> assign(:count_all_summary, socket.assigns.count_all)
         |> assign(:count_all_pagination, socket.assigns.count_all)
         |> assign(:pending_deletion, false)
         |> stream(:languages, languages, reset: true)
-        |> (&if(new_options.page != page_before_validation,
-              do: push_patch(&1, to: get_pagination_url(new_options)),
+        |> (&if(valid_options.page != page,
+              do: push_patch(&1, to: get_pagination_url(valid_options)),
               else: &1
             )).()
       else
