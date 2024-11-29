@@ -33,11 +33,15 @@
     deleted.
   </li>
   <li>
-    If the validated <code>page</code> differs from the provided
-    <code>page</code>, we redirect the user to the correct URL using
-    <code>push_navigate</code>. This ensures that the URL in the browser
-    accurately reflects the current state of the LiveView. Without this
-    redirection, the URL would remain unchanged even after validation.
+    We first convert page and per_page parameters to integers using
+    <code>to_integer/2</code>, which safely handles both integer and string
+    inputs, defaulting to specified values if parsing fails.
+  </li>
+  <li>
+    We then validate these options using <code>validate_options/2</code>. If the
+    validated options differ from the original options, we redirect using
+    <code>push_navigate</code>. This ensures that the URL accurately reflects
+    the validated state.
   </li>
 </ul>
 <p>
@@ -58,21 +62,15 @@
 <ul>
   <li>
     <p>
-      The <code>validate_options/2</code> function sanitizes the pagination
-      parameters. Instead of using <code>String.to_integer/1</code>, it employs
-      a custom <code>to_integer/2</code> function. This custom function safely
-      parses integers and defaults to specified values if parsing fails,
-      preventing errors from invalid input.
-    </p>
-    <p>
-      After parsing, the function calls <code>get_existing_page/3</code>, which
-      uses <code>ceil_div/2</code> to calculate the maximum number of pages
-      based on the total item count and the <code>per_page</code> value. For
-      example, if there are 45 items and <code>per_page</code> is set to 10,
+      The <code>validate_options/2</code> function focuses solely on validating
+      the pagination parameters, as the integer conversion is now handled
+      separately. It calls <code>get_existing_page/3</code>, which uses
+      <code>ceil_div/2</code> to calculate the maximum number of pages based on
+      the total item count and the <code>per_page</code> value. For example, if
+      there are 45 items and <code>per_page</code> is set to 10,
       <code>ceil_div</code> computes that there should be 5 pages. If a user
-      requests page 6, <code>get_existing_page</code>
-      adjusts the page number to 5 to ensure it doesn't exceed the available
-      range.
+      requests page 6, <code>get_existing_page</code> adjusts the page number to
+      5 to ensure it doesn't exceed the available range.
     </p>
   </li>
   <li>
@@ -148,7 +146,7 @@
           <li><code>:count_all</code> increases to 101.</li>
           <li>
             <code>:count_all_summary</code> also increases to 101, updating the
-            summary to display “Showing 1 - 6 of 101.”
+            summary to display "Showing 1 - 6 of 101."
           </li>
           <li>
             <code>:count_all_pagination</code> remains at 100 to prevent the
@@ -262,10 +260,10 @@
     </p>
   </li>
   <li>
-    <strong>Validate Parameters</strong>:
+    <strong>Convert and Validate Parameters</strong>:
     <p>
-      Convert <code>page</code> to an integer and validate options to ensure the
-      page number is within valid bounds.
+      First convert <code>page</code> and <code>per_page</code> to integers,
+      then validate the options to ensure they are within valid bounds.
     </p>
   </li>
   <li>
@@ -276,15 +274,15 @@
         <code>reset_stream</code> is true (user clicked "reset" to resort data).
       </li>
       <li>
-        <code>new_options</code> differ from current options (user navigated to
-        a new page or changed <code>per_page</code> value).
+        <code>valid_options</code> differ from current options (user navigated
+        to a new page or changed <code>per_page</code> value).
       </li>
       <li>
         The validated page number changed because the user requested an invalid
         page. For example, after deleting all items on page 5 and attempting to
         navigate to page 6, the validation adjusts the page number back to 5,
         which becomes the last valid page. Even though
-        <code>new_options</code> and <code>options</code>
+        <code>valid_options</code> and <code>options</code>
         both now point to page 5, we still need this extra condition to reset
         the stream and ensure the data is correctly displayed for the updated
         last page.
