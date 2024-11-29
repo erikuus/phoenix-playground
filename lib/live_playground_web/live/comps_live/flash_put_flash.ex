@@ -16,7 +16,7 @@ defmodule LivePlaygroundWeb.CompsLive.FlashPutFlash do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <.button_link phx-click={JS.push("set-flash", value: %{msg: placeholder_sentences(3, true)})}>
+    <.button_link phx-click={JS.push("set-flash")}>
       Show flash
     </.button_link>
     <!-- start hiding from live code -->
@@ -27,7 +27,8 @@ defmodule LivePlaygroundWeb.CompsLive.FlashPutFlash do
     """
   end
 
-  def handle_event("set-flash", %{"msg" => msg}, socket) do
+  def handle_event("set-flash", _, socket) do
+    msg = placeholder_sentences(3, true)
     {:noreply, put_flash(socket, :info, msg)}
   end
 end

@@ -459,16 +459,34 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             ]
           },
           %{
+            expandable: %{
+              id: "alert",
+              icon: "hero-exclamation-triangle",
+              label: "Alert",
+              open:
+                is_active?(current_path, [
+                  "/alert",
+                  "/alert-put-flash"
+                ])
+            },
+            expandable_items: [
+              %{
+                label: "Alert Basics",
+                path: ~p"/alert",
+                active: is_active?(current_path, ["/alert"])
+              },
+              %{
+                label: "Alert Using Put Flash",
+                path: ~p"/alert-put-flash",
+                active: is_active?(current_path, ["/alert-put-flash"])
+              }
+            ]
+          },
+          %{
             icon: "hero-cursor-arrow-rays",
             label: "Button Link",
             path: ~p"/button-link",
             active: is_active?(current_path, ["/button-link"])
-          },
-          %{
-            icon: "hero-exclamation-triangle",
-            label: "Alert",
-            path: ~p"/alert",
-            active: is_active?(current_path, ["/alert"])
           },
           %{
             icon: "hero-tag",

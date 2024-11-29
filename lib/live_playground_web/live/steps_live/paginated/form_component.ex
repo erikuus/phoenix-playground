@@ -12,9 +12,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
         <%= @title %>
         <:subtitle>Use this form to manage language records in your database.</:subtitle>
       </.header>
-      <.alert :if={@flash["lock"]} title="Concurrent update detected" kind={:error} close={false} class="mt-6 text-sm">
-        <%= live_flash(@flash, :lock) %>
-      </.alert>
+      <.alert flash={@flash} flash_key={:lock} title="Concurrent update detected" kind={:error} close={false} class="mt-6 text-sm" />
       <.simple_form for={@form} id="language-form" phx-target={@myself} phx-change="validate" phx-submit="save">
         <.input field={@form[:lock_version]} type="hidden" />
         <.input field={@form[:countrycode]} type="text" label="Countrycode" autocomplete="off" list="matches" phx-debounce="500" />

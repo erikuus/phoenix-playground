@@ -58,9 +58,7 @@ defmodule LivePlaygroundWeb.RecipesLive.SearchParam do
       </.button_link>
     </form>
     <.loading :if={@loading} />
-    <.alert :if={@flash["no_result"]}>
-      <%= live_flash(@flash, :no_result) %>
-    </.alert>
+    <.alert flash={@flash} flash_key={:no_result} />
     <.table :if={@countries != []} id="countries" rows={@countries}>
       <:col :let={country} label="Name"><%= country.name %></:col>
       <:col :let={country} label="Continent"><%= country.continent %></:col>

@@ -456,11 +456,22 @@ defmodule LivePlaygroundWeb.MoreComponents do
   @doc """
   Renders a notification or alert box with specific types.
 
-  ## Examples
+  # Simple alerts
 
       <.alert>Info</.alert>
       <.alert kind={:warning}>Warning</.alert>
       <.alert kind={:error}>Error</.alert>
+
+  # Flash-based alert
+
+  <.alert
+    flash={@flash}
+    flash_key={:breaking_news}
+    title="Breaking News"
+    icon="hero-exclamation-triangle-mini"
+    kind={:error}
+  />
+
   """
   attr :id, :string, default: "alert"
   attr :kind, :atom, default: :info
@@ -468,14 +479,23 @@ defmodule LivePlaygroundWeb.MoreComponents do
   attr :icon, :string, default: nil
   attr :title, :string, default: nil
   attr :close, :boolean, default: true
+  attr :flash, :map, default: %{}
+  attr :flash_key, :any, default: nil
 
-  slot :inner_block, required: true
+  slot :inner_block
 
   def alert(assigns) do
     ~H"""
     <div
+      :if={(@flash_key && Phoenix.Flash.get(@flash, @flash_key)) || !@flash_key}
+      phx-click={
+        if @flash_key do
+          JS.push("lv:clear-flash", value: %{key: @flash_key})
+        else
+          hide("##{@id}")
+        end
+      }
       id={@id}
-      phx-click={hide("##{@id}")}
       class={[
         "rounded-md p-4",
         @kind == :info && "bg-zinc-100 text-zinc-600",
@@ -494,8 +514,13 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
         <div class={["flex-1", @icon != nil && "ml-3"]}>
           <h3 :if={@title} id={"#{@id}-title"} class="font-medium mb-2"><%= @title %></h3>
-
-          <p><%= render_slot(@inner_block) %></p>
+          <p>
+            <%= if @flash_key do %>
+              <%= Phoenix.Flash.get(@flash, @flash_key) %>
+            <% else %>
+              <%= render_slot(@inner_block) %>
+            <% end %>
+          </p>
         </div>
 
         <button :if={@close} type="button" class="flex-shrink-0 ml-4" aria-label="Close alert">

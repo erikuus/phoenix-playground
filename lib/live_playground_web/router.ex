@@ -82,6 +82,8 @@ defmodule LivePlaygroundWeb.Router do
       live "/flash-info-title", CompsLive.FlashInfoTitle
       live "/flash-text-only", CompsLive.FlashTextOnly
       live "/flash-put-flash", CompsLive.FlashPutFlash
+      live "/alert", CompsLive.Alert
+      live "/alert-put-flash", CompsLive.AlertPutFlash
       live "/table", CompsLive.Table
       live "/table-action", CompsLive.TableAction
       live "/table-row-click", CompsLive.TableRowClick
@@ -115,7 +117,6 @@ defmodule LivePlaygroundWeb.Router do
       live "/slideover-red", CompsLive.SlideoverRed
       live "/slideover-navigate", CompsLive.SlideoverNavigate
       live "/button-link", CompsLive.ButtonLink
-      live "/alert", CompsLive.Alert
       live "/badge", CompsLive.Badge
       live "/note", CompsLive.Note
       live "/simple-list", CompsLive.SimpleList
