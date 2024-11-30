@@ -15,10 +15,10 @@ defmodule LivePlayground.Languages2.Language do
   def changeset(language, attrs, opts \\ []) do
     language
     |> cast(attrs, [:countrycode, :language, :isofficial, :percentage, :lock_version])
-    |> update_change(:countrycode, &String.upcase/1)
     |> validate_required([:countrycode, :language, :isofficial, :percentage])
     |> validate_length(:language, min: 2, max: 30)
     |> validate_number(:percentage, greater_than_or_equal_to: 0, less_than_or_equal_to: 100)
+    |> update_change(:countrycode, &String.upcase/1)
     |> maybe_validate_countrycode_exists(opts)
     |> optimistic_lock(:lock_version)
   end
