@@ -480,3 +480,208 @@
     </p>
   </li>
 </ul>
+<hr />
+<p>
+  The template for <code>LivePlaygroundWeb.StepsLive.Paginated.Index</code>
+  implements the UI for our paginated language list. While most of the code is
+  straightforward Phoenix LiveView markup, there are a few important
+  implementation details that handle real-time updates, pagination controls, and
+  visual feedback for concurrent actions.
+</p>
+<h4>Count Management in UI</h4>
+<p>
+  The template uses different count variables for different UI elements, as
+  explained in the <code>init/2</code> section:
+</p>
+<ul>
+  <li>
+    The summary text uses <code>@count_all_summary</code> to maintain accurate
+    "Showing X of Y" text even when items are marked as deleted but still
+    visible
+  </li>
+  <li>
+    The pagination component uses <code>@count_all_pagination</code> to ensure
+    page numbers remain stable until the user explicitly reloads or navigates
+  </li>
+</ul>
+<h4>Stream Demonstration</h4>
+<p>
+  In the countrycode column, you'll notice:
+  <code>&lt;dd>&lt;%= Timex.now() %>&lt;/dd></code>
+</p>
+<p>
+  This timestamp is included purely for demonstration purposes—it shows when
+  each row was stream-inserted, helping developers understand when and how the
+  stream updates. In a production application, you would typically not include
+  this debugging information.
+</p>
+<hr />
+<p>
+  The <code>LivePlaygroundWeb.StepsLive.Paginated.FormComponent</code> adds two
+  advanced features to standard Phoenix LiveView form handling: optimistic
+  locking for concurrent updates and dynamic country code suggestions. Let's see
+  how these work together across the component and schema:
+</p>
+<h3>Optimistic Locking</h3>
+<p>
+  When multiple users edit the same record simultaneously, we need to prevent
+  one user from accidentally overwriting another's changes. Phoenix and Ecto
+  provide optimistic locking to handle this. Here's how it works:
+</p>
+<h4>How to Implement</h4>
+<ol>
+  <li>
+    <p><strong>Add version tracking to your database table:</strong></p>
+    <pre><code>add :lock_version, :integer, default: 0</code></pre>
+  </li>
+  <li>
+    <p>
+      <strong
+        >Add the field to your schema
+        (LivePlayground.Languages2.Language):</strong
+      >
+    </p>
+    <pre><code>field :lock_version, :integer, default: 0</code></pre>
+  </li>
+  <li>
+    <p><strong>Add optimistic lock to your changeset:</strong></p>
+    <pre><code>|> optimistic_lock(:lock_version)</code></pre>
+  </li>
+  <li>
+    <p>
+      <strong
+        >Configure update in your context (LivePlayground.Languages2):</strong
+      >
+    </p>
+    <pre><code>Repo.update(changeset, stale_error_field: :lock_version)</code></pre>
+    <p>
+      This crucial step ensures that version conflicts appear in
+      <code>changeset.errors[:lock_version]</code>
+    </p>
+  </li>
+  <li>
+    <p><strong>Include the version in your form component:</strong></p>
+    <pre><code>&lt;.input field={@form[:lock_version]} type="hidden" /&gt;</code></pre>
+  </li>
+  <li>
+    <p><strong>Handle version conflicts in your save function:</strong></p>
+    <pre><code>if changeset.errors[:lock_version] do
+  # Someone else updated the record while we were editing
+  latest_language = Languages2.get_language!(language.id)
+  # Show the latest version to the user
+  # Let them merge their changes with the new version
+end</code></pre>
+  </li>
+</ol>
+<h4>How It Works</h4>
+<p>
+  Let's say two users, Alice and Bob, start editing the same language record:
+</p>
+<ol>
+  <li>Both load the record with <code>lock_version = 1</code></li>
+  <li>
+    Alice saves her changes first. The database updates the record and
+    increments
+    <code>lock_version</code> to 2
+  </li>
+  <li>
+    When Bob tries to save, his form still has <code>lock_version = 1</code>
+  </li>
+  <li>Ecto sees the mismatch and returns a <code>:lock_version</code> error</li>
+  <li>
+    Our code then loads the latest version and lets Bob merge his changes with
+    Alice's updates
+  </li>
+</ol>
+<p>
+  This approach is called "optimistic" because it assumes conflicts are rare and
+  only checks for them at save time, rather than locking the record during the
+  entire edit session.
+</p>
+<h3>Country Code Suggestions with Smart Validation</h3>
+<p>
+  Our form needs to both suggest valid country codes and validate the final
+  input. While we could handle these as separate events, we combine them for
+  better user experience. Here's why and how:
+</p>
+<p><strong>The Challenge</strong></p>
+<p>
+  If we validated the country code separately from suggestions, users would see
+  "Code not found" errors while typing, even when valid suggestions are being
+  displayed in the autocomplete list. This would be confusing and provide a poor
+  user experience.
+</p>
+<p><strong>The Solution</strong></p>
+<p>
+  We combine suggestion lookup and validation in the
+  <code>validate</code> event:
+</p>
+<ul>
+  <li>
+    When matches are found for autocomplete, we skip validation using
+    <code>validate_countrycode_exists: false</code>
+  </li>
+  <li>
+    When no matches exist, we enable validation using
+    <code>validate_countrycode_exists: true</code>
+  </li>
+</ul>
+<p><strong>How It Works</strong></p>
+<ol>
+  <li>
+    User starts typing a country code, triggering the
+    <code>validate</code> event
+  </li>
+  <li>We search for matching codes to populate the autocomplete list</li>
+  <li>
+    If matches are found:
+    <ul>
+      <li>Skip database validation</li>
+      <li>User sees suggestions without error messages</li>
+    </ul>
+  </li>
+  <li>
+    If no matches are found:
+    <ul>
+      <li>Perform database validation</li>
+      <li>User sees "Code not found" if input is invalid</li>
+    </ul>
+  </li>
+</ol>
+<hr />
+<p>
+  <code>LivePlayground.Languages2</code> handles three key aspects of our
+  application:
+</p>
+<p><strong>Real-time Updates</strong></p>
+<ul>
+  <li>
+    <code>broadcast/2</code> sets up broadcasts for all database changes. Note
+    how create/update/delete functions end with
+    <code>|> broadcast(:created)</code>, <code>|> broadcast(:updated)</code>, or
+    <code>|> broadcast(:deleted)</code>
+  </li>
+  <li>
+    Provides <code>subscribe/0</code> function that, when called in LiveView's
+    mount, enables the view to receive these broadcasts. This means when any
+    connected user creates, updates, or deletes a language, all other connected
+    users will see these changes immediately.
+  </li>
+</ul>
+<p><strong>Pagination</strong></p>
+<ul>
+  <li>
+    <code>list_languages/1</code> implements efficient database pagination that
+    combines sorting and page slicing in a single query.
+  </li>
+</ul>
+<p><strong>Optimistic Locking</strong></p>
+<ul>
+  <li>
+    Configures <code>Repo.update</code> with
+    <code>stale_error_field: :lock_version</code>, which enables version
+    conflict detection. This setting ensures that
+    <code>changeset.errors[:lock_version]</code> will be set in our form
+    component when concurrent update conflicts occur.
+  </li>
+</ul>
