@@ -7,13 +7,13 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
   @per_page 10
 
   @impl true
-  def mount(%{"page" => page, "per_page" => per_page}, _session, socket) do
+  def mount(params, _session, socket) do
     if connected?(socket), do: Languages2.subscribe()
 
     socket = assign(socket, :count_all, Languages2.count_languages())
 
-    page = to_integer(page, 1)
-    per_page = to_integer(per_page, @per_page)
+    page = to_integer(params["page"], 1)
+    per_page = to_integer(params["per_page"], @per_page)
     options = %{page: page, per_page: per_page}
 
     valid_options = validate_options(socket, options)
@@ -23,17 +23,6 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     else
       {:ok, init(socket, valid_options)}
     end
-  end
-
-  @impl true
-  def mount(_params, _session, socket) do
-    if connected?(socket), do: Languages2.subscribe()
-
-    socket = assign(socket, :count_all, Languages2.count_languages())
-
-    options = %{page: 1, per_page: @per_page}
-
-    {:ok, init(socket, options)}
   end
 
   defp to_integer(value, _default_value) when is_integer(value), do: value
@@ -127,8 +116,8 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
 
     page = to_integer(page, 1)
     per_page = to_integer(per_page, @per_page)
-
-    valid_options = validate_options(socket, %{page: page, per_page: per_page})
+    new_options = %{page: page, per_page: per_page}
+    valid_options = validate_options(socket, new_options)
 
     socket =
       if reset_stream or valid_options != options or valid_options.page != page do
@@ -166,11 +155,11 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
   end
 
   @impl true
-  def handle_event("reset-stream", _params, socket) do
+  def handle_event("reset-stream", %{} = params, socket) do
     socket =
       socket
       |> clear_flash()
-      |> apply_options(:index, socket.assigns.options, true)
+      |> apply_options(:index, params, true)
 
     {:noreply, socket}
   end
@@ -326,8 +315,8 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     |> stream_insert(:languages, language)
   end
 
-  defp get_pagination_url(params, base_path \\ "/steps/paginated") do
-    query_string = URI.encode_query(params)
+  defp get_pagination_url(options, base_path \\ "/steps/paginated") do
+    query_string = URI.encode_query(options)
     "#{base_path}?#{query_string}"
   end
 

@@ -5,54 +5,58 @@
 </p>
 <h3><code>mount/3</code></h3>
 <p>
-  <strong>Why Two Mount Functions?</strong>
-</p>
-<ul>
-  <li>
-    The approach is quite practical: when someone just visits
-    <code>/steps/paginated</code>, we can simply use default values (page 1,
-    standard items per page) without any extra checks. However, when the URL
-    contains parameters like
-    <code>/steps/paginated?page=999&per_page=999</code>—whether typed manually
-    or manipulated—we need to validate these numbers before showing any data.
-  </li>
-  <li>
-    Using two separate mount functions with pattern matching makes this
-    distinction clean and efficient.
-  </li>
-</ul>
-<p>
-  <strong>First <code>mount/3</code> Function (With Parameters)</strong>
+  Initializes the LiveView when a user visits <code>/steps/paginated</code>,
+  handling both scenarios where query parameters are present (e.g.,
+  <code>?page=2&per_page=10</code>) and when they are absent. It ensures that
+  pagination parameters are correctly parsed, validated, and applied.
 </p>
 <ul>
   <li>
     If the socket is connected, we subscribe to language updates using
-    <code>Languages2.subscribe()</code>. We need this to display messages when
+    <code>Languages2.subscribe()</code>. This allows us to display messages when
     other connected users add, edit, or delete languages. For example, if
     another user adds a new language, you'll see a notification like "A new
-    language was added by another user" and the item will appear in your list.
+    language was added by another user," and the item will appear in your list.
   </li>
   <li>
-    We first convert page and per_page parameters to integers using
-    <code>to_integer/2</code>, which safely handles both integer and string
-    inputs, defaulting to specified values if parsing fails.
+    We assign the total count of languages to the socket using
+    <code>assign(socket, :count_all, Languages2.count_languages())</code>. This
+    needs to be done before other assigns because we'll need this total count
+    when validating pagination parameters to ensure we don't exceed the actual
+    number of pages available.
   </li>
   <li>
-    We then validate these options using <code>validate_options/2</code>. If the
-    validated options differ from the original options, we redirect using
-    <code>push_navigate</code>. This ensures that the URL accurately reflects
-    the validated state.
+    We extract the <code>page</code> and <code>per_page</code> parameters from
+    the <code>params</code> map using <code>params["page"]</code> and
+    <code>params["per_page"]</code>. If these parameters are missing, they
+    default to <code>nil</code>.
   </li>
-</ul>
-<p>
-  <strong>Second <code>mount/3</code> Function (Without Parameters)</strong>
-</p>
-<ul>
   <li>
-    We set default values for
-    <code>page</code> and <code>per_page</code>.
+    We convert these parameters to integers using the
+    <code>to_integer/2</code> function, which safely handles integer and string
+    inputs, defaulting to specified values if parsing fails or if the input is
+    <code>nil</code>. The defaults are page <code>1</code> and the predefined
+    <code>@per_page</code> value.
   </li>
-  <li>We call the <code>init/2</code> function with these default options.</li>
+  <li>
+    We construct an <code>options</code> map with the <code>page</code> and
+    <code>per_page</code> values.
+  </li>
+  <li>
+    We validate these options using <code>validate_options/2</code>. If the
+    validated options differ from the original options, we redirect the user to
+    the correct URL using <code>push_navigate</code>. This ensures that the URL
+    accurately reflects the validated state, maintaining consistency and
+    preventing invalid parameters from affecting the application. For example,
+    if someone types page 6 in the URL (like
+    <code>/steps/paginated?page=6</code>), but there are only 5 pages available,
+    they will be automatically redirected to the last valid page.
+  </li>
+  <li>
+    If the options are valid, we initialize the socket with these options by
+    calling the <code>init/2</code> function. This sets up the necessary assigns
+    and prepares the socket for rendering the paginated content.
+  </li>
 </ul>
 <h3><code>validate_options/2</code></h3>
 <p>
@@ -255,10 +259,31 @@
 <p>For the index version, here's what happens step by step:</p>
 <ol>
   <li>
-    <strong>Extract Options and Parameters</strong>:
     <p>
       Get <code>per_page</code> and <code>page</code> from either the URL
-      parameters or fall back to current values.
+      parameters or, if they are not present, fall back to the current values
+      stored in <code>options</code>.
+    </p>
+    <p>This is necessary because:</p>
+    <ul>
+      <li>
+        <strong>In <code>handle_params/3</code>:</strong> When the user
+        navigates through pagination links or modifies the URL directly (e.g.,
+        <code>?page=2&amp;per_page=10</code>), the URL parameters provide the
+        new pagination values.
+      </li>
+      <li>
+        <strong>In events like <code>"reset-stream"</code>:</strong> When the
+        user triggers an event that doesn't involve URL parameters, the
+        <code>params</code> map may be empty. In this case, we use the existing
+        pagination options from <code>options</code> to maintain the current
+        state.
+      </li>
+    </ul>
+    <p>
+      By checking both <code>params</code> and <code>options</code>, we ensure
+      the pagination state is accurately updated whether changes come from URL
+      parameters or in-app events.
     </p>
   </li>
   <li>
