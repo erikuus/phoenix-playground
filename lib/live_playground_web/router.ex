@@ -156,6 +156,12 @@ defmodule LivePlaygroundWeb.Router do
       live "/steps/paginated/:id/edit", StepsLive.Paginated.Index, :edit
       live "/steps/paginated/:id", StepsLive.Paginated.Show, :show
       live "/steps/paginated/:id/show/edit", StepsLive.Paginated.Show, :edit
+
+      live "/steps/refactored", StepsLive.Refactored.Index, :index
+      live "/steps/refactored/new", StepsLive.Refactored.Index, :new
+      live "/steps/refactored/:id/edit", StepsLive.Refactored.Index, :edit
+      live "/steps/refactored/:id", StepsLive.Refactored.Show, :show
+      live "/steps/refactored/:id/show/edit", StepsLive.Refactored.Show, :edit
     end
   end
 

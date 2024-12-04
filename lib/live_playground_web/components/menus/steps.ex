@@ -48,10 +48,9 @@ defmodule LivePlaygroundWeb.Menus.Steps do
       %{
         title: "Extract Pagination Logic",
         description: "Refactor pagination into a helper module",
-        path: "/3",
+        path: ~p"/steps/refactored",
         order: 3
       },
-      # Refactor pagination-specific code into a reusable helper module for cleaner, more maintainable code.
       %{
         title: "Add Sorting",
         description: "Implement dynamic column ordering",

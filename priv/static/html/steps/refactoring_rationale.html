@@ -1,0 +1,83 @@
+<p>
+  This section explains the rationale behind refactoring our pagination
+  implementation into a helper module. If you haven't reviewed the initial
+  pagination implementation in the previous section, it's recommended to
+  <a href="/steps/paginated">start there</a> to understand the complete context
+  and functionality of the code being refactored.
+</p>
+<h3>Key Principles Behind the Helper</h3>
+<ul>
+  <li>Reusable across all paginated LiveViews</li>
+  <li>Consistent pagination behavior</li>
+  <li>Encapsulated pagination logic</li>
+  <li>Centralized configuration</li>
+  <li>Clear separation from LiveView lifecycle</li>
+</ul>
+<p>The helper handles all pagination logic, letting the LiveView focus on:</p>
+<ul>
+  <li>LiveView lifecycles (mount, handle_params, etc.)</li>
+  <li>Languages feature business logic</li>
+  <li>View-specific state</li>
+  <li>View-specific events</li>
+</ul>
+<h3><code>convert_params</code>, <code>to_integer</code></h3>
+<p>In helper because:</p>
+<ul>
+  <li>Pure parameter conversion utility</li>
+  <li>No LiveView-specific logic</li>
+  <li>Reusable across paginated views</li>
+</ul>
+<h3><code>validate_options</code></h3>
+<p>In helper because:</p>
+<ul>
+  <li>Handles all pagination validation</li>
+  <li>Pure computation, no side effects</li>
+  <li>Core pagination rules needed app-wide</li>
+</ul>
+<h3><code>get_per_page_select_options</code></h3>
+<p>In helper because:</p>
+<ul>
+  <li>Central pagination UI config</li>
+  <li>Consistent options across views</li>
+  <li>Single source for per-page options</li>
+</ul>
+<h3><code>update_per_page_option</code></h3>
+<p>In helper because:</p>
+<ul>
+  <li>Standard per-page updates</li>
+  <li>Consistent default handling</li>
+  <li>Reusable pagination logic</li>
+</ul>
+<h3><code>init</code></h3>
+<p>In helper because:</p>
+<ul>
+  <li>Standard pagination setup</li>
+  <li>Handles all pagination assignments</li>
+  <li>Consistent across LiveViews</li>
+</ul>
+
+<h3><code>apply_options</code></h3>
+<p>In helper because:</p>
+<ul>
+  <li>Complex, reusable pagination logic</li>
+  <li>Consistent state updates</li>
+  <li>Handles stream resets and URL updates</li>
+</ul>
+
+<h3>
+  <code>handle_created</code>, <code>handle_updated</code>,
+  <code>handle_deleted</code>
+</h3>
+<p>In helper because:</p>
+<ul>
+  <li>Standard count updates</li>
+  <li>Consistent stream handling</li>
+  <li>Manages pagination state changes</li>
+</ul>
+<h3><code>get_summary</code></h3>
+<p>In helper because:</p>
+<ul>
+  <li>Pure presentation logic</li>
+  <li>Consistent across views</li>
+  <li>Reusable summary formatting</li>
+</ul>
