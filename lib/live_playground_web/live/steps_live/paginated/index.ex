@@ -142,13 +142,13 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     socket
   end
 
-  defp apply_options(socket, _action, _params, _reset_stream) do
+  defp apply_options(socket, _, _, _) do
     socket
   end
 
   @impl true
   def handle_event("change-per-page", params, socket) do
-    per_page = params["per_page"] || @per_page
+    per_page = to_integer(params["per_page"], @per_page)
     options = %{socket.assigns.options | per_page: per_page}
     socket = push_patch(socket, to: get_pagination_url(options))
     {:noreply, socket}
