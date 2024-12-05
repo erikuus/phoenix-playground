@@ -5,79 +5,74 @@
   <a href="/steps/paginated">start there</a> to understand the complete context
   and functionality of the code being refactored.
 </p>
-<h3>Key Principles Behind the Helper</h3>
+<h3>Key Principles</h3>
 <ul>
   <li>Reusable across all paginated LiveViews</li>
-  <li>Consistent pagination behavior</li>
-  <li>Encapsulated pagination logic</li>
-  <li>Centralized configuration</li>
-  <li>Clear separation from LiveView lifecycle</li>
+  <li>Encapsulated logic and centralized configuration of pagination</li>
+  <li>Clear separation of pagination logic from LiveView lifecycle methods</li>
 </ul>
-<p>The helper handles all pagination logic, letting the LiveView focus on:</p>
+<p>The helper manages pagination logic, allowing LiveView to focus on:</p>
 <ul>
-  <li>LiveView lifecycles (mount, handle_params, etc.)</li>
-  <li>Languages feature business logic</li>
-  <li>View-specific state</li>
-  <li>View-specific events</li>
+  <li>
+    Lifecycle hooks (e.g., <code>mount</code>, <code>handle_params</code>)
+  </li>
+  <li>Business-specific logic</li>
+  <li>View-specific state and events</li>
 </ul>
-<h3><code>convert_params</code>, <code>to_integer</code></h3>
-<p>In helper because:</p>
+<h3>Functions in the Helper Module</h3>
+<h4><code>convert_params</code>, <code>to_integer</code></h4>
 <ul>
-  <li>Pure parameter conversion utility</li>
-  <li>No LiveView-specific logic</li>
-  <li>Reusable across paginated views</li>
+  <li>
+    Performs pure parameter conversion without LiveView-specific dependencies
+  </li>
 </ul>
-<h3><code>validate_options</code></h3>
-<p>In helper because:</p>
+<h4><code>validate_options</code></h4>
 <ul>
-  <li>Handles all pagination validation</li>
-  <li>Pure computation, no side effects</li>
-  <li>Core pagination rules needed app-wide</li>
+  <li>
+    Provides centralized validation of pagination options using pure, reusable
+    rules
+  </li>
 </ul>
-<h3><code>get_per_page_select_options</code></h3>
-<p>In helper because:</p>
+<h4><code>get_per_page_select_options</code></h4>
 <ul>
-  <li>Central pagination UI config</li>
-  <li>Consistent options across views</li>
-  <li>Single source for per-page options</li>
+  <li>
+    Offers a single source for pagination UI configuration, ensuring consistency
+    across views
+  </li>
 </ul>
-<h3><code>update_per_page_option</code></h3>
-<p>In helper because:</p>
+<h4><code>update_per_page_option</code></h4>
 <ul>
-  <li>Standard per-page updates</li>
-  <li>Consistent default handling</li>
-  <li>Reusable pagination logic</li>
+  <li>
+    Standardizes updates to per-page settings with uniform default handling
+  </li>
 </ul>
-<h3><code>init</code></h3>
-<p>In helper because:</p>
+<h4><code>init</code></h4>
 <ul>
-  <li>Standard pagination setup</li>
-  <li>Handles all pagination assignments</li>
-  <li>Consistent across LiveViews</li>
+  <li>
+    Initializes pagination state assignments to ensure consistent setup across
+    LiveViews
+  </li>
 </ul>
-
-<h3><code>apply_options</code></h3>
-<p>In helper because:</p>
+<h4><code>apply_options</code></h4>
 <ul>
-  <li>Complex, reusable pagination logic</li>
-  <li>Consistent state updates</li>
-  <li>Handles stream resets and URL updates</li>
+  <li>
+    Manages complex pagination updates, including stream resets and URL state
+    updates
+  </li>
 </ul>
-
-<h3>
+<h4>
   <code>handle_created</code>, <code>handle_updated</code>,
   <code>handle_deleted</code>
-</h3>
-<p>In helper because:</p>
+</h4>
 <ul>
-  <li>Standard count updates</li>
-  <li>Consistent stream handling</li>
-  <li>Manages pagination state changes</li>
+  <li>
+    Manages pagination state changes in response to create, update, and delete
+    events
+  </li>
 </ul>
-<h3><code>get_summary</code></h3>
-<p>In helper because:</p>
+<h4><code>get_summary</code></h4>
 <ul>
-  <li>Pure presentation logic</li>
-  <li>Consistent across views</li>
-  <li>Reusable summary formatting</li>
+  <li>
+    Provides reusable summary formatting, ensuring consistency across views
+  </li>
 </ul>
