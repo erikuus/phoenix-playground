@@ -861,6 +861,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
     * `:params_key` (optional) - Key to use for page parameter in URL. Defaults to "page".
     * `:params_per_page_key` (optional) - Key to use for per_page parameter in URL. When nil, per_page is not included.
     * `:keep_params` (optional) - A map of parameters to maintain in the URL when navigating.
+    * `:hook` (optional) - A LiveView JS hook name to attach to the pagination navigation.
+      Useful for adding client-side behaviors like scrolling to top on page changes.
 
   ## Basic usage with event (no URL parameters):
       <.pagination
@@ -912,7 +914,25 @@ defmodule LivePlaygroundWeb.MoreComponents do
         keep_params={Map.take(@options, [:sort, :filter])}
       />
       # Results in: /items?page=2&sort=name&filter=active
+
+   ## Example with scroll-to-top hook:
+      # In your app.js:
+      let ScrollToTop = {
+        updated() {
+          window.scrollTo({ top: 0, behavior: "auto" });
+        },
+      };
+
+      # In your template:
+      <.pagination
+        patch_path="/items"
+        page={@page}
+        per_page={@per_page}
+        count_all={@count}
+        hook="ScrollToTop"
+      />
   """
+  attr :id, :string, default: "pagination"
   attr :class, :string, default: nil
   attr :event, :string, default: nil
   attr :patch_path, :string, default: nil
@@ -922,6 +942,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   attr :params_key, :string, default: "page"
   attr :params_per_page_key, :string, default: nil
   attr :keep_params, :map, default: %{}
+  attr :hook, :string, default: nil
 
   attr :limit, :integer,
     default: 5,
@@ -940,6 +961,9 @@ defmodule LivePlaygroundWeb.MoreComponents do
     ~H"""
     <nav
       :if={@count_all > 0}
+      id={@id}
+      phx-hook={@hook}
+      data-current-page={@page}
       class={["flex items-center justify-between border-t border-gray-200 px-4 sm:px-0", @class]}
       aria-label="Pagination"
     >

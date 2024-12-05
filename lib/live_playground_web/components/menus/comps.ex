@@ -318,7 +318,9 @@ defmodule LivePlaygroundWeb.Menus.Comps do
                   "/pagination",
                   "/pagination-page",
                   "/pagination-per-page",
-                  "/pagination-options"
+                  "/pagination-options",
+                  "/pagination-modifier",
+                  "/pagination-hook"
                 ])
             },
             expandable_items: [
@@ -346,6 +348,11 @@ defmodule LivePlaygroundWeb.Menus.Comps do
                 label: "Pagination with Modifier",
                 path: ~p"/pagination-modifier",
                 active: is_active?(current_path, ["/pagination-modifier"])
+              },
+              %{
+                label: "Pagination with Hook",
+                path: ~p"/pagination-hook",
+                active: is_active?(current_path, ["/pagination-hook"])
               }
             ]
           },
