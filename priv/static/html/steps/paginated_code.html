@@ -574,6 +574,17 @@
     <pre><code>field :lock_version, :integer, default: 0</code></pre>
   </li>
   <li>
+    <p><strong>Add force_change before optimistic_lock:</strong></p>
+    <pre><code>|> force_change(:lock_version, record.lock_version)</code></pre>
+    <p>
+      This forced update ensures version check happens even when the form data
+      itself hasn't changed. Without it, submitting an unchanged form would
+      bypass optimistic locking - if another user had modified the data in the
+      meantime, you wouldn't see a conflict message and the form would
+      incorrectly close as if successful.
+    </p>
+  </li>
+  <li>
     <p><strong>Add optimistic lock to your changeset:</strong></p>
     <pre><code>|> optimistic_lock(:lock_version)</code></pre>
   </li>

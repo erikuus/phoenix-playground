@@ -20,6 +20,7 @@ defmodule LivePlayground.Languages2.Language do
     |> validate_number(:percentage, greater_than_or_equal_to: 0, less_than_or_equal_to: 100)
     |> update_change(:countrycode, &String.upcase/1)
     |> maybe_validate_countrycode_exists(opts)
+    |> force_change(:lock_version, language.lock_version)
     |> optimistic_lock(:lock_version)
   end
 
@@ -40,7 +41,6 @@ defmodule LivePlayground.Languages2.Language do
       if Repo.exists?(from c in "country", where: c.code == ^countrycode) do
         changeset
       else
-        add_error(changeset, :countrycode, "does not exist")
       end
     end
   end
