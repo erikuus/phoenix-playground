@@ -19,6 +19,17 @@
   <li>Business-specific logic</li>
   <li>View-specific state and events</li>
 </ul>
+<h3>The Pagination Context Struct</h3>
+<p>
+  To reduce the complexity of passing multiple parameters (e.g.,
+  <code>fetch_data_fn</code>, <code>fetch_url_fn</code>, and
+  <code>stream_name</code>) into our helper functions, we introduce a dedicated
+  <code>Context</code> struct within the helper. This struct encapsulates all
+  pagination-specific configuration unique to a particular LiveView. By
+  assigning this struct to the socket once (e.g., during <code>mount</code>),
+  our helper functions can read it directly from the socket, simplifying their
+  signatures and making the pagination logic more portable and maintainable.
+</p>
 <h3>Functions in the Helper Module</h3>
 <h4><code>convert_params</code>, <code>to_integer</code></h4>
 <ul>

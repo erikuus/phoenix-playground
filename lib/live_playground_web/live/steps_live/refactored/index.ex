@@ -9,36 +9,35 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
   def mount(params, _session, socket) do
     if connected?(socket), do: Languages2.subscribe()
 
-    socket = assign(socket, :count_all, Languages2.count_languages())
+    # Set up the pagination context once so all pagination logic in helper
+    # can read from it without extra parameters.
+    context = %PaginationHelpers.Context{
+      stream_name: :languages,
+      fetch_data_fn: fn opts -> Languages2.list_languages(opts) end,
+      fetch_url_fn: &get_url/1
+    }
+
+    socket =
+      socket
+      |> assign(:context, context)
+      |> assign(:count_all, Languages2.count_languages())
 
     options = PaginationHelpers.convert_params(params)
     valid_options = PaginationHelpers.validate_options(socket.assigns.count_all, options)
 
-    fetch_data_fn = fn opts -> Languages2.list_languages(opts) end
-
     if options != valid_options do
       {:ok, push_navigate(socket, to: get_url(valid_options))}
     else
-      {:ok, PaginationHelpers.init(socket, valid_options, :languages, fetch_data_fn)}
+      {:ok, PaginationHelpers.init(socket, valid_options)}
     end
   end
 
   @impl true
   def handle_params(params, _url, socket) do
-    fetch_data_fn = fn options -> Languages2.list_languages(options) end
-    fetch_url_fn = fn options -> get_url(options) end
-
     socket =
       socket
       |> apply_action(socket.assigns.live_action, params)
-      |> PaginationHelpers.apply_options(
-        socket.assigns.live_action,
-        params,
-        :languages,
-        fetch_data_fn,
-        fetch_url_fn,
-        false
-      )
+      |> PaginationHelpers.apply_options(socket.assigns.live_action, params, false)
 
     {:noreply, socket}
   end
@@ -70,20 +69,10 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
 
   @impl true
   def handle_event("reset-stream", %{} = params, socket) do
-    fetch_data_fn = fn options -> Languages2.list_languages(options) end
-    fetch_url_fn = fn options -> get_url(options) end
-
     socket =
       socket
       |> clear_flash()
-      |> PaginationHelpers.apply_options(
-        :index,
-        params,
-        :languages,
-        fetch_data_fn,
-        fetch_url_fn,
-        true
-      )
+      |> PaginationHelpers.apply_options(:index, params, true)
 
     {:noreply, socket}
   end

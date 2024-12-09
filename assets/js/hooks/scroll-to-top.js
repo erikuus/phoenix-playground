@@ -11,7 +11,7 @@ let ScrollToTop = {
     // Compare with the previous page number
     if (currentPage !== this.previousPage) {
       // Page has changed, perform the scroll to top
-      window.scrollTo({ top: 0, behavior: "auto" }); // Use 'auto' for instant scroll
+      window.scrollTo({ top: 0, behavior: "auto" }); // Use 'smooth' for smooth scroll
 
       // Update the previousPage to the current page
       this.previousPage = currentPage;

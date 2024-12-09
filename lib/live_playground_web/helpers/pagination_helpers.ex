@@ -1,16 +1,38 @@
 defmodule LivePlaygroundWeb.PaginationHelpers do
+  @moduledoc """
+  Provides a suite of functions and a configurable `Context` struct for handling
+  pagination-related logic in Phoenix LiveView modules.
+
+  This module allows developers to integrate pagination seamlessly by assigning
+  a `Context` struct to the socket and using helper functions like `init/2` and
+  `apply_options/4` to manage pagination state, validate parameters, and update
+  data streams based on user interactions or URL changes.
+  """
+
   import Phoenix.LiveView
   import Phoenix.Component
 
   @per_page_options [5, 10, 20, 50, 100]
   @default_per_page 10
 
-  @doc """
-  Converts pagination parameters from the given `params` map, applying default values when necessary.
+  defmodule Context do
+    @moduledoc """
+    A configuration struct for pagination.
 
-  This function safely extracts the `"page"` and `"per_page"` parameters from the provided `params` map,
-  converting them to integers and applying default values if they are missing or invalid. It's useful for
-  ensuring that pagination parameters are always in a consistent and expected format.
+    This struct bundles together all the pagination-specific parameters that
+    vary between modules using the helper.
+    """
+    defstruct [:stream_name, :fetch_data_fn, :fetch_url_fn]
+  end
+
+  @doc """
+  Converts pagination parameters from the given `params` map, applying default values
+  when necessary.
+
+  This function safely extracts the `"page"` and `"per_page"` parameters from the provided
+  `params` map, converting them to integers and applying default values if they are missing
+  or invalid. It's useful for ensuring that pagination parameters are always in a consistent
+  and expected format.
 
   ## Parameters
 
@@ -57,7 +79,8 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   defp to_integer(_value, default_value), do: default_value
 
   @doc """
-  Validates pagination options, ensuring that `page` and `per_page` are within acceptable ranges.
+  Validates pagination options, ensuring that `page` and `per_page` are
+  within acceptable ranges.
 
   This function adjusts the `page` and `per_page` values based on the total count of items (`count_all`) and
   the allowed `per_page` options. It ensures that the `page` number does not exceed the maximum available pages
@@ -179,8 +202,6 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
 
   - `socket`: The LiveView socket.
   - `options`: A map containing validated pagination options (`:page` and `:per_page`).
-  - `stream_name`: An atom representing the name of the data stream (e.g., `:items`).
-  - `fetch_data_fn`: A function that accepts pagination options and returns a list of data items.
 
   ## Returns
 
@@ -189,15 +210,22 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   ## Examples
 
   ```elixir
-  fetch_data_fn = fn options -> MyApp.list_items(options) end
-  PaginationHelpers.init(socket, %{page: 1, per_page: 10}, :items, fetch_data_fn)
+  context = %PaginationHelpers.Context{
+    stream_name: :items,
+    fetch_data_fn: fn opts -> Items.list_items(opts) end,
+    fetch_url_fn: &get_url/1
+  }
+  socket = assign(socket, :context, context)
+  PaginationHelpers.init(socket, %{page: 1, per_page: 10})
   ```
   """
-  def init(socket, options, stream_name, fetch_data_fn) do
+  def init(socket, options) do
+    context = socket.assigns.context || %Context{}
+
     count_all = socket.assigns.count_all
     per_page = options.per_page
     count_visible_rows = min(count_all, per_page)
-    data = fetch_data_fn.(options)
+    data = context.fetch_data_fn.(options)
 
     socket
     |> assign(:options, options)
@@ -205,7 +233,7 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
     |> assign(:count_all_pagination, count_all)
     |> assign(:count_visible_rows, count_visible_rows)
     |> assign(:pending_deletion, false)
-    |> stream(stream_name, data)
+    |> stream(context.stream_name, data)
   end
 
   @doc """
@@ -219,9 +247,6 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   - `socket`: The LiveView socket.
   - `action`: The current LiveView action (e.g., `:index`).
   - `params`: A map of parameters from the URL or user input.
-  - `stream_name`: An atom representing the name of the data stream.
-  - `fetch_data_fn`: A function that accepts pagination options and returns a list of data items.
-  - `fetch_url_fn`: A function that generates a URL based on pagination options.
   - `reset_stream`: A boolean indicating whether to force a data reload (e.g., after a reset action). Typically used
     in scenarios where newly added, edited, or deleted items should remain visible in the current view (), even if they
     don’t naturally belong to the page based on sorting or pagination. In such cases, users are provided a reset link
@@ -234,28 +259,17 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   ## Examples
 
   ```elixir
-  fetch_data_fn = fn options -> MyApp.list_items(options) end
-  fetch_url_fn = fn options -> Routes.items_path(MyAppWeb.Endpoint, :index, options) end
-  PaginationHelpers.apply_options(
-  socket,
-  :index,
-  params,
-  :items,
-  fetch_data_fn,
-  fetch_url_fn,
-  false
-  )
+  context = %PaginationHelpers.Context{
+    stream_name: :items,
+    fetch_data_fn: fn opts -> Items.list_items(opts) end,
+    fetch_url_fn: &get_url/1
+  }
+  socket = assign(socket, :context, context)
+  PaginationHelpers.apply_options(socket, :index, params, false)
   ```
   """
-  def apply_options(
-        socket,
-        :index,
-        params,
-        stream_name,
-        fetch_data_fn,
-        fetch_url_fn,
-        reset_stream
-      ) do
+  def apply_options(socket, :index, params, reset_stream) do
+    context = socket.assigns.context || %Context{}
     options = socket.assigns.options || %{page: 1, per_page: @default_per_page}
 
     # Extract parameters with fallbacks
@@ -271,7 +285,7 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
     # Check if data needs to be reloaded
     socket =
       if reset_stream or valid_options != options or valid_options.page != page do
-        data = fetch_data_fn.(valid_options)
+        data = context.fetch_data_fn.(valid_options)
         count_visible_rows = length(data)
 
         socket
@@ -280,9 +294,9 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
         |> assign(:count_all_summary, socket.assigns.count_all)
         |> assign(:count_all_pagination, socket.assigns.count_all)
         |> assign(:pending_deletion, false)
-        |> stream(stream_name, data, reset: true)
+        |> stream(context.stream_name, data, reset: true)
         |> (&if(valid_options.page != page,
-              do: push_patch(&1, to: fetch_url_fn.(valid_options)),
+              do: push_patch(&1, to: context.fetch_url_fn.(valid_options)),
               else: &1
             )).()
       else
@@ -292,7 +306,7 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
     socket
   end
 
-  def apply_options(socket, _, _, _, _, _, _), do: socket
+  def apply_options(socket, _, _, _), do: socket
 
   @doc """
   Handles the creation of a new item by updating counts and inserting the item into the data stream.
