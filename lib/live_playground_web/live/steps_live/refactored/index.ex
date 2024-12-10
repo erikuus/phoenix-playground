@@ -14,7 +14,8 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
     context = %PaginationHelpers.Context{
       stream_name: :languages,
       fetch_data_fn: fn opts -> Languages2.list_languages(opts) end,
-      fetch_url_fn: &get_url/1
+      fetch_url_fn: &get_url/1,
+      default_per_page: 5
     }
 
     socket =
@@ -22,8 +23,8 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
       |> assign(:context, context)
       |> assign(:count_all, Languages2.count_languages())
 
-    options = PaginationHelpers.convert_params(params)
-    valid_options = PaginationHelpers.validate_options(socket.assigns.count_all, options)
+    options = PaginationHelpers.convert_params(socket, params)
+    valid_options = PaginationHelpers.validate_options(socket, options)
 
     if options != valid_options do
       {:ok, push_navigate(socket, to: get_url(valid_options))}
@@ -85,7 +86,7 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
       {:ok, deleted_language} ->
         {:noreply,
          socket
-         |> PaginationHelpers.handle_deleted(:languages, deleted_language)
+         |> PaginationHelpers.handle_deleted(deleted_language)
          |> put_flash(
            :info,
            get_flash_message_with_reset_link(
@@ -107,7 +108,7 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
       ) do
     socket =
       socket
-      |> PaginationHelpers.handle_created(:languages, language)
+      |> PaginationHelpers.handle_created(language)
       |> put_flash(
         :info,
         get_flash_message_with_reset_link(
@@ -125,7 +126,7 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
       ) do
     socket =
       socket
-      |> PaginationHelpers.handle_updated(:languages, language)
+      |> PaginationHelpers.handle_updated(language)
       |> put_flash(
         :info,
         get_flash_message_with_reset_link("Language updated successfully.")
@@ -141,7 +142,7 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
       ) do
     socket =
       socket
-      |> PaginationHelpers.handle_created(:languages, language)
+      |> PaginationHelpers.handle_created(language)
       |> put_flash(
         :info,
         get_flash_message_with_reset_link(
@@ -159,7 +160,7 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
       ) do
     socket =
       socket
-      |> PaginationHelpers.handle_updated(:languages, language)
+      |> PaginationHelpers.handle_updated(language)
       |> put_flash(
         :info,
         get_flash_message_with_reset_link("A language was updated by another user.")
@@ -173,7 +174,7 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
         {LivePlayground.Languages2, {:deleted, language}},
         socket
       ) do
-    socket = PaginationHelpers.handle_deleted(socket, :languages, language)
+    socket = PaginationHelpers.handle_deleted(socket, language)
 
     if socket.assigns.live_action == :edit and socket.assigns.language.id == language.id do
       # Inform the user and close the modal without changing the URL

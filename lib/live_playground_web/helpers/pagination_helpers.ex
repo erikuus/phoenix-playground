@@ -2,69 +2,46 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   @moduledoc """
   Provides a suite of functions and a configurable `Context` struct for handling
   pagination-related logic in Phoenix LiveView modules.
-
-  This module allows developers to integrate pagination seamlessly by assigning
-  a `Context` struct to the socket and using helper functions like `init/2` and
-  `apply_options/4` to manage pagination state, validate parameters, and update
-  data streams based on user interactions or URL changes.
   """
 
   import Phoenix.LiveView
   import Phoenix.Component
 
-  @per_page_options [5, 10, 20, 50, 100]
-  @default_per_page 10
-
   defmodule Context do
     @moduledoc """
     A configuration struct for pagination.
 
-    This struct bundles together all the pagination-specific parameters that
-    vary between modules using the helper.
+    Fields:
+      - `stream_name`: The name of the data stream (atom)
+      - `fetch_data_fn`: A function that takes pagination options and returns a list of data
+      - `fetch_url_fn`: A function that takes pagination options and returns a URL
+      - `per_page_options`: A list of allowed `per_page` values
+      - `default_per_page`: The default `per_page` value if none is provided or invalid
     """
-    defstruct [:stream_name, :fetch_data_fn, :fetch_url_fn]
+    defstruct [
+      :stream_name,
+      :fetch_data_fn,
+      :fetch_url_fn,
+      per_page_options: [5, 10, 20, 50, 100],
+      default_per_page: 10
+    ]
   end
 
   @doc """
-  Converts pagination parameters from the given `params` map, applying default values
-  when necessary.
-
-  This function safely extracts the `"page"` and `"per_page"` parameters from the provided
-  `params` map, converting them to integers and applying default values if they are missing
-  or invalid. It's useful for ensuring that pagination parameters are always in a consistent
-  and expected format.
+  Converts pagination parameters from string to integer values.
 
   ## Parameters
-
-  - `params`: A map of parameters, typically extracted from the URL or user input.
+    - `socket`: The LiveView socket with assigned `context`
+    - `params`: A map of parameters from URL or user input
 
   ## Returns
-
-  A map containing the converted pagination parameters:
-
-  - `:page` - The current page number (defaults to `1`).
-  - `:per_page` - The number of items per page (defaults to `@default_per_page`).
-
-  ## Examples
-
-  ```elixir
-  iex> params = %{"page" => "2", "per_page" => "20"}
-  iex> PaginationHelpers.convert_params(params)
-  %{page: 2, per_page: 20}
-
-  iex> params = %{}
-  iex> PaginationHelpers.convert_params(params)
-  %{page: 1, per_page: 10}
-
-  iex> params = %{"page" => "abc", "per_page" => "xyz"}
-  iex> PaginationHelpers.convert_params(params)
-  %{page: 1, per_page: 10}
+    A map `%{page: integer, per_page: integer}` with converted pagination parameters
   """
-  def convert_params(params) do
-    %{
-      page: to_integer(params["page"], 1),
-      per_page: to_integer(params["per_page"], @default_per_page)
-    }
+  def convert_params(socket, params) do
+    context = socket.assigns.context
+    page = to_integer(params["page"], 1)
+    per_page = to_integer(params["per_page"], context.default_per_page)
+    %{page: page, per_page: per_page}
   end
 
   defp to_integer(value, _default_value) when is_integer(value), do: value
@@ -79,46 +56,20 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   defp to_integer(_value, default_value), do: default_value
 
   @doc """
-  Validates pagination options, ensuring that `page` and `per_page` are
-  within acceptable ranges.
-
-  This function adjusts the `page` and `per_page` values based on the total count of items (`count_all`) and
-  the allowed `per_page` options. It ensures that the `page` number does not exceed the maximum available pages
-  and that `per_page` is one of the allowed values.
+  Validates pagination options against the total item count and context configuration.
 
   ## Parameters
-
-  - `count_all`: The total number of items available (e.g., total records in the database).
-  - `options`: A map containing the current pagination options (`:page` and `:per_page`).
+    - `socket`: The LiveView socket with assigned `context`, `count_all`, and `options`
+    - `options`: The pagination options to validate
 
   ## Returns
-
-  A map with validated and possibly adjusted pagination options:
-
-  - `:page` - The validated page number.
-  - `:per_page` - The validated number of items per page.
-
-  ## Examples
-
-  ```elixir
-  iex> count_all = 50
-  iex> options = %{page: 3, per_page: 10}
-  iex> PaginationHelpers.validate_options(count_all, options)
-  %{page: 3, per_page: 10}
-
-  iex> options = %{page: 6, per_page: 10}
-  iex> PaginationHelpers.validate_options(count_all, options)
-  %{page: 5, per_page: 10} # Adjusted to the last available page
-
-  iex> options = %{page: 1, per_page: 15}
-  iex> PaginationHelpers.validate_options(count_all, options)
-  %{page: 1, per_page: 10} # Adjusted to the default per_page
-  ```
+    A map `%{page: integer, per_page: integer}` with validated pagination parameters
   """
-  def validate_options(count_all, options) do
-    per_page = get_allowed_per_page(options.per_page)
+  def validate_options(socket, options) do
+    context = socket.assigns.context
+    count_all = socket.assigns.count_all
+    per_page = get_allowed_per_page(options.per_page, context)
     page = get_existing_page(options.page, per_page, count_all)
-
     %{page: page, per_page: per_page}
   end
 
@@ -136,92 +87,45 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   defp ceil_div(_num, 0), do: 0
   defp ceil_div(num, denom), do: div(num + denom - 1, denom)
 
-  defp get_allowed_per_page(per_page) do
-    per_page = to_integer(per_page, @default_per_page)
-    if per_page in @per_page_options, do: per_page, else: @default_per_page
+  defp get_allowed_per_page(per_page, context) do
+    per_page = to_integer(per_page, context.default_per_page)
+    if per_page in context.per_page_options, do: per_page, else: context.default_per_page
   end
 
   @doc """
-  Returns the list of allowed `per_page` options for pagination.
-
-  This function provides the available options for the number of items displayed per page,
-  typically used to populate a select dropdown in the UI.
-
-  ## Returns
-
-  A list of integers representing the allowed `per_page` options.
-
-  ## Examples
-
-  ```heex
-  <.input type="select" name="per_page" options={PaginationHelpers.get_per_page_select_options()} value={@options.per_page} />
-  ```
-  """
-  def get_per_page_select_options, do: @per_page_options
-
-  @doc """
-  Updates the `per_page` option in the pagination settings based on user input.
-
-  This function extracts the `"per_page"` parameter from the provided `params` map, converts it to an integer,
-  and updates the `per_page` value in the current pagination options stored in the `socket`.
+  Updates the per_page option based on user input.
 
   ## Parameters
-
-  - `socket`: The LiveView socket containing the current assigns.
-  - `params`: A map of parameters, typically from user input or a form submission.
+    - `socket`: The LiveView socket with assigned `context` and `options`
+    - `params`: User input parameters containing "per_page"
 
   ## Returns
-
-  An updated map of pagination options with the new `per_page` value.
-
-  ## Examples
-
-  ```elixir
-  # Given the current options in the socket:
-  socket.assigns.options = %{page: 2, per_page: 10}
-
-  # User changes per_page to 20:
-  params = %{"per_page" => "20"}
-  PaginationHelpers.update_per_page_option(socket, params)
-  # Returns: %{page: 2, per_page: 20}
-  ```
+    Updated options map with the new per_page value
   """
   def update_per_page_option(socket, params) do
-    options = socket.assigns.options || %{page: 1, per_page: @default_per_page}
-    per_page = to_integer(params["per_page"], @default_per_page)
+    context = socket.assigns.context
+    options = socket.assigns.options
+    per_page = to_integer(params["per_page"], context.default_per_page)
     %{options | per_page: per_page}
   end
 
   @doc """
-  Initializes pagination by setting up the necessary assigns and streaming data into the socket.
-
-  This function prepares the socket for pagination by assigning options, counts, and initializing the data stream.
-  It's typically called during the `mount/3` phase of a LiveView.
+  Initializes pagination state by fetching data and assigning values to socket.
 
   ## Parameters
-
-  - `socket`: The LiveView socket.
-  - `options`: A map containing validated pagination options (`:page` and `:per_page`).
+    - `socket`: The LiveView socket with assigned `context`, `count_all`, and `options`
+    - `options`: Validated pagination options
 
   ## Returns
+    Updated socket with pagination assigns and streamed data
 
-  The updated socket with pagination assigns and data stream initialized.
-
-  ## Examples
-
-  ```elixir
-  context = %PaginationHelpers.Context{
-    stream_name: :items,
-    fetch_data_fn: fn opts -> Items.list_items(opts) end,
-    fetch_url_fn: &get_url/1
-  }
-  socket = assign(socket, :context, context)
-  PaginationHelpers.init(socket, %{page: 1, per_page: 10})
-  ```
+  ## Behavior
+    - Streams initial data using context.fetch_data_fn
+    - Sets count_all_summary, count_all_pagination, count_visible_rows
+    - Initializes pending_deletion as false
   """
   def init(socket, options) do
-    context = socket.assigns.context || %Context{}
-
+    context = socket.assigns.context
     count_all = socket.assigns.count_all
     per_page = options.per_page
     count_visible_rows = min(count_all, per_page)
@@ -237,62 +141,45 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   end
 
   @doc """
-  Applies pagination options and updates the socket accordingly, handling data reloads and stream resets.
-
-  This function manages the pagination logic, determining whether data needs to be reloaded based on changes
-  in parameters or options. It updates the socket assigns and streams new data when necessary.
+  Applies pagination options on parameter changes or resets.
 
   ## Parameters
-
-  - `socket`: The LiveView socket.
-  - `action`: The current LiveView action (e.g., `:index`).
-  - `params`: A map of parameters from the URL or user input.
-  - `reset_stream`: A boolean indicating whether to force a data reload (e.g., after a reset action). Typically used
-    in scenarios where newly added, edited, or deleted items should remain visible in the current view (), even if they
-    don’t naturally belong to the page based on sorting or pagination. In such cases, users are provided a reset link
-    in the flash message to refresh and see the updated list in its proper sorted state.
+    - `socket`: The LiveView socket with assigned `context`, `options`, and `count_all`
+    - `action`: The current LiveView action
+    - `params`: A map of new parameters from URL or user input
+    - `reset_stream`: Boolean indicating if data should be reloaded
 
   ## Returns
+    Updated socket with applied pagination options
 
-  The updated socket with applied pagination options and data.
-
-  ## Examples
-
-  ```elixir
-  context = %PaginationHelpers.Context{
-    stream_name: :items,
-    fetch_data_fn: fn opts -> Items.list_items(opts) end,
-    fetch_url_fn: &get_url/1
-  }
-  socket = assign(socket, :context, context)
-  PaginationHelpers.apply_options(socket, :index, params, false)
-  ```
+  ## Behavior
+    - Converts and validates new parameters
+    - Re-fetches data if options changed or reset requested
+    - Updates URL via push_patch when page changes during validation
   """
   def apply_options(socket, :index, params, reset_stream) do
-    context = socket.assigns.context || %Context{}
-    options = socket.assigns.options || %{page: 1, per_page: @default_per_page}
+    context = socket.assigns.context
+    options = socket.assigns.options
 
-    # Extract parameters with fallbacks
     page = params["page"] || options.page || 1
-    per_page = params["per_page"] || options.per_page || @default_per_page
+    per_page = params["per_page"] || options.per_page || context.default_per_page
 
-    # Convert and validate parameters
     page = to_integer(page, 1)
-    per_page = to_integer(per_page, @default_per_page)
+    per_page = to_integer(per_page, context.default_per_page)
     new_options = %{page: page, per_page: per_page}
-    valid_options = validate_options(socket.assigns.count_all, new_options)
+    valid_options = validate_options(socket, new_options)
 
-    # Check if data needs to be reloaded
     socket =
       if reset_stream or valid_options != options or valid_options.page != page do
         data = context.fetch_data_fn.(valid_options)
+        count_all = socket.assigns.count_all
         count_visible_rows = length(data)
 
         socket
         |> assign(:options, valid_options)
         |> assign(:count_visible_rows, count_visible_rows)
-        |> assign(:count_all_summary, socket.assigns.count_all)
-        |> assign(:count_all_pagination, socket.assigns.count_all)
+        |> assign(:count_all_summary, count_all)
+        |> assign(:count_all_pagination, count_all)
         |> assign(:pending_deletion, false)
         |> stream(context.stream_name, data, reset: true)
         |> (&if(valid_options.page != page,
@@ -309,137 +196,92 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   def apply_options(socket, _, _, _), do: socket
 
   @doc """
-  Handles the creation of a new item by updating counts and inserting the item into the data stream.
-
-  This function is used when a new item is created, either by the current user or another user.
-  It updates the total counts and marks the item with a `:created` flag for UI distinction.
+  Handles the creation of a new item in the data stream.
 
   ## Parameters
-
-  - `socket`: The LiveView socket.
-  - `stream_name`: An atom representing the name of the data stream.
-  - `item`: The newly created item to be inserted into the stream.
+    - `socket`: The LiveView socket with assigned `context`
+    - `item`: The newly created item to insert
 
   ## Returns
+    Updated socket with incremented counts and inserted item
 
-  The updated socket with counts incremented and the new item inserted into the stream.
-
-  ## Examples
-
-  ```elixir
-  item = %Item{id: 123, name: "New Item"}
-  PaginationHelpers.handle_created(socket, :items, item)
-  ```
+  ## Behavior
+    - Marks item as created for UI differentiation
+    - Increments count_all, count_visible_rows, count_all_summary
+    - Inserts item at start of stream
   """
-  def handle_created(socket, stream_name, item) do
+  def handle_created(socket, item) do
+    context = socket.assigns.context
     item = Map.put(item, :created, true)
 
     socket
     |> update(:count_all, &(&1 + 1))
     |> update(:count_visible_rows, &(&1 + 1))
     |> update(:count_all_summary, &(&1 + 1))
-    |> stream_insert(stream_name, item, at: 0)
+    |> stream_insert(context.stream_name, item, at: 0)
   end
 
   @doc """
-  Handles the update of an existing item by updating it in the data stream.
-
-  This function is used when an item is updated, either by the current user or another user.
-  It marks the item with an `:updated` flag for UI distinction.
+  Handles the update of an existing item in the data stream.
 
   ## Parameters
-
-  - `socket`: The LiveView socket.
-  - `stream_name`: An atom representing the name of the data stream.
-  - `item`: The updated item to be refreshed in the stream.
+    - `socket`: The LiveView socket with assigned `context`
+    - `item`: The updated item to refresh
 
   ## Returns
+    Updated socket with refreshed item in stream
 
-  The updated socket with the item refreshed in the stream.
-
-  ## Examples
-
-  ```elixir
-  item = %Item{id: 123, name: "Updated Item"}
-  PaginationHelpers.handle_updated(socket, :items, item)
-  ```
+  ## Behavior
+    - Marks item as updated for UI differentiation
+    - Refreshes item in stream at current position
   """
-  def handle_updated(socket, stream_name, item) do
+  def handle_updated(socket, item) do
+    context = socket.assigns.context
     item = Map.put(item, :updated, true)
-    stream_insert(socket, stream_name, item)
+    stream_insert(socket, context.stream_name, item)
   end
 
   @doc """
-  Handles the deletion of an item by updating counts and marking the item as deleted in the data stream.
-
-  This function is used when an item is deleted, either by the current user or another user.
-  It decrements the total counts, sets the `:pending_deletion` flag, and marks the item with a `:deleted` flag
-  for UI distinction.
+  Handles the deletion of an item from the data stream.
 
   ## Parameters
-
-  - `socket`: The LiveView socket.
-  - `stream_name`: An atom representing the name of the data stream.
-  - `item`: The deleted item to be marked in the stream.
+    - `socket`: The LiveView socket with assigned `context`
+    - `item`: The item to mark as deleted
 
   ## Returns
+    Updated socket with marked item and adjusted counts
 
-  The updated socket with counts decremented and the item marked as deleted in the stream.
-
-  ## Examples
-
-  ```elixir
-  item = %Item{id: 123, name: "Deleted Item"}
-  PaginationHelpers.handle_deleted(socket, :items, item)
-  ```
+  ## Behavior
+    - Marks item as deleted for UI differentiation
+    - Decrements count_all
+    - Sets pending_deletion flag
+    - Updates stream with deleted item state
   """
-  def handle_deleted(socket, stream_name, item) do
+  def handle_deleted(socket, item) do
+    context = socket.assigns.context
     item = Map.put(item, :deleted, true)
 
     socket
     |> update(:count_all, &(&1 - 1))
     |> assign(:pending_deletion, true)
-    |> stream_insert(stream_name, item)
+    |> stream_insert(context.stream_name, item)
   end
 
   @doc """
-  Generates a summary string for the current page in the pagination view.
-
-  This function calculates the starting and ending item numbers displayed on the current page
-  and returns a string summarizing this information.
+  Generates a summary string for the current page.
 
   ## Parameters
-
-  - `count_all`: The total number of items available.
-  - `page`: The current page number.
-  - `per_page`: The number of items per page.
-  - `stream_size`: The actual number of items in the current data stream.
+    - `count_all`: Total number of items
+    - `page`: Current page number
+    - `per_page`: Items per page
+    - `stream_size`: Number of items currently streamed
 
   ## Returns
-
-  A string summarizing the items being displayed, in the format:
-
-  "Showing X - Y of Z."
-
-  Where:
-  - `X` is the starting item number.
-  - `Y` is the ending item number.
-  - `Z` is the total number of items.
-
-  ## Examples
-
-  ```elixir
-  iex> PaginationHelpers.get_summary(100, 2, 10, 10)
-  "Showing 11 - 20 of 100."
-
-  iex> PaginationHelpers.get_summary(45, 5, 10, 5)
-  "Showing 41 - 45 of 45."
-  ```
+    String in format "Showing X - Y of Z"
   """
   def get_summary(count_all, page, per_page, stream_size) do
     start = (page - 1) * per_page + 1
     ending = min(start + stream_size - 1, count_all)
-
     "Showing #{start} - #{ending} of #{count_all}."
   end
 end

@@ -23,7 +23,7 @@
     <label for="rows-per-page" class="mr-2 text-zinc-600 text-sm">
       Rows per page:
     </label>
-    <.input type="select" name="per_page" options={PaginationHelpers.get_per_page_select_options()} value={@options.per_page} />
+    <.input type="select" name="per_page" options={@context.per_page_options} value={@options.per_page} />
   </div>
 </form>
 
