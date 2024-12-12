@@ -23,8 +23,13 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
       |> assign(:context, context)
       |> assign(:count_all, Languages2.count_languages())
 
-    options = PaginationHelpers.convert_params(socket, params)
-    valid_options = PaginationHelpers.validate_options(socket, options)
+    options =
+      %{}
+      |> PaginationHelpers.convert_params(socket, params)
+
+    valid_options =
+      options
+      |> PaginationHelpers.validate_options(socket)
 
     if options != valid_options do
       {:ok, push_navigate(socket, to: get_url(valid_options))}
