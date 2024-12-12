@@ -37,11 +37,16 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   ## Returns
     A map `%{page: integer, per_page: integer}` with converted pagination parameters
   """
-  def convert_params(socket, params) do
+  def convert_params(options, socket, %{"page" => page, "per_page" => per_page} = _params) do
     context = socket.assigns.context
-    page = to_integer(params["page"], 1)
-    per_page = to_integer(params["per_page"], context.default_per_page)
-    %{page: page, per_page: per_page}
+    page = to_integer(page, 1)
+    per_page = to_integer(per_page, context.default_per_page)
+    Map.merge(options, %{page: page, per_page: per_page})
+  end
+
+  def convert_params(options, socket, _params) do
+    context = socket.assigns.context
+    Map.merge(options, %{page: 1, per_page: context.default_per_page})
   end
 
   defp to_integer(value, _default_value) when is_integer(value), do: value
@@ -65,12 +70,18 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   ## Returns
     A map `%{page: integer, per_page: integer}` with validated pagination parameters
   """
-  def validate_options(socket, options) do
+  def validate_options(%{page: page, per_page: per_page} = options, socket) do
     context = socket.assigns.context
     count_all = socket.assigns.count_all
-    per_page = get_allowed_per_page(options.per_page, context)
-    page = get_existing_page(options.page, per_page, count_all)
-    %{page: page, per_page: per_page}
+
+    per_page = get_allowed_per_page(per_page, context)
+    page = get_existing_page(page, per_page, count_all)
+
+    %{options | page: page, per_page: per_page}
+  end
+
+  def validate_options(options, _socket) do
+    options
   end
 
   defp get_existing_page(page, per_page, count_all) do
@@ -102,11 +113,15 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   ## Returns
     Updated options map with the new per_page value
   """
-  def update_per_page_option(socket, params) do
+  def update_per_page_option(socket, %{"per_page" => per_page_param}) do
     context = socket.assigns.context
     options = socket.assigns.options
-    per_page = to_integer(params["per_page"], context.default_per_page)
+    per_page = to_integer(per_page_param, context.default_per_page)
     %{options | per_page: per_page}
+  end
+
+  def update_per_page_option(socket, _) do
+    socket.assigns.options
   end
 
   @doc """
@@ -166,8 +181,8 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
 
     page = to_integer(page, 1)
     per_page = to_integer(per_page, context.default_per_page)
-    new_options = %{page: page, per_page: per_page}
-    valid_options = validate_options(socket, new_options)
+    new_options = Map.merge(options, %{page: page, per_page: per_page})
+    valid_options = validate_options(new_options, socket)
 
     socket =
       if reset_stream or valid_options != options or valid_options.page != page do
