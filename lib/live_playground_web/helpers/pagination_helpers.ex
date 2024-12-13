@@ -28,14 +28,15 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   end
 
   @doc """
-  Converts pagination parameters from string to integer values.
+  Converts pagination parameters from string to integer values and merges them with existing options.
 
   ## Parameters
+    - `options`: The existing pagination options map
     - `socket`: The LiveView socket with assigned `context`
     - `params`: A map of parameters from URL or user input
 
   ## Returns
-    A map `%{page: integer, per_page: integer}` with converted pagination parameters
+    A map `%{page: integer, per_page: integer}` with converted and merged pagination parameters
   """
   def convert_params(options, socket, %{"page" => page, "per_page" => per_page} = _params) do
     context = socket.assigns.context
@@ -64,8 +65,8 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   Validates pagination options against the total item count and context configuration.
 
   ## Parameters
-    - `socket`: The LiveView socket with assigned `context`, `count_all`, and `options`
     - `options`: The pagination options to validate
+    - `socket`: The LiveView socket with assigned `context`, `count_all`, and `options`
 
   ## Returns
     A map `%{page: integer, per_page: integer}` with validated pagination parameters
@@ -133,11 +134,6 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
 
   ## Returns
     Updated socket with pagination assigns and streamed data
-
-  ## Behavior
-    - Streams initial data using context.fetch_data_fn
-    - Sets count_all_summary, count_all_pagination, count_visible_rows
-    - Initializes pending_deletion as false
   """
   def init(socket, options) do
     context = socket.assigns.context
@@ -166,11 +162,6 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
 
   ## Returns
     Updated socket with applied pagination options
-
-  ## Behavior
-    - Converts and validates new parameters
-    - Re-fetches data if options changed or reset requested
-    - Updates URL via push_patch when page changes during validation
   """
   def apply_options(socket, :index, params, reset_stream) do
     context = socket.assigns.context
@@ -219,11 +210,6 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
 
   ## Returns
     Updated socket with incremented counts and inserted item
-
-  ## Behavior
-    - Marks item as created for UI differentiation
-    - Increments count_all, count_visible_rows, count_all_summary
-    - Inserts item at start of stream
   """
   def handle_created(socket, item) do
     context = socket.assigns.context
@@ -245,10 +231,6 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
 
   ## Returns
     Updated socket with refreshed item in stream
-
-  ## Behavior
-    - Marks item as updated for UI differentiation
-    - Refreshes item in stream at current position
   """
   def handle_updated(socket, item) do
     context = socket.assigns.context
@@ -265,12 +247,6 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
 
   ## Returns
     Updated socket with marked item and adjusted counts
-
-  ## Behavior
-    - Marks item as deleted for UI differentiation
-    - Decrements count_all
-    - Sets pending_deletion flag
-    - Updates stream with deleted item state
   """
   def handle_deleted(socket, item) do
     context = socket.assigns.context
