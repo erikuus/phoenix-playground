@@ -1,7 +1,7 @@
 defmodule LivePlaygroundWeb.StepsLive.Refactored.FormComponent do
   use LivePlaygroundWeb, :live_component
 
-  alias LivePlayground.Languages2
+  alias LivePlayground.PaginatedLanguages
   alias LivePlayground.Countries
 
   @impl true
@@ -32,7 +32,7 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.FormComponent do
 
   @impl true
   def update(%{language: language} = assigns, socket) do
-    changeset = Languages2.change_language(language)
+    changeset = PaginatedLanguages.change_language(language)
 
     {:ok,
      socket
@@ -51,7 +51,7 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.FormComponent do
     # Validation logic
     changeset =
       socket.assigns.language
-      |> Languages2.change_language(language_params,
+      |> PaginatedLanguages.change_language(language_params,
         validate_countrycode_exists: validate_countrycode_exists
       )
       |> Map.put(:action, :validate)
@@ -71,7 +71,7 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.FormComponent do
   defp save_language(socket, :edit, language_params) do
     language = socket.assigns.language
 
-    case Languages2.update_language(language, language_params) do
+    case PaginatedLanguages.update_language(language, language_params) do
       {:ok, updated_language} ->
         notify_parent({:updated, updated_language})
         {:noreply, push_patch(socket, to: socket.assigns.patch)}
@@ -79,12 +79,12 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.FormComponent do
       {:error, %Ecto.Changeset{} = changeset} ->
         if changeset.errors[:lock_version] do
           # Fetch the latest version and merge with current changes
-          latest_language = Languages2.get_language!(language.id)
+          latest_language = PaginatedLanguages.get_language!(language.id)
 
           socket =
             socket
             |> assign(:language, latest_language)
-            |> assign_form(Languages2.change_language(latest_language))
+            |> assign_form(PaginatedLanguages.change_language(latest_language))
             |> put_flash(
               :lock,
               "This record has been modified. We've loaded the latest version. Please review and submit again."
@@ -99,7 +99,7 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.FormComponent do
   end
 
   defp save_language(socket, :new, language_params) do
-    case Languages2.create_language(language_params) do
+    case PaginatedLanguages.create_language(language_params) do
       {:ok, language} ->
         notify_parent({:created, language})
         {:noreply, push_patch(socket, to: socket.assigns.patch)}

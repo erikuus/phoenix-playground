@@ -1,16 +1,16 @@
 defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
   use LivePlaygroundWeb, :live_view
 
-  alias LivePlayground.Languages2
-  alias LivePlayground.Languages2.Language
+  alias LivePlayground.PaginatedLanguages
+  alias LivePlayground.PaginatedLanguages.Language
 
   @per_page 10
 
   @impl true
   def mount(params, _session, socket) do
-    if connected?(socket), do: Languages2.subscribe()
+    if connected?(socket), do: PaginatedLanguages.subscribe()
 
-    socket = assign(socket, :count_all, Languages2.count_languages())
+    socket = assign(socket, :count_all, PaginatedLanguages.count_languages())
 
     page = to_integer(params["page"], 1)
     per_page = to_integer(params["per_page"], @per_page)
@@ -77,7 +77,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     |> assign(:count_all_pagination, count_all)
     |> assign(:count_visible_rows, count_visible_rows)
     |> assign(:pending_deletion, false)
-    |> stream(:languages, Languages2.list_languages(options))
+    |> stream(:languages, PaginatedLanguages.list_languages(options))
   end
 
   @impl true
@@ -93,7 +93,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Language")
-    |> assign(:language, Languages2.get_language!(id))
+    |> assign(:language, PaginatedLanguages.get_language!(id))
   end
 
   defp apply_action(socket, :new, _params) do
@@ -121,7 +121,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
 
     socket =
       if reset_stream or valid_options != options or valid_options.page != page do
-        languages = Languages2.list_languages(valid_options)
+        languages = PaginatedLanguages.list_languages(valid_options)
         count_visible_rows = length(languages)
 
         socket
@@ -166,9 +166,9 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    language = Languages2.get_language!(id)
+    language = PaginatedLanguages.get_language!(id)
 
-    case Languages2.delete_language(language) do
+    case PaginatedLanguages.delete_language(language) do
       {:ok, deleted_language} ->
         {:noreply,
          socket
@@ -223,7 +223,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
 
   @impl true
   def handle_info(
-        {LivePlayground.Languages2, {:created, language}},
+        {LivePlayground.PaginatedLanguages, {:created, language}},
         socket
       ) do
     socket =
@@ -241,7 +241,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
 
   @impl true
   def handle_info(
-        {LivePlayground.Languages2, {:updated, language}},
+        {LivePlayground.PaginatedLanguages, {:updated, language}},
         socket
       ) do
     socket =
@@ -257,7 +257,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
 
   @impl true
   def handle_info(
-        {LivePlayground.Languages2, {:deleted, language}},
+        {LivePlayground.PaginatedLanguages, {:deleted, language}},
         socket
       ) do
     socket = handle_deleted(socket, language)

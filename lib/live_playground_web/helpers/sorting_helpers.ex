@@ -11,22 +11,22 @@ defmodule LivePlaygroundWeb.SortingHelpers do
     A configuration struct for sorting.
 
     Fields:
-      - `allowed_sort_fields`: A list of atoms representing allowed fields for sorting
-      - `allowed_orders`: A list of atoms (e.g., `:asc`, `:desc`) representing allowed sort orders
       - `sort_by`: The default/current field to sort by (atom)
       - `sort_order`: The default/current sort order (atom, `:asc` or `:desc`)
       - `fetch_url_fn`: A function that takes sorting options and returns a URL
-      - `asc_indicator`: String indicator for ascending order (default: "▴")
-      - `desc_indicator`: String indicator for descending order (default: "▾")
+      - `allowed_sort_fields`: A list of atoms representing allowed fields for sorting
+      - `allowed_orders`: A list of atoms (e.g., `:asc`, `:desc`) representing allowed sort orders
+      - `asc_indicator`: String indicator for ascending order (default: "↑")
+      - `desc_indicator`: String indicator for descending order (default: "↓")
     """
     defstruct [
-      :allowed_sort_fields,
-      :allowed_orders,
       :sort_by,
       :sort_order,
       :fetch_url_fn,
-      asc_indicator: "▴",
-      desc_indicator: "▾"
+      :allowed_sort_fields,
+      allowed_orders: [:asc, :desc],
+      asc_indicator: "↑",
+      desc_indicator: "↓"
     ]
   end
 
@@ -46,14 +46,14 @@ defmodule LivePlaygroundWeb.SortingHelpers do
         socket,
         %{"sort_by" => sort_by, "sort_order" => sort_order} = _params
       ) do
-    context = socket.assigns.context
+    context = socket.assigns.sorting_context
     sort_by = to_atom_safe(sort_by, context.sort_by)
     sort_order = to_atom_safe(sort_order, context.sort_order)
     Map.merge(options, %{sort_by: sort_by, sort_order: sort_order})
   end
 
   def convert_params(options, socket, _params) do
-    context = socket.assigns.context
+    context = socket.assigns.sorting_context
     Map.merge(options, %{sort_by: context.sort_by, sort_order: context.sort_order})
   end
 
@@ -91,31 +91,54 @@ defmodule LivePlaygroundWeb.SortingHelpers do
   end
 
   @doc """
+  Applies sorting options to the socket based on URL parameters for the index action.
+  This function processes the parameters through conversion and validation before
+  updating the socket's options assign.
+
+  ## Parameters
+    - `socket`: The LiveView socket containing current state and sorting context
+    - `:index`: Atom indicating this is for the index action
+    - `params`: URL parameters that may contain "sort_by" and "sort_order"
+
+  ## Returns
+    The socket with updated sorting options in its assigns
+  """
+  def apply_options(socket, :index, params) do
+    options =
+      socket.assigns.options
+      |> convert_params(socket, params)
+      |> validate_options(socket)
+
+    assign(socket, :options, options)
+  end
+
+  def apply_options(socket, _, _), do: socket
+
+  @doc """
   Generates a sorting link with appropriate indicators for the current sort state.
 
   ## Parameters
-    - `label`: The text to display in the link
-    - `col`: The column identifier (atom) this link sorts by
-    - `socket`: The LiveView socket with assigned `sorting_context` and `sorting_options`
+    - `label` - The text to display in the link
+    - `col` - The column identifier (atom) this link sorts by
+    - `options` - Map containing sorting options including :sort_by and :sort_order
+    - `context` - Map containing sorting context including :fetch_url_fn
 
   ## Returns
-    A Phoenix.Component link with sorting indicators and URL for the next sort state
+    A Phoenix.Component link containing the label text with sort indicators and URL for the next sort state
   """
-  def sort_link(label, col, socket) do
-    context = socket.assigns.sorting_context
-    options = socket.assigns.sorting_options
-
+  def sort_link(label, col, options, context) do
     sort_order_indicator = get_sort_order_indicator(col, options, context)
     sort_order_reversed = get_sort_order_reversed(col, options)
 
-    new_options = Map.put(options, :sort_order, sort_order_reversed)
+    new_options = Map.merge(options, %{sort_by: col, sort_order: sort_order_reversed})
     to = context.fetch_url_fn.(new_options)
 
-    assigns = %{label: label <> sort_order_indicator, to: to}
+    assigns = %{label: label, indicator: sort_order_indicator, to: to}
 
     ~H"""
-    <.link patch={@to}>
-      <%= @label %>
+    <.link patch={@to} class="flex gap-x-1">
+      <span><%= @label %></span>
+      <span><%= @indicator %></span>
     </.link>
     """
   end

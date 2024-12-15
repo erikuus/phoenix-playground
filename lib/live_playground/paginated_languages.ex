@@ -1,12 +1,12 @@
-defmodule LivePlayground.Languages2 do
+defmodule LivePlayground.PaginatedLanguages do
   @moduledoc """
-  The Languages context.
+  The PaginatedLanguages context.
   """
 
   import Ecto.Query, warn: false
   alias LivePlayground.Repo
 
-  alias LivePlayground.Languages2.Language
+  alias LivePlayground.PaginatedLanguages.Language
 
   @pubsub LivePlayground.PubSub
   @topic "languages"

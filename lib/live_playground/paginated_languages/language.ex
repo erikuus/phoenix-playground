@@ -1,4 +1,4 @@
-defmodule LivePlayground.Languages2.Language do
+defmodule LivePlayground.PaginatedLanguages.Language do
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query

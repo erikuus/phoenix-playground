@@ -23,7 +23,7 @@
     <label for="rows-per-page" class="mr-2 text-zinc-600 text-sm">
       Rows per page:
     </label>
-    <.input type="select" name="per_page" options={@context.per_page_options} value={@options.per_page} />
+    <.input type="select" name="per_page" options={@pagination_context.per_page_options} value={@options.per_page} />
   </div>
 </form>
 
@@ -99,7 +99,7 @@
   <.code_block filename="lib/live_playground_web/live/steps_live/refactored/index.ex" />
   <.code_block filename="lib/live_playground_web/live/steps_live/refactored/index.html.heex" />
   <.code_block filename="lib/live_playground_web/live/steps_live/refactored/form_component.ex" />
-  <.code_block filename="lib/live_playground/languages2/language.ex" />
-  <.code_block filename="lib/live_playground/languages2.ex" />
+  <.code_block filename="lib/live_playground/languages_paginated/language.ex" />
+  <.code_block filename="lib/live_playground/languages_paginated.ex" />
 </div>
 <!-- end hiding from live code -->

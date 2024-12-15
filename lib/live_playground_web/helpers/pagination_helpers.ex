@@ -39,14 +39,14 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
     A map `%{page: integer, per_page: integer}` with converted and merged pagination parameters
   """
   def convert_params(options, socket, %{"page" => page, "per_page" => per_page} = _params) do
-    context = socket.assigns.context
+    context = socket.assigns.pagination_context
     page = to_integer(page, 1)
     per_page = to_integer(per_page, context.default_per_page)
     Map.merge(options, %{page: page, per_page: per_page})
   end
 
   def convert_params(options, socket, _params) do
-    context = socket.assigns.context
+    context = socket.assigns.pagination_context
     Map.merge(options, %{page: 1, per_page: context.default_per_page})
   end
 
@@ -72,7 +72,7 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
     A map `%{page: integer, per_page: integer}` with validated pagination parameters
   """
   def validate_options(%{page: page, per_page: per_page} = options, socket) do
-    context = socket.assigns.context
+    context = socket.assigns.pagination_context
     count_all = socket.assigns.count_all
 
     per_page = get_allowed_per_page(per_page, context)
@@ -115,7 +115,7 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
     Updated options map with the new per_page value
   """
   def update_per_page_option(socket, %{"per_page" => per_page_param}) do
-    context = socket.assigns.context
+    context = socket.assigns.pagination_context
     options = socket.assigns.options
     per_page = to_integer(per_page_param, context.default_per_page)
     %{options | per_page: per_page}
@@ -136,7 +136,7 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
     Updated socket with pagination assigns and streamed data
   """
   def init(socket, options) do
-    context = socket.assigns.context
+    context = socket.assigns.pagination_context
     count_all = socket.assigns.count_all
     per_page = options.per_page
     count_visible_rows = min(count_all, per_page)
@@ -164,7 +164,7 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
     Updated socket with applied pagination options
   """
   def apply_options(socket, :index, params, reset_stream) do
-    context = socket.assigns.context
+    context = socket.assigns.pagination_context
     options = socket.assigns.options
 
     page = params["page"] || options.page || 1
@@ -212,7 +212,7 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
     Updated socket with incremented counts and inserted item
   """
   def handle_created(socket, item) do
-    context = socket.assigns.context
+    context = socket.assigns.pagination_context
     item = Map.put(item, :created, true)
 
     socket
@@ -233,7 +233,7 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
     Updated socket with refreshed item in stream
   """
   def handle_updated(socket, item) do
-    context = socket.assigns.context
+    context = socket.assigns.pagination_context
     item = Map.put(item, :updated, true)
     stream_insert(socket, context.stream_name, item)
   end
@@ -249,7 +249,7 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
     Updated socket with marked item and adjusted counts
   """
   def handle_deleted(socket, item) do
-    context = socket.assigns.context
+    context = socket.assigns.pagination_context
     item = Map.put(item, :deleted, true)
 
     socket

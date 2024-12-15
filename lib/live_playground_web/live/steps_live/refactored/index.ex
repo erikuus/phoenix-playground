@@ -1,27 +1,27 @@
 defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
   use LivePlaygroundWeb, :live_view
 
-  alias LivePlayground.Languages2
-  alias LivePlayground.Languages2.Language
+  alias LivePlayground.PaginatedLanguages
+  alias LivePlayground.PaginatedLanguages.Language
   alias LivePlaygroundWeb.PaginationHelpers
 
   @impl true
   def mount(params, _session, socket) do
-    if connected?(socket), do: Languages2.subscribe()
+    if connected?(socket), do: PaginatedLanguages.subscribe()
 
     # Set up the pagination context once so all pagination logic in helper
     # can read from it without extra parameters.
-    context = %PaginationHelpers.Context{
+    pagination_context = %PaginationHelpers.Context{
       stream_name: :languages,
-      fetch_data_fn: fn opts -> Languages2.list_languages(opts) end,
+      fetch_data_fn: fn opts -> PaginatedLanguages.list_languages(opts) end,
       fetch_url_fn: &get_url/1,
       default_per_page: 5
     }
 
     socket =
       socket
-      |> assign(:context, context)
-      |> assign(:count_all, Languages2.count_languages())
+      |> assign(:pagination_context, pagination_context)
+      |> assign(:count_all, PaginatedLanguages.count_languages())
 
     options =
       %{}
@@ -51,7 +51,7 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Language")
-    |> assign(:language, Languages2.get_language!(id))
+    |> assign(:language, PaginatedLanguages.get_language!(id))
   end
 
   defp apply_action(socket, :new, _params) do
@@ -85,9 +85,9 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    language = Languages2.get_language!(id)
+    language = PaginatedLanguages.get_language!(id)
 
-    case Languages2.delete_language(language) do
+    case PaginatedLanguages.delete_language(language) do
       {:ok, deleted_language} ->
         {:noreply,
          socket
@@ -142,7 +142,7 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
 
   @impl true
   def handle_info(
-        {LivePlayground.Languages2, {:created, language}},
+        {LivePlayground.PaginatedLanguages, {:created, language}},
         socket
       ) do
     socket =
@@ -160,7 +160,7 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
 
   @impl true
   def handle_info(
-        {LivePlayground.Languages2, {:updated, language}},
+        {LivePlayground.PaginatedLanguages, {:updated, language}},
         socket
       ) do
     socket =
@@ -176,7 +176,7 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
 
   @impl true
   def handle_info(
-        {LivePlayground.Languages2, {:deleted, language}},
+        {LivePlayground.PaginatedLanguages, {:deleted, language}},
         socket
       ) do
     socket = PaginationHelpers.handle_deleted(socket, language)
