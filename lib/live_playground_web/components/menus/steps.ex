@@ -54,10 +54,9 @@ defmodule LivePlaygroundWeb.Menus.Steps do
       %{
         title: "Add Sorting",
         description: "Implement dynamic column ordering",
-        path: "/4",
+        path: ~p"/steps/sorted",
         order: 4
       },
-      # Introduce sorting functionality to allow users to reorder data columns
       %{
         title: "Add Filtering",
         description: "Implement filtering to narrow results",
