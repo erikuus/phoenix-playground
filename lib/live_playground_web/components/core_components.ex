@@ -10,8 +10,9 @@ defmodule LivePlaygroundWeb.CoreComponents do
   """
   use Phoenix.Component
 
+  use Gettext, backend: LivePlaygroundWeb.Gettext
+
   alias Phoenix.LiveView.JS
-  import LivePlaygroundWeb.Gettext
 
   @doc """
   Renders a modal.
@@ -77,23 +78,23 @@ defmodule LivePlaygroundWeb.CoreComponents do
                       :if={@icon != []}
                       class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center sm:mx-0 sm:h-10 sm:w-10 sm:mr-4"
                     >
-                      <%= render_slot(@icon) %>
+                      {render_slot(@icon)}
                     </div>
 
                     <div class="mt-3 text-center sm:mt-0 sm:text-left">
                       <header :if={@title != []}>
                         <h3 id={"#{@id}-title"} class="text-lg font-medium leading-6 text-gray-900">
-                          <%= render_slot(@title) %>
+                          {render_slot(@title)}
                         </h3>
 
                         <p :if={@subtitle != []} id={"#{@id}-subtitle"} class="mt-2 text-base leading-6 text-zinc-600">
-                          <%= render_slot(@subtitle) %>
+                          {render_slot(@subtitle)}
                         </p>
                       </header>
 
                       <div class="mt-2">
                         <p class="text-sm text-gray-500">
-                          <%= render_slot(@inner_block) %>
+                          {render_slot(@inner_block)}
                         </p>
                       </div>
                     </div>
@@ -109,7 +110,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
                         "w-full sm:w-auto sm:ml-3"
                       ]}
                     >
-                      <%= render_slot(cancel) %>
+                      {render_slot(cancel)}
                     </.link>
 
                     <.button
@@ -119,7 +120,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
                       phx-disable-with
                       class={"w-full sm:w-auto mt-3 sm:mt-0 #{Map.get(confirm, :class, nil)}"}
                     >
-                      <%= render_slot(confirm) %>
+                      {render_slot(confirm)}
                     </.button>
                   </div>
                 </div>
@@ -171,10 +172,10 @@ defmodule LivePlaygroundWeb.CoreComponents do
         <div class="flex-1">
           <p :if={@title} class="flex items-center gap-1.5 text-[0.8125rem] font-semibold leading-6">
             <.icon :if={@kind == :info} name="hero-information-circle-mini" class="w-4 h-4" />
-            <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="w-4 h-4" /> <%= @title %>
+            <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="w-4 h-4" /> {@title}
           </p>
 
-          <p class={["text-[0.8125rem] leading-5", @title != nil && "mt-2"]}><%= msg %></p>
+          <p class={["text-[0.8125rem] leading-5", @title != nil && "mt-2"]}>{msg}</p>
         </div>
 
         <button :if={@close} type="button" class="flex-shrink-0 ml-4" aria-label={gettext("close")}>
@@ -239,9 +240,9 @@ defmodule LivePlaygroundWeb.CoreComponents do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
       <div class="space-y-8 bg-white mt-10">
-        <%= render_slot(@inner_block, f) %>
+        {render_slot(@inner_block, f)}
         <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
-          <%= render_slot(action, f) %>
+          {render_slot(action, f)}
         </div>
       </div>
     </.form>
@@ -278,7 +279,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
       ]}
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </button>
     """
   end
@@ -345,10 +346,10 @@ defmodule LivePlaygroundWeb.CoreComponents do
           checked={@checked}
           class="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900"
           {@rest}
-        /> <%= @label %>
+        /> {@label}
       </label>
 
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -356,7 +357,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
   def input(%{type: "select"} = assigns) do
     ~H"""
     <div phx-feedback-for={@name} class={@class}>
-      <.label :if={@label} for={@id}><%= @label %></.label>
+      <.label :if={@label} for={@id}>{@label}</.label>
 
       <select
         id={@id}
@@ -372,11 +373,11 @@ defmodule LivePlaygroundWeb.CoreComponents do
         multiple={@multiple}
         {@rest}
       >
-        <option :if={@prompt} value=""><%= @prompt %></option>
-        <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
+        <option :if={@prompt} value="">{@prompt}</option>
+        {Phoenix.HTML.Form.options_for_select(@options, @value)}
       </select>
 
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -384,7 +385,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
   def input(%{type: "textarea"} = assigns) do
     ~H"""
     <div phx-feedback-for={@name} class={@class}>
-      <.label :if={@label} for={@id}><%= @label %></.label>
+      <.label :if={@label} for={@id}>{@label}</.label>
       <textarea
         id={@id || @name}
         name={@name}
@@ -398,7 +399,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
         ]}
         {@rest}
       ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -415,10 +416,10 @@ defmodule LivePlaygroundWeb.CoreComponents do
           checked={@checked}
           class="border-zinc-300 text-zinc-900 focus:ring-zinc-900"
           {@rest}
-        /> <%= @label %>
+        /> {@label}
       </label>
 
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -426,7 +427,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
   def input(assigns) do
     ~H"""
     <div phx-feedback-for={@name} class={@class}>
-      <.label :if={@label} for={@id}><%= @label %></.label>
+      <.label :if={@label} for={@id}>{@label}</.label>
 
       <input
         type={@type}
@@ -443,7 +444,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
         ]}
         {@rest}
       />
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -457,7 +458,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
   def label(assigns) do
     ~H"""
     <label for={@for} class="block text-sm font-semibold leading-6 text-zinc-800 mb-2">
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </label>
     """
   end
@@ -470,7 +471,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
   def error(assigns) do
     ~H"""
     <p class="phx-no-feedback:hidden mt-3 flex gap-3 text-sm leading-6 text-rose-600">
-      <.icon name="hero-exclamation-circle-mini" class="mt-0.5 w-5 h-5 flex-none" /> <%= render_slot(@inner_block) %>
+      <.icon name="hero-exclamation-circle-mini" class="mt-0.5 w-5 h-5 flex-none" /> {render_slot(@inner_block)}
     </p>
     """
   end
@@ -498,16 +499,16 @@ defmodule LivePlaygroundWeb.CoreComponents do
     ]}>
       <div class="min-w-0 flex-1">
         <h1 class="text-3xl font-bold leading-8 text-zinc-800">
-          <%= render_slot(@inner_block) %>
+          {render_slot(@inner_block)}
         </h1>
 
         <p :for={subtitle <- @subtitle} class={["mt-2 mr-4 text-sm leading-6 text-zinc-600", Map.get(subtitle, :class, nil)]}>
-          <%= render_slot(@subtitle) %>
+          {render_slot(@subtitle)}
         </p>
       </div>
 
       <div :for={actions <- @actions} class={["mt-4 flex md:mt-0 md:ml-4 self-start", Map.get(actions, :class, nil)]}>
-        <%= render_slot(@actions) %>
+        {render_slot(@actions)}
       </div>
     </header>
     """
@@ -552,11 +553,11 @@ defmodule LivePlaygroundWeb.CoreComponents do
       <thead class="text-left text-[0.8125rem] leading-6 text-zinc-500">
         <tr>
           <th :for={col <- @col} class={["p-0 pb-4 font-normal", col[:class]]}>
-            <%= col[:label] %>
+            {col[:label]}
           </th>
 
           <th class="relative p-0 pb-4">
-            <span class="sr-only"><%= gettext("Actions") %></span>
+            <span class="sr-only">{gettext("Actions")}</span>
           </th>
         </tr>
       </thead>
@@ -585,7 +586,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
                 ]}
               />
               <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
-                <%= render_slot(col, @row_item.(row)) %>
+                {render_slot(col, @row_item.(row))}
               </span>
             </div>
           </td>
@@ -597,7 +598,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
                 @row_class && @row_class.(row)
               ]} />
               <span :for={action <- @action} class="relative ml-4 font-semibold leading-6 text-zinc-900 hover:text-zinc-700">
-                <%= render_slot(action, @row_item.(row)) %>
+                {render_slot(action, @row_item.(row))}
               </span>
             </div>
           </td>
@@ -629,9 +630,9 @@ defmodule LivePlaygroundWeb.CoreComponents do
       <dl class="-my-4 divide-y divide-zinc-100">
         <div :for={item <- @item} class="md:flex py-4 sm:gap-8">
           <dt class="md:w-1/4 md:flex-none text-[0.8125rem] leading-6 text-zinc-500">
-            <%= item.title %>
+            {item.title}
           </dt>
-          <dd class="text-sm leading-6 text-zinc-700 w-full"><%= render_slot(item) %></dd>
+          <dd class="text-sm leading-6 text-zinc-700 w-full">{render_slot(item)}</dd>
         </div>
       </dl>
     </div>
@@ -652,7 +653,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
     ~H"""
     <div class="mt-16">
       <.link navigate={@navigate} class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700">
-        <.icon name="hero-arrow-left-solid" class="w-3 h-3" /> <%= render_slot(@inner_block) %>
+        <.icon name="hero-arrow-left-solid" class="w-3 h-3" /> {render_slot(@inner_block)}
       </.link>
     </div>
     """
