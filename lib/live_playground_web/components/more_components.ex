@@ -145,7 +145,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
     ~H"""
     <.link
       :for={item <- @items}
-      navigate={item.path}
+      href={item.path}
       class={[
         "flex w-full flex-col items-center rounded-md p-3 text-xs font-medium",
         item.active == true && "bg-zinc-600 bg-opacity-50 text-white",
