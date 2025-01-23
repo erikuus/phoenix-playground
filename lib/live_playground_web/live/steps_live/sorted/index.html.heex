@@ -17,7 +17,7 @@
 </div>
 <form phx-change="change-per-page" class="flex flex-col gap-y-2 items-end justify-end md:flex-row md:gap-y-0 md:justify-between">
   <div class={["text-sm", @pending_deletion && "text-zinc-300", !@pending_deletion && "text-zinc-600"]}>
-    <%= PaginationHelpers.get_summary(@count_all_summary, @options.page, @options.per_page, @count_visible_rows) %>
+    {PaginationHelpers.get_summary(@count_all_summary, @options.page, @options.per_page, @count_visible_rows)}
   </div>
   <div class="flex items-center">
     <label for="rows-per-page" class="mr-2 text-zinc-600 text-sm">
@@ -34,23 +34,23 @@
   row_class={fn {_id, language} -> get_row_class(language) end}
 >
   <:col :let={{_id, language}} label={SortingHelpers.sort_link("Countrycode", :countrycode, @options, @sorting_context)}>
-    <%= language.countrycode %>
+    {language.countrycode}
     <.badge :if={Map.get(language, :created, false)} kind={:green}>New</.badge>
     <.badge :if={Map.get(language, :updated, false)} kind={:blue}>Edited</.badge>
     <.badge :if={Map.get(language, :deleted, false)} kind={:gray}>Deleted</.badge>
     <dl class="hidden md:block font-normal text-xs text-zinc-500">
       <dt>Stream inserted:</dt>
-      <dd><%= Timex.now() %></dd>
+      <dd>{Timex.now()}</dd>
     </dl>
   </:col>
   <:col :let={{_id, language}} label={SortingHelpers.sort_link("Language", :language, @options, @sorting_context)}>
-    <%= language.language %>
+    {language.language}
   </:col>
   <:col :let={{_id, language}} label={SortingHelpers.sort_link("Isofficial", :isofficial, @options, @sorting_context)}>
     <.icon :if={language.isofficial} name="hero-check" />
   </:col>
   <:col :let={{_id, language}} label={SortingHelpers.sort_link("Percentage", :percentage, @options, @sorting_context)}>
-    <%= format_percentage(language.percentage) %>
+    {format_percentage(language.percentage)}
   </:col>
   <:action :let={{_id, language}}>
     <div class="sr-only">

@@ -9,7 +9,7 @@ defmodule LivePlaygroundWeb.StepsLive.Sorted.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= @title %>
+        {@title}
         <:subtitle>Use this form to manage language records in your database.</:subtitle>
       </.header>
       <.alert flash={@flash} flash_key={:lock} title="Concurrent update detected" kind={:error} close={false} class="mt-6 text-sm" />
