@@ -1,141 +1,83 @@
 <p>
-  This section explains the rationale behind refactoring our pagination
-  implementation into a helper module. If you haven't reviewed the initial
-  pagination implementation in the previous section, it's recommended to
+  This section explains the rationale behind creating a purely functional
+  pagination helper module. If you haven't reviewed the initial pagination setup
+  in the previous section, it's recommended to
   <a href="/steps/paginated">start there</a> to understand the complete context
   and functionality of the code being refactored.
 </p>
 
-<h3>Key Principles</h3>
+<h3>Core Design Goals</h3>
 <ul>
-  <li>Reusable across all paginated LiveViews</li>
-  <li>Encapsulated logic and centralized configuration of pagination</li>
-  <li>Clear separation of pagination logic from LiveView lifecycle methods</li>
-</ul>
-<p>The helper manages pagination logic, allowing LiveView to focus on:</p>
-<ul>
+  <li>Make pagination reusable across all LiveViews</li>
+  <li>Keep all pagination settings in one place</li>
   <li>
-    Lifecycle hooks (e.g., <code>mount</code>, <code>handle_params</code>)
+    Keep pagination logic separate from LiveView lifecycle - the helper just
+    handles data, while LiveView handles UI updates
   </li>
-  <li>Business-specific logic</li>
-  <li>View-specific state and events</li>
 </ul>
 
-<h3>The Pagination Context Struct</h3>
+<h3>The Pagination Context</h3>
 <p>
-  To reduce the complexity of passing multiple parameters (e.g.,
-  <code>fetch_data_fn</code>, <code>fetch_url_fn</code>,
-  <code>per_page_options</code>, and <code>default_per_page</code>) into our
-  helper functions, we rely on a dedicated <code>Context</code> struct. This
-  struct encapsulates all pagination-specific configuration unique to a
-  particular LiveView and is accessed via the `socket`.
+  Instead of passing multiple settings around, we use a simple
+  <code>Context</code> struct that holds configuration like
+  <code>per_page_options</code> and <code>default_per_page</code>. This struct
+  lives in your LiveView's assigns as
+  <code>socket.assigns.pagination_context</code>.
 </p>
 
-<h3>Dilemma: Passing Parameters vs. Using the Socket</h3>
+<h3>Key Functions</h3>
+
+<h4>Setting Up Pagination</h4>
+<ul>
+  <li>
+    <code>convert_params</code>: Takes user input for page and items per page,
+    converts them to proper numbers
+  </li>
+  <li>
+    <code>validate_options</code>: Makes sure page numbers and items per page
+    stay within allowed ranges
+  </li>
+  <li>
+    <code>init</code>: Sets up initial pagination state with counts and settings
+  </li>
+</ul>
+
+<h4>Handling Changes</h4>
+<ul>
+  <li>
+    <code>apply_options</code>: Handles pagination changes (like page number)
+    and tells LiveView if it needs to reload data
+  </li>
+  <li>
+    <code>update_per_page_option</code>: Updates how many items show per page
+    when user changes this setting
+  </li>
+</ul>
+
+<h4>Managing Items</h4>
+<ul>
+  <li>
+    <code>handle_created</code>: Updates counts when new items are added and
+    marks them as new
+  </li>
+  <li><code>handle_updated</code>: Marks items that have been changed</li>
+  <li>
+    <code>handle_deleted</code>: Updates counts when items are removed and marks
+    them for deletion
+  </li>
+</ul>
+
+<h4>Template Helper</h4>
+<ul>
+  <li>
+    <code>get_summary</code>: Creates readable text like "Showing 1 - 20 of 100"
+    for displaying pagination status
+  </li>
+</ul>
+
 <p>
-  Should we pass all pagination data (context, options, counts) as explicit
-  parameters to each helper function, or rely on the `socket` to carry state and
-  configuration?
+  This clean separation makes the code easier to test and maintain. Each helper
+  function does one thing well, working with just the data it needs. The
+  LiveView remains in charge of the UI, handling all the visual updates and user
+  interactions.
 </p>
-<p>
-  <strong>Passing Parameters Explicitly</strong><br />
-  Pros: Functions are more testable and explicit about their dependencies.<br />
-  Cons: Increased verbosity and more parameters to manage.
-</p>
-<p>
-  <strong>Using the Socket as a Carrier</strong><br />
-  Pros: Fewer parameters in function signatures and centralizes state in
-  `socket.assigns`.<br />
-  Cons: Functions depend on `socket` presence, making them less "pure" and
-  potentially harder to test in isolation.
-</p>
-<p>
-  Ultimately, it's up to each developer to choose the approach they prefer. If
-  you find the current socket-based approach cumbersome, you can refactor it
-  again to pass parameters explicitly.
-</p>
-
-<h3>Functions in the Helper Module</h3>
-
-<h4><code>convert_params/2</code></h4>
-<ul>
-  <li>Converts pagination parameters from URL strings to integers</li>
-  <li>
-    Belongs in helper because parameter conversion is a reusable utility
-    operation independent of business logic
-  </li>
-</ul>
-
-<h4><code>validate_options/2</code></h4>
-<ul>
-  <li>
-    Ensures pagination options are within valid bounds based on total count and
-    configuration
-  </li>
-  <li>
-    Belongs in helper because validation rules are common across all paginated
-    views
-  </li>
-</ul>
-
-<h4><code>update_per_page_option/2</code></h4>
-<ul>
-  <li>Updates the items per page based on user selection</li>
-  <li>
-    Belongs in helper because per-page handling is standard pagination
-    functionality
-  </li>
-</ul>
-
-<h4><code>init/2</code></h4>
-<ul>
-  <li>Sets up initial pagination state and loads first page of data</li>
-  <li>
-    Belongs in helper because pagination initialization follows the same pattern
-    regardless of data type
-  </li>
-</ul>
-
-<h4><code>apply_options/4</code></h4>
-<ul>
-  <li>Handles parameter changes, resets data, and updates URL state</li>
-  <li>
-    Belongs in helper because option application logic is identical for all
-    paginated views
-  </li>
-</ul>
-
-<h4><code>handle_created/2</code></h4>
-<ul>
-  <li>Adds new item to stream and updates counts</li>
-  <li>
-    Belongs in helper because stream insertion and count management are generic
-    pagination concerns
-  </li>
-</ul>
-
-<h4><code>handle_updated/2</code></h4>
-<ul>
-  <li>Refreshes existing item in stream</li>
-  <li>
-    Belongs in helper because stream updates are standard pagination operations
-  </li>
-</ul>
-
-<h4><code>handle_deleted/2</code></h4>
-<ul>
-  <li>Marks item as deleted and adjusts counts</li>
-  <li>
-    Belongs in helper because deletion handling is common pagination
-    functionality
-  </li>
-</ul>
-
-<h4><code>get_summary/4</code></h4>
-<ul>
-  <li>Creates human-readable pagination status text</li>
-  <li>
-    Belongs in helper because summary formatting is a view-level concern shared
-    across paginated displays
-  </li>
-</ul>

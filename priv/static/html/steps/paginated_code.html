@@ -13,17 +13,18 @@
 <ul>
   <li>
     If the socket is connected, we subscribe to language updates using
-    <code>Languages2.subscribe()</code>. This allows us to display messages when
-    other connected users add, edit, or delete languages. For example, if
-    another user adds a new language, you'll see a notification like "A new
-    language was added by another user," and the item will appear in your list.
+    <code>PaginatedLanguages.subscribe()</code>. This allows us to display
+    messages when other connected users add, edit, or delete languages. For
+    example, if another user adds a new language, you'll see a notification like
+    "A new language was added by another user," and the item will appear in your
+    list.
   </li>
   <li>
     We assign the total count of languages to the socket using
-    <code>assign(socket, :count_all, Languages2.count_languages())</code>. This
-    needs to be done before other assigns because we'll need this total count
-    when validating pagination parameters to ensure we don't exceed the actual
-    number of pages available.
+    <code>assign(socket, :count_all, PaginatedLanguages.count_languages())</code
+    >. This needs to be done before other assigns because we'll need this total
+    count when validating pagination parameters to ensure we don't exceed the
+    actual number of pages available.
   </li>
   <li>
     We extract the <code>page</code> and <code>per_page</code> parameters from
@@ -418,17 +419,18 @@
   <li>
     <strong>Someone Creates a Language:</strong>
     <p>
-      <code>{Languages2, {:created, language}}</code> broadcast is received. The
-      LiveView uses <code>handle_created/2</code> to update counts and add the
-      new language to the stream. A flash message with a reset link notifies the
-      user of the new addition and prompts them to refresh and sort the list.
+      <code>{PaginatedLanguages, {:created, language}}</code> broadcast is
+      received. The LiveView uses <code>handle_created/2</code> to update counts
+      and add the new language to the stream. A flash message with a reset link
+      notifies the user of the new addition and prompts them to refresh and sort
+      the list.
     </p>
   </li>
   <li>
     <strong>Someone Updates a Language:</strong>
     <p>
       Upon receiving a
-      <code>{Languages2, {:updated, language}}</code> broadcast,
+      <code>{PaginatedLanguages, {:updated, language}}</code> broadcast,
       <code>handle_updated/2</code> updates the language in the stream. A flash
       message informs the user that a language was updated by another user.
     </p>
@@ -437,13 +439,13 @@
     <strong>Someone Deletes a Language:</strong>
     <p>
       If a language is deleted by another user, a
-      <code>{Languages2, {:deleted, language}}</code> message is received. The
-      LiveView calls <code>handle_deleted/2</code> to update counts and mark the
-      language as deleted in the stream. If the deleted language was being
-      edited by the current user, a flash message notifies them of the deletion
-      and closes the edit modal. Otherwise, a general flash message informs the
-      user that the language has been deleted and will be removed upon
-      navigation or refresh.
+      <code>{PaginatedLanguages, {:deleted, language}}</code> message is
+      received. The LiveView calls <code>handle_deleted/2</code> to update
+      counts and mark the language as deleted in the stream. If the deleted
+      language was being edited by the current user, a flash message notifies
+      them of the deletion and closes the edit modal. Otherwise, a general flash
+      message informs the user that the language has been deleted and will be
+      removed upon navigation or refresh.
     </p>
   </li>
 </ul>
@@ -568,7 +570,7 @@
     <p>
       <strong
         >Add the field to your schema
-        (LivePlayground.Languages2.Language):</strong
+        (LivePlayground.PaginatedLanguages.Language):</strong
       >
     </p>
     <pre><code>field :lock_version, :integer, default: 0</code></pre>
@@ -591,7 +593,8 @@
   <li>
     <p>
       <strong
-        >Configure update in your context (LivePlayground.Languages2):</strong
+        >Configure update in your context
+        (LivePlayground.PaginatedLanguages):</strong
       >
     </p>
     <pre><code>Repo.update(changeset, stale_error_field: :lock_version)</code></pre>
@@ -608,7 +611,7 @@
     <p><strong>Handle version conflicts in your save function:</strong></p>
     <pre><code>if changeset.errors[:lock_version] do
   # Someone else updated the record while we were editing
-  latest_language = Languages2.get_language!(language.id)
+  latest_language = PaginatedLanguages.get_language!(language.id)
   # Show the latest version to the user
   # Let them merge their changes with the new version
 end</code></pre>
@@ -691,8 +694,8 @@ end</code></pre>
 </ol>
 <hr />
 <p>
-  <code>LivePlayground.Languages2</code> handles three key aspects of our
-  application:
+  <code>LivePlayground.PaginatedLanguages</code> handles three key aspects of
+  our application:
 </p>
 <p><strong>Real-time Updates</strong></p>
 <ul>
