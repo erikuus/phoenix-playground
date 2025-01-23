@@ -10,8 +10,6 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
   def mount(params, _session, socket) do
     if connected?(socket), do: PaginatedLanguages.subscribe()
 
-    count_all = PaginatedLanguages.count_languages()
-
     pagination_context = %PaginationContext{
       per_page_options: [5, 10, 20, 50, 100],
       default_per_page: 5
@@ -19,7 +17,9 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
 
     options =
       %{}
-      |> PaginationHelpers.convert_params(pagination_context, params)
+      |> PaginationHelpers.convert_params(params, pagination_context)
+
+    count_all = PaginatedLanguages.count_languages()
 
     valid_options =
       options
@@ -234,23 +234,20 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
       |> assign(new_assigns)
       |> stream_insert(:languages, marked_language)
 
-    if socket.assigns.live_action == :edit and socket.assigns.language.id == language.id do
-      # Inform the user and close the modal without changing the URL
-      socket =
+    socket =
+      if socket.assigns.live_action == :edit and socket.assigns.language.id == language.id do
+        # Inform the user and close the modal without changing the URL
         socket
+        |> assign(:live_action, :index)
+        |> assign(:language, nil)
         |> put_flash(
           :error,
           get_flash_message_with_reset_link(
             "The language you were editing was deleted by another user."
           )
         )
-        |> assign(:live_action, :index)
-        |> assign(:language, nil)
-
-      {:noreply, socket}
-    else
-      # General deletion notification
-      socket =
+      else
+        # General deletion notification
         socket
         |> put_flash(
           :info,
@@ -258,9 +255,9 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
             "A language was deleted by another user. It will be removed from the list when you navigate away or refresh."
           )
         )
+      end
 
-      {:noreply, socket}
-    end
+    {:noreply, socket}
   end
 
   defp get_url(options, base_path \\ "/steps/refactored") do

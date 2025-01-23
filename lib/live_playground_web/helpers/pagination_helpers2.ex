@@ -6,11 +6,11 @@ defmodule LivePlaygroundWeb.PaginationHelpers2 do
 
   defmodule Context do
     @moduledoc """
-    A configuration struct for pagination.
+    A configuration struct that defines pagination behavior and constraints.
 
     Fields:
-      - `per_page_options`: A list of allowed `per_page` values
-      - `default_per_page`: The default `per_page` value if none is provided or invalid
+      - `per_page_options`: A list of allowed `per_page` values (e.g., [5, 10, 20, 50, 100])
+      - `default_per_page`: The default number of items per page when not specified or invalid
     """
     defstruct per_page_options: [5, 10, 20, 50, 100],
               default_per_page: 10
@@ -21,21 +21,21 @@ defmodule LivePlaygroundWeb.PaginationHelpers2 do
 
   ## Parameters
     - `options`: Target options map to merge pagination values into
-    - `context`: Pagination context containing default_per_page setting
     - `params`: Request parameters that may contain "page" and "per_page" strings
+    - `context`: Pagination context containing default_per_page setting
 
   ## Returns
     Options map with :page and :per_page integers, either:
     - Converted from params if present
     - Or set to defaults (page: 1, per_page: context.default_per_page)
   """
-  def convert_params(options, context, %{"page" => page, "per_page" => per_page} = _params) do
+  def convert_params(options, %{"page" => page, "per_page" => per_page} = _params, context) do
     page = to_integer(page, 1)
     per_page = to_integer(per_page, context.default_per_page)
     Map.merge(options, %{page: page, per_page: per_page})
   end
 
-  def convert_params(options, context, _params) do
+  def convert_params(options, _params, context) do
     Map.merge(options, %{page: 1, per_page: context.default_per_page})
   end
 
@@ -104,6 +104,7 @@ defmodule LivePlaygroundWeb.PaginationHelpers2 do
 
   Sets up initial pagination state:
   - :pagination_context - Pagination context from module
+  - :count_all - Total items
   - :count_all_summary - Total items for summary
   - :count_all_pagination - Total items for pagination
   - :count_visible_rows - Currently visible rows
@@ -127,6 +128,7 @@ defmodule LivePlaygroundWeb.PaginationHelpers2 do
 
     pagination_assigns = %{
       pagination_context: context,
+      count_all: count_all,
       count_all_summary: count_all,
       count_all_pagination: count_all,
       count_visible_rows: count_visible_rows,
@@ -137,21 +139,30 @@ defmodule LivePlaygroundWeb.PaginationHelpers2 do
   end
 
   @doc """
-  Applies pagination changes based on incoming parameters and returns either a signal
-  to reset the stream or continue as is.
+  Applies pagination changes based on incoming parameters and determines if data needs to be reloaded.
 
   ## Parameters
-  - `options` (map): The current pagination options (e.g., `%{page: 1, per_page: 10}`).
-  - `params` (map): Potential new parameters from the URL or an event (may contain `"page"` or `"per_page"`).
-  - `count_all` (integer): Total number of items for pagination (used to compute max page).
-  - `context` (%Context{}): A struct holding pagination config (like `default_per_page`, `per_page_options`).
-  - `force_reset` (boolean): If `true`, skips normal checks and signals a forced reload.
+    - `options` (map): The current pagination options (e.g., `%{page: 1, per_page: 10}`)
+    - `params` (map): Potential new parameters from the URL or an event (may contain `"page"` or `"per_page"`)
+    - `count_all` (integer): Total number of items for pagination (used to compute max page)
+    - `context` (%Context{}): A struct holding pagination config (like `default_per_page`, `per_page_options`)
+    - `force_reset` (boolean): If `true`, skips normal checks and signals a forced reload
 
   ## Returns
-  - {:reset_stream, valid_options, page_changed, pagination_assigns} - When reload needed
-  - {:noreset_stream, valid_options} - When current data can be kept
+  One of:
+    ```
+    {:reset_stream, valid_options, page_changed, pagination_assigns}
+    {:noreset_stream, valid_options}
+    ```
 
-    Stream reset occurs if:
+  Where:
+    - `:reset_stream` indicates data needs to be reloaded
+    - `:noreset_stream` indicates current data can be kept
+    - `valid_options` contains validated pagination options
+    - `page_changed` is true if the page number was modified
+    - `pagination_assigns` contains updated count and state values
+
+  Stream reset occurs if:
     - force_reset is true
     - page/per_page values changed
     - requested page was adjusted to be in valid range
@@ -218,9 +229,9 @@ defmodule LivePlaygroundWeb.PaginationHelpers2 do
   @doc """
   Processes a newly created item by updating pagination counts and marking the item.
 
-  Increments count fields in assigns if they exist:
+  Increments count fields in assigns:
+  - :count_all
   - :count_all_summary
-  - :count_all_pagination
   - :count_visible_rows
 
   Also marks the item as newly created by setting :created flag.
@@ -241,11 +252,11 @@ defmodule LivePlaygroundWeb.PaginationHelpers2 do
   def handle_created(assigns, item) do
     marked_item = Map.put(item, :created, true)
 
-    new_assigns =
-      assigns
-      |> increment_map(:count_all_summary)
-      |> increment_map(:count_all_pagination)
-      |> increment_map(:count_visible_rows)
+    new_assigns = %{
+      count_all: assigns.count_all + 1,
+      count_all_summary: assigns.count_all_summary + 1,
+      count_visible_rows: assigns.count_visible_rows + 1
+    }
 
     {:handled_created, new_assigns, marked_item}
   end
@@ -261,12 +272,12 @@ defmodule LivePlaygroundWeb.PaginationHelpers2 do
     - `item`: The item being updated to process
 
   ## Returns
-    Tuple `{:handled_updated, item}` where:
-    - item: Original item with :updated flag set to true
+    Tuple `{:handled_updated, marked_item}` where:
+    - marked_item: Original item with :updated flag set to true
 
   ## Example
-      {:handled_updated, new_assigns, marked_item} =
-        PaginationHelpers.handle_updated(socket.assigns, item)
+      {:handled_updated, marked_item} =
+        PaginationHelpers.handle_updated(item)
   """
   def handle_updated(item) do
     marked_item = Map.put(item, :updated, true)
@@ -276,12 +287,9 @@ defmodule LivePlaygroundWeb.PaginationHelpers2 do
   @doc """
   Processes a deleted item by updating pagination counts, marking it deleted and setting pending deletion state.
 
-  Decrements count fields in assigns if they exist:
-  - :count_all_summary
-  - :count_all_pagination
-
-  Also marks the item as deleted by setting :deleted flag and sets :pending_deletion
-  state in assigns to true to indicate deletion is in progress.
+  - Decrements count_all field in assigns
+  - Marks the item as deleted by setting :deleted flag
+  - Sets :pending_deletion state in assigns to true to indicate deletion is in progress.
 
   ## Parameters
     - `assigns`: Current assigns containing pagination count fields
@@ -299,38 +307,32 @@ defmodule LivePlaygroundWeb.PaginationHelpers2 do
   def handle_deleted(assigns, item) do
     marked_item = Map.put(item, :deleted, true)
 
-    new_assigns =
-      assigns
-      |> decrement_map(:count_all_summary)
-      |> decrement_map(:count_all_pagination)
-      |> assign_pending_deletion()
+    new_assigns = %{
+      count_all: max(assigns.count_all - 1, 0),
+      pending_deletion: true
+    }
 
     {:handled_deleted, new_assigns, marked_item}
   end
 
-  defp increment_map(assigns, key) do
-    Map.update(assigns, key, 1, &(&1 + 1))
-  end
-
-  defp decrement_map(assigns, key) do
-    Map.update(assigns, key, 0, &max(&1 - 1, 0))
-  end
-
-  defp assign_pending_deletion(assigns) do
-    Map.put(assigns, :pending_deletion, true)
-  end
-
   @doc """
-  Produces a summary string for the current displayed items, e.g. "Showing X - Y of Z."
+  Produces a summary string describing the currently displayed items range.
 
   ## Parameters
-    - `count_all`: total number of items
-    - `page`: current page
-    - `per_page`: items per page
-    - `stream_size`: number of items currently visible in the data structure
+    - `count_all` (integer): Total number of items in the collection
+    - `page` (integer): Current page number
+    - `per_page` (integer): Number of items displayed per page
+    - `stream_size` (integer): Number of items currently visible in the stream
 
   ## Returns
-    A string: "Showing X - Y of Z"
+    String in the format "Showing X - Y of Z" where:
+      - X is the index of first item on current page
+      - Y is the index of last visible item
+      - Z is the total number of items
+
+  ## Example
+      iex> get_summary(100, 2, 10, 10)
+      "Showing 11 - 20 of 100."
   """
   def get_summary(count_all, page, per_page, stream_size) do
     start = (page - 1) * per_page + 1
