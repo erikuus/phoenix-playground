@@ -3,8 +3,8 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
 
   alias LivePlayground.PaginatedLanguages
   alias LivePlayground.PaginatedLanguages.Language
-  alias LivePlaygroundWeb.PaginationHelpers2, as: PaginationHelpers
-  alias LivePlaygroundWeb.PaginationHelpers2.Context, as: PaginationContext
+  alias LivePlaygroundWeb.PaginationHelpers
+  alias LivePlaygroundWeb.PaginationHelpers.Context, as: PaginationContext
 
   @impl true
   def mount(params, _session, socket) do
