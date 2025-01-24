@@ -1,8 +1,11 @@
+<h2>index.ex</h2>
+
 <p>
   The <code>LivePlaygroundWeb.StepsLive.Paginated.Index</code> module is a
   Phoenix LiveView that manages a paginated list of languages. It incorporates
   real-time updates, pagination controls, and concurrency.
 </p>
+
 <h3><code>mount/3</code></h3>
 <p>
   Initializes the LiveView when a user visits <code>/steps/paginated</code>,
@@ -21,10 +24,10 @@
   </li>
   <li>
     We assign the total count of languages to the socket using
-    <code>assign(socket, :count_all, PaginatedLanguages.count_languages())</code
-    >. This needs to be done before other assigns because we'll need this total
-    count when validating pagination parameters to ensure we don't exceed the
-    actual number of pages available.
+    <code>PaginatedLanguages.count_languages()</code>. This needs to be done
+    before other assigns because we'll need this total count when validating
+    pagination parameters to ensure we don't exceed the actual number of pages
+    available.
   </li>
   <li>
     We extract the <code>page</code> and <code>per_page</code> parameters from
@@ -59,6 +62,7 @@
     and prepares the socket for rendering the paginated content.
   </li>
 </ul>
+
 <h3><code>validate_options/2</code></h3>
 <p>
   Ensures that <code>page</code> and <code>per_page</code> are within acceptable
@@ -80,8 +84,9 @@
     <code>@per_page</code>.
   </li>
 </ul>
+
 <h3><code>init/2</code></h3>
-<p>Handles all the initial setup that both mount functions need.</p>
+<p>Handles all the initial setup that pagination logic needs.</p>
 <ol>
   <li>
     <p>
@@ -113,7 +118,6 @@
       <code>:count_all</code> is immediately updated to mirror these changes.
     </p>
     <p>
-      While <code>:count_all</code> provides the actual total count,
       <code>:count_all_summary</code> is specifically used for the summary
       display presented to the user, such as "Showing 1 - 5 of 100." The key
       reason for keeping <code>:count_all_summary</code> separate from
@@ -133,18 +137,15 @@
       </li>
     </ul>
     <p>
-      <code>:count_all_pagination</code> is essential for keeping the pagination
-      controls consistent in the application. Unlike
-      <code>:count_all_summary</code>, which can temporarily differ from
-      <code>:count_all</code> when items are being deleted,
-      <code>:count_all_pagination</code> ensures that the number of pages
-      remains stable and only updates when necessary—such as when the user
-      resorts the list, reloads, or navigates away.
+      <code>:count_all_pagination</code> needs to differ from
+      <code>:count_all</code> to maintain stable pagination controls. While
+      <code>:count_all</code>
+      immediately reflects any changes in the total number of items,
+      <code>:count_all_pagination</code> deliberately maintains the current page
+      structure and only updates during specific user interactions—such as
+      resorting the list, reloading the page, or navigating away.
     </p>
-    <p>
-      Using <code>:count_all_summary</code> directly for pagination would lead
-      to inconsistencies. Consider the following scenario:
-    </p>
+    <p>Consider the following scenario:</p>
     <ul>
       <li>There are 100 items distributed over 5 pages (20 items per page).</li>
       <li>
@@ -153,7 +154,7 @@
           <li><code>:count_all</code> increases to 101.</li>
           <li>
             <code>:count_all_summary</code> also increases to 101, updating the
-            summary to display "Showing 1 - 6 of 101."
+            summary to display "Showing 1 - 21 of 101."
           </li>
           <li>
             <code>:count_all_pagination</code> remains at 100 to prevent the
@@ -205,6 +206,7 @@
     </p>
   </li>
 </ol>
+
 <h3><code>handle_params/3</code></h3>
 <p>
   Manages updates to URL parameters and handles LiveView actions such as
@@ -222,6 +224,7 @@
     more details.
   </li>
 </ul>
+
 <h3><code>apply_action/3</code></h3>
 <p>
   This function configures the socket based on the current LiveView action.
@@ -231,6 +234,7 @@
   <code>apply_action/3</code> sets up the socket with the specific language data
   to be edited.
 </p>
+
 <h3><code>apply_options/4</code></h3>
 <p>
   Handles pagination updates. It has two versions, separated by pattern
@@ -273,18 +277,13 @@
         new pagination values.
       </li>
       <li>
-        <strong>In events like <code>"reset-stream"</code>:</strong> When the
-        user triggers an event that doesn't involve URL parameters, the
-        <code>params</code> map may be empty. In this case, we use the existing
+        <strong>In <code>"reset-stream"</code> event:</strong> When the user
+        triggers an event that doesn't involve URL parameters, the
+        <code>params</code> map is empty. In this case, we use the existing
         pagination options from <code>options</code> to maintain the current
         state.
       </li>
     </ul>
-    <p>
-      By checking both <code>params</code> and <code>options</code>, we ensure
-      the pagination state is accurately updated whether changes come from URL
-      parameters or in-app events.
-    </p>
   </li>
   <li>
     <strong>Convert and Validate Parameters</strong>:
@@ -308,9 +307,9 @@
       <li>
         <code>valid_options.page != page</code> - Page number was adjusted.
         Imagine you're on page 5 and delete all its items. If you try to go to
-        page 6, we'll adjust back to page 5 (now the last page). Even though
-        both old and new options say "page 5", we still need to reload to show
-        the correct items for that last page.
+        page 6, <code>validate_options/2</code> will adjust back to page 5 (now
+        the last page). Even though both old and new options say "page 5", we
+        still need to reload to show the correct items for that last page.
       </li>
     </ul>
   </li>
@@ -337,6 +336,7 @@
     </p>
   </li>
 </ol>
+
 <h3><code>handle_event/3</code></h3>
 <p>This function handles three main types of user interactions:</p>
 <ul>
@@ -383,6 +383,7 @@
     </ul>
   </li>
 </ul>
+
 <h3><code>handle_info/2</code></h3>
 <p>Handles messages that come in asynchronously from two sources:</p>
 <ul>
@@ -391,64 +392,72 @@
   </li>
   <li>From broadcasts when other users make changes</li>
 </ul>
+<ol>
+  <li>
+    <h4>Form Updates (Current User's Actions)</h4>
+    <ul>
+      <li>
+        <strong>Creating a Language:</strong>
+        <p>
+          When the form component emits a
+          <code>{FormComponent, {:created, language}}</code> message, the
+          LiveView invokes <code>handle_created/2</code> to update counts and
+          insert the new language into the stream. A flash message with a reset
+          link is then displayed, allowing the user to refresh and sort the
+          list.
+        </p>
+      </li>
+      <li>
+        <strong>Updating a Language:</strong>
+        <p>
+          Similarly, when the form component sends a
+          <code>{FormComponent, {:updated, language}}</code> message,
+          <code>handle_updated/2</code> is called to update the language in the
+          stream. A flash message confirms the successful update to the user.
+        </p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <h4>Broadcast Updates (Other Users' Actions)</h4>
+    <ul>
+      <li>
+        <strong>Someone Creates a Language:</strong>
+        <p>
+          <code>{PaginatedLanguages, {:created, language}}</code> broadcast is
+          received. The LiveView uses <code>handle_created/2</code> to update
+          counts and add the new language to the stream. A flash message with a
+          reset link notifies the user of the new addition and prompts them to
+          refresh and sort the list.
+        </p>
+      </li>
+      <li>
+        <strong>Someone Updates a Language:</strong>
+        <p>
+          Upon receiving a
+          <code>{PaginatedLanguages, {:updated, language}}</code> broadcast,
+          <code>handle_updated/2</code> updates the language in the stream. A
+          flash message informs the user that a language was updated by another
+          user.
+        </p>
+      </li>
+      <li>
+        <strong>Someone Deletes a Language:</strong>
+        <p>
+          If a language is deleted by another user, a
+          <code>{PaginatedLanguages, {:deleted, language}}</code> message is
+          received. The LiveView calls <code>handle_deleted/2</code> to update
+          counts and mark the language as deleted in the stream. If the deleted
+          language was being edited by the current user, a flash message
+          notifies them of the deletion and closes the edit modal. Otherwise, a
+          general flash message informs the user that the language has been
+          deleted and will be removed upon navigation or refresh.
+        </p>
+      </li>
+    </ul>
+  </li>
+</ol>
 
-<h4>Form Updates (Current User's Actions)</h4>
-<ul>
-  <li>
-    <strong>Creating a Language:</strong>
-    <p>
-      When the form component emits a
-      <code>{FormComponent, {:created, language}}</code> message, the LiveView
-      invokes <code>handle_created/2</code> to update counts and insert the new
-      language into the stream. A flash message with a reset link is then
-      displayed, allowing the user to refresh and sort the list.
-    </p>
-  </li>
-  <li>
-    <strong>Updating a Language:</strong>
-    <p>
-      Similarly, when the form component sends a
-      <code>{FormComponent, {:updated, language}}</code> message,
-      <code>handle_updated/2</code> is called to update the language in the
-      stream. A flash message confirms the successful update to the user.
-    </p>
-  </li>
-</ul>
-<h4>Broadcast Updates (Other Users' Actions)</h4>
-<ul>
-  <li>
-    <strong>Someone Creates a Language:</strong>
-    <p>
-      <code>{PaginatedLanguages, {:created, language}}</code> broadcast is
-      received. The LiveView uses <code>handle_created/2</code> to update counts
-      and add the new language to the stream. A flash message with a reset link
-      notifies the user of the new addition and prompts them to refresh and sort
-      the list.
-    </p>
-  </li>
-  <li>
-    <strong>Someone Updates a Language:</strong>
-    <p>
-      Upon receiving a
-      <code>{PaginatedLanguages, {:updated, language}}</code> broadcast,
-      <code>handle_updated/2</code> updates the language in the stream. A flash
-      message informs the user that a language was updated by another user.
-    </p>
-  </li>
-  <li>
-    <strong>Someone Deletes a Language:</strong>
-    <p>
-      If a language is deleted by another user, a
-      <code>{PaginatedLanguages, {:deleted, language}}</code> message is
-      received. The LiveView calls <code>handle_deleted/2</code> to update
-      counts and mark the language as deleted in the stream. If the deleted
-      language was being edited by the current user, a flash message notifies
-      them of the deletion and closes the edit modal. Otherwise, a general flash
-      message informs the user that the language has been deleted and will be
-      removed upon navigation or refresh.
-    </p>
-  </li>
-</ul>
 <h3>
   <code>handle_deleted/2</code>, <code>handle_created/2</code>, and
   <code>handle_updated/2</code>
@@ -458,7 +467,7 @@
   <code>handle_info/2</code> (broadcasted actions from other users) utilize
   these functions.
 </p>
-<h4>Core Concepts</h4>
+
 <ul>
   <li>
     <strong>Flagging Items:</strong>
@@ -474,46 +483,64 @@
     <strong>Updating Counts:</strong>
     <p>
       They adjust various count assignments such as <code>:count_all</code>,
-      <code>:count_all_summary</code>, and <code>:count_all_pagination</code>.
-      These counts ensure that summaries and pagination controls accurately
-      reflect the current state of the data. For a detailed explanation of how
-      these counts work, refer to the <code>init/2</code> section.
+      <code>:count_all_summary</code>, and <code>:count_visible_rows</code>. For
+      a detailed explanation of how these counts work, refer to the
+      <code>init/2</code> section.
     </p>
   </li>
 </ul>
+
 <h3>Helper Functions</h3>
 <ul>
   <li>
     <strong><code>get_pagination_url/2</code></strong>
     <p>
-      Generates URLs for accessing the current page, used when opening or
-      closing modals, navigating back, and other pagination-related actions.
+      Generates URLs for pagination by encoding query parameters. The function
+      accepts options and an optional base path, combining them into a complete
+      URL for navigation.
+    </p>
+  </li>
+  <li>
+    <strong><code>get_flash_message_with_reset_link/1</code></strong>
+    <p>
+      Creates a flash message with an embedded "reload and sort" link, providing
+      users with both feedback and an action to refresh the data state.
     </p>
   </li>
   <li>
     <strong><code>get_page_summary/4</code></strong>
     <p>
-      Creates the summary text displayed above the data table, such as "Showing
-      1 - 5 of 100."
+      Generates the pagination summary text (e.g., "Showing 1 - 5 of 100") by
+      calculating the correct range based on current page, items per page, and
+      total count.
+    </p>
+  </li>
+  <li>
+    <strong><code>get_row_class/1</code></strong>
+    <p>
+      Determines the appropriate CSS class for table rows based on the language
+      entry's state (created, updated, or deleted), providing visual feedback
+      through different background colors and styles.
     </p>
   </li>
   <li>
     <strong><code>format_percentage/2</code></strong>
     <p>
-      Formats numerical values into percentage strings with specified precision.
-      Applied within table cells and detailed views to present percentage data
-      clearly.
+      Formats numerical values into percentage strings with configurable
+      precision, using the Number.Percentage formatter for consistent display
+      across the application.
     </p>
   </li>
 </ul>
+
 <hr />
+
+<h2>index.html.heex</h2>
+
 <p>
-  The template for <code>LivePlaygroundWeb.StepsLive.Paginated.Index</code>
-  implements the UI for our paginated language list. While most of the code is
-  straightforward Phoenix LiveView markup, there are a few important
-  implementation details that handle real-time updates, pagination controls, and
-  visual feedback for concurrent actions.
+  Beyond standard Phoenix LiveView markup, here are few things worth to mention:
 </p>
+
 <h4>Count Management in UI</h4>
 <p>
   The template uses different count variables for different UI elements, as
@@ -530,16 +557,18 @@
     page numbers remain stable until the user explicitly reloads or navigates
   </li>
 </ul>
+
 <h4>Navigation Behavior</h4>
 <p>
   The pagination component includes a hook that automatically scrolls back to
   the top of the page whenever the page number changes, providing a smoother
   navigation experience.
 </p>
+
 <h4>Stream Demonstration</h4>
 <p>
   In the countrycode column, you'll notice:
-  <code>&lt;dd>&lt;%= Timex.now() %>&lt;/dd></code>
+  <code>&lt;dd>{Timex.now()}&lt;/dd></code>
 </p>
 <p>
   This timestamp is included purely for demonstration purposes—it shows when
@@ -547,19 +576,25 @@
   stream updates. In a production application, you would typically not include
   this debugging information.
 </p>
+
 <hr />
+
+<h2>form_component.ex</h2>
+
 <p>
   The <code>LivePlaygroundWeb.StepsLive.Paginated.FormComponent</code> adds two
   advanced features to standard Phoenix LiveView form handling: optimistic
   locking for concurrent updates and dynamic country code suggestions. Let's see
   how these work together across the component and schema:
 </p>
+
 <h3>Optimistic Locking</h3>
 <p>
   When multiple users edit the same record simultaneously, we need to prevent
   one user from accidentally overwriting another's changes. Phoenix and Ecto
   provide optimistic locking to handle this. Here's how it works:
 </p>
+
 <h4>How to Implement</h4>
 <ol>
   <li>
@@ -617,6 +652,7 @@
 end</code></pre>
   </li>
 </ol>
+
 <h4>How It Works</h4>
 <p>
   Let's say two users, Alice and Bob, start editing the same language record:
@@ -642,12 +678,14 @@ end</code></pre>
   only checks for them at save time, rather than locking the record during the
   entire edit session.
 </p>
+
 <h3>Country Code Suggestions with Smart Validation</h3>
 <p>
   Our form needs to both suggest valid country codes and validate the final
   input. While we could handle these as separate events, we combine them for
   better user experience. Here's why and how:
 </p>
+
 <p><strong>The Challenge</strong></p>
 <p>
   If we validated the country code separately from suggestions, users would see
@@ -655,6 +693,7 @@ end</code></pre>
   displayed in the autocomplete list. This would be confusing and provide a poor
   user experience.
 </p>
+
 <p><strong>The Solution</strong></p>
 <p>
   We combine suggestion lookup and validation in the
@@ -670,6 +709,7 @@ end</code></pre>
     <code>validate_countrycode_exists: true</code>
   </li>
 </ul>
+
 <p><strong>How It Works</strong></p>
 <ol>
   <li>
@@ -692,26 +732,36 @@ end</code></pre>
     </ul>
   </li>
 </ol>
+
 <hr />
+
+<h2>paginated_languages.ex</h2>
+
 <p>
   <code>LivePlayground.PaginatedLanguages</code> handles three key aspects of
   our application:
 </p>
+
 <p><strong>Real-time Updates</strong></p>
 <ul>
   <li>
     <code>broadcast/2</code> sets up broadcasts for all database changes. Note
     how create/update/delete functions end with
     <code>|> broadcast(:created)</code>, <code>|> broadcast(:updated)</code>, or
-    <code>|> broadcast(:deleted)</code>
+    <code>|> broadcast(:deleted)</code>. The broadcast uses
+    <code>broadcast_from</code> with <code>self()</code> to ensure the
+    originating process doesn't receive its own broadcast messages, preventing
+    redundant updates.
   </li>
   <li>
     Provides <code>subscribe/0</code> function that, when called in LiveView's
     mount, enables the view to receive these broadcasts. This means when any
     connected user creates, updates, or deletes a language, all other connected
-    users will see these changes immediately.
+    users (except the initiator) will see these changes immediately, maintaining
+    efficient real-time synchronization.
   </li>
 </ul>
+
 <p><strong>Pagination</strong></p>
 <ul>
   <li>
@@ -719,6 +769,7 @@ end</code></pre>
     combines sorting and page slicing in a single query.
   </li>
 </ul>
+
 <p><strong>Optimistic Locking</strong></p>
 <ul>
   <li>
