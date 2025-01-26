@@ -33,7 +33,7 @@
   row_click={fn {_id, language} -> JS.navigate(get_url(@options, ~p"/steps/sorted/#{language}")) end}
   row_class={fn {_id, language} -> get_row_class(language) end}
 >
-  <:col :let={{_id, language}} label={SortingHelpers.sort_link("Countrycode", :countrycode, @options, @sorting_context)}>
+  <:col :let={{_id, language}} label={sort_link("Countrycode", :countrycode, @options, @sorting_context)}>
     {language.countrycode}
     <.badge :if={Map.get(language, :created, false)} kind={:green}>New</.badge>
     <.badge :if={Map.get(language, :updated, false)} kind={:blue}>Edited</.badge>
@@ -43,13 +43,13 @@
       <dd>{Timex.now()}</dd>
     </dl>
   </:col>
-  <:col :let={{_id, language}} label={SortingHelpers.sort_link("Language", :language, @options, @sorting_context)}>
+  <:col :let={{_id, language}} label={sort_link("Language", :language, @options, @sorting_context)}>
     {language.language}
   </:col>
-  <:col :let={{_id, language}} label={SortingHelpers.sort_link("Isofficial", :isofficial, @options, @sorting_context)}>
+  <:col :let={{_id, language}} label={sort_link("Isofficial", :isofficial, @options, @sorting_context)}>
     <.icon :if={language.isofficial} name="hero-check" />
   </:col>
-  <:col :let={{_id, language}} label={SortingHelpers.sort_link("Percentage", :percentage, @options, @sorting_context)}>
+  <:col :let={{_id, language}} label={sort_link("Percentage", :percentage, @options, @sorting_context)}>
     {format_percentage(language.percentage)}
   </:col>
   <:action :let={{_id, language}}>

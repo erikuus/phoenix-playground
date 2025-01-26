@@ -4,8 +4,6 @@ defmodule LivePlaygroundWeb.SortingHelpers do
   sorting logic in Phoenix LiveView modules.
   """
 
-  import Phoenix.Component
-
   defmodule Context do
     @moduledoc """
     A configuration struct that defines sorting behavior and constraints.
@@ -27,17 +25,31 @@ defmodule LivePlaygroundWeb.SortingHelpers do
   end
 
   @doc """
-  Converts sorting parameters to atoms and merges them into options map.
+  Converts sorting parameters to atoms and determines the source of sort values.
 
   ## Parameters
-    - `options`: Target options map to merge sorting values into
+    - `options`: Target options map that may contain existing sort values
     - `params`: Request parameters that may contain "sort_by" and "sort_order" strings
     - `context`: Sorting context containing defaults
 
   ## Returns
-    Options map with :sort_by and :sort_order atoms, either:
-    - Converted from params if present and valid
-    - Or set to defaults from context
+    Options map with :sort_by and :sort_order atoms, sourced from either:
+    - params if sort parameters are present
+    - existing options if they contain valid sort fields
+    - context defaults if neither params nor options have sort fields
+
+  ## Examples
+      # From params
+      convert_params(%{}, %{"sort_by" => "name", "sort_order" => "asc"}, context)
+      #=> %{sort_by: :name, sort_order: :asc}
+
+      # From existing options
+      convert_params(%{sort_by: :name, sort_order: :asc}, %{}, context)
+      #=> %{sort_by: :name, sort_order: :asc}
+
+      # From context defaults
+      convert_params(%{}, %{}, context)
+      #=> %{sort_by: context.sort_by, sort_order: context.sort_order}
   """
   def convert_params(
         options,
@@ -47,6 +59,10 @@ defmodule LivePlaygroundWeb.SortingHelpers do
     sort_by = to_atom_safe(sort_by, context.sort_by)
     sort_order = to_atom_safe(sort_order, context.sort_order)
     Map.merge(options, %{sort_by: sort_by, sort_order: sort_order})
+  end
+
+  def convert_params(%{sort_by: _, sort_order: _} = options, _params, _context) do
+    options
   end
 
   def convert_params(options, _params, context) do
@@ -66,23 +82,26 @@ defmodule LivePlaygroundWeb.SortingHelpers do
   defp to_atom_safe(_value, fallback), do: fallback
 
   @doc """
-  Validates and adjusts sorting values to ensure they are within allowed options.
-
-  If both :sort_by and :sort_order exist in options:
-  - Ensures sort_by is one of the allowed fields from context
-  - Ensures sort_order is one of the allowed orders
-  - Updates options with corrected values
-
-  If :sort_by or :sort_order are missing from options, returns options unchanged.
+  Validates sorting options against allowed values in context.
 
   ## Parameters
-    - `options`: Map that may contain :sort_by and :sort_order atoms
-    - `context`: Contains allowed_sort_fields and allowed_orders
+    - `options`: Map containing :sort_by and :sort_order from convert_params
+    - `context`: Sorting context containing allowed_sort_fields and allowed_orders
 
   ## Returns
-    Options map with either:
-    - Validated/adjusted :sort_by and :sort_order values
-    - Or unchanged if sorting keys were missing
+    Options map with validated values, where:
+    - sort_by falls back to context.sort_by if not in allowed_sort_fields
+    - sort_order falls back to context.sort_order if not in allowed_orders
+    - original options returned unchanged if sorting keys missing
+
+  ## Examples
+      # Valid options
+      validate_options(%{sort_by: :name, sort_order: :asc}, context)
+      #=> %{sort_by: :name, sort_order: :asc}
+
+      # Invalid sort_by
+      validate_options(%{sort_by: :invalid, sort_order: :asc}, context)
+      #=> %{sort_by: context.sort_by, sort_order: :asc}
   """
   def validate_options(%{sort_by: sort_by, sort_order: sort_order} = options, context) do
     sort_by = get_allowed_sort_field(sort_by, context)
@@ -105,34 +124,43 @@ defmodule LivePlaygroundWeb.SortingHelpers do
   @doc """
   Initializes sorting assigns with the provided context.
 
-  Sets up initial sorting state with the context containing default values and constraints.
-  This should be called during LiveView mount to establish the base sorting configuration.
-
   ## Parameters
-    - `context` - Sorting context struct containing defaults and allowed values
+    - `context`: Sorting configuration containing:
+        - sort_by: Default field to sort by
+        - sort_order: Default sort order (:asc/:desc)
+        - allowed_sort_fields: List of valid sort fields
+        - allowed_orders: List of valid sort orders
+        - asc_indicator/desc_indicator: Sort direction indicators
 
   ## Returns
     Tuple `{:sorting_initialized, assigns}` where assigns contains:
-    - :pagination_context - The provided sorting context
+    - :sorting_context - The provided sorting configuration
 
-  ## Example
-      {:sorting_initialized, sorting_assigns} =
-        SortingHelpers.init(sorting_context)
+  ## Examples
+      context = %Context{
+        sort_by: :name,
+        sort_order: :asc,
+        allowed_sort_fields: [:name, :date],
+        allowed_orders: [:asc, :desc]
+      }
+
+      {:sorting_initialized, %{sorting_context: ^context}} = init(context)
   """
   def init(context) do
     sorting_assigns = %{
-      pagination_context: context
+      sorting_context: context
     }
 
     {:sorting_initialized, sorting_assigns}
   end
 
   @doc """
-  Applies sorting changes based on incoming parameters and determines if data needs to be reloaded.
+  Applies sorting changes and determines if data needs to be reloaded.
 
-  Processes new sorting parameters, validates them against allowed values, and determines
-  if the changes require a stream reset. This is typically called when handling sorting
-  parameter changes from URL or user interactions.
+  Processes sorting parameters through a pipeline that:
+  1. Determines sort values from params, existing options, or context defaults
+  2. Validates values against allowed fields and orders
+  3. Checks if changes require a data reload
 
   ## Parameters
     - `options` (map): The current sorting options (e.g., `%{sort_by: :name, sort_order: :asc}`)
@@ -143,7 +171,7 @@ defmodule LivePlaygroundWeb.SortingHelpers do
   ## Returns
   One of:
     ```
-    {:reset_stream, valid_options, new_assigns}
+    {:reset_stream, valid_options}
     {:noreset_stream, valid_options}
     ```
 
@@ -151,15 +179,15 @@ defmodule LivePlaygroundWeb.SortingHelpers do
     - `:reset_stream` indicates data needs to be reloaded
     - `:noreset_stream` indicates current data can be kept
     - `valid_options` contains validated sorting options
-    - `new_assigns` contains updated sort state values
 
   Stream reset occurs if:
     - force_reset is true
-    - sort field or order values changed
+    - sort values change after conversion or validation
+    - initial sort values are set from context defaults
 
   ## Example
       case SortingHelpers.apply_options(options, params, context, false) do
-        {:reset_stream, valid_options, sorting_assigns} ->
+        {:reset_stream, valid_options} ->
           # Re-fetch data and reset stream with new sort options
         {:noreset_stream, valid_options} ->
           # Keep using existing data with current sort
@@ -174,55 +202,53 @@ defmodule LivePlaygroundWeb.SortingHelpers do
     reload_needed = force_reset or valid_options != options
 
     if reload_needed do
-      new_assigns = %{
-        sort_by: valid_options.sort_by,
-        sort_order: valid_options.sort_order
-      }
-
-      {:reset_stream, valid_options, new_assigns}
+      {:reset_stream, valid_options}
     else
       {:noreset_stream, valid_options}
     end
   end
 
-  @doc """
-  Generates a sorting link with appropriate indicators for the current sort state.
-
-  Creates an interactive link component that handles column sorting. The link displays
-  the current sort state using indicators (↑/↓) and generates the URL for the next
-  sort state when clicked.
+  @doc ~S'''
+  Generates sorting info for a column header link.
 
   ## Parameters
-    - `label` - The text to display in the link
-    - `col` - The column identifier (atom) this link sorts by
-    - `options` - Map containing sorting options including :sort_by and :sort_order
-    - `context` - Map containing sorting context including :fetch_url_fn
+    - `label`: Display text for the column header
+    - `col`: Column identifier (atom) this link sorts by
+    - `options`: Current sorting state (%{sort_by: atom, sort_order: :asc/:desc})
+    - `context`: Sorting configuration with asc_indicator/desc_indicator
 
   ## Returns
-    A Phoenix.Component link containing:
-    - The provided label text
-    - Sort indicator if this column is currently sorted
-    - URL that will toggle sort order if clicked
+    Map containing:
+    - :label - Column header text
+    - :indicator - Current sort indicator ("↑"/"↓") or empty string
+    - :options - Updated options for next sort state
 
   ## Example
-      sort_link("Name", :name, %{sort_by: :name, sort_order: :asc}, context)
-      # Renders link with "Name ↑" that will switch to descending when clicked
-  """
-  def sort_link(label, col, options, context) do
+      # In your LiveView:
+      defp sort_link(label, col, options, context) do
+        assigns = SortingHelpers.sort_link_assigns(label, col, options, context)
+        ~H"""
+        <.link patch={get_url(assigns.options)} class="flex gap-x-1">
+          <span>{@label}</span>
+          <span>{@indicator}</span>
+        </.link>
+        """
+      end
+
+      # In your template (.heex):
+      <:col :let={{_id, name}} label={sort_link("Name", :name, @options, @sorting_context)}>
+  '''
+  def sort_link_assigns(label, col, options, context) do
     sort_order_indicator = get_sort_order_indicator(col, options, context)
     sort_order_reversed = get_sort_order_reversed(col, options)
 
     new_options = Map.merge(options, %{sort_by: col, sort_order: sort_order_reversed})
-    to = context.fetch_url_fn.(new_options)
 
-    assigns = %{label: label, indicator: sort_order_indicator, to: to}
-
-    ~H"""
-    <.link patch={@to} class="flex gap-x-1">
-      <span>{@label}</span>
-      <span>{@indicator}</span>
-    </.link>
-    """
+    %{
+      label: label,
+      indicator: sort_order_indicator,
+      options: new_options
+    }
   end
 
   defp get_sort_order_indicator(col, options, context) when col == options.sort_by do

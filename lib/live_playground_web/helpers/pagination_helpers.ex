@@ -17,22 +17,40 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   end
 
   @doc """
-  Converts pagination parameters to integers and merges them into options map.
+  Converts pagination parameters to integers and determines the source of pagination values.
 
   ## Parameters
-    - `options`: Target options map to merge pagination values into
+    - `options`: Target options map that may contain existing pagination values
     - `params`: Request parameters that may contain "page" and "per_page" strings
-    - `context`: Pagination context containing default_per_page setting
+    - `context`: Pagination context containing defaults
 
   ## Returns
-    Options map with :page and :per_page integers, either:
-    - Converted from params if present
-    - Or set to defaults (page: 1, per_page: context.default_per_page)
+    Options map with :page and :per_page integers, sourced from either:
+    - params if pagination parameters are present
+    - existing options if they contain valid pagination fields
+    - context defaults if neither params nor options have pagination fields
+
+  ## Examples
+      # From params
+      convert_params(%{}, %{"page" => "2", "per_page" => "20"}, context)
+      #=> %{page: 2, per_page: 20}
+
+      # From existing options
+      convert_params(%{page: 2, per_page: 20}, %{}, context)
+      #=> %{page: 2, per_page: 20}
+
+      # From context defaults
+      convert_params(%{}, %{}, context)
+      #=> %{page: 1, per_page: context.default_per_page}
   """
   def convert_params(options, %{"page" => page, "per_page" => per_page} = _params, context) do
     page = to_integer(page, 1)
     per_page = to_integer(per_page, context.default_per_page)
     Map.merge(options, %{page: page, per_page: per_page})
+  end
+
+  def convert_params(%{page: _, per_page: _} = options, _params, _context) do
+    options
   end
 
   def convert_params(options, _params, context) do
@@ -51,24 +69,27 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   defp to_integer(_value, default_value), do: default_value
 
   @doc """
-  Validates and adjusts pagination values to ensure they are within allowed bounds.
-
-  If both :page and :per_page exist in options:
-  - Ensures per_page is one of the allowed values from context
-  - Adjusts page number to not exceed maximum possible pages based on count_all
-  - Updates options with corrected values
-
-  If :page or :per_page are missing from options, returns options unchanged.
+  Validates and adjusts pagination values against total count and allowed options.
 
   ## Parameters
-    - `options`: Map that may contain :page and :per_page integers
-    - `count_all`: Total number of items in collection being paginated
-    - `context`: Contains allowed per_page_options and default_per_page
+    - `options`: Map containing :page and :per_page integers from convert_params
+    - `count_all`: Total number of items for computing maximum page number
+    - `context`: Contains allowed_per_page_options for validation
 
   ## Returns
-    Options map with either:
-    - Validated/adjusted :page and :per_page values
-    - Or unchanged if pagination keys were missing
+    Options map with validated and potentially adjusted values:
+    - per_page is ensured to be one of allowed options
+    - page is adjusted to be within valid range (1..max_page)
+    - original options returned unchanged if pagination keys missing
+
+  ## Examples
+      # Adjusts exceeding page
+      validate_options(%{page: 10, per_page: 10}, 50, context)
+      #=> %{page: 5, per_page: 10}  # max page is 5 for 50 items
+
+      # Validates per_page
+      validate_options(%{page: 1, per_page: 15}, 100, context)
+      #=> %{page: 1, per_page: 10}  # 15 not in allowed options
   """
   def validate_options(%{page: page, per_page: per_page} = options, count_all, context) do
     per_page = get_allowed_per_page(per_page, context)
@@ -100,27 +121,28 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   defp ceil_div(num, denom), do: div(num + denom - 1, denom)
 
   @doc """
-  Initializes pagination assigns with counts and visible rows.
-
-  Sets up initial pagination state:
-  - :pagination_context - Pagination context from module
-  - :count_all - Total items
-  - :count_all_summary - Total items for summary
-  - :count_all_pagination - Total items for pagination
-  - :count_visible_rows - Currently visible rows
-  - :pending_deletion - Deletion in progress flag
+  Initializes pagination assigns with counts and state flags.
 
   ## Parameters
-    - `options` - Pagination options with optional :per_page
-    - `count_all` - Total number of items
-    - `context` - Pagination context with defaults
+    - `options`: Current pagination options (uses :per_page if present)
+    - `count_all`: Total number of items in the collection
+    - `context`: Pagination context for default_per_page value
 
   ## Returns
-    {:pagination_initialized, assigns}
+    Tuple `{:pagination_initialized, assigns}` where assigns contains:
+    - :pagination_context - Configuration for pagination behavior
+    - :count_all - Base count for pagination calculations
+    - :count_all_summary - Count for summary display
+    - :count_all_pagination - Count for pagination controls
+    - :count_visible_rows - Number of rows visible on current page
+    - :pending_deletion - Flag for deletion in progress
 
   ## Example
-      {:pagination_initialized, pagination_assigns} =
-        PaginationHelpers.init(options, count_all, pagination_context)
+      {:pagination_initialized, assigns} = PaginationHelpers.init(
+        %{per_page: 10},  # existing options
+        42,               # total items
+        pagination_context
+      )
   """
   def init(options, count_all, context) do
     per_page = Map.get(options, :per_page, context.default_per_page)
@@ -139,13 +161,18 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   end
 
   @doc """
-  Applies pagination changes based on incoming parameters and determines if data needs to be reloaded.
+  Applies pagination changes and determines if data needs to be reloaded.
+
+  Processes pagination parameters through a pipeline that:
+  1. Converts params to obtain new pagination values
+  2. Validates values against total count and allowed options
+  3. Checks if changes require a data reload
 
   ## Parameters
     - `options` (map): The current pagination options (e.g., `%{page: 1, per_page: 10}`)
-    - `params` (map): Potential new parameters from the URL or an event (may contain `"page"` or `"per_page"`)
+    - `params` (map): Potential new parameters (may contain `"page"` or `"per_page"`)
     - `count_all` (integer): Total number of items for pagination (used to compute max page)
-    - `context` (%Context{}): A struct holding pagination config (like `default_per_page`, `per_page_options`)
+    - `context` (%Context{}): Pagination configuration with defaults and constraints
     - `force_reset` (boolean): If `true`, skips normal checks and signals a forced reload
 
   ## Returns
@@ -159,36 +186,33 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
     - `:reset_stream` indicates data needs to be reloaded
     - `:noreset_stream` indicates current data can be kept
     - `valid_options` contains validated pagination options
-    - `page_changed` is true if the page number was modified
+    - `page_changed` is true if page number changed after conversion or validation
     - `new_assigns` contains updated count and state values
 
   Stream reset occurs if:
     - force_reset is true
-    - page/per_page values changed
-    - requested page was adjusted to be in valid range
+    - pagination values change after conversion or validation
+    - requested page was adjusted during validation (e.g., exceeding max pages)
 
   ## Example
       case PaginationHelpers.apply_options(options, params, count_all, context, false) do
-        {:reset_stream, valid_options, page_changed, pagination_assigns} ->
+        {:reset_stream, valid_options, page_changed, new_assigns} ->
           # Re-fetch data, reset stream, push patch if page_changed
         {:noreset_stream, valid_options} ->
-          # Keep using existing data
+          # Keep using existing data with current sort
       end
   """
   def apply_options(options, params, count_all, context, force_reset) do
-    old_page = Map.get(options, :page, 1)
-    old_per_page = Map.get(options, :per_page, context.default_per_page)
-
-    page = to_integer(params["page"] || old_page, 1)
-    per_page = to_integer(params["per_page"] || old_per_page, context.default_per_page)
-    new_options = Map.merge(options, %{page: page, per_page: per_page})
+    new_options = convert_params(options, params, context)
     valid_options = validate_options(new_options, count_all, context)
 
-    reload_needed = force_reset or valid_options != options or valid_options.page != page
-    page_changed = valid_options.page != page
+    reload_needed =
+      force_reset or valid_options != options or valid_options.page != new_options.page
+
+    page_changed = valid_options.page != new_options.page
 
     if reload_needed do
-      count_visible_rows = min(count_all, per_page)
+      count_visible_rows = min(count_all, valid_options.per_page)
 
       new_assigns = %{
         count_all_summary: count_all,
@@ -206,20 +230,21 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   @doc """
   Updates pagination options with new per_page value from params.
 
-  Extracts "per_page" parameter and converts it to integer. If param is missing or
-  invalid, falls back to context.default_per_page value.
-
   ## Parameters
-    - `options` - Current pagination options map
-    - `params` - Request params that may contain "per_page"
-    - `context` - Context with default_per_page fallback value
+    - `options`: Current pagination options map (must contain :per_page)
+    - `params`: Request params that may contain "per_page"
+    - `context`: Context with default_per_page and per_page_options
 
   ## Returns
-    Updated options map with new :per_page value
+    Updated options map with new :per_page value, either:
+    - Converted from params if present and valid
+    - Or using context.default_per_page as fallback
 
   ## Example
-      options = update_per_page_option(options, %{"per_page" => "20"}, context)
-      options.per_page #=> 20
+      options = %{page: 2, per_page: 10}
+      params = %{"per_page" => "20"}
+      update_per_page_option(options, params, context)
+      #=> %{page: 2, per_page: 20}
   """
   def update_per_page_option(options, params, context) do
     per_page = to_integer(Map.get(params, "per_page"), context.default_per_page)
@@ -227,27 +252,25 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   end
 
   @doc """
-  Processes a newly created item by updating pagination counts and marking the item.
-
-  Increments count fields in assigns:
-  - :count_all
-  - :count_all_summary
-  - :count_visible_rows
-
-  Also marks the item as newly created by setting :created flag.
+  Processes a newly created item by updating counts and marking creation state.
 
   ## Parameters
-    - `assigns`: Current assigns containing pagination count fields
-    - `item`: The newly created item to process
+    - `assigns`: Current assigns containing count fields
+    - `item`: Item being created
 
   ## Returns
     Tuple `{:handled_created, assigns, item}` where:
-    - assigns: Map with incremented pagination counts
-    - item: Original item with :created flag set to true
+    - assigns: Contains incremented counts for all, summary and visible rows
+    - item: Has :created = true flag set
 
   ## Example
-      {:handled_created, new_assigns, marked_item} =
-        PaginationHelpers.handle_created(socket.assigns, item)
+      {:handled_created,
+       %{count_all: 43, count_all_summary: 43, count_visible_rows: 11},
+       %{id: 1, created: true}} =
+        handle_created(
+          %{count_all: 42, count_all_summary: 42, count_visible_rows: 10},
+          %{id: 1}
+        )
   """
   def handle_created(assigns, item) do
     marked_item = Map.put(item, :created, true)
@@ -262,22 +285,18 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   end
 
   @doc """
-  Processes an updated item by marking it with :updated flag.
-
-  Marks the item as updated by setting :updated flag. Unlike handle_created,
-  no pagination counts need to be modified since this is updating an existing
-  item.
+  Processes an updated item by marking update state.
 
   ## Parameters
-    - `item`: The item being updated to process
+    - `item`: Item being updated
 
   ## Returns
-    Tuple `{:handled_updated, marked_item}` where:
-    - marked_item: Original item with :updated flag set to true
+    Tuple `{:handled_updated, item}` where:
+    - item: Has :updated = true flag set
 
   ## Example
-      {:handled_updated, marked_item} =
-        PaginationHelpers.handle_updated(item)
+      {:handled_updated, %{id: 1, updated: true}} =
+        handle_updated(%{id: 1})
   """
   def handle_updated(item) do
     marked_item = Map.put(item, :updated, true)
@@ -285,24 +304,20 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   end
 
   @doc """
-  Processes a deleted item by updating pagination counts, marking it deleted and setting pending deletion state.
-
-  - Decrements count_all field in assigns
-  - Marks the item as deleted by setting :deleted flag
-  - Sets :pending_deletion state in assigns to true to indicate deletion is in progress.
+  Processes a deleted item by updating counts and marking deletion state.
 
   ## Parameters
-    - `assigns`: Current assigns containing pagination count fields
-    - `item`: The item being deleted to process
+    - `assigns`: Current assigns containing count fields
+    - `item`: Item being deleted
 
   ## Returns
     Tuple `{:handled_deleted, assigns, item}` where:
-    - assigns: Map with decremented pagination counts and pending_deletion flag
-    - item: Original item with :deleted flag set to true
+    - assigns: Contains decremented :count_all and :pending_deletion = true
+    - item: Has :deleted = true flag set
 
   ## Example
-      {:handled_deleted, new_assigns, marked_item} =
-        PaginationHelpers.handle_deleted(socket.assigns, item)
+      {:handled_deleted, %{count_all: 41, pending_deletion: true}, %{id: 1, deleted: true}} =
+        handle_deleted(%{count_all: 42}, %{id: 1})
   """
   def handle_deleted(assigns, item) do
     marked_item = Map.put(item, :deleted, true)
@@ -319,20 +334,30 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   Produces a summary string describing the currently displayed items range.
 
   ## Parameters
-    - `count_all` (integer): Total number of items in the collection
-    - `page` (integer): Current page number
-    - `per_page` (integer): Number of items displayed per page
-    - `stream_size` (integer): Number of items currently visible in the stream
+    - `count_all`: Total number of items in collection
+    - `page`: Current page number (starting from 1)
+    - `per_page`: Number of items per page
+    - `stream_size`: Actual number of items currently in view. This may temporarily
+      differ from per_page during operations like additions before refresh.
 
   ## Returns
-    String in the format "Showing X - Y of Z" where:
-      - X is the index of first item on current page
-      - Y is the index of last visible item
-      - Z is the total number of items
+    String "Showing X - Y of Z" where:
+    - X is the index of first item ((page - 1) * per_page + 1)
+    - Y is the actual last item index (min(start + stream_size - 1, count_all))
+    - Z is the total count
 
-  ## Example
-      iex> get_summary(100, 2, 10, 10)
-      "Showing 11 - 20 of 100."
+  ## Examples
+      # Normal page display
+      get_summary(100, 1, 5, 5)
+      #=> "Showing 1 - 5 of 100."
+
+      # After item addition, before refresh
+      get_summary(101, 1, 5, 6)
+      #=> "Showing 1 - 6 of 101."  # stream_size temporarily 6
+
+      # After refresh (item sorted to correct position)
+      get_summary(101, 1, 5, 5)
+      #=> "Showing 1 - 5 of 101."  # stream_size back to per_page
   """
   def get_summary(count_all, page, per_page, stream_size) do
     start = (page - 1) * per_page + 1
