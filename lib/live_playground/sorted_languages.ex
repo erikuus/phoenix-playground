@@ -35,12 +35,31 @@ defmodule LivePlayground.SortedLanguages do
   end
 
   @doc """
-  Returns the list of language.
+  Fetches a paginated and sorted list of languages based on the provided options.
+
+  ## Sorting
+  - The `sort_by` option specifies the field to sort by (e.g., `:name`, `:id`).
+  - The `sort_order` option specifies the sort direction (`:asc` or `:desc`).
+  - For string fields, sorting is **case-insensitive** (e.g., "ruby" and "Ruby" are treated as equal).
+  - To ensure consistent ordering across pages, a secondary sort by `id` is always applied.
+    This prevents rows with the same value in the primary sort field from appearing in multiple pages.
+
+  ## Pagination
+  - The `page` option specifies the page number (1-based).
+  - The `per_page` option specifies the number of items per page.
+  - Pagination is implemented using `limit` and `offset`.
 
   ## Examples
+      # Sort by name (case-insensitive) and paginate
+      list_languages(%{sort_by: :name, sort_order: :asc, page: 1, per_page: 10})
 
-      iex> list_language()
-      [%Language{}, ...]
+      # Sort by ID in descending order and paginate
+      list_languages(%{sort_by: :id, sort_order: :desc, page: 2, per_page: 5})
+
+  ## Notes
+  - If `sort_by` or `sort_order` is not provided, no sorting is applied.
+  - If `page` or `per_page` is not provided, no pagination is applied.
+  - The function assumes that the `Language` schema has an `id` field for secondary sorting.
   """
   def list_languages(options \\ %{}) do
     from(Language)
@@ -50,10 +69,24 @@ defmodule LivePlayground.SortedLanguages do
   end
 
   defp sort(query, %{sort_by: sort_by, sort_order: sort_order}) do
-    order_by(query, {^sort_order, ^sort_by})
+    case get_field_type(Language, sort_by) do
+      :string ->
+        query
+        |> order_by([l], {^sort_order, fragment("LOWER(?)", field(l, ^sort_by))})
+        |> order_by([l], asc: l.id)
+
+      _ ->
+        query
+        |> order_by([l], {^sort_order, field(l, ^sort_by)})
+        |> order_by([l], asc: l.id)
+    end
   end
 
   defp sort(query, _options), do: query
+
+  defp get_field_type(schema, field_name) do
+    schema.__schema__(:type, field_name)
+  end
 
   defp paginate(query, %{page: page, per_page: per_page}) do
     offset = max((page - 1) * per_page, 0)
