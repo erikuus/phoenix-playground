@@ -4,7 +4,7 @@
     <meta charset="utf-8" /> <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
     <.live_title suffix=" · Phoenix Framework">
-      <%= assigns[:page_title] || "LivePlayground" %>
+      {assigns[:page_title] || "LivePlayground"}
     </.live_title>
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
@@ -12,10 +12,10 @@
     </script>
     <style>
       <%= Makeup.stylesheet() %>
-      <%= Makeup.Styles.HTML.Style.stylesheet(Makeup.Styles.HTML.StyleMap.xcode_style()) %>
+      <%= Makeup.Styles.HTML.Style.stylesheet(Makeup.Styles.HTML.StyleMap.arduino_style()) %>
     </style>
   </head>
   <body id="root-body" class="font-sans antialiased text-gray-600 min-h-full flex flex-col" scroll-region>
-    <%= @inner_content %>
+    {@inner_content}
   </body>
 </html>

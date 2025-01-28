@@ -202,7 +202,8 @@ defmodule LivePlaygroundWeb.StepsLive.Sorted.Index do
       |> put_flash(
         :info,
         get_flash_message_with_reset_link(
-          "Language created successfully. It has been temporarily added to the top of the list and will be sorted to its correct position on the next page load."
+          "Language created successfully. It has been temporarily added to the top of the list
+          and will be sorted to its correct position on the next page load."
         )
       )
 
@@ -243,7 +244,8 @@ defmodule LivePlaygroundWeb.StepsLive.Sorted.Index do
       |> put_flash(
         :info,
         get_flash_message_with_reset_link(
-          "A new language was added by another user. It has been temporarily added to the top of the list and will be sorted to its correct position on the next page load."
+          "A new language was added by another user. It has been temporarily added to the top of the list
+          and will be sorted to its correct position on the next page load."
         )
       )
 

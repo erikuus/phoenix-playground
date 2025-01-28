@@ -206,12 +206,12 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
     new_options = convert_params(options, params, context)
     valid_options = validate_options(new_options, count_all, context)
 
-    reload_needed =
+    reset_needed =
       force_reset or valid_options != options or valid_options.page != new_options.page
 
     page_changed = valid_options.page != new_options.page
 
-    if reload_needed do
+    if reset_needed do
       count_visible_rows = min(count_all, valid_options.per_page)
 
       new_assigns = %{

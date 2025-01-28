@@ -199,9 +199,9 @@ defmodule LivePlaygroundWeb.SortingHelpers do
       |> convert_params(params, context)
       |> validate_options(context)
 
-    reload_needed = force_reset or valid_options != options
+    reset_needed = force_reset or valid_options != options
 
-    if reload_needed do
+    if reset_needed do
       {:reset_stream, valid_options}
     else
       {:noreset_stream, valid_options}

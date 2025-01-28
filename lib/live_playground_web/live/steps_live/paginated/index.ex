@@ -12,10 +12,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
 
     socket = assign(socket, :count_all, PaginatedLanguages.count_languages())
 
-    page = to_integer(params["page"], 1)
-    per_page = to_integer(params["per_page"], @per_page)
-    options = %{page: page, per_page: per_page}
-
+    options = convert_params(%{}, params)
     valid_options = validate_options(socket, options)
 
     if options != valid_options do
@@ -23,6 +20,20 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     else
       {:ok, init(socket, valid_options)}
     end
+  end
+
+  defp convert_params(options, %{"page" => page, "per_page" => per_page} = _params) do
+    page = to_integer(page, 1)
+    per_page = to_integer(per_page, @per_page)
+    Map.merge(options, %{page: page, per_page: per_page})
+  end
+
+  defp convert_params(%{page: _, per_page: _} = options, _params) do
+    options
+  end
+
+  defp convert_params(options, _params) do
+    Map.merge(options, %{page: 1, per_page: @per_page})
   end
 
   defp to_integer(value, _default_value) when is_integer(value), do: value
@@ -82,12 +93,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
 
   @impl true
   def handle_params(params, _url, socket) do
-    socket =
-      socket
-      |> apply_action(socket.assigns.live_action, params)
-      |> apply_options(socket.assigns.live_action, params, false)
-
-    {:noreply, socket}
+    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
@@ -102,25 +108,26 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     |> assign(:language, %Language{})
   end
 
-  defp apply_action(socket, :index, _params) do
+  defp apply_action(socket, :index, params) do
     socket
     |> assign(:page_title, "Listing Languages")
     |> assign(:language, nil)
+    |> apply_options(params, false)
   end
 
-  defp apply_options(socket, :index, params, reset_stream) do
+  defp apply_options(socket, params, force_reset) do
     options = socket.assigns.options
 
-    page = params["page"] || options.page || 1
-    per_page = params["per_page"] || options.per_page || @per_page
-
-    page = to_integer(page, 1)
-    per_page = to_integer(per_page, @per_page)
-    new_options = %{page: page, per_page: per_page}
+    new_options = convert_params(options, params)
     valid_options = validate_options(socket, new_options)
 
+    reset_needed =
+      force_reset or valid_options != options or valid_options.page != new_options.page
+
+    page_changed = valid_options.page != new_options.page
+
     socket =
-      if reset_stream or valid_options != options or valid_options.page != page do
+      if reset_needed do
         languages = PaginatedLanguages.list_languages(valid_options)
         count_visible_rows = length(languages)
 
@@ -131,7 +138,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
         |> assign(:count_all_pagination, socket.assigns.count_all)
         |> assign(:pending_deletion, false)
         |> stream(:languages, languages, reset: true)
-        |> (&if(valid_options.page != page,
+        |> (&if(page_changed,
               do: push_patch(&1, to: get_pagination_url(valid_options)),
               else: &1
             )).()
@@ -139,10 +146,6 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
         socket
       end
 
-    socket
-  end
-
-  defp apply_options(socket, _, _, _) do
     socket
   end
 
@@ -159,7 +162,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     socket =
       socket
       |> clear_flash()
-      |> apply_options(:index, params, true)
+      |> apply_options(params, true)
 
     {:noreply, socket}
   end
@@ -198,7 +201,8 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
       |> put_flash(
         :info,
         get_flash_message_with_reset_link(
-          "Language created successfully. It has been temporarily added to the top of the list and will be sorted to its correct position on the next page load."
+          "Language created successfully. It has been temporarily added to the top of
+          the list and will be sorted to its correct position on the next page load."
         )
       )
 
@@ -232,7 +236,8 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
       |> put_flash(
         :info,
         get_flash_message_with_reset_link(
-          "A new language was added by another user. It has been temporarily added to the top of the list and will be sorted to its correct position on the next page load."
+          "A new language was added by another user. It has been temporarily added to the top
+          of the list and will be sorted to its correct position on the next page load."
         )
       )
 
@@ -283,7 +288,8 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
         |> put_flash(
           :info,
           get_flash_message_with_reset_link(
-            "A language was deleted by another user. It will be removed from the list when you navigate away or refresh."
+            "A language was deleted by another user. It will be removed from the list when you
+            navigate away or refresh."
           )
         )
 
