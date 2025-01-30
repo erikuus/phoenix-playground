@@ -44,6 +44,12 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
   end
 
   @impl true
+  def terminate(_reason, _socket) do
+    PaginatedLanguages.unsubscribe()
+    :ok
+  end
+
+  @impl true
   def handle_params(params, _url, socket) do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end

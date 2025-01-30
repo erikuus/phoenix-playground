@@ -22,6 +22,12 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     end
   end
 
+  @impl true
+  def terminate(_reason, _socket) do
+    PaginatedLanguages.unsubscribe()
+    :ok
+  end
+
   defp convert_params(options, %{"page" => page, "per_page" => per_page} = _params) do
     page = to_integer(page, 1)
     per_page = to_integer(per_page, @per_page)
