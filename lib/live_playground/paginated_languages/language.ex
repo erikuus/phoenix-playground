@@ -41,6 +41,7 @@ defmodule LivePlayground.PaginatedLanguages.Language do
       if Repo.exists?(from c in "country", where: c.code == ^countrycode) do
         changeset
       else
+        add_error(changeset, :countrycode, "country code does not exist")
       end
     end
   end
