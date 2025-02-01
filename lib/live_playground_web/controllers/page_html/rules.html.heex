@@ -99,16 +99,20 @@ socket =
   <section class="prose">
     <h2>Naming Convention for Helper Functions</h2>
     <p>
-      For <strong>State-Manipulating Functions</strong> (returning <code>socket</code>) use action-oriented
-      verbs (e.g., <code>init</code>, <code>apply_options</code>, <code>apply_action</code>).
+      For <strong>State-Manipulating Functions</strong> (returning <code>socket</code>) prefer action-oriented
+      verbs (e.g., <code>apply_options</code>, <code>apply_action</code>).
     </p>
     <p>
-      For <strong>Data Transformation Functions</strong> (modifying variables or data structures) use verbs
-      indicating the transformation (e.g., <code>update_params</code>, <code>to_integer</code>).
+      For <strong>Data Transformation Functions</strong> (modifying variables or data structures) prefer verbs
+      indicating the transformation (e.g., <code>convert_params</code>, <code>validate_options</code>).
     </p>
     <p>
-      For <strong>Value-Retrieving Functions</strong> use the <code>get_</code> prefix
+      For <strong>Value-Retrieving Functions</strong> prefer the <code>get_</code> prefix
       (e.g., <code>get_existing_page</code>, <code>get_pagination_url</code>, <code>get_allowed_per_page</code>).
+    </p>
+    <p>
+      Ultimately, opt for clarity and consistency. Choose names that make your intent obvious, without rigidly
+      enforcing specific naming patterns.
     </p>
   </section>
   <section class="prose">
