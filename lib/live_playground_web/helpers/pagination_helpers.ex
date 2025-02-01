@@ -32,15 +32,15 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
 
   ## Examples
       # From params
-      convert_params(%{}, %{"page" => "2", "per_page" => "20"}, context)
+      PaginationHelpers.convert_params(%{}, %{"page" => "2", "per_page" => "20"}, context)
       #=> %{page: 2, per_page: 20}
 
       # From existing options
-      convert_params(%{page: 2, per_page: 20}, %{}, context)
+      PaginationHelpers.convert_params(%{page: 2, per_page: 20}, %{}, context)
       #=> %{page: 2, per_page: 20}
 
       # From context defaults
-      convert_params(%{}, %{}, context)
+      PaginationHelpers.convert_params(%{}, %{}, context)
       #=> %{page: 1, per_page: context.default_per_page}
   """
   def convert_params(options, %{"page" => page, "per_page" => per_page} = _params, context) do
@@ -84,11 +84,11 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
 
   ## Examples
       # Adjusts exceeding page
-      validate_options(%{page: 10, per_page: 10}, 50, context)
+      PaginationHelpers.validate_options(%{page: 10, per_page: 10}, 50, context)
       #=> %{page: 5, per_page: 10}  # max page is 5 for 50 items
 
       # Validates per_page
-      validate_options(%{page: 1, per_page: 15}, 100, context)
+      PaginationHelpers.validate_options(%{page: 1, per_page: 15}, 100, context)
       #=> %{page: 1, per_page: 10}  # 15 not in allowed options
   """
   def validate_options(%{page: page, per_page: per_page} = options, count_all, context) do
@@ -138,13 +138,13 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
     - :pending_deletion - Flag for deletion in progress
 
   ## Example
-      {:pagination_initialized, assigns} = PaginationHelpers.init(
+      {:pagination_initialized, assigns} = PaginationHelpers.init_pagination(
         %{per_page: 10},  # existing options
         42,               # total items
         pagination_context
       )
   """
-  def init(options, count_all, context) do
+  def init_pagination(options, count_all, context) do
     per_page = Map.get(options, :per_page, context.default_per_page)
     count_visible_rows = min(count_all, per_page)
 
@@ -161,7 +161,7 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   end
 
   @doc """
-  Applies pagination changes and determines if data needs to be reloaded.
+  Resolves pagination changes and determines if data needs to be reloaded.
 
   Processes pagination parameters through a pipeline that:
   1. Converts params to obtain new pagination values
@@ -195,14 +195,14 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
     - requested page was adjusted during validation (e.g., exceeding max pages)
 
   ## Example
-      case PaginationHelpers.apply_options(options, params, count_all, context, false) do
+      case PaginationHelpers.resolve_pagination_changes(options, params, count_all, context, false) do
         {:reset_stream, valid_options, page_changed, new_assigns} ->
           # Re-fetch data, reset stream, push patch if page_changed
         {:noreset_stream, valid_options} ->
           # Keep using existing data with current sort
       end
   """
-  def apply_options(options, params, count_all, context, force_reset) do
+  def resolve_pagination_changes(options, params, count_all, context, force_reset) do
     new_options = convert_params(options, params, context)
     valid_options = validate_options(new_options, count_all, context)
 
@@ -243,7 +243,7 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   ## Example
       options = %{page: 2, per_page: 10}
       params = %{"per_page" => "20"}
-      update_per_page_option(options, params, context)
+      PaginationHelpers.update_per_page_option(options, params, context)
       #=> %{page: 2, per_page: 20}
   """
   def update_per_page_option(options, params, context) do
@@ -259,20 +259,20 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
     - `item`: Item being created
 
   ## Returns
-    Tuple `{:handled_created, assigns, item}` where:
+    Tuple `{:processed_created, assigns, item}` where:
     - assigns: Contains incremented counts for all, summary and visible rows
     - item: Has :created = true flag set
 
   ## Example
-      {:handled_created,
+      {:processed_created,
        %{count_all: 43, count_all_summary: 43, count_visible_rows: 11},
        %{id: 1, created: true}} =
-        handle_created(
+        PaginationHelpers.process_created(
           %{count_all: 42, count_all_summary: 42, count_visible_rows: 10},
           %{id: 1}
         )
   """
-  def handle_created(assigns, item) do
+  def process_created(assigns, item) do
     marked_item = Map.put(item, :created, true)
 
     new_assigns = %{
@@ -281,7 +281,7 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
       count_visible_rows: assigns.count_visible_rows + 1
     }
 
-    {:handled_created, new_assigns, marked_item}
+    {:processed_created, new_assigns, marked_item}
   end
 
   @doc """
@@ -291,16 +291,16 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
     - `item`: Item being updated
 
   ## Returns
-    Tuple `{:handled_updated, item}` where:
+    Tuple `{:processed_updated, item}` where:
     - item: Has :updated = true flag set
 
   ## Example
-      {:handled_updated, %{id: 1, updated: true}} =
-        handle_updated(%{id: 1})
+      {:processed_updated, %{id: 1, updated: true}} =
+        PaginationHelpers.process_updated(%{id: 1})
   """
-  def handle_updated(item) do
+  def process_updated(item) do
     marked_item = Map.put(item, :updated, true)
-    {:handled_updated, marked_item}
+    {:processed_updated, marked_item}
   end
 
   @doc """
@@ -311,15 +311,15 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
     - `item`: Item being deleted
 
   ## Returns
-    Tuple `{:handled_deleted, assigns, item}` where:
+    Tuple `{:processed_deleted, assigns, item}` where:
     - assigns: Contains decremented :count_all and :pending_deletion = true
     - item: Has :deleted = true flag set
 
   ## Example
-      {:handled_deleted, %{count_all: 41, pending_deletion: true}, %{id: 1, deleted: true}} =
-        handle_deleted(%{count_all: 42}, %{id: 1})
+      {:processed_deleted, %{count_all: 41, pending_deletion: true}, %{id: 1, deleted: true}} =
+        PaginationHelpers.process_deleted(%{count_all: 42}, %{id: 1})
   """
-  def handle_deleted(assigns, item) do
+  def process_deleted(assigns, item) do
     marked_item = Map.put(item, :deleted, true)
 
     new_assigns = %{
@@ -327,7 +327,7 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
       pending_deletion: true
     }
 
-    {:handled_deleted, new_assigns, marked_item}
+    {:processed_deleted, new_assigns, marked_item}
   end
 
   @doc """
@@ -348,15 +348,15 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
 
   ## Examples
       # Normal page display
-      get_summary(100, 1, 5, 5)
+      PaginationHelpers.get_summary(100, 1, 5, 5)
       #=> "Showing 1 - 5 of 100."
 
       # After item addition, before refresh
-      get_summary(101, 1, 5, 6)
+      PaginationHelpers.get_summary(101, 1, 5, 6)
       #=> "Showing 1 - 6 of 101."  # stream_size temporarily 6
 
       # After refresh (item sorted to correct position)
-      get_summary(101, 1, 5, 5)
+      PaginationHelpers.get_summary(101, 1, 5, 5)
       #=> "Showing 1 - 5 of 101."  # stream_size back to per_page
   """
   def get_summary(count_all, page, per_page, stream_size) do

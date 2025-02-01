@@ -29,7 +29,7 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
       {:ok, push_navigate(socket, to: get_url(valid_options))}
     else
       {:pagination_initialized, pagination_assigns} =
-        PaginationHelpers.init(valid_options, count_all, pagination_context)
+        PaginationHelpers.init_pagination(valid_options, count_all, pagination_context)
 
       languages = PaginatedLanguages.list_languages(valid_options)
 
@@ -78,7 +78,13 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
     count_all = socket.assigns.count_all
     context = socket.assigns.pagination_context
 
-    case PaginationHelpers.apply_options(options, params, count_all, context, force_reset) do
+    case PaginationHelpers.resolve_pagination_changes(
+           options,
+           params,
+           count_all,
+           context,
+           force_reset
+         ) do
       {:reset_stream, valid_options, page_changed, new_assigns} ->
         data = PaginatedLanguages.list_languages(valid_options)
 
@@ -124,8 +130,8 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
 
     case PaginatedLanguages.delete_language(language) do
       {:ok, deleted_language} ->
-        {:handled_deleted, new_assigns, marked_language} =
-          PaginationHelpers.handle_deleted(socket.assigns, deleted_language)
+        {:processed_deleted, new_assigns, marked_language} =
+          PaginationHelpers.process_deleted(socket.assigns, deleted_language)
 
         {:noreply,
          socket
@@ -150,8 +156,8 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
         {LivePlaygroundWeb.StepsLive.Refactored.FormComponent, {:created, language}},
         socket
       ) do
-    {:handled_created, new_assigns, marked_language} =
-      PaginationHelpers.handle_created(socket.assigns, language)
+    {:processed_created, new_assigns, marked_language} =
+      PaginationHelpers.process_created(socket.assigns, language)
 
     socket =
       socket
@@ -160,7 +166,8 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
       |> put_flash(
         :info,
         get_flash_message_with_reset_link(
-          "Language created successfully. It has been temporarily added to the top of the list and will be sorted to its correct position on the next page load."
+          "Language created successfully. It has been temporarily added to the top of
+          the list and will be sorted to its correct position on the next page load."
         )
       )
 
@@ -172,8 +179,8 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
         {LivePlaygroundWeb.StepsLive.Refactored.FormComponent, {:updated, language}},
         socket
       ) do
-    {:handled_updated, marked_language} =
-      PaginationHelpers.handle_updated(language)
+    {:processed_updated, marked_language} =
+      PaginationHelpers.process_updated(language)
 
     socket =
       socket
@@ -191,8 +198,8 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
         {LivePlayground.PaginatedLanguages, {:created, language}},
         socket
       ) do
-    {:handled_created, new_assigns, marked_language} =
-      PaginationHelpers.handle_created(socket.assigns, language)
+    {:processed_created, new_assigns, marked_language} =
+      PaginationHelpers.process_created(socket.assigns, language)
 
     socket =
       socket
@@ -201,7 +208,8 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
       |> put_flash(
         :info,
         get_flash_message_with_reset_link(
-          "A new language was added by another user. It has been temporarily added to the top of the list and will be sorted to its correct position on the next page load."
+          "A new language was added by another user. It has been temporarily added to the top of
+          the list and will be sorted to its correct position on the next page load."
         )
       )
 
@@ -213,8 +221,8 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
         {LivePlayground.PaginatedLanguages, {:updated, language}},
         socket
       ) do
-    {:handled_updated, marked_language} =
-      PaginationHelpers.handle_updated(language)
+    {:processed_updated, marked_language} =
+      PaginationHelpers.process_updated(language)
 
     socket =
       socket
@@ -232,8 +240,8 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
         {LivePlayground.PaginatedLanguages, {:deleted, language}},
         socket
       ) do
-    {:handled_deleted, new_assigns, marked_language} =
-      PaginationHelpers.handle_deleted(socket.assigns, language)
+    {:processed_deleted, new_assigns, marked_language} =
+      PaginationHelpers.process_deleted(socket.assigns, language)
 
     socket =
       socket

@@ -39,10 +39,10 @@ defmodule LivePlaygroundWeb.StepsLive.Sorted.Index do
       {:ok, push_navigate(socket, to: get_url(valid_options))}
     else
       {:pagination_initialized, pagination_assigns} =
-        PaginationHelpers.init(valid_options, count_all, pagination_context)
+        PaginationHelpers.init_pagination(valid_options, count_all, pagination_context)
 
       {:sorting_initialized, sorting_assigns} =
-        SortingHelpers.init(sorting_context)
+        SortingHelpers.init_sorting(sorting_context)
 
       languages = SortedLanguages.list_languages(valid_options)
 
@@ -92,7 +92,7 @@ defmodule LivePlaygroundWeb.StepsLive.Sorted.Index do
     options = socket.assigns.options
     sorting_context = socket.assigns.sorting_context
 
-    case SortingHelpers.apply_options(
+    case SortingHelpers.resolve_sorting_changes(
            options,
            params,
            sorting_context,
@@ -118,7 +118,7 @@ defmodule LivePlaygroundWeb.StepsLive.Sorted.Index do
     # If sorting said reset_stream is needed, we combine that with the passed `force_reset`.
     combined_force_reset = socket.assigns.sorting_reset_stream or force_reset
 
-    case PaginationHelpers.apply_options(
+    case PaginationHelpers.resolve_pagination_changes(
            options,
            params,
            count_all,
@@ -172,8 +172,8 @@ defmodule LivePlaygroundWeb.StepsLive.Sorted.Index do
 
     case SortedLanguages.delete_language(language) do
       {:ok, deleted_language} ->
-        {:handled_deleted, new_assigns, marked_language} =
-          PaginationHelpers.handle_deleted(socket.assigns, deleted_language)
+        {:processed_deleted, new_assigns, marked_language} =
+          PaginationHelpers.process_deleted(socket.assigns, deleted_language)
 
         {:noreply,
          socket
@@ -198,8 +198,8 @@ defmodule LivePlaygroundWeb.StepsLive.Sorted.Index do
         {LivePlaygroundWeb.StepsLive.Sorted.FormComponent, {:created, language}},
         socket
       ) do
-    {:handled_created, new_assigns, marked_language} =
-      PaginationHelpers.handle_created(socket.assigns, language)
+    {:processed_created, new_assigns, marked_language} =
+      PaginationHelpers.process_created(socket.assigns, language)
 
     socket =
       socket
@@ -221,8 +221,8 @@ defmodule LivePlaygroundWeb.StepsLive.Sorted.Index do
         {LivePlaygroundWeb.StepsLive.Sorted.FormComponent, {:updated, language}},
         socket
       ) do
-    {:handled_updated, marked_language} =
-      PaginationHelpers.handle_updated(language)
+    {:processed_updated, marked_language} =
+      PaginationHelpers.process_updated(language)
 
     socket =
       socket
@@ -240,8 +240,8 @@ defmodule LivePlaygroundWeb.StepsLive.Sorted.Index do
         {LivePlayground.SortedLanguages, {:created, language}},
         socket
       ) do
-    {:handled_created, new_assigns, marked_language} =
-      PaginationHelpers.handle_created(socket.assigns, language)
+    {:processed_created, new_assigns, marked_language} =
+      PaginationHelpers.process_created(socket.assigns, language)
 
     socket =
       socket
@@ -263,8 +263,8 @@ defmodule LivePlaygroundWeb.StepsLive.Sorted.Index do
         {LivePlayground.SortedLanguages, {:updated, language}},
         socket
       ) do
-    {:handled_updated, marked_language} =
-      PaginationHelpers.handle_updated(language)
+    {:processed_updated, marked_language} =
+      PaginationHelpers.process_updated(language)
 
     socket =
       socket
@@ -282,8 +282,8 @@ defmodule LivePlaygroundWeb.StepsLive.Sorted.Index do
         {LivePlayground.SortedLanguages, {:deleted, language}},
         socket
       ) do
-    {:handled_deleted, new_assigns, marked_language} =
-      PaginationHelpers.handle_deleted(socket.assigns, language)
+    {:processed_deleted, new_assigns, marked_language} =
+      PaginationHelpers.process_deleted(socket.assigns, language)
 
     socket =
       socket
@@ -317,7 +317,7 @@ defmodule LivePlaygroundWeb.StepsLive.Sorted.Index do
   end
 
   defp sort_link(label, col, options, context) do
-    assigns = SortingHelpers.sort_link_assigns(label, col, options, context)
+    assigns = SortingHelpers.get_sort_link_assigns(label, col, options, context)
 
     ~H"""
     <.link patch={get_url(assigns.options)} class="flex gap-x-1">

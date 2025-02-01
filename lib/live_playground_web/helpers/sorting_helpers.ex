@@ -137,16 +137,9 @@ defmodule LivePlaygroundWeb.SortingHelpers do
     - :sorting_context - The provided sorting configuration
 
   ## Examples
-      context = %Context{
-        sort_by: :name,
-        sort_order: :asc,
-        allowed_sort_fields: [:name, :date],
-        allowed_orders: [:asc, :desc]
-      }
-
-      {:sorting_initialized, %{sorting_context: ^context}} = init(context)
+      {:sorting_initialized, assigns} = SortingHelpers.init_sorting(sorting_context)
   """
-  def init(context) do
+  def init_sorting(context) do
     sorting_assigns = %{
       sorting_context: context
     }
@@ -155,7 +148,7 @@ defmodule LivePlaygroundWeb.SortingHelpers do
   end
 
   @doc """
-  Applies sorting changes and determines if data needs to be reloaded.
+  Resolves sorting changes and determines if data needs to be reloaded.
 
   Processes sorting parameters through a pipeline that:
   1. Determines sort values from params, existing options, or context defaults
@@ -186,14 +179,14 @@ defmodule LivePlaygroundWeb.SortingHelpers do
     - initial sort values are set from context defaults
 
   ## Example
-      case SortingHelpers.apply_options(options, params, context, false) do
+      case SortingHelpers.resolve_sorting_changes(options, params, context, false) do
         {:reset_stream, valid_options} ->
           # Re-fetch data and reset stream with new sort options
         {:noreset_stream, valid_options} ->
           # Keep using existing data with current sort
       end
   """
-  def apply_options(options, params, context, force_reset) do
+  def resolve_sorting_changes(options, params, context, force_reset) do
     valid_options =
       options
       |> convert_params(params, context)
@@ -226,7 +219,7 @@ defmodule LivePlaygroundWeb.SortingHelpers do
   ## Example
       # In your LiveView:
       defp sort_link(label, col, options, context) do
-        assigns = SortingHelpers.sort_link_assigns(label, col, options, context)
+        assigns = SortingHelpers.get_sort_link_assigns(label, col, options, context)
         ~H"""
         <.link patch={get_url(assigns.options)} class="flex gap-x-1">
           <span>{@label}</span>
@@ -238,7 +231,7 @@ defmodule LivePlaygroundWeb.SortingHelpers do
       # In your template (.heex):
       <:col :let={{_id, name}} label={sort_link("Name", :name, @options, @sorting_context)}>
   '''
-  def sort_link_assigns(label, col, options, context) do
+  def get_sort_link_assigns(label, col, options, context) do
     sort_order_indicator = get_sort_order_indicator(col, options, context)
     sort_order_reversed = get_sort_order_reversed(col, options)
 
