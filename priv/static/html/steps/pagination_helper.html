@@ -39,15 +39,17 @@
     stay within allowed ranges
   </li>
   <li>
-    <code>init</code>: Sets up initial pagination state with counts and settings
+    <code>init_pagination</code>: Initializes pagination assigns with counts and
+    context, returning values like total counts, visible row count, and deletion
+    status for display in templates
   </li>
 </ul>
 
-<h4>Handling Changes</h4>
+<h4>Handling Pagination Changes</h4>
 <ul>
   <li>
-    <code>apply_options</code>: Handles pagination changes (like page number)
-    and tells LiveView if it needs to reload data
+    <code>resolve_pagination_changes</code>: Handles pagination changes (like
+    page number) and tells LiveView if it needs to reload data
   </li>
   <li>
     <code>update_per_page_option</code>: Updates how many items show per page
@@ -55,16 +57,16 @@
   </li>
 </ul>
 
-<h4>Managing Items</h4>
+<h4>Processing Data After DB Changes</h4>
 <ul>
   <li>
-    <code>handle_created</code>: Updates counts when new items are added and
-    marks them as new
+    <code>process_created</code>: Increments counts (total, summary, visible)
+    and marks new items with created: true
   </li>
-  <li><code>handle_updated</code>: Marks items that have been changed</li>
+  <li><code>process_updated</code>: Marks modified items with updated: true</li>
   <li>
-    <code>handle_deleted</code>: Updates counts when items are removed and marks
-    them for deletion
+    <code>process_deleted</code>: Decrements total count, sets pending_deletion
+    flag, and marks items with deleted: true
   </li>
 </ul>
 
