@@ -84,42 +84,29 @@ defmodule LivePlaygroundWeb.StepsLive.Sorted.Index do
     socket
     |> assign(:page_title, "Listing Languages")
     |> assign(:language, nil)
-    |> apply_sorting_options(params, false)
-    |> apply_pagination_options(params, false)
+    |> apply_options(params, false)
   end
 
-  defp apply_sorting_options(socket, params, force_reset) do
+  defp apply_options(socket, params, force_reset) do
+    # Resolve sorting changes, capturing whether sorting needs to trigger a stream reset.
     options = socket.assigns.options
     sorting_context = socket.assigns.sorting_context
 
-    case SortingHelpers.resolve_sorting_changes(
-           options,
-           params,
-           sorting_context,
-           force_reset
-         ) do
-      {:reset_stream, valid_options} ->
-        socket
-        |> assign(:options, valid_options)
-        |> assign(:sorting_reset_stream, true)
+    {sorting_requires_reset, valid_sorting_options} =
+      case SortingHelpers.resolve_sorting_changes(options, params, sorting_context, force_reset) do
+        {:reset_stream, valid_options} -> {true, valid_options}
+        {:noreset_stream, valid_options} -> {false, valid_options}
+      end
 
-      {:noreset_stream, valid_options} ->
-        socket
-        |> assign(:options, valid_options)
-        |> assign(:sorting_reset_stream, false)
-    end
-  end
+    # Combine the forced reset flag with the reset flag required by sorting.
+    combined_force_reset = sorting_requires_reset or force_reset
 
-  defp apply_pagination_options(socket, params, force_reset) do
-    options = socket.assigns.options
+    # Now resolve pagination changes using the updated options.
     count_all = socket.assigns.count_all
     pagination_context = socket.assigns.pagination_context
 
-    # If sorting said reset_stream is needed, we combine that with the passed `force_reset`.
-    combined_force_reset = socket.assigns.sorting_reset_stream or force_reset
-
     case PaginationHelpers.resolve_pagination_changes(
-           options,
+           valid_sorting_options,
            params,
            count_all,
            pagination_context,
@@ -132,7 +119,6 @@ defmodule LivePlaygroundWeb.StepsLive.Sorted.Index do
           socket
           |> assign(:options, valid_options)
           |> assign(new_assigns)
-          |> assign(:sorting_reset_stream, false)
           |> stream(:languages, data, reset: true)
 
         if page_changed do
@@ -160,8 +146,7 @@ defmodule LivePlaygroundWeb.StepsLive.Sorted.Index do
     socket =
       socket
       |> clear_flash()
-      |> apply_sorting_options(params, true)
-      |> apply_pagination_options(params, true)
+      |> apply_options(params, true)
 
     {:noreply, socket}
   end

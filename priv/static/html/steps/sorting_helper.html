@@ -1,0 +1,82 @@
+<p>
+  This section explains the rationale behind creating a purely functional
+  sorting helper module. If you haven't reviewed the pagination helper
+  implementation, it's recommended to
+  <a href="/steps/refactored">start there</a> to understand the pattern being
+  followed for separating concerns in LiveView modules.
+</p>
+
+<h3>Core Design Goals</h3>
+<ul>
+  <li>Make sorting reusable across all LiveViews</li>
+  <li>Keep all sorting settings in one place</li>
+  <li>
+    Keep sorting logic separate from LiveView lifecycle - the helper just
+    handles data, while LiveView handles UI updates
+  </li>
+</ul>
+
+<h3>The Sorting Context</h3>
+<p>
+  Instead of passing multiple settings around, we use a simple
+  <code>Context</code> struct that holds configuration settings such as:
+</p>
+<ul>
+  <li><code>sort_by</code>: The default field to sort by</li>
+  <li>
+    <code>sort_order</code>: The default sort order (e.g., <code>:asc</code> or
+    <code>:desc</code>)
+  </li>
+  <li><code>allowed_sort_fields</code>: A list of fields that can be sorted</li>
+  <li><code>allowed_orders</code>: Permitted sort orders</li>
+  <li>
+    <code>asc_indicator</code> and <code>desc_indicator</code>: Visual
+    indicators for the current sort direction
+  </li>
+</ul>
+<p>This context is stored in <code>socket.assigns.sorting_context</code>.</p>
+
+<h3>Key Functions</h3>
+<h4>Setting Up Sorting</h4>
+<ul>
+  <li>
+    <code>convert_params</code>: Determines sorting values from either user
+    input parameters, existing options, or context defaults, converting string
+    inputs to proper atoms when needed
+  </li>
+  <li>
+    <code>validate_options</code>: Verifies that the chosen sort field and sort
+    order are allowed, reverting to default values if they aren’t
+  </li>
+  <li>
+    <code>init_sorting</code>: Initializes the sorting assigns, setting up the
+    necessary context for the LiveView
+  </li>
+</ul>
+
+<h4>Handling Sorting Changes</h4>
+<ul>
+  <li>
+    <code>resolve_sorting_changes</code>: Compares current sorting options with
+    any new parameters. If there’s a change—or if a forced reset is requested—it
+    signals that the data should be reloaded to reflect the new sorting order.
+  </li>
+</ul>
+
+<h4>Template Helper</h4>
+<ul>
+  <li>
+    <code>get_sort_link_assigns</code>: Generates the necessary data for sorting
+    links in your templates. This function prepares the display label, the sort
+    direction indicator (e.g., "↑" for ascending, "↓" for descending), and the
+    updated sorting options that toggle the sort order when a column header is
+    clicked.
+  </li>
+</ul>
+
+<p>
+  By extracting the sorting logic into its own helper module, your LiveView code
+  becomes cleaner and more maintainable. The helper takes care of data
+  conversion, validation, and the decision-making process regarding when to
+  reload data—just as we achieved with the pagination helper.
+</p>
