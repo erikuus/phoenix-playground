@@ -87,6 +87,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     count_all = socket.assigns.count_all
     per_page = options.per_page
     count_visible_rows = min(count_all, per_page)
+    languages = PaginatedLanguages.list_languages(options)
 
     socket
     |> assign(:options, options)
@@ -94,7 +95,8 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     |> assign(:count_all_pagination, count_all)
     |> assign(:count_visible_rows, count_visible_rows)
     |> assign(:pending_deletion, false)
-    |> stream(:languages, PaginatedLanguages.list_languages(options))
+    |> assign(:visible_ids, Enum.map(languages, & &1.id))
+    |> stream(:languages, languages)
   end
 
   @impl true
@@ -143,6 +145,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
         |> assign(:count_all_summary, socket.assigns.count_all)
         |> assign(:count_all_pagination, socket.assigns.count_all)
         |> assign(:pending_deletion, false)
+        |> assign(:visible_ids, Enum.map(languages, & &1.id))
         |> stream(:languages, languages, reset: true)
         |> (&if(page_changed,
               do: push_patch(&1, to: get_pagination_url(valid_options)),
@@ -255,15 +258,19 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
         {LivePlayground.PaginatedLanguages, {:updated, language}},
         socket
       ) do
-    socket =
-      socket
-      |> handle_updated(language)
-      |> put_flash(
-        :info,
-        get_flash_message_with_reset_link("A language was updated by another user.")
-      )
+    if language.id in socket.assigns.visible_ids do
+      socket =
+        socket
+        |> handle_updated(language)
+        |> put_flash(
+          :info,
+          get_flash_message_with_reset_link("A language was updated by another user.")
+        )
 
-    {:noreply, socket}
+      {:noreply, socket}
+    else
+      {:noreply, socket}
+    end
   end
 
   @impl true
@@ -271,35 +278,39 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
         {LivePlayground.PaginatedLanguages, {:deleted, language}},
         socket
       ) do
-    socket = handle_deleted(socket, language)
+    if language.id in socket.assigns.visible_ids do
+      socket = handle_deleted(socket, language)
 
-    if socket.assigns.live_action == :edit and socket.assigns.language.id == language.id do
-      # Inform the user and close the modal without changing the URL
-      socket =
-        socket
-        |> put_flash(
-          :error,
-          get_flash_message_with_reset_link(
-            "The language you were editing was deleted by another user."
+      if socket.assigns.live_action == :edit and socket.assigns.language.id == language.id do
+        # Inform the user and close the modal without changing the URL
+        socket =
+          socket
+          |> put_flash(
+            :error,
+            get_flash_message_with_reset_link(
+              "The language you were editing was deleted by another user."
+            )
           )
-        )
-        |> assign(:live_action, :index)
-        |> assign(:language, nil)
+          |> assign(:live_action, :index)
+          |> assign(:language, nil)
 
-      {:noreply, socket}
+        {:noreply, socket}
+      else
+        # General deletion notification
+        socket =
+          socket
+          |> put_flash(
+            :info,
+            get_flash_message_with_reset_link(
+              "A language was deleted by another user. It will be removed from the list when you
+              navigate away or refresh."
+            )
+          )
+
+        {:noreply, socket}
+      end
     else
-      # General deletion notification
-      socket =
-        socket
-        |> put_flash(
-          :info,
-          get_flash_message_with_reset_link(
-            "A language was deleted by another user. It will be removed from the list when you
-            navigate away or refresh."
-          )
-        )
-
-      {:noreply, socket}
+      {:noreply, update(socket, :count_all, &(&1 - 1))}
     end
   end
 
@@ -310,6 +321,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
     |> update(:count_all, &(&1 + 1))
     |> update(:count_visible_rows, &(&1 + 1))
     |> update(:count_all_summary, &(&1 + 1))
+    |> update(:visible_ids, &[language.id | &1])
     |> stream_insert(:languages, language, at: 0)
   end
 

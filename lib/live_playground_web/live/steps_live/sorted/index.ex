@@ -51,6 +51,7 @@ defmodule LivePlaygroundWeb.StepsLive.Sorted.Index do
         |> assign(:options, valid_options)
         |> assign(pagination_assigns)
         |> assign(sorting_assigns)
+        |> assign(:visible_ids, Enum.map(languages, & &1.id))
         |> stream(:languages, languages)
 
       {:ok, socket}
@@ -113,13 +114,14 @@ defmodule LivePlaygroundWeb.StepsLive.Sorted.Index do
            combined_force_reset
          ) do
       {:reset_stream, valid_options, page_changed, new_assigns} ->
-        data = SortedLanguages.list_languages(valid_options)
+        languages = SortedLanguages.list_languages(valid_options)
 
         socket =
           socket
           |> assign(:options, valid_options)
           |> assign(new_assigns)
-          |> stream(:languages, data, reset: true)
+          |> assign(:visible_ids, Enum.map(languages, & &1.id))
+          |> stream(:languages, languages, reset: true)
 
         if page_changed do
           push_patch(socket, to: get_url(valid_options))
@@ -248,18 +250,22 @@ defmodule LivePlaygroundWeb.StepsLive.Sorted.Index do
         {LivePlayground.SortedLanguages, {:updated, language}},
         socket
       ) do
-    {:processed_updated, marked_language} =
-      PaginationHelpers.process_updated(language)
+    if language.id in socket.assigns.visible_ids do
+      {:processed_updated, marked_language} =
+        PaginationHelpers.process_updated(language)
 
-    socket =
-      socket
-      |> stream_insert(:languages, marked_language)
-      |> put_flash(
-        :info,
-        get_flash_message_with_reset_link("A language was updated by another user.")
-      )
+      socket =
+        socket
+        |> stream_insert(:languages, marked_language)
+        |> put_flash(
+          :info,
+          get_flash_message_with_reset_link("A language was updated by another user.")
+        )
 
-    {:noreply, socket}
+      {:noreply, socket}
+    else
+      {:noreply, socket}
+    end
   end
 
   @impl true
@@ -267,38 +273,42 @@ defmodule LivePlaygroundWeb.StepsLive.Sorted.Index do
         {LivePlayground.SortedLanguages, {:deleted, language}},
         socket
       ) do
-    {:processed_deleted, new_assigns, marked_language} =
-      PaginationHelpers.process_deleted(socket.assigns, language)
+    if language.id in socket.assigns.visible_ids do
+      {:processed_deleted, new_assigns, marked_language} =
+        PaginationHelpers.process_deleted(socket.assigns, language)
 
-    socket =
-      socket
-      |> assign(new_assigns)
-      |> stream_insert(:languages, marked_language)
-
-    socket =
-      if socket.assigns.live_action == :edit and socket.assigns.language.id == language.id do
-        # Inform the user and close the modal without changing the URL
+      socket =
         socket
-        |> assign(:live_action, :index)
-        |> assign(:language, nil)
-        |> put_flash(
-          :error,
-          get_flash_message_with_reset_link(
-            "The language you were editing was deleted by another user."
-          )
-        )
-      else
-        # General deletion notification
-        socket
-        |> put_flash(
-          :info,
-          get_flash_message_with_reset_link(
-            "A language was deleted by another user. It will be removed from the list when you navigate away or refresh."
-          )
-        )
-      end
+        |> assign(new_assigns)
+        |> stream_insert(:languages, marked_language)
 
-    {:noreply, socket}
+      socket =
+        if socket.assigns.live_action == :edit and socket.assigns.language.id == language.id do
+          # Inform the user and close the modal without changing the URL
+          socket
+          |> assign(:live_action, :index)
+          |> assign(:language, nil)
+          |> put_flash(
+            :error,
+            get_flash_message_with_reset_link(
+              "The language you were editing was deleted by another user."
+            )
+          )
+        else
+          # General deletion notification
+          socket
+          |> put_flash(
+            :info,
+            get_flash_message_with_reset_link(
+              "A language was deleted by another user. It will be removed from the list when you navigate away or refresh."
+            )
+          )
+        end
+
+      {:noreply, socket}
+    else
+      {:noreply, update(socket, :count_all, &(&1 - 1))}
+    end
   end
 
   defp sort_link(label, col, options, context) do

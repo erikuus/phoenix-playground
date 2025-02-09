@@ -136,6 +136,8 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
     - :count_all_pagination - Count for pagination controls
     - :count_visible_rows - Number of rows visible on current page
     - :pending_deletion - Flag for deletion in progress
+    - :visible_ids - List of IDs for items currently visible on the page (starts empty,
+      populated by LiveView after fetching data)
 
   ## Example
       {:pagination_initialized, assigns} = PaginationHelpers.init_pagination(
@@ -154,7 +156,8 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
       count_all_summary: count_all,
       count_all_pagination: count_all,
       count_visible_rows: count_visible_rows,
-      pending_deletion: false
+      pending_deletion: false,
+      visible_ids: []
     }
 
     {:pagination_initialized, pagination_assigns}
@@ -187,7 +190,12 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
     - `:noreset_stream` indicates current data can be kept
     - `valid_options` contains validated pagination options
     - `page_changed` is true if page number changed after conversion or validation
-    - `new_assigns` contains updated count and state values
+    - `new_assigns` contains updated count and state values, including:
+      * count_all_summary
+      * count_all_pagination
+      * count_visible_rows
+      * pending_deletion
+      * visible_ids (reset to [] when stream needs reset, populated by LiveView after fetching new data)
 
   Stream reset occurs if:
     - force_reset is true
@@ -218,7 +226,8 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
         count_all_summary: count_all,
         count_all_pagination: count_all,
         count_visible_rows: count_visible_rows,
-        pending_deletion: false
+        pending_deletion: false,
+        visible_ids: []
       }
 
       {:reset_stream, valid_options, page_changed, new_assigns}
@@ -260,15 +269,25 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
 
   ## Returns
     Tuple `{:processed_created, assigns, item}` where:
-    - assigns: Contains incremented counts for all, summary and visible rows
+    - assigns: Contains incremented counts and updated visible_ids:
+      * count_all + 1
+      * count_all_summary + 1
+      * count_visible_rows + 1
+      * visible_ids with new item.id prepended
     - item: Has :created = true flag set
 
   ## Example
       {:processed_created,
-       %{count_all: 43, count_all_summary: 43, count_visible_rows: 11},
+       %{count_all: 43,
+         count_all_summary: 43,
+         count_visible_rows: 11,
+         visible_ids: [1, 2, 3]},
        %{id: 1, created: true}} =
         PaginationHelpers.process_created(
-          %{count_all: 42, count_all_summary: 42, count_visible_rows: 10},
+          %{count_all: 42,
+            count_all_summary: 42,
+            count_visible_rows: 10,
+            visible_ids: [2, 3]},
           %{id: 1}
         )
   """
@@ -278,7 +297,8 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
     new_assigns = %{
       count_all: assigns.count_all + 1,
       count_all_summary: assigns.count_all_summary + 1,
-      count_visible_rows: assigns.count_visible_rows + 1
+      count_visible_rows: assigns.count_visible_rows + 1,
+      visible_ids: [item.id | assigns.visible_ids]
     }
 
     {:processed_created, new_assigns, marked_item}

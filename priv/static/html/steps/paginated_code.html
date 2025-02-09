@@ -193,6 +193,16 @@
   </li>
   <li>
     <p>
+      <strong><code>:visible_ids</code></strong
+      >: Stores IDs of items currently visible on the page. This is used to
+      optimize broadcasts by only updating the UI when changes affect items that
+      are actually visible to the user. For example, if another user updates a
+      language that isn't on your current page, your UI won't need to process
+      that update.
+    </p>
+  </li>
+  <li>
+    <p>
       <strong><code>:count_visible_rows</code></strong> represents the number of
       items currently visible to the user on the page. This value can exceed the
       <code>per_page</code> limit temporarily when new items are added to the
@@ -397,19 +407,23 @@
         <p>
           <code>{PaginatedLanguages, {:created, language}}</code> broadcast is
           received. The LiveView uses <code>handle_created/2</code> to update
-          counts and add the new language to the stream. A flash message with a
-          reset link notifies the user of the new addition and prompts them to
-          refresh and sort the list.
+          counts, add the language's ID to visible_ids (since it will be shown
+          at the top of the current page), and add the language to the stream. A
+          flash message with a reset link notifies the user of the new addition
+          and prompts them to refresh and sort the list.
         </p>
       </li>
       <li>
         <strong>Someone Updates a Language:</strong>
         <p>
           Upon receiving a
-          <code>{PaginatedLanguages, {:updated, language}}</code> broadcast,
-          <code>handle_updated/2</code> updates the language in the stream. A
-          flash message informs the user that a language was updated by another
-          user.
+          <code>{PaginatedLanguages, {:updated, language}}</code> broadcast, we
+          first check if the language.id is in socket.assigns.visible_ids. If it
+          is, handle_updated/2 updates the language in the stream and a flash
+          message informs the user. If not, the update is ignored since it
+          doesn't affect the current page view. This optimization reduces
+          unnecessary UI updates and improves performance in scenarios with many
+          concurrent users.
         </p>
       </li>
       <li>
@@ -417,10 +431,12 @@
         <p>
           If a language is deleted by another user, a
           <code>{PaginatedLanguages, {:deleted, language}}</code> message is
-          received. The LiveView calls <code>handle_deleted/2</code> to update
-          counts and mark the language as deleted in the stream. If the deleted
-          language was being edited by the current user, a flash message
-          notifies them of the deletion and closes the edit modal. Otherwise, a
+          received. The total count is always updated to reflect the database
+          state. If the deleted item was visible on the current page, the
+          LiveView calls <code>handle_deleted/2</code> to mark the language as
+          deleted in the stream, and shows appropriate notifications: if the
+          deleted language was being edited by the current user, a flash message
+          notifies them of the deletion and closes the edit modal; otherwise, a
           general flash message informs the user that the language has been
           deleted and will be removed upon navigation or refresh.
         </p>

@@ -39,9 +39,10 @@
     stay within allowed ranges
   </li>
   <li>
-    <code>init_pagination</code>: Initializes pagination assigns with counts and
-    context, returning values like total counts, visible row count, and deletion
-    status for display in templates
+    <code>init_pagination</code>: Initializes pagination assigns with counts,
+    context, and visible_ids tracking. Returns values like total counts, visible
+    row count, deletion status, and visible_ids for tracking currently displayed
+    items.
   </li>
 </ul>
 
@@ -60,8 +61,8 @@
 <h4>Processing Data After DB Changes</h4>
 <ul>
   <li>
-    <code>process_created</code>: Increments counts (total, summary, visible)
-    and marks new items with created: true
+    <code>process_created</code>: Increments counts (total, summary, visible),
+    updates visible_ids tracking, and marks item with created: true
   </li>
   <li><code>process_updated</code>: Marks modified items with updated: true</li>
   <li>
