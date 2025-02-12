@@ -169,6 +169,12 @@ defmodule LivePlaygroundWeb.Router do
       live "/steps/sorted/:id/edit", StepsLive.Sorted.Index, :edit
       live "/steps/sorted/:id", StepsLive.Sorted.Show, :show
       live "/steps/sorted/:id/show/edit", StepsLive.Sorted.Show, :edit
+
+      live "/steps/filtered", StepsLive.Filtered.Index, :index
+      live "/steps/filtered/new", StepsLive.Filtered.Index, :new
+      live "/steps/filtered/:id/edit", StepsLive.Filtered.Index, :edit
+      live "/steps/filtered/:id", StepsLive.Filtered.Show, :show
+      live "/steps/filtered/:id/show/edit", StepsLive.Filtered.Show, :edit
     end
   end
 

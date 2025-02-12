@@ -1,0 +1,141 @@
+<!-- start hiding from live code -->
+<.header>
+  Listing Languages
+  <:subtitle>
+    Implement filtering options so users can find specific data based on search criteria or categories.
+  </:subtitle>
+  <:actions class="items-center gap-x-5">
+    <.slideout_link slideout_id="sorting-helper" title="Sorting Helper" />
+  </:actions>
+</.header>
+<.slideout title="Sorting Helper" id="sorting-helper" filename="priv/static/html/steps/sorting_helper.html" />
+<!-- end hiding from live code -->
+<div class="flex justify-end my-5">
+  <.link patch={get_url(@options, ~p"/steps/filtered/new")}>
+    <.button>New Language</.button>
+  </.link>
+</div>
+
+<div class="mb-6">
+  <.form for={%{}} method="get" phx-change="filter">
+    <div class="grid grid-cols-4 gap-4">
+      <div>
+        <.input
+          type="select"
+          name="countrycode"
+          value={@options.filter["countrycode"]}
+          options={[{"All Countries", ""}]}
+          label="Country"
+        />
+      </div>
+      <div>
+        <.input type="text" name="language" value={@options.filter["language"]} label="Language" phx-debounce="300" />
+      </div>
+      <div>
+        <.input
+          type="select"
+          name="isofficial"
+          value={@options.filter["isofficial"]}
+          options={[
+            {"All", ""},
+            {"Official", "true"},
+            {"Unofficial", "false"}
+          ]}
+          label="Status"
+        />
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <.input type="number" name="percentage_min" value={@options.filter["percentage_min"]} label="Min %" min="0" max="100" />
+        <.input type="number" name="percentage_max" value={@options.filter["percentage_max"]} label="Max %" min="0" max="100" />
+      </div>
+    </div>
+  </.form>
+</div>
+
+<form phx-change="change-per-page" class="flex flex-col gap-y-2 items-end justify-end md:flex-row md:gap-y-0 md:justify-between">
+  <div class={["text-sm", @pending_deletion && "text-zinc-300", !@pending_deletion && "text-zinc-600"]}>
+    {PaginationHelpers.get_summary(@count_all_summary, @options.page, @options.per_page, @count_visible_rows)}
+  </div>
+  <div class="flex items-center">
+    <label for="rows-per-page" class="mr-2 text-zinc-600 text-sm">
+      Rows per page:
+    </label>
+    <.input type="select" name="per_page" options={@pagination_context.per_page_options} value={@options.per_page} />
+  </div>
+</form>
+
+<.table
+  id="languages"
+  rows={@streams.languages}
+  row_click={fn {_id, language} -> JS.navigate(get_url(@options, ~p"/steps/filtered/#{language}")) end}
+  row_class={fn {_id, language} -> get_row_class(language) end}
+>
+  <:col :let={{_id, language}} label={sort_link("Countrycode", :countrycode, @options, @sorting_context)}>
+    {language.countrycode}
+    <.badge :if={Map.get(language, :created, false)} kind={:green}>New</.badge>
+    <.badge :if={Map.get(language, :updated, false)} kind={:blue}>Edited</.badge>
+    <.badge :if={Map.get(language, :deleted, false)} kind={:gray}>Deleted</.badge>
+    <dl class="hidden md:block font-normal text-xs text-zinc-500">
+      <dt>Stream inserted:</dt>
+      <dd>{Timex.now()}</dd>
+    </dl>
+  </:col>
+  <:col :let={{_id, language}} label={sort_link("Language", :language, @options, @sorting_context)}>
+    {language.language}
+  </:col>
+  <:col :let={{_id, language}} label={sort_link("Isofficial", :isofficial, @options, @sorting_context)}>
+    <.icon :if={language.isofficial} name="hero-check" />
+  </:col>
+  <:col :let={{_id, language}} label={sort_link("Percentage", :percentage, @options, @sorting_context)}>
+    {format_percentage(language.percentage)}
+  </:col>
+  <:action :let={{_id, language}}>
+    <div class="sr-only">
+      <.link navigate={get_url(@options, ~p"/steps/filtered/#{language}")}>Show</.link>
+    </div>
+    <.link :if={!Map.get(language, :deleted, false)} patch={get_url(@options, ~p"/steps/filtered/#{language}/edit")}>
+      Edit
+    </.link>
+  </:action>
+  <:action :let={{_id, language}}>
+    <.link
+      :if={!Map.get(language, :deleted, false)}
+      phx-click={JS.push("delete", value: %{id: language.id})}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.pagination
+  patch_path="/steps/filtered"
+  page={@options.page}
+  per_page={@options.per_page}
+  count_all={@count_all_pagination}
+  params_per_page_key="per_page"
+  keep_params={Map.take(@options, [:sort_by, :sort_order])}
+  hook="ScrollToTop"
+/>
+
+<.modal :if={@live_action in [:new, :edit]} id="language-modal" show on_cancel={JS.patch(get_url(@options, ~p"/steps/filtered"))}>
+  <.live_component
+    module={LivePlaygroundWeb.StepsLive.Filtered.FormComponent}
+    id={@language.id || :new}
+    title={@page_title}
+    action={@live_action}
+    language={@language}
+    patch={get_url(@options, ~p"/steps/filtered")}
+  />
+</.modal>
+<!-- start hiding from live code -->
+<div class="mt-10 space-y-6">
+  <.code_block filename="lib/live_playground_web/helpers/sorting_helpers.ex" />
+  <.code_block filename="lib/live_playground_web/helpers/pagination_helpers.ex" />
+  <.code_block filename="lib/live_playground_web/live/steps_live/filtered/index.ex" />
+  <.code_block filename="lib/live_playground_web/live/steps_live/filtered/index.html.heex" />
+  <.code_block filename="lib/live_playground_web/live/steps_live/filtered/form_component.ex" />
+  <.code_block filename="lib/live_playground/filtered_languages/language.ex" />
+  <.code_block filename="lib/live_playground/filtered_languages.ex" />
+</div>
+<!-- end hiding from live code -->

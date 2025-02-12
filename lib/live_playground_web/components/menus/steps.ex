@@ -15,10 +15,10 @@ defmodule LivePlaygroundWeb.Menus.Steps do
     <.steps>
       <:step :for={step <- get_steps(@current_path)} path={step.path} active={step.active} checked={step.checked}>
         <p class="text-sm text-zinc-900 font-medium">
-          <%= step.title %>
+          {step.title}
         </p>
         <p class="text-xs text-zinc-600">
-          <%= step.description %>
+          {step.description}
         </p>
       </:step>
     </.steps>
@@ -60,10 +60,9 @@ defmodule LivePlaygroundWeb.Menus.Steps do
       %{
         title: "Add Filtering",
         description: "Implement filtering to narrow results",
-        path: "/5",
+        path: ~p"/steps/filtered",
         order: 5
       }
-      # Implement filtering options so users can find specific data based on search criteria or categories.
     ]
   end
 
