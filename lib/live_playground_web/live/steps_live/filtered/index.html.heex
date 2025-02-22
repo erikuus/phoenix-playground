@@ -5,10 +5,10 @@
     Implement filtering options so users can find specific data based on search criteria or categories.
   </:subtitle>
   <:actions class="items-center gap-x-5">
-    <.slideout_link slideout_id="sorting-helper" title="Sorting Helper" />
+    <.slideout_link slideout_id="filtering-helper" title="Filtering Helper" />
   </:actions>
 </.header>
-<.slideout title="Sorting Helper" id="sorting-helper" filename="priv/static/html/steps/sorting_helper.html" />
+<.slideout title="Filtering Helper" id="filtering-helper" filename="priv/static/html/steps/filtering_helper.html" />
 <!-- end hiding from live code -->
 <div class="flex justify-end my-5">
   <.link patch={get_url(@options, ~p"/steps/filtered/new")}>
@@ -20,16 +20,10 @@
   <.form for={%{}} method="get" phx-change="filter">
     <div class="grid grid-cols-4 gap-4">
       <div>
-        <.input
-          type="select"
-          name="countrycode"
-          value={@options.filter["countrycode"]}
-          options={[{"All Countries", ""}]}
-          label="Country"
-        />
+        <.input type="text" name="countrycode" value={@options.filter["countrycode"]} label="Countrycode" phx-debounce="500" />
       </div>
       <div>
-        <.input type="text" name="language" value={@options.filter["language"]} label="Language" phx-debounce="300" />
+        <.input type="text" name="language" value={@options.filter["language"]} label="Language" phx-debounce="500" />
       </div>
       <div>
         <.input
@@ -45,8 +39,24 @@
         />
       </div>
       <div class="grid grid-cols-2 gap-2">
-        <.input type="number" name="percentage_min" value={@options.filter["percentage_min"]} label="Min %" min="0" max="100" />
-        <.input type="number" name="percentage_max" value={@options.filter["percentage_max"]} label="Max %" min="0" max="100" />
+        <.input
+          type="number"
+          name="percentage_min"
+          value={@options.filter["percentage_min"]}
+          label="Min %"
+          min="0"
+          max="100"
+          phx-debounce="500"
+        />
+        <.input
+          type="number"
+          name="percentage_max"
+          value={@options.filter["percentage_max"]}
+          label="Max %"
+          min="0"
+          max="100"
+          phx-debounce="500"
+        />
       </div>
     </div>
   </.form>
@@ -114,7 +124,7 @@
   per_page={@options.per_page}
   count_all={@count_all_pagination}
   params_per_page_key="per_page"
-  keep_params={Map.take(@options, [:sort_by, :sort_order])}
+  keep_params={get_pagination_keep_params(@options)}
   hook="ScrollToTop"
 />
 

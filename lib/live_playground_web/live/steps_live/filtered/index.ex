@@ -31,15 +31,15 @@ defmodule LivePlaygroundWeb.StepsLive.Filtered.Index do
         countrycode: %FilterField{
           type: :string,
           default: ""
-          # validate: {:in, Countries.list_codes()}
         },
         language: %FilterField{
           type: :string,
           default: ""
         },
         isofficial: %FilterField{
-          type: :boolean,
-          default: ""
+          type: :string,
+          default: "",
+          validate: {:in, ["true", "false", ""]}
         },
         percentage_min: %FilterField{
           type: :integer,
@@ -77,6 +77,9 @@ defmodule LivePlaygroundWeb.StepsLive.Filtered.Index do
       {:sorting_initialized, sorting_assigns} =
         SortingHelpers.init_sorting(sorting_context)
 
+      {:filtering_initialized, filtering_assigns} =
+        FilteringHelpers.init_filtering(filtering_context)
+
       languages = FilteredLanguages.list_languages(valid_options)
 
       socket =
@@ -84,6 +87,7 @@ defmodule LivePlaygroundWeb.StepsLive.Filtered.Index do
         |> assign(:options, valid_options)
         |> assign(pagination_assigns)
         |> assign(sorting_assigns)
+        |> assign(filtering_assigns)
         |> assign(:visible_ids, Enum.map(languages, & &1.id))
         |> stream(:languages, languages)
 
@@ -127,20 +131,38 @@ defmodule LivePlaygroundWeb.StepsLive.Filtered.Index do
   end
 
   defp apply_options(socket, params, force_reset) do
-    # Resolve sorting changes, capturing whether sorting needs to trigger a stream reset.
     options = socket.assigns.options
     sorting_context = socket.assigns.sorting_context
+    filtering_context = socket.assigns.filtering_context
 
-    {sorting_requires_reset, valid_sorting_options} =
-      case SortingHelpers.resolve_sorting_changes(options, params, sorting_context, force_reset) do
+    # First handle filtering changes
+    {filtering_requires_reset, valid_filtering_options} =
+      case FilteringHelpers.resolve_filtering_changes(
+             options,
+             params,
+             filtering_context,
+             force_reset
+           ) do
         {:reset_stream, valid_options} -> {true, valid_options}
         {:noreset_stream, valid_options} -> {false, valid_options}
       end
 
-    # Combine the forced reset flag with the reset flag required by sorting.
-    combined_force_reset = sorting_requires_reset or force_reset
+    # Then handle sorting with combined reset flag
+    combined_force_reset = filtering_requires_reset or force_reset
 
-    # Now resolve pagination changes using the updated options.
+    {sorting_requires_reset, valid_sorting_options} =
+      case SortingHelpers.resolve_sorting_changes(
+             valid_filtering_options,
+             params,
+             sorting_context,
+             combined_force_reset
+           ) do
+        {:reset_stream, valid_options} -> {true, valid_options}
+        {:noreset_stream, valid_options} -> {false, valid_options}
+      end
+
+    # Finally handle pagination with combined reset flags
+    combined_force_reset = sorting_requires_reset or filtering_requires_reset or force_reset
     count_all = socket.assigns.count_all
     pagination_context = socket.assigns.pagination_context
 
@@ -173,10 +195,19 @@ defmodule LivePlaygroundWeb.StepsLive.Filtered.Index do
   end
 
   @impl true
+  def handle_event("filter", params, socket) do
+    options = socket.assigns.options
+    filtering_context = socket.assigns.filtering_context
+    new_options = FilteringHelpers.update_filter_options(options, params, filtering_context)
+    socket = push_patch(socket, to: get_url(new_options))
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_event("change-per-page", params, socket) do
     options = socket.assigns.options
-    context = socket.assigns.pagination_context
-    new_options = PaginationHelpers.update_per_page_option(options, params, context)
+    pagination_context = socket.assigns.pagination_context
+    new_options = PaginationHelpers.update_per_page_option(options, params, pagination_context)
     socket = push_patch(socket, to: get_url(new_options))
     {:noreply, socket}
   end
@@ -361,21 +392,28 @@ defmodule LivePlaygroundWeb.StepsLive.Filtered.Index do
   end
 
   defp get_url(options, base_path \\ "/steps/filtered") do
+    query_params = merge_filter_params(options)
+    query_string = URI.encode_query(query_params)
+    "#{base_path}?#{query_string}"
+  end
+
+  defp merge_filter_params(options) do
     # First removes empty values from the filter map
     filter =
       options
       |> Map.get(:filter, %{})
       |> Enum.reject(fn {_k, v} -> v == "" end)
-      |> Map.new()
 
     # Then merges the filter map with the rest of the options
-    query_params =
-      options
-      |> Map.delete(:filter)
-      |> Map.merge(filter)
+    options
+    |> Map.delete(:filter)
+    |> Map.merge(Map.new(filter))
+  end
 
-    query_string = URI.encode_query(query_params)
-    "#{base_path}?#{query_string}"
+  defp get_pagination_keep_params(options) do
+    options
+    |> Map.drop([:page, :per_page])
+    |> merge_filter_params()
   end
 
   defp get_flash_message_with_reset_link(message) do

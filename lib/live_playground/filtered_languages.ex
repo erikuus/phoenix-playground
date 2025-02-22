@@ -35,38 +35,70 @@ defmodule LivePlayground.FilteredLanguages do
   end
 
   @doc """
-  Fetches a paginated and sorted list of languages based on the provided options.
+  Fetches a filtered, paginated and sorted list of languages based on the provided options.
+
+  ## Filtering
+  - The `filter` option contains a map of field names to filter values
+  - Supported filters: countrycode, language, isofficial, percentage_min, percentage_max
 
   ## Sorting
-  - The `sort_by` option specifies the field to sort by (e.g., `:name`, `:id`).
-  - The `sort_order` option specifies the sort direction (`:asc` or `:desc`).
-  - For string fields, sorting is **case-insensitive** (e.g., "ruby" and "Ruby" are treated as equal).
-  - To ensure consistent ordering across pages, a secondary sort by `id` is always applied.
-    This prevents rows with the same value in the primary sort field from appearing in multiple pages.
+  - The `sort_by` option specifies the field to sort by
+  - The `sort_order` option specifies the sort direction (`:asc` or `:desc`)
 
   ## Pagination
-  - The `page` option specifies the page number (1-based).
-  - The `per_page` option specifies the number of items per page.
-  - Pagination is implemented using `limit` and `offset`.
+  - The `page` option specifies the page number (1-based)
+  - The `per_page` option specifies the number of items per page
 
   ## Examples
-      # Sort by name (case-insensitive) and paginate
-      list_languages(%{sort_by: :name, sort_order: :asc, page: 1, per_page: 10})
-
-      # Sort by ID in descending order and paginate
-      list_languages(%{sort_by: :id, sort_order: :desc, page: 2, per_page: 5})
-
-  ## Notes
-  - If `sort_by` or `sort_order` is not provided, no sorting is applied.
-  - If `page` or `per_page` is not provided, no pagination is applied.
-  - The function assumes that the `Language` schema has an `id` field for secondary sorting.
+      # Filter, sort and paginate
+      list_languages(%{
+        filter: %{
+          countrycode: "EST",
+          language: "est",
+          percentage_min: 50
+        },
+        sort_by: :language,
+        sort_order: :asc,
+        page: 1,
+        per_page: 10
+      })
   """
   def list_languages(options \\ %{}) do
-    from(Language)
+    Language
+    |> filter(options)
     |> sort(options)
     |> paginate(options)
     |> Repo.all()
   end
+
+  defp filter(query, %{filter: filters}) when is_map(filters) do
+    Enum.reduce(filters, query, fn
+      {"countrycode", value}, query when is_binary(value) ->
+        from l in query,
+          where: ilike(l.countrycode, ^"#{value}%")
+
+      {"language", value}, query when is_binary(value) ->
+        from l in query,
+          where: ilike(l.language, ^"%#{value}%")
+
+      {"isofficial", "true"}, query ->
+        from l in query, where: l.isofficial == true
+
+      {"isofficial", "false"}, query ->
+        from l in query, where: l.isofficial == false
+
+      {"percentage_min", value}, query when is_integer(value) ->
+        from l in query, where: l.percentage >= ^value
+
+      {"percentage_max", value}, query when is_integer(value) ->
+        from l in query, where: l.percentage <= ^value
+
+      _filter, query ->
+        query
+    end)
+  end
+
+  defp filter(query, _options), do: query
 
   defp sort(query, %{sort_by: sort_by, sort_order: sort_order}) do
     case get_field_type(Language, sort_by) do

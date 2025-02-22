@@ -234,4 +234,45 @@ defmodule LivePlaygroundWeb.FilteringHelpers do
       {:noreset_stream, valid_options}
     end
   end
+
+  @doc """
+  Updates filter options with raw values from params without conversion or validation.
+
+  ## Parameters
+    - `options` (map): The current options map that may contain existing filter values
+    - `params` (map): Request parameters containing potential filter values
+    - `context` (%Context{}): Filtering context containing allowed field definitions
+
+  ## Returns
+    Options map with updated :filter key containing raw param values for fields
+    defined in context. Values are not converted or validated at this stage.
+
+  ## Examples
+      # Update filter with new params
+      options = %{filter: %{"language" => "eng"}}
+      params = %{"language" => "spa", "isofficial" => "true"}
+      FilteringHelpers.update_filter_options(options, params, context)
+      #=> %{filter: %{"language" => "spa", "isofficial" => "true"}}
+
+      # Empty or missing params preserved
+      options = %{filter: %{"language" => ""}}
+      params = %{"language" => "", "isofficial" => nil}
+      FilteringHelpers.update_filter_options(options, params, context)
+      #=> %{filter: %{"language" => "", "isofficial" => nil}}
+  """
+  def update_filter_options(options, params, context) do
+    filter =
+      context.fields
+      |> Enum.reduce(%{}, fn {field, _config}, acc ->
+        field_string = to_string(field)
+
+        value =
+          params
+          |> Map.get(field_string)
+
+        Map.put(acc, field_string, value)
+      end)
+
+    %{options | filter: filter}
+  end
 end
