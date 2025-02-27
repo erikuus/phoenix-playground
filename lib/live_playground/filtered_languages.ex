@@ -29,10 +29,55 @@ defmodule LivePlayground.FilteredLanguages do
     {:error, changeset}
   end
 
+  @doc """
+    Counts languages that match the given filtering options.
+
+    ## Parameters
+      - `options`: Map containing filter criteria (defaults to an empty map)
+
+    ## Returns
+      Integer representing the count of matching languages
+
+    ## Examples
+        # Count all languages
+        count_languages()
+        #=> 984
+
+        # Count languages with specific filters
+        count_languages(%{filter: %{"countrycode" => "EST", "isofficial" => "true"}})
+        #=> 1
+  """
   def count_languages(options \\ %{}) do
     Language
     |> filter(options)
     |> Repo.aggregate(:count, :id)
+  end
+
+  @doc """
+    Determines if a language matches the specified filter options.
+
+    ## Parameters
+      - `language`: A Language struct or map containing a language ID
+      - `options`: Map containing filter criteria (defaults to an empty map)
+
+    ## Returns
+      Boolean indicating whether language matches the filters
+
+    ## Examples
+        # Check if language matches country filter
+        language = get_language!(1)
+        matches_filter?(language, %{filter: %{"countrycode" => "EST"}})
+        #=> true
+
+        # Check if language matches multiple filters
+        matches_filter?(language, %{filter: %{"isofficial" => "true", "percentage_min" => 50}})
+        #=> false
+  """
+  def matches_filter?(language, options \\ %{}) do
+    Language
+    |> where([l], l.id == ^language.id)
+    |> filter(options)
+    |> Repo.exists?()
   end
 
   @doc """

@@ -277,17 +277,24 @@ defmodule LivePlaygroundWeb.StepsLive.Filtered.Index do
     {:processed_created, new_assigns, marked_language} =
       PaginationHelpers.process_created(socket.assigns, language)
 
+    # Check if item matches current filters for appropriate messaging
+    matches_current_filter =
+      FilteredLanguages.matches_filter?(language, socket.assigns.options)
+
+    message =
+      if matches_current_filter do
+        "Language created successfully. It has been temporarily added to the top of the list " <>
+          "and will be sorted to its correct position on the next page load."
+      else
+        "Language created successfully. It has been temporarily added to the top of the list " <>
+          "but will disappear when you reload as it doesn't match your current filters."
+      end
+
     socket =
       socket
       |> assign(new_assigns)
       |> stream_insert(:languages, marked_language, at: 0)
-      |> put_flash(
-        :info,
-        get_flash_message_with_reset_link(
-          "Language created successfully. It has been temporarily added to the top of the list
-            and will be sorted to its correct position on the next page load."
-        )
-      )
+      |> put_flash(:info, get_flash_message_with_reset_link(message))
 
     {:noreply, socket}
   end
@@ -312,26 +319,27 @@ defmodule LivePlaygroundWeb.StepsLive.Filtered.Index do
   end
 
   @impl true
-  def handle_info(
-        {LivePlayground.FilteredLanguages, {:created, language}},
+  def handle_info({LivePlayground.FilteredLanguages, {:created, language}}, socket) do
+    if FilteredLanguages.matches_filter?(language, socket.assigns.options) do
+      {:processed_created, new_assigns, marked_language} =
+        PaginationHelpers.process_created(socket.assigns, language)
+
+      socket =
         socket
-      ) do
-    {:processed_created, new_assigns, marked_language} =
-      PaginationHelpers.process_created(socket.assigns, language)
-
-    socket =
-      socket
-      |> assign(new_assigns)
-      |> stream_insert(:languages, marked_language, at: 0)
-      |> put_flash(
-        :info,
-        get_flash_message_with_reset_link(
-          "A new language was added by another user. It has been temporarily added to the top of the list
-            and will be sorted to its correct position on the next page load."
+        |> assign(new_assigns)
+        |> stream_insert(:languages, marked_language, at: 0)
+        |> put_flash(
+          :info,
+          get_flash_message_with_reset_link(
+            "A new language was added by another user. It has been temporarily added to the top of the list " <>
+              "and will be sorted to its correct position on the next page load."
+          )
         )
-      )
 
-    {:noreply, socket}
+      {:noreply, socket}
+    else
+      {:noreply, socket}
+    end
   end
 
   @impl true

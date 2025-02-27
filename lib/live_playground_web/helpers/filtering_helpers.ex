@@ -54,25 +54,34 @@ defmodule LivePlaygroundWeb.FilteringHelpers do
   end
 
   @doc """
-  Converts filtering parameters to their appropriate types and applies defaults.
+    Converts filtering parameters to their appropriate types and applies defaults.
 
-  ## Parameters
-    - `options`: Target options map that may contain existing filter values
-    - `params`: Request parameters containing potential filter values
-    - `context`: Filtering context containing field configurations
+    ## Parameters
+      - `options`: Target options map that may contain existing filter values
+      - `params`: Request parameters containing potential filter values
+      - `context`: Filtering context containing field configurations
 
-  ## Returns
-    Options map with :filter key containing converted and defaulted values
+    ## Returns
+      Options map with :filter key containing converted and defaulted values
 
-  ## Examples
-      # With valid params
-      convert_params(%{}, %{"size" => "large"}, context)
-      #=> %{filter: %{size: "large"}}
+    ## Examples
+        # With valid params
+        convert_params(%{}, %{"size" => "large"}, context)
+        #=> %{filter: %{"size" => "large"}}
 
-      # With invalid params (falls back to defaults)
-      convert_params(%{}, %{"size" => "invalid"}, context)
-      #=> %{filter: %{size: "small"}}
+        # With empty params (preserves existing options)
+        convert_params(%{filter: %{"size" => "large"}}, %{}, context)
+        #=> %{filter: %{"size" => "large"}}
+
+        # With invalid params (falls back to defaults during validation)
+        convert_params(%{}, %{"size" => "invalid"}, context)
+        #=> %{filter: %{"size" => "invalid"}}
+        # Note: validation happens separately in validate_options
   """
+  def convert_params(options, params, _context) when map_size(params) == 0 do
+    options
+  end
+
   def convert_params(options, params, context) do
     filter =
       context.fields
