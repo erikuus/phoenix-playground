@@ -56,17 +56,20 @@ defmodule LivePlaygroundWeb.StepsLive.Filtered.Index do
 
     options =
       %{}
-      |> PaginationHelpers.convert_params(params, pagination_context)
-      |> SortingHelpers.convert_params(params, sorting_context)
       |> FilteringHelpers.convert_params(params, filtering_context)
+      |> SortingHelpers.convert_params(params, sorting_context)
+      |> PaginationHelpers.convert_params(params, pagination_context)
 
-    count_all = FilteredLanguages.count_languages()
+    valid_filter_options =
+      options
+      |> FilteringHelpers.validate_options(filtering_context)
+
+    count_all = FilteredLanguages.count_languages(valid_filter_options)
 
     valid_options =
-      options
-      |> PaginationHelpers.validate_options(count_all, pagination_context)
+      valid_filter_options
       |> SortingHelpers.validate_options(sorting_context)
-      |> FilteringHelpers.validate_options(filtering_context)
+      |> PaginationHelpers.validate_options(count_all, pagination_context)
 
     if options != valid_options do
       {:ok, push_navigate(socket, to: get_url(valid_options))}
@@ -134,6 +137,7 @@ defmodule LivePlaygroundWeb.StepsLive.Filtered.Index do
     options = socket.assigns.options
     sorting_context = socket.assigns.sorting_context
     filtering_context = socket.assigns.filtering_context
+    count_all = socket.assigns.count_all
 
     # First handle filtering changes
     {filtering_requires_reset, valid_filtering_options} =
@@ -145,6 +149,14 @@ defmodule LivePlaygroundWeb.StepsLive.Filtered.Index do
            ) do
         {:reset_stream, valid_options} -> {true, valid_options}
         {:noreset_stream, valid_options} -> {false, valid_options}
+      end
+
+    # Get new count if filters changed
+    count_all =
+      if options.filter != valid_filtering_options.filter do
+        FilteredLanguages.count_languages(valid_filtering_options)
+      else
+        count_all
       end
 
     # Then handle sorting with combined reset flag
@@ -161,9 +173,8 @@ defmodule LivePlaygroundWeb.StepsLive.Filtered.Index do
         {:noreset_stream, valid_options} -> {false, valid_options}
       end
 
-    # Finally handle pagination with combined reset flags
+    # Finally handle pagination with combined reset flags and new count
     combined_force_reset = sorting_requires_reset or filtering_requires_reset or force_reset
-    count_all = socket.assigns.count_all
     pagination_context = socket.assigns.pagination_context
 
     case PaginationHelpers.resolve_pagination_changes(
@@ -179,6 +190,7 @@ defmodule LivePlaygroundWeb.StepsLive.Filtered.Index do
         socket =
           socket
           |> assign(:options, valid_options)
+          |> assign(:count_all, count_all)
           |> assign(new_assigns)
           |> assign(:visible_ids, Enum.map(languages, & &1.id))
           |> stream(:languages, languages, reset: true)
@@ -190,7 +202,10 @@ defmodule LivePlaygroundWeb.StepsLive.Filtered.Index do
         end
 
       {:noreset_stream, valid_options} ->
-        assign(socket, :options, valid_options)
+        socket
+        |> assign(:options, valid_options)
+        # Update count in socket
+        |> assign(:count_all, count_all)
     end
   end
 
@@ -198,7 +213,12 @@ defmodule LivePlaygroundWeb.StepsLive.Filtered.Index do
   def handle_event("filter", params, socket) do
     options = socket.assigns.options
     filtering_context = socket.assigns.filtering_context
-    new_options = FilteringHelpers.update_filter_options(options, params, filtering_context)
+
+    new_options =
+      options
+      |> FilteringHelpers.update_filter_options(params, filtering_context)
+      |> FilteringHelpers.validate_options(filtering_context)
+
     socket = push_patch(socket, to: get_url(new_options))
     {:noreply, socket}
   end

@@ -236,7 +236,7 @@ defmodule LivePlaygroundWeb.FilteringHelpers do
   end
 
   @doc """
-  Updates filter options with raw values from params without conversion or validation.
+  Updates and converts filter options from params.
 
   ## Parameters
     - `options` (map): The current options map that may contain existing filter values
@@ -244,31 +244,32 @@ defmodule LivePlaygroundWeb.FilteringHelpers do
     - `context` (%Context{}): Filtering context containing allowed field definitions
 
   ## Returns
-    Options map with updated :filter key containing raw param values for fields
-    defined in context. Values are not converted or validated at this stage.
+    Options map with updated :filter key containing converted param values for fields
+    defined in context. Values are converted but not validated at this stage.
 
   ## Examples
-      # Update filter with new params
+      # Update and convert filter with new params
       options = %{filter: %{"language" => "eng"}}
-      params = %{"language" => "spa", "isofficial" => "true"}
+      params = %{"language" => "spa", "isofficial" => "true", "percentage" => "42"}
       FilteringHelpers.update_filter_options(options, params, context)
-      #=> %{filter: %{"language" => "spa", "isofficial" => "true"}}
+      #=> %{filter: %{"language" => "spa", "isofficial" => "true", "percentage" => 42}}
 
-      # Empty or missing params preserved
+      # Empty or missing params preserved and converted
       options = %{filter: %{"language" => ""}}
-      params = %{"language" => "", "isofficial" => nil}
+      params = %{"language" => "", "percentage" => "invalid"}
       FilteringHelpers.update_filter_options(options, params, context)
-      #=> %{filter: %{"language" => "", "isofficial" => nil}}
+      #=> %{filter: %{"language" => "", "percentage" => ""}}
   """
   def update_filter_options(options, params, context) do
     filter =
       context.fields
-      |> Enum.reduce(%{}, fn {field, _config}, acc ->
+      |> Enum.reduce(%{}, fn {field, config}, acc ->
         field_string = to_string(field)
 
         value =
           params
           |> Map.get(field_string)
+          |> convert_value(config)
 
         Map.put(acc, field_string, value)
       end)

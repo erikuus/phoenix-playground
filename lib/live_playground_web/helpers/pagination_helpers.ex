@@ -361,10 +361,13 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
       differ from per_page during operations like additions before refresh.
 
   ## Returns
-    String "Showing X - Y of Z" where:
-    - X is the index of first item ((page - 1) * per_page + 1)
-    - Y is the actual last item index (min(start + stream_size - 1, count_all))
-    - Z is the total count
+    One of:
+    - "No items to display." when collection is empty (count_all = 0)
+    - "No items match your filter." when filtering returns no results (stream_size = 0)
+    - "Showing X - Y of Z." where:
+      * X is the index of first item ((page - 1) * per_page + 1)
+      * Y is the actual last item index (min(start + stream_size - 1, count_all))
+      * Z is the total count
 
   ## Examples
       # Normal page display
@@ -375,13 +378,26 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
       PaginationHelpers.get_summary(101, 1, 5, 6)
       #=> "Showing 1 - 6 of 101."  # stream_size temporarily 6
 
-      # After refresh (item sorted to correct position)
-      PaginationHelpers.get_summary(101, 1, 5, 5)
-      #=> "Showing 1 - 5 of 101."  # stream_size back to per_page
+      # Empty collection
+      PaginationHelpers.get_summary(0, 1, 5, 0)
+      #=> "No items to display."
+
+      # Filtered with no matches
+      PaginationHelpers.get_summary(100, 1, 5, 0)
+      #=> "No items match your filter."
   """
   def get_summary(count_all, page, per_page, stream_size) do
-    start = (page - 1) * per_page + 1
-    ending = min(start + stream_size - 1, count_all)
-    "Showing #{start} - #{ending} of #{count_all}."
+    cond do
+      count_all == 0 ->
+        "No items to display."
+
+      stream_size == 0 ->
+        "No items match your filter."
+
+      true ->
+        start = (page - 1) * per_page + 1
+        ending = min(start + stream_size - 1, count_all)
+        "Showing #{start} - #{ending} of #{count_all}."
+    end
   end
 end

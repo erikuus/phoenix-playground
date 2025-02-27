@@ -29,8 +29,9 @@ defmodule LivePlayground.FilteredLanguages do
     {:error, changeset}
   end
 
-  def count_languages do
-    from(Language)
+  def count_languages(options \\ %{}) do
+    Language
+    |> filter(options)
     |> Repo.aggregate(:count, :id)
   end
 
