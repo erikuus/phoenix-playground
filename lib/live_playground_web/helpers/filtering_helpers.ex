@@ -78,7 +78,7 @@ defmodule LivePlaygroundWeb.FilteringHelpers do
         #=> %{filter: %{"size" => "invalid"}}
         # Note: validation happens separately in validate_options
   """
-  def convert_params(options, params, _context) when map_size(params) == 0 do
+  def convert_params(%{filter: _} = options, %{} = params, _context) when params == %{} do
     options
   end
 
