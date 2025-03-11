@@ -54,6 +54,12 @@ defmodule LivePlaygroundWeb.StepsLive.Filtered.FormComponent do
       |> FilteredLanguages.change_language(language_params,
         validate_countrycode_exists: validate_countrycode_exists
       )
+      |> Map.update!(:errors, fn errors ->
+        Enum.reject(errors, fn
+          {_, {_, [validation: :required]}} -> true
+          _ -> false
+        end)
+      end)
       |> Map.put(:action, :validate)
 
     # Update socket

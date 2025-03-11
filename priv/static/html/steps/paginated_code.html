@@ -720,6 +720,66 @@ end</code></pre>
   </li>
 </ol>
 
+<h3>Improved Form Validation UX</h3>
+<p>
+  Our form handles validation in a way that prevents an overwhelming user
+  experience. We've addressed a common problem with real-time validation:
+</p>
+
+<p><strong>The Challenge</strong></p>
+<p>
+  With standard Phoenix LiveView validation, the form shows error messages for
+  all fields as soon as the user starts typing in <em>any</em> field - including
+  required field errors for fields the user hasn't reached yet. This creates a
+  poor experience where users see multiple red error messages before they've
+  even had a chance to fill out the form.
+</p>
+
+<p><strong>The Solution</strong></p>
+<p>
+  We modified the validation pipeline to separate different types of validation:
+</p>
+
+<pre><code>|> FilteredLanguages.change_language(language_params)
+|> Map.update!(:errors, fn errors ->
+  Enum.reject(errors, fn
+    {_, {_, [validation: :required]}} -> true
+    _ -> false
+  end)
+end)
+|> Map.put(:action, :validate)</code></pre>
+
+<p>This approach:</p>
+<ol>
+  <li>Creates a changeset with all validations applied</li>
+  <li>Removes only "required field" errors during typing</li>
+  <li>Keeps other validation errors (like format, type, length)</li>
+  <li>Sets the action to display the remaining errors</li>
+</ol>
+
+<p><strong>How It Works</strong></p>
+<ol>
+  <li>
+    During form interaction, users get immediate feedback on format errors (like
+    invalid email format)
+  </li>
+  <li>
+    Required field errors are suppressed until form submission, preventing
+    premature error messages
+  </li>
+  <li>
+    When the user clicks Save, full validation occurs including required field
+    checks
+  </li>
+</ol>
+
+<p>
+  The <code>Map.update!</code> function specifically modifies the
+  <code>:errors</code> key in the changeset, filtering out required field errors
+  while keeping all others. This surgical approach gives us precise control over
+  which validation messages users see and when they see them.
+</p>
+
 <hr />
 
 <h2>paginated_languages.ex</h2>

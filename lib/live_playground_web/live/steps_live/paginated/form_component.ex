@@ -9,7 +9,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= @title %>
+        {@title}
         <:subtitle>Use this form to manage language records in your database.</:subtitle>
       </.header>
       <.alert flash={@flash} flash_key={:lock} title="Concurrent update detected" kind={:error} close={false} class="mt-6 text-sm" />
@@ -54,6 +54,12 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.FormComponent do
       |> PaginatedLanguages.change_language(language_params,
         validate_countrycode_exists: validate_countrycode_exists
       )
+      |> Map.update!(:errors, fn errors ->
+        Enum.reject(errors, fn
+          {_, {_, [validation: :required]}} -> true
+          _ -> false
+        end)
+      end)
       |> Map.put(:action, :validate)
 
     # Update socket
