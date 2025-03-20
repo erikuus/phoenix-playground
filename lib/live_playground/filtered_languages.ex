@@ -127,11 +127,8 @@ defmodule LivePlayground.FilteredLanguages do
         from l in query,
           where: ilike(l.language, ^"%#{value}%")
 
-      {"isofficial", "true"}, query ->
-        from l in query, where: l.isofficial == true
-
-      {"isofficial", "false"}, query ->
-        from l in query, where: l.isofficial == false
+      {"isofficial", value}, query when is_boolean(value) ->
+        from l in query, where: l.isofficial == ^value
 
       {"percentage_min", value}, query when is_integer(value) ->
         from l in query, where: l.percentage >= ^value

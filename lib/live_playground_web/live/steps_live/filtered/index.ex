@@ -37,13 +37,13 @@ defmodule LivePlaygroundWeb.StepsLive.Filtered.Index do
           default: ""
         },
         isofficial: %FilterField{
-          type: :string,
+          type: :boolean,
           default: "",
-          validate: {:in, ["true", "false", ""]}
+          validate: {:in, [true, false, ""]}
         },
         percentage_min: %FilterField{
           type: :integer,
-          default: "",
+          default: 50,
           validate: {:custom, &validate_percentage/1}
         },
         percentage_max: %FilterField{
@@ -62,6 +62,7 @@ defmodule LivePlaygroundWeb.StepsLive.Filtered.Index do
 
     valid_filter_options =
       options
+      |> FilteringHelpers.apply_defaults(filtering_context)
       |> FilteringHelpers.validate_options(filtering_context)
 
     count_all = FilteredLanguages.count_languages(valid_filter_options)
@@ -425,13 +426,17 @@ defmodule LivePlaygroundWeb.StepsLive.Filtered.Index do
   end
 
   defp merge_filter_params(options) do
-    # First removes empty values from the filter map
+    # First convert special types and remove empty values from the filter map
     filter =
       options
       |> Map.get(:filter, %{})
-      |> Enum.reject(fn {_k, v} -> v == "" end)
+      |> Enum.map(fn
+        {k, v} when is_boolean(v) -> {k, to_string(v)}
+        {k, v} -> {k, v}
+      end)
+      |> Enum.reject(fn {_k, v} -> v == "" or is_nil(v) end)
 
-    # Then merges the filter map with the rest of the options
+    # Then merge the filter map with the rest of the options
     options
     |> Map.delete(:filter)
     |> Map.merge(Map.new(filter))

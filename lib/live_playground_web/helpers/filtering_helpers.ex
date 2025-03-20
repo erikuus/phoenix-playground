@@ -54,29 +54,36 @@ defmodule LivePlaygroundWeb.FilteringHelpers do
   end
 
   @doc """
-    Converts filtering parameters to their appropriate types and applies defaults.
+  Converts filtering parameters to their appropriate types.
 
-    ## Parameters
-      - `options`: Target options map that may contain existing filter values
-      - `params`: Request parameters containing potential filter values
-      - `context`: Filtering context containing field configurations
+  ## Parameters
+    - `options`: Target options map
+    - `params`: Request parameters from URL or form
+    - `context`: Filtering context with field configurations
 
-    ## Returns
-      Options map with :filter key containing converted and defaulted values
+  ## Returns
+    Options map with :filter key containing converted values
 
-    ## Examples
-        # With valid params
-        convert_params(%{}, %{"size" => "large"}, context)
-        #=> %{filter: %{"size" => "large"}}
+  ## Type Conversion Rules
+    - Missing parameters → `""` (empty string)
+    - Empty strings stay as empty strings
+    - Invalid integers → `nil`
+    - Invalid booleans → `nil`
+    - Valid values → Appropriate type (integer, boolean, string)
 
-        # With empty params (preserves existing options)
-        convert_params(%{filter: %{"size" => "large"}}, %{}, context)
-        #=> %{filter: %{"size" => "large"}}
+  ## Note
+    Used as the first step in the filtering pipeline. The converted values
+    can be compared with validated values to determine if URL redirection is needed.
 
-        # With invalid params (falls back to defaults during validation)
-        convert_params(%{}, %{"size" => "invalid"}, context)
-        #=> %{filter: %{"size" => "invalid"}}
-        # Note: validation happens separately in validate_options
+  ## Examples
+    convert_params(%{}, %{"size" => "large", "count" => "42"}, context)
+    #=> %{filter: %{"size" => "large", "count" => 42}}
+
+    convert_params(%{}, %{"size" => ""}, context)
+    #=> %{filter: %{"size" => ""}}
+
+    convert_params(%{}, %{"count" => "abc"}, context)
+    #=> %{filter: %{"count" => nil}}
   """
   def convert_params(%{filter: _} = options, %{} = params, _context) when params == %{} do
     options
@@ -99,25 +106,81 @@ defmodule LivePlaygroundWeb.FilteringHelpers do
     Map.put(options, :filter, filter)
   end
 
-  defp convert_value("", _), do: ""
   defp convert_value(nil, _), do: ""
 
   defp convert_value(value, %FilterField{type: :integer}) when is_binary(value) do
     case Integer.parse(value) do
       {int, ""} -> int
-      _ -> ""
+      _ -> nil
     end
   end
 
   defp convert_value(value, %FilterField{type: :boolean}) when is_binary(value) do
     case value do
-      "true" -> "true"
-      "false" -> "false"
-      _ -> ""
+      "true" -> true
+      "false" -> false
+      _ -> nil
     end
   end
 
   defp convert_value(value, _), do: value
+
+  @doc """
+  Applies default values to empty filter parameters.
+
+  ## Parameters
+    - `options`: Options map containing converted filter values
+    - `context`: Filtering context with default values
+
+  ## Returns
+    Options map with defaults applied to empty strings
+
+  ## Rules
+    - Empty strings (`""`) → Field's default value ONLY if default is not empty
+    - Other values including `nil` are preserved as-is
+    - If options has no filter key, returns options unchanged
+
+  ## Note
+    Used as an intermediate step in the filtering pipeline, after conversion
+    but before validation.
+
+  ## Examples
+    # Empty strings receive non-empty defaults
+    apply_defaults(
+      %{filter: %{"size" => "", "count" => 42}},
+      %Context{fields: %{size: %FilterField{default: "medium"}}}
+    )
+    #=> %{filter: %{"size" => "medium", "count" => 42}}
+
+    # nil values from failed conversions are preserved
+    apply_defaults(
+      %{filter: %{"size" => "", "count" => nil}},
+      %Context{fields: %{size: %FilterField{default: "medium"}, count: %FilterField{default: 0}}}
+    )
+    #=> %{filter: %{"size" => "medium", "count" => nil}}
+  """
+  def apply_defaults(%{filter: filter} = options, context) do
+    filter_with_defaults =
+      context.fields
+      |> Enum.reduce(%{}, fn {field, config}, acc ->
+        field_string = to_string(field)
+
+        value =
+          filter
+          |> Map.get(field_string)
+          |> apply_default(config)
+
+        Map.put(acc, field_string, value)
+      end)
+
+    %{options | filter: filter_with_defaults}
+  end
+
+  def apply_defaults(options, _context), do: options
+
+  # Only apply non-empty defaults to empty strings
+  defp apply_default("", %FilterField{default: default}) when default != "", do: default
+  defp apply_default(value, _), do: value
 
   @doc """
   Validates filter values against their field configurations.
@@ -127,22 +190,31 @@ defmodule LivePlaygroundWeb.FilteringHelpers do
     - `context`: Filtering context with validation rules
 
   ## Returns
-    Options map with validated filter values, invalid values replaced with defaults
+    Options map with validated filter values:
+    - Valid values are preserved
+    - Invalid values (including nil) are replaced with empty strings ("")
+
+  ## Note
+    Final step in the filtering pipeline. Validation standardizes invalid
+    values (including nil) to empty strings, making them consistent with
+    the URL generation logic that omits empty values. The comparison between
+    converted options and validated options identifies cases requiring URL
+    redirection.
 
   ## Examples
-      # Valid filters
-      validate_options(
-        %{filter: %{size: "large"}},
-        %Context{fields: %{size: %FilterField{validate: {:in, ["small", "medium", "large"]}}}}
-      )
-      #=> %{filter: %{size: "large"}}
+    # Valid filters
+    validate_options(
+      %{filter: %{size: "large"}},
+      %Context{fields: %{size: %FilterField{validate: {:in, ["small", "medium", "large"]}}}}
+    )
+    #=> %{filter: %{size: "large"}}
 
-      # Invalid filters (replaced with defaults)
-      validate_options(
-        %{filter: %{size: "invalid"}},
-        %Context{fields: %{size: %FilterField{default: "small", validate: {:in, ["small", "medium", "large"]}}}}
-      )
-      #=> %{filter: %{size: "small"}}
+    # Invalid filters (replaced with empty strings)
+    validate_options(
+      %{filter: %{size: "invalid"}},
+      %Context{fields: %{size: %FilterField{validate: {:in, ["small", "medium", "large"]}}}}
+    )
+    #=> %{filter: %{size: ""}}
   """
   def validate_options(%{filter: filter} = options, context) do
     valid_filter =
@@ -163,14 +235,16 @@ defmodule LivePlaygroundWeb.FilteringHelpers do
 
   def validate_options(options, _context), do: options
 
-  defp validate_value(value, %FilterField{validate: {:in, allowed_values}} = config) do
-    if value in allowed_values, do: value, else: config.default
+  defp validate_value(nil, _config), do: ""
+
+  defp validate_value(value, %FilterField{validate: {:in, allowed_values}}) do
+    if value in allowed_values, do: value, else: ""
   end
 
-  defp validate_value(value, %FilterField{validate: {:custom, validate_fn}} = config) do
+  defp validate_value(value, %FilterField{validate: {:custom, validate_fn}}) do
     case validate_fn.(value) do
       {:ok, valid_value} -> valid_value
-      :error -> config.default
+      :error -> ""
     end
   end
 
