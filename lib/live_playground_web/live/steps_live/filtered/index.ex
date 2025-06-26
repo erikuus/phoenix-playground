@@ -57,8 +57,8 @@ defmodule LivePlaygroundWeb.StepsLive.Filtered.Index do
     options =
       %{}
       |> FilteringHelpers.convert_params(params, filtering_context)
-      |> SortingHelpers.convert_params(params, sorting_context)
-      |> PaginationHelpers.convert_params(params, pagination_context)
+      |> SortingHelpers.convert_params(params)
+      |> PaginationHelpers.convert_params(params)
 
     valid_filter_options =
       options

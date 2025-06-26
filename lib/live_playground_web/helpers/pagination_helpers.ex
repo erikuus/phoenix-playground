@@ -28,33 +28,61 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
     Options map with :page and :per_page integers, sourced from either:
     - params if pagination parameters are present
     - existing options if they contain valid pagination fields
-    - context defaults if neither params nor options have pagination fields
+    - default values (0) if neither params nor options have pagination fields
+
+  ## Conversion Details
+    - Valid integer params are converted to their integer values
+    - Invalid or missing values are converted to 0 (not context.default_per_page)
+    - This intentionally creates invalid values that will be corrected during validation
+    - The difference between converted and validated values triggers URL synchronization
+
+  ## URL Synchronization
+    Using 0 as default ensures that:
+    1. Invalid URL parameters (like 'page=abc') are properly rewritten
+    2. Out-of-range values (like 'page=1000') are corrected to valid limits
+    3. Missing parameters receive proper defaults in the URL
 
   ## Examples
       # From params
       PaginationHelpers.convert_params(%{}, %{"page" => "2", "per_page" => "20"}, context)
       #=> %{page: 2, per_page: 20}
 
+      # From invalid params (will be fixed in validation)
+      PaginationHelpers.convert_params(%{}, %{"page" => "abc"}, context)
+      #=> %{page: 0, per_page: context.default_per_page}
+
       # From existing options
       PaginationHelpers.convert_params(%{page: 2, per_page: 20}, %{}, context)
       #=> %{page: 2, per_page: 20}
 
-      # From context defaults
+      # From empty params (will be fixed in validation)
       PaginationHelpers.convert_params(%{}, %{}, context)
-      #=> %{page: 1, per_page: context.default_per_page}
+      #=> %{page: 0, per_page: 0}
   """
-  def convert_params(options, %{"page" => page, "per_page" => per_page} = _params, context) do
-    page = to_integer(page, 1)
-    per_page = to_integer(per_page, context.default_per_page)
+  def convert_params(options, %{"page" => page, "per_page" => per_page} = _params) do
+    page = to_integer(page, 0)
+    per_page = to_integer(per_page, 0)
     Map.merge(options, %{page: page, per_page: per_page})
   end
 
-  def convert_params(%{page: _, per_page: _} = options, _params, _context) do
+  def convert_params(options, %{"page" => page} = _params) do
+    page = to_integer(page, 0)
+    per_page = 0
+    Map.merge(options, %{page: page, per_page: per_page})
+  end
+
+  def convert_params(options, %{"per_page" => per_page} = _params) do
+    page = 0
+    per_page = to_integer(per_page, 0)
+    Map.merge(options, %{page: page, per_page: per_page})
+  end
+
+  def convert_params(%{page: _, per_page: _} = options, _params) do
     options
   end
 
-  def convert_params(options, _params, context) do
-    Map.merge(options, %{page: 1, per_page: context.default_per_page})
+  def convert_params(options, _params) do
+    Map.merge(options, %{page: 0, per_page: 0})
   end
 
   defp to_integer(value, _default_value) when is_integer(value), do: value
@@ -69,27 +97,44 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   defp to_integer(_value, default_value), do: default_value
 
   @doc """
-  Validates and adjusts pagination values against total count and allowed options.
+  Converts pagination parameters to integers and determines the source of pagination values.
 
   ## Parameters
-    - `options`: Map containing :page and :per_page integers from convert_params
-    - `count_all`: Total number of items for computing maximum page number
-    - `context`: Contains allowed_per_page_options for validation
+    - `options`: Target options map that may contain existing pagination values
+    - `params`: Request parameters that may contain "page" and "per_page" strings
 
   ## Returns
-    Options map with validated and potentially adjusted values:
-    - per_page is ensured to be one of allowed options
-    - page is adjusted to be within valid range (1..max_page)
-    - original options returned unchanged if pagination keys missing
+    Options map with :page and :per_page integers, sourced from either:
+    - params if pagination parameters are present
+    - existing options if they contain valid pagination fields
+    - default values (0) if neither params nor options have pagination fields
+
+  ## Conversion Details
+    - Valid integer params are converted to their integer values
+    - Invalid or missing values are converted to 0
+    - This intentionally creates invalid values that will be corrected during validation
+    - The difference between converted and validated values triggers URL synchronization
 
   ## Examples
-      # Adjusts exceeding page
-      PaginationHelpers.validate_options(%{page: 10, per_page: 10}, 50, context)
-      #=> %{page: 5, per_page: 10}  # max page is 5 for 50 items
+      # From params
+      PaginationHelpers.convert_params(%{}, %{"page" => "2", "per_page" => "20"})
+      #=> %{page: 2, per_page: 20}
 
-      # Validates per_page
-      PaginationHelpers.validate_options(%{page: 1, per_page: 15}, 100, context)
-      #=> %{page: 1, per_page: 10}  # 15 not in allowed options
+      # From invalid params (will be fixed in validation)
+      PaginationHelpers.convert_params(%{}, %{"page" => "abc"})
+      #=> %{page: 0, per_page: 0}
+
+      # From partial params
+      PaginationHelpers.convert_params(%{}, %{"page" => "2"})
+      #=> %{page: 2, per_page: 0}
+
+      # From existing options
+      PaginationHelpers.convert_params(%{page: 2, per_page: 20}, %{})
+      #=> %{page: 2, per_page: 20}
+
+      # From empty params (will be fixed in validation)
+      PaginationHelpers.convert_params(%{}, %{})
+      #=> %{page: 0, per_page: 0}
   """
   def validate_options(%{page: page, per_page: per_page} = options, count_all, context) do
     per_page = get_allowed_per_page(per_page, context)
@@ -107,7 +152,9 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
   end
 
   defp get_existing_page(page, per_page, count_all) do
-    max_page = ceil_div(count_all, per_page)
+    # Use max to ensure per_page is at least 1 to avoid division by zero
+    safe_per_page = max(per_page, 1)
+    max_page = ceil_div(count_all, safe_per_page)
 
     cond do
       max_page == 0 -> 1
@@ -211,7 +258,7 @@ defmodule LivePlaygroundWeb.PaginationHelpers do
       end
   """
   def resolve_pagination_changes(options, params, count_all, context, force_reset) do
-    new_options = convert_params(options, params, context)
+    new_options = convert_params(options, params)
     valid_options = validate_options(new_options, count_all, context)
 
     reset_needed =

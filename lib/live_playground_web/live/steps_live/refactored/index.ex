@@ -17,7 +17,7 @@ defmodule LivePlaygroundWeb.StepsLive.Refactored.Index do
 
     options =
       %{}
-      |> PaginationHelpers.convert_params(params, pagination_context)
+      |> PaginationHelpers.convert_params(params)
 
     count_all = PaginatedLanguages.count_languages()
 

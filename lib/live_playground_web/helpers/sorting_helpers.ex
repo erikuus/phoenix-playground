@@ -30,43 +30,67 @@ defmodule LivePlaygroundWeb.SortingHelpers do
   ## Parameters
     - `options`: Target options map that may contain existing sort values
     - `params`: Request parameters that may contain "sort_by" and "sort_order" strings
-    - `context`: Sorting context containing defaults
 
   ## Returns
     Options map with :sort_by and :sort_order atoms, sourced from either:
     - params if sort parameters are present
     - existing options if they contain valid sort fields
-    - context defaults if neither params nor options have sort fields
+    - placeholder values (:invalid) if neither params nor options have sort fields
+
+  ## URL Synchronization
+    Using :invalid as placeholder ensures that validation will detect and
+    correct invalid values, triggering URL synchronization when needed.
 
   ## Examples
       # From params
-      convert_params(%{}, %{"sort_by" => "name", "sort_order" => "asc"}, context)
+      convert_params(%{}, %{"sort_by" => "name", "sort_order" => "asc"})
       #=> %{sort_by: :name, sort_order: :asc}
+
+      # From invalid params (will be fixed in validation)
+      convert_params(%{}, %{"sort_by" => "unknown_field"})
+      #=> %{sort_by: :unknown_field, sort_order: :invalid}
 
       # From existing options
-      convert_params(%{sort_by: :name, sort_order: :asc}, %{}, context)
+      convert_params(%{sort_by: :name, sort_order: :asc}, %{})
       #=> %{sort_by: :name, sort_order: :asc}
 
-      # From context defaults
-      convert_params(%{}, %{}, context)
-      #=> %{sort_by: context.sort_by, sort_order: context.sort_order}
+      # From empty params (will be fixed in validation)
+      convert_params(%{}, %{})
+      #=> %{sort_by: :invalid, sort_order: :invalid}
   """
   def convert_params(
         options,
-        %{"sort_by" => sort_by, "sort_order" => sort_order} = _params,
-        context
+        %{"sort_by" => sort_by, "sort_order" => sort_order} = _params
       ) do
-    sort_by = to_atom_safe(sort_by, context.sort_by)
-    sort_order = to_atom_safe(sort_order, context.sort_order)
+    sort_by = to_atom_safe(sort_by, :invalid)
+    sort_order = to_atom_safe(sort_order, :invalid)
     Map.merge(options, %{sort_by: sort_by, sort_order: sort_order})
   end
 
-  def convert_params(%{sort_by: _, sort_order: _} = options, _params, _context) do
+  def convert_params(
+        options,
+        %{"sort_by" => sort_by} = _params
+      ) do
+    sort_by = to_atom_safe(sort_by, :invalid)
+    sort_order = :invalid
+    Map.merge(options, %{sort_by: sort_by, sort_order: sort_order})
+  end
+
+  def convert_params(
+        options,
+        %{"sort_order" => sort_order} = _params
+      ) do
+    sort_by = :invalid
+    sort_order = to_atom_safe(sort_order, :invalid)
+    Map.merge(options, %{sort_by: sort_by, sort_order: sort_order})
+  end
+
+  def convert_params(%{sort_by: _, sort_order: _} = options, _params) do
     options
   end
 
-  def convert_params(options, _params, context) do
-    Map.merge(options, %{sort_by: context.sort_by, sort_order: context.sort_order})
+  def convert_params(options, _params) do
+    Map.merge(options, %{sort_by: :invalid, sort_order: :invalid})
   end
 
   defp to_atom_safe(value, _fallback) when is_atom(value), do: value
@@ -189,7 +213,7 @@ defmodule LivePlaygroundWeb.SortingHelpers do
   def resolve_sorting_changes(options, params, context, force_reset) do
     valid_options =
       options
-      |> convert_params(params, context)
+      |> convert_params(params)
       |> validate_options(context)
 
     reset_needed = force_reset or valid_options != options

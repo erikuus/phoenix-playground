@@ -33,9 +33,11 @@
     We call <code>convert_params/2</code> with the empty options and URL params
     to obtain new pagination options. This function determines the values either
     from the URL params (converting strings like "2" and "20" to integers),
-    existing options (already integers), or defaults (page 1 and @per_page). Any
-    invalid or unparseable values are safely handled by falling back to
-    defaults.
+    existing options (already integers), or defaults (page 0 and per_page 0).
+    Default and invalid values like "abc" are intentionally converted to 0
+    rather than immediately applying valid defaults (page 1 and per_page 10).
+    This creates a detectable difference between converted and validated
+    options, which triggers URL synchronization when needed.
   </li>
   <li>
     We validate these options using <code>validate_options/2</code>. If the
@@ -56,31 +58,56 @@
 
 <h3><code>convert_params/2</code></h3>
 <p>
-  Determines the source of pagination values and converts string parameters to
-  proper integers when needed. This function ensures we always have valid
-  pagination values regardless of the input source.
+  Converts string parameters from URLs to their appropriate types, preserving
+  invalid values as "0" to enable URL correction.
 </p>
 <ul>
   <li>
-    First tries to use values from URL params if both "page" and "per_page" are
-    present. String values are safely converted to integers, defaulting to 1 for
-    page and @per_page for per_page if conversion fails.
+    First clause handles both "page" and "per_page" parameters in the URL:
+    <ul>
+      <li>Valid numeric strings ("2", "20") are converted to integers</li>
+      <li>Invalid strings ("abc", "-5") are converted to 0</li>
+    </ul>
   </li>
   <li>
-    If URL params don't contain both values, checks if existing options has
-    valid pagination fields (:page and :per_page). If found, uses these existing
-    values unchanged.
+    Second clause handles only "page" parameter:
+    <ul>
+      <li>Valid page numbers are converted to integers</li>
+      <li>Invalid page values are converted to 0</li>
+      <li>per_page is intentionally set to 0</li>
+    </ul>
   </li>
   <li>
-    If neither source provides valid values, falls back to default values (page
-    1 and @per_page). These defaults ensure we always start with a valid
-    pagination state.
+    Third clause handles only "per_page" parameter:
+    <ul>
+      <li>Valid per_page numbers are converted to integers</li>
+      <li>Invalid per_page values are converted to 0</li>
+      <li>page is intentionally set to 0</li>
+    </ul>
   </li>
   <li>
-    The function merges the determined values with the existing options map,
-    ensuring we don't lose any other option values that might be present.
+    Fourth clause detects if options already contain valid pagination fields:
+    <ul>
+      <li>If both page and per_page exist, returns options unchanged</li>
+      <li>Used when updating internal state without URL changes</li>
+    </ul>
+  </li>
+  <li>
+    Final clause handles no pagination parameters at all:
+    <ul>
+      <li>Sets both page and per_page to 0</li>
+      <li>Ensures validation will apply correct defaults</li>
+    </ul>
   </li>
 </ul>
+
+<p>
+  <strong>Why we use 0 for invalid inputs:</strong> When convert_params receives
+  invalid values, it returns 0 instead of immediately applying defaults. This
+  creates a difference between converted and validated options. When validation
+  fixes these values, LiveView detects the difference and redirects to fix the
+  URL.
+</p>
 
 <h3><code>validate_options/2</code></h3>
 <p>
@@ -89,14 +116,13 @@
 </p>
 <ul>
   <li>
-    It calls <code>get_existing_page/3</code>, which uses
-    <code>ceil_div/2</code> to calculate the maximum number of pages based on
-    the total item count and the <code>per_page</code> value. For example, if
-    there are 45 items and <code>per_page</code> is set to 10,
-    <code>ceil_div</code> computes that there should be 5 pages. If someone
-    types page 6 in the URL (like <code>/steps/paginated?page=6</code>),
-    <code>get_existing_page</code> will automatically adjust it to page 5, since
-    that's the last available page.
+    It calls <code>get_existing_page/3</code>, which first ensures
+    <code>per_page</code> is never zero with <code>max(per_page, 1)</code>. This
+    protection is crucial because <code>convert_params</code> may have set
+    invalid per_page values to 0. Then it uses <code>ceil_div/2</code> to
+    calculate the maximum number of pages. For example, if there are 45 items
+    and <code>per_page</code> is set to 10, the function computes 5 pages. If
+    someone requests page 6 in the URL, it will automatically adjust to page 5.
   </li>
   <li>
     If <code>per_page</code> is not one of the allowed options, it defaults to

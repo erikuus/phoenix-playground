@@ -40,17 +40,21 @@
 <h4>Setting Up Sorting</h4>
 <ul>
   <li>
-    <code>convert_params</code>: Determines sorting values from either user
-    input parameters, existing options, or context defaults, converting string
-    inputs to proper atoms when needed
+    <code>convert_params</code>: Transforms URL parameters into appropriate
+    sorting values. Converts string inputs to atoms and handles invalid
+    parameters by using <code>:invalid</code>
+    as a placeholder value, ensuring proper URL synchronization during
+    validation.
   </li>
   <li>
-    <code>validate_options</code>: Verifies that the chosen sort field and sort
-    order are allowed, reverting to default values if they aren’t
+    <code>validate_options</code>: Ensures sorting values stay within allowed
+    constraints. Replaces <code>:invalid</code> placeholder values and
+    disallowed fields/orders with context defaults, creating the difference
+    needed to trigger URL corrections.
   </li>
   <li>
-    <code>init_sorting</code>: Initializes the sorting assigns, setting up the
-    necessary context for the LiveView
+    <code>init_sorting</code>: Initializes sorting assigns with the provided
+    context, setting up the necessary configuration for the LiveView.
   </li>
 </ul>
 

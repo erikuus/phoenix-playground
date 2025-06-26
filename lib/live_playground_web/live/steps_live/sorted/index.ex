@@ -25,8 +25,8 @@ defmodule LivePlaygroundWeb.StepsLive.Sorted.Index do
 
     options =
       %{}
-      |> PaginationHelpers.convert_params(params, pagination_context)
-      |> SortingHelpers.convert_params(params, sorting_context)
+      |> PaginationHelpers.convert_params(params)
+      |> SortingHelpers.convert_params(params)
 
     count_all = SortedLanguages.count_languages()
 

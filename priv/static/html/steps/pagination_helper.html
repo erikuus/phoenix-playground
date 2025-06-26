@@ -30,13 +30,16 @@
 <h4>Setting Up Pagination</h4>
 <ul>
   <li>
-    <code>convert_params</code>: Determines pagination values from either user
-    input parameters, existing options, or context defaults, converting string
-    inputs to proper numbers when needed
+    <code>convert_params</code>: Transforms URL parameters into appropriate
+    pagination values. Handles string-to-integer conversions and detects invalid
+    inputs, using placeholder values that ensure proper URL synchronization
+    during validation.
   </li>
   <li>
-    <code>validate_options</code>: Makes sure page numbers and items per page
-    stay within allowed ranges
+    <code>validate_options</code>: Ensures pagination values stay within valid
+    ranges. Uses <code>max(per_page, 1)</code> to prevent division issues when
+    calculating max pages, preserving valid page numbers even when per_page
+    values need correction.
   </li>
   <li>
     <code>init_pagination</code>: Initializes pagination assigns with counts,

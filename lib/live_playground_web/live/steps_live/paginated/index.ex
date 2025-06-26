@@ -29,8 +29,20 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
   end
 
   defp convert_params(options, %{"page" => page, "per_page" => per_page} = _params) do
-    page = to_integer(page, 1)
-    per_page = to_integer(per_page, @per_page)
+    page = to_integer(page, 0)
+    per_page = to_integer(per_page, 0)
+    Map.merge(options, %{page: page, per_page: per_page})
+  end
+
+  defp convert_params(options, %{"page" => page} = _params) do
+    page = to_integer(page, 0)
+    per_page = 0
+    Map.merge(options, %{page: page, per_page: per_page})
+  end
+
+  defp convert_params(options, %{"per_page" => per_page} = _params) do
+    page = 0
+    per_page = to_integer(per_page, 0)
     Map.merge(options, %{page: page, per_page: per_page})
   end
 
@@ -39,7 +51,7 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
   end
 
   defp convert_params(options, _params) do
-    Map.merge(options, %{page: 1, per_page: @per_page})
+    Map.merge(options, %{page: 0, per_page: 0})
   end
 
   defp to_integer(value, _default_value) when is_integer(value), do: value
@@ -61,7 +73,9 @@ defmodule LivePlaygroundWeb.StepsLive.Paginated.Index do
   end
 
   defp get_existing_page(page, per_page, count_all) do
-    max_page = ceil_div(count_all, per_page)
+    # Use max/2 to ensure per_page is at least 1 to avoid division by zero
+    safe_per_page = max(per_page, 1)
+    max_page = ceil_div(count_all, safe_per_page)
 
     cond do
       # When there are no items, stay on page 1
