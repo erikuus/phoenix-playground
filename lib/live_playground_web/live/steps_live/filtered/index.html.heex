@@ -2,13 +2,15 @@
 <.header>
   Listing Languages
   <:subtitle>
-    Implement filtering options so users can find specific data based on search criteria or categories.
+    Implement filtering options so users can find specific data based on search criteria.
   </:subtitle>
   <:actions class="items-center gap-x-5">
     <.slideout_link slideout_id="filtering-helper" title="Filtering Helper" />
+    <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
   </:actions>
 </.header>
 <.slideout title="Filtering Helper" id="filtering-helper" filename="priv/static/html/steps/filtering_helper.html" />
+<.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/steps/filtered_code.html" />
 <!-- end hiding from live code -->
 <div class="flex justify-end my-5">
   <.link patch={get_url(@options, ~p"/steps/filtered/new")}>
