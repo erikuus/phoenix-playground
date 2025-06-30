@@ -152,6 +152,7 @@ defmodule LivePlaygroundWeb.StepsLive.Filtered.Index do
         {:noreset_stream, valid_options} -> {false, valid_options}
       end
 
+    # Recalculate count if filters changed - pagination needs accurate count
     count_all =
       if filtering_requires_reset do
         FilteredLanguages.count_languages(valid_filtering_options)
