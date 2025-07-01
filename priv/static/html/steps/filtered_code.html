@@ -806,12 +806,11 @@ end)
 <p>Key Insights:</p>
 <ul>
   <li>
-    <strong>You never see the internals:</strong> The bag stays sealed until
-    execution—you can't peek inside or manipulate the accumulated conditions
-    directly
+    You never see the internals: The bag stays sealed until execution—you can't
+    peek inside or manipulate the accumulated conditions directly
   </li>
   <li>
-    <strong>Ecto does the heavy lifting:</strong> When you finally call
+    Ecto does the heavy lifting: When you finally call
     <code>Repo.all/1</code>, Ecto opens the bag and automatically combines all
     conditions with AND logic
   </li>
