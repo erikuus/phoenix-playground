@@ -766,14 +766,12 @@ end</code></pre>
   We modified the validation pipeline to separate different types of validation:
 </p>
 
-<pre><code>|> FilteredLanguages.change_language(language_params)
-|> Map.update!(:errors, fn errors ->
+<pre><code>|> Map.update!(:errors, fn errors ->
   Enum.reject(errors, fn
     {_, {_, [validation: :required]}} -> true
     _ -> false
   end)
-end)
-|> Map.put(:action, :validate)</code></pre>
+end)</code></pre>
 
 <p>This approach:</p>
 <ol>
