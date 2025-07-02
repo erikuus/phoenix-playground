@@ -34,32 +34,38 @@ defmodule LivePlaygroundWeb.Menus.Steps do
   defp get_steps() do
     [
       %{
-        title: "Generate",
-        description: "Create the foundation with mix phx.gen.live",
+        title: "Introduction",
+        description: "What we're building and why we chose advanced LiveView patterns",
+        path: ~p"/steps",
+        order: 0
+      },
+      %{
+        title: "Generate Foundation",
+        description: "Start with basic Phoenix LiveView generated code",
         path: ~p"/steps/generated",
         order: 1
       },
       %{
-        title: "Add Pagination",
-        description: "Enhance with advanced pagination",
+        title: "Implement Pagination",
+        description: "Add advanced pagination with real-time updates and concurrency handling",
         path: ~p"/steps/paginated",
         order: 2
       },
       %{
-        title: "Extract Pagination Logic",
-        description: "Refactor pagination into a helper module",
+        title: "Extract Pagination Helper",
+        description: "Refactor pagination logic into reusable helper module",
         path: ~p"/steps/refactored",
         order: 3
       },
       %{
-        title: "Add Sorting",
-        description: "Implement dynamic column ordering",
+        title: "Add Sorting Helper",
+        description: "Implement column sorting with the same helper pattern",
         path: ~p"/steps/sorted",
         order: 4
       },
       %{
-        title: "Add Filtering",
-        description: "Implement filtering to narrow results",
+        title: "Add Filtering Helper",
+        description: "Complete the trilogy with search and filter functionality",
         path: ~p"/steps/filtered",
         order: 5
       }
