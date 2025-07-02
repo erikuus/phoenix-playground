@@ -71,7 +71,7 @@ defmodule LivePlaygroundWeb.Menus.Sidebar do
       %{
         icon: "hero-chart-bar",
         label: "Steps",
-        path: ~p"/steps",
+        path: ~p"/steps/introduction",
         layout: :steps
       },
       %{

@@ -36,38 +36,38 @@ defmodule LivePlaygroundWeb.Menus.Steps do
       %{
         title: "Introduction",
         description: "What we're building and why we chose advanced LiveView patterns",
-        path: ~p"/steps",
-        order: 0
+        path: ~p"/steps/introduction",
+        order: 1
       },
       %{
         title: "Generate Foundation",
         description: "Start with basic Phoenix LiveView generated code",
         path: ~p"/steps/generated",
-        order: 1
+        order: 2
       },
       %{
         title: "Implement Pagination",
         description: "Add advanced pagination with real-time updates and concurrency handling",
         path: ~p"/steps/paginated",
-        order: 2
+        order: 3
       },
       %{
         title: "Extract Pagination Helper",
         description: "Refactor pagination logic into reusable helper module",
         path: ~p"/steps/refactored",
-        order: 3
+        order: 4
       },
       %{
         title: "Add Sorting Helper",
         description: "Implement column sorting with the same helper pattern",
         path: ~p"/steps/sorted",
-        order: 4
+        order: 5
       },
       %{
         title: "Add Filtering Helper",
         description: "Complete the trilogy with search and filter functionality",
         path: ~p"/steps/filtered",
-        order: 5
+        order: 6
       }
     ]
   end
