@@ -146,6 +146,8 @@ defmodule LivePlaygroundWeb.Router do
     scope "/", LivePlaygroundWeb do
       pipe_through :browser
 
+      live "/steps", StepsLive.Index, :index
+
       live "/steps/generated", StepsLive.Generated.Index, :index
       live "/steps/generated/new", StepsLive.Generated.Index, :new
       live "/steps/generated/:id/edit", StepsLive.Generated.Index, :edit
