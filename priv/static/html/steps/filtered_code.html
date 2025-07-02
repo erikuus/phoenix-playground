@@ -298,7 +298,7 @@
           first check if the language.id is in socket.assigns.visible_ids. If it
           is, <code>PaginationHelpers.process_updated/1</code> marks the
           language as updated in the stream (<code>marked_language</code> is the
-          updated language record with a <code>:Updated</code> flag set to
+          updated language record with a <code>:updated</code> flag set to
           <code>true</code> to indicate its status in UI) and a flash message
           informs the user. If not, the update is ignored since it doesn't
           affect the current page view. This optimization reduces unnecessary UI
