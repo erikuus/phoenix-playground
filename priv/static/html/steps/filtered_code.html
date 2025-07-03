@@ -329,8 +329,11 @@
               <li>
                 <strong>Count decreased or unchanged:</strong> The item either
                 moved out of our filter or the update didn't affect filter
-                matching. We update our stored count to maintain synchronization
-                with the actual database state.
+                matching. We always update our stored count to maintain
+                synchronization with the actual database state, even when the
+                counts are identical. This defensive approach ensures our socket
+                state never drifts from reality and prevents edge cases where
+                multiple rapid updates might cause temporary inconsistencies.
               </li>
             </ul>
           </li>
