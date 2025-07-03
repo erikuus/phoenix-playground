@@ -293,17 +293,55 @@
       <li>
         <strong>Someone Updates a Language:</strong>
         <p>
-          Upon receiving a
+          When we receive a
           <code>{FilteredLanguages, {:updated, language}}</code> broadcast, we
-          first check if the language.id is in socket.assigns.visible_ids. If it
-          is, <code>PaginationHelpers.process_updated/1</code> marks the
-          language as updated in the stream (<code>marked_language</code> is the
-          updated language record with a <code>:updated</code> flag set to
-          <code>true</code> to indicate its status in UI) and a flash message
-          informs the user. If not, the update is ignored since it doesn't
-          affect the current page view. This optimization reduces unnecessary UI
-          updates and improves performance in scenarios with many concurrent
-          users.
+          face a fundamental challenge: the broadcasted language contains the
+          updated data, but we cannot determine from this alone whether the item
+          previously matched our current filter.
+        </p>
+
+        <p>
+          Our solution uses a two-step approach based on visibility and count
+          comparison:
+        </p>
+
+        <ol>
+          <li>
+            <strong>For visible items:</strong> If <code>language.id</code> is
+            in <code>socket.assigns.visible_ids</code>, we know the item was
+            already on our current page. We call
+            <code>PaginationHelpers.process_updated/1</code> to mark it as
+            updated in the stream and display an appropriate flash message.
+          </li>
+
+          <li>
+            <strong>For non-visible items:</strong> We recalculate the total
+            count using <code>FilteredLanguages.count_languages/1</code> and
+            compare it to our stored count:
+            <ul>
+              <li>
+                <strong>Count increased:</strong> The item now matches our
+                filter. We treat this like a creation using
+                <code>PaginationHelpers.process_created/2</code>, adding the
+                item to the top of the stream with appropriate visual
+                indicators.
+              </li>
+              <li>
+                <strong>Count decreased or unchanged:</strong> The item either
+                moved out of our filter or the update didn't affect filter
+                matching. We update our stored count to maintain synchronization
+                with the actual database state.
+              </li>
+            </ul>
+          </li>
+        </ol>
+
+        <p>
+          This count-based approach elegantly handles complex filter
+          transitions—such as when someone changes a country code from "EST" to
+          "USA"—without requiring us to track the previous state of each item.
+          The existing pagination logic automatically handles scenarios like
+          redirecting users from invalid pages when the count decreases.
         </p>
       </li>
       <li>

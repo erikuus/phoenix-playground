@@ -362,7 +362,31 @@ defmodule LivePlaygroundWeb.StepsLive.Filtered.Index do
 
       {:noreply, socket}
     else
-      {:noreply, socket}
+      count_all = FilteredLanguages.count_languages(socket.assigns.options)
+
+      if count_all > socket.assigns.count_all do
+        # Item now matches filter - treat like creation
+        {:processed_created, new_assigns, marked_language} =
+          PaginationHelpers.process_created(socket.assigns, language)
+
+        socket =
+          socket
+          |> assign(new_assigns)
+          |> stream_insert(:languages, marked_language, at: 0)
+          |> put_flash(
+            :info,
+            get_flash_message_with_reset_link(
+              "A language was updated by another user and now matches your filters. " <>
+              "It has been temporarily added to the top of the list and will be sorted " <>
+              "to its correct position on the next page load."
+            )
+          )
+
+        {:noreply, socket}
+      else
+        # Item still doesn't match or count decreased (moved out of filter)
+        {:noreply, assign(socket, :count_all, count_all)}
+      end
     end
   end
 
