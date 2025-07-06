@@ -9,8 +9,8 @@ defmodule LivePlaygroundWeb.CompsLive.Setup do
         Setting Up Core and MoreComponents
       </:subtitle>
     </.header>
-    <div class="flex flex-col gap-x-0 gap-y-8 xl:flex-row xl:gap-x-16 xl:gap-y-0">
-      <div class="flex-1 prose max-w-none">
+    <div class="flex flex-col gap-x-0 gap-y-8 xl:flex-row xl:gap-x-10 xl:gap-y-0">
+      <div class="flex-1 prose max-w-none rounded-md bg-gray-100 p-6">
         <h3>CoreComponents</h3>
         <p>
           In a new Phoenix application, you will find a CoreComponents module inside the components folder.
@@ -28,7 +28,7 @@ defmodule LivePlaygroundWeb.CompsLive.Setup do
           core_components.ex
         </.github_link>
       </div>
-      <div class="flex-1 prose max-w-none">
+      <div class="flex-1 prose max-w-none rounded-md bg-gray-100 p-6">
         <h3>MoreComponents</h3>
         <p>
           The MoreComponents are a bespoke suite that you'll discover within this playground. These are housed in a
