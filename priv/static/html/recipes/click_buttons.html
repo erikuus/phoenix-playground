@@ -6,9 +6,9 @@
 <h3><code>mount/3</code></h3>
 <p>
   In the <code>mount/3</code> function, a list of countries in the "Baltic
-  Countries" region is fetched. If the list is empty, both
-  <code>:countries</code> and <code>:selected_country</code> are set to
-  <code>nil</code> in the socket's assigns. If there are countries, the first
+  Countries" region is fetched. If the list is empty, <code>:countries</code> is
+  set to an empty list <code>[]</code> and <code>:selected_country</code> is set
+  to <code>nil</code> in the socket's assigns. If there are countries, the first
   one is set as the <code>:selected_country</code>, and the list is saved under
   <code>:countries</code>.
 </p>
@@ -25,7 +25,7 @@
 </p>
 <h3><code>country_details/1</code></h3>
 <p>
-  This helper function renders the details of the selected country. It's
+  This functional component renders the details of the selected country. It's
   designed to handle two scenarios:
 </p>
 <ol>
@@ -33,11 +33,7 @@
     If <code>:selected_country</code> is <code>nil</code>, an alert is shown to
     inform that no countries were found in the specified region.
   </li>
-  <li>
-    Otherwise, it renders a list of the selected country's details, such as
-    code, continent, region, year of independence, form of government, head of
-    state, population (formatted with a delimiter), GNP, and life expectancy.
-  </li>
+  <li>Otherwise, it renders a list of the selected country's details.</li>
 </ol>
 <h3><code>handle_event/3</code></h3>
 <p>
@@ -50,10 +46,12 @@
 </p>
 <h3><code>get_button_kind/2</code></h3>
 <p>
-  A simple utility function used within the <code>render/1</code> function to
-  determine the styling of the buttons. It compares the
-  <code>country</code> against the <code>selected_country</code>. If they match,
-  it returns <code>:primary</code> which signifies that the button should have a
-  primary styling. If they do not match, it returns <code>:secondary</code>,
-  suggesting a more subdued styling.
+  A helper function for <code>render/1</code> that determines the visual styling
+  of the buttons. This function encapsulates the logic for distinguishing
+  between active and inactive states, keeping the template clean and readable.
+  It compares the <code>country</code> against the
+  <code>selected_country</code>. If they match, it returns
+  <code>:primary</code> which signifies that the button should have a primary
+  styling. If they do not match, it returns <code>:secondary</code>, suggesting
+  a more subdued styling.
 </p>
