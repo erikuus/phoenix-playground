@@ -65,7 +65,7 @@ defmodule LivePlaygroundWeb.Menus.Sidebar do
       %{
         icon: "hero-book-open",
         label: "Recipes",
-        path: ~p"/click-buttons",
+        path: ~p"/recipes-introduction",
         layout: :recipes
       },
       %{

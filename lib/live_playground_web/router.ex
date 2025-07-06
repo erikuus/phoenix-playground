@@ -20,6 +20,7 @@ defmodule LivePlaygroundWeb.Router do
     scope "/", LivePlaygroundWeb do
       pipe_through :browser
 
+      live "/recipes-introduction", RecipesLive.Introduction
       live "/click-buttons", RecipesLive.ClickButtons
       live "/handle-params", RecipesLive.HandleParams
       live "/change-form", RecipesLive.ChangeForm
@@ -37,7 +38,6 @@ defmodule LivePlaygroundWeb.Router do
       live "/paginate-params", RecipesLive.PaginateParams
       live "/form-insert", RecipesLive.FormInsert
       live "/form-insert-validate", RecipesLive.FormInsertValidate
-      live "/form-update-validate", RecipesLive.FormUpdateValidate
       live "/stream-insert", RecipesLive.StreamInsert
       live "/stream-update", RecipesLive.StreamUpdate, :index
       live "/stream-update/edit", RecipesLive.StreamUpdate, :edit
