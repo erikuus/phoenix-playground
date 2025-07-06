@@ -15,7 +15,7 @@ config :live_playground, LivePlaygroundWeb.Endpoint,
   url: [host: "localhost"],
   render_errors: [
     formats: [html: LivePlaygroundWeb.ErrorHTML, json: LivePlaygroundWeb.ErrorJSON],
-    layout: false
+    layout: {LivePlaygroundWeb.Layouts, :error}
   ],
   pubsub_server: LivePlayground.PubSub,
   live_view: [signing_salt: "wD1HHY8C"]

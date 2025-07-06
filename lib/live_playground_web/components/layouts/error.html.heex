@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <.live_title suffix=" · Phoenix Framework">
+      {assigns[:page_title] || "LivePlayground - Error"}
+    </.live_title>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+    </script>
+  </head>
+  <body class="h-full">
+    <main class="grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
+      <div class="text-center">
+        {@inner_content}
+        <div class="mt-10 flex items-center justify-center gap-x-6">
+          <.link
+            navigate={~p"/"}
+            class="rounded-md bg-zinc-900 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-zinc-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+          >
+            Go back home
+          </.link>
+          <.link navigate={~p"/comps-setup"} class="text-sm font-semibold text-gray-900">
+            Get started <span aria-hidden="true">&rarr;</span>
+          </.link>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
