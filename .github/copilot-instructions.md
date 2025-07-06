@@ -37,6 +37,7 @@ You MUST order functions in LiveView modules as follows:
 4. `render/1` function (if present)
 
    - MUST come after mount/handle_params and before event handlers
+   - Functional components called by `render/1` MUST be placed immediately after `render/1` following the stepdown rule
 
 5. `handle_event/3` function
 
@@ -45,6 +46,7 @@ You MUST order functions in LiveView modules as follows:
 7. Helper functions for `render`, `handle_event`, and `handle_info`
    - MUST be placed at the end
    - Group helpers with their main function
+   - NOTE: This applies only to helper functions, NOT functional components. Functional components follow the stepdown rule and are placed immediately after their caller.
 
 ## State Management
 
