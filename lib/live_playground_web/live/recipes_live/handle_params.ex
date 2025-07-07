@@ -5,18 +5,12 @@ defmodule LivePlaygroundWeb.RecipesLive.HandleParams do
 
   def mount(_params, _session, socket) do
     countries = Countries.list_region_country("Baltic Countries")
-
     {:ok, assign(socket, :countries, countries)}
   end
 
   def handle_params(%{"id" => id}, _url, socket) do
-    try do
-      country = Countries.get_country!(id)
-      {:noreply, assign(socket, :selected_country, country)}
-    rescue
-      Ecto.NoResultsError ->
-        {:noreply, assign(socket, :selected_country, nil)}
-    end
+    country = Countries.get_country!(id)
+    {:noreply, assign(socket, :selected_country, country)}
   end
 
   def handle_params(_params, _url, socket) do
@@ -44,10 +38,10 @@ defmodule LivePlaygroundWeb.RecipesLive.HandleParams do
     <!-- end hiding from live code -->
     <.tabs :if={@countries != []} class="mb-6">
       <:tab :for={country <- @countries} path={~p"/handle-params?#{[id: country.id]}"} active={country == @selected_country}>
-        <%= country.name %>
+        {country.name}
       </:tab>
     </.tabs>
-    <%= country_details(assigns) %>
+    <.country_details countries={@countries} selected_country={@selected_country} />
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/recipes_live/handle_params.ex" />
@@ -66,31 +60,23 @@ defmodule LivePlaygroundWeb.RecipesLive.HandleParams do
     """
   end
 
-  defp country_details(%{selected_country: nil} = assigns) do
-    ~H"""
-    <.alert kind={:info} close={false}>
-      No country found for the provided ID.
-    </.alert>
-    """
-  end
-
   defp country_details(assigns) do
     ~H"""
     <.list class="mb-16 ml-1">
-      <:item title="Code"><%= @selected_country.code %></:item>
-      <:item title="Continent"><%= @selected_country.continent %></:item>
-      <:item title="Region"><%= @selected_country.region %></:item>
-      <:item title="The year of independence"><%= @selected_country.indepyear %></:item>
-      <:item title="The form of government"><%= @selected_country.governmentform %></:item>
-      <:item title="The head of state"><%= @selected_country.headofstate %></:item>
+      <:item title="Code">{@selected_country.code}</:item>
+      <:item title="Continent">{@selected_country.continent}</:item>
+      <:item title="Region">{@selected_country.region}</:item>
+      <:item title="The year of independence">{@selected_country.indepyear}</:item>
+      <:item title="The form of government">{@selected_country.governmentform}</:item>
+      <:item title="The head of state">{@selected_country.headofstate}</:item>
       <:item title="Population">
-        <%= Number.Delimit.number_to_delimited(@selected_country.population, precision: 0, delimiter: " ") %>
+        {Number.Delimit.number_to_delimited(@selected_country.population, precision: 0, delimiter: " ")}
       </:item>
       <:item title="GNP">
-        <%= Number.Delimit.number_to_delimited(@selected_country.gnp, precision: 0, delimiter: " ") %>
+        {Number.Delimit.number_to_delimited(@selected_country.gnp, precision: 0, delimiter: " ")}
       </:item>
       <:item title="Life expectancy">
-        <%= Number.Delimit.number_to_delimited(@selected_country.lifeexpectancy, precision: 2) %>
+        {Number.Delimit.number_to_delimited(@selected_country.lifeexpectancy, precision: 2)}
       </:item>
     </.list>
     """

@@ -18,11 +18,10 @@
   <li>
     <p>
       The first clause handles a URL parameter with the key <code>id</code>. It
-      attempts to fetch the details of the country with the given ID using
-      <code>Countries.get_country!/1</code>. If the country exists, it assigns
-      it to <code>:selected_country</code>. If the fetch fails (i.e., the
-      country ID is not found), it sets <code>:selected_country</code> to
-      <code>nil</code>.
+      fetches the country details using <code>Countries.get_country!/1</code>.
+      If the country exists, it assigns it to <code>:selected_country</code>. If
+      the country ID is not found, Phoenix's error handling will catch the
+      exception and redirect the user to an appropriate error page.
     </p>
   </li>
   <li>
@@ -47,8 +46,8 @@
 </p>
 <h3><code>country_details/1</code></h3>
 <p>
-  This helper function has three clauses, each generating different HEEx content
-  based on the assigns:
+  This functional component has two clauses, each generating different HEEx
+  content based on the assigns:
 </p>
 <ol>
   <li>
@@ -56,12 +55,6 @@
       If there are no countries in the <code>:countries</code> assign, it
       renders an alert indicating no countries were found in the specified
       region.
-    </p>
-  </li>
-  <li>
-    <p>
-      If <code>:selected_country</code> is <code>nil</code>, it renders an alert
-      that no country was found for the provided ID.
     </p>
   </li>
   <li>
