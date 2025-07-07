@@ -1,49 +1,131 @@
 <p>
-  The <code>ChangeForm</code> module deals with a form that dynamically updates
-  part of its content based on user selections. It highlights the interaction
-  between the server-side state and client-side events in a Phoenix LiveView
-  application. Here's a breakdown of its functionality:
+  The <code>ChangeForm</code> module demonstrates dynamic form handling in
+  Phoenix LiveView, where form sections appear and disappear based on user
+  selections. It showcases conditional rendering and real-time form updates
+  without page refreshes.
 </p>
+
 <h3><code>mount/3</code></h3>
 <p>
-  Initializes the LiveView with a default state where the color is set to "red"
-  and the shape to "circle". This function runs once when the LiveView is
-  mounted, setting up the initial form values.
+  Initializes the LiveView with default form state, setting the event type to
+  "conference" and ticket type to "regular". This establishes the initial form
+  configuration that determines which conditional fields are displayed on first
+  render.
 </p>
+
 <h3><code>render/1</code></h3>
 <p>
-  The render function uses HEEx (HTML + Elixir) templating to construct the
-  form. It contains:
+  Constructs the main form using HEEx templating with a
+  <code>phx-change="update_form"</code>
+  event that triggers whenever any form input changes. The form structure
+  includes:
 </p>
 <ul>
   <li>
-    A select input for color, with options provided by
-    <code>color_options/0</code>.
+    <strong>Event Type Select:</strong> A dropdown that calls
+    <code>get_event_type_options()</code> for its options and binds to
+    <code>@event_type</code> from socket assigns
+    <ul>
+      <li>
+        <code>&lt;.event_specific_fields&gt;</code> component receives the
+        current <code>event_type</code> and conditionally renders fields
+        specific to conferences or workshops
+      </li>
+    </ul>
   </li>
-  <li>Dynamic inputs that are rendered based on the selected color value.</li>
   <li>
-    A series of radio inputs for shape selection, with additional dynamic inputs
-    rendered based on the selected shape.
+    <strong>Ticket Type Radio Group:</strong> Three radio buttons (Regular, VIP,
+    Student) with <code>checked</code> attributes bound to
+    <code>@ticket_type</code> state
+    <ul>
+      <li>
+        <code>&lt;.vip_preferences&gt;</code> component appears only when VIP is
+        selected
+      </li>
+      <li>
+        <code>&lt;.student_verification&gt;</code> component appears only when
+        Student is selected
+      </li>
+    </ul>
   </li>
 </ul>
-<h3><code>render_dynamic_inputs/2</code></h3>
+
+<h3><code>event_specific_fields/1</code></h3>
 <p>
-  This helper function dynamically generates additional inputs based on the
-  current state. There are different clauses based on the value of the color and
-  shape. For example, if the color is "green", additional text inputs for "Dark
-  Green" and "Light Green" are displayed. For shapes, if the shape is
-  "rectangle", radio buttons labeled "A" and "B" are shown.
+  A functional component that uses pattern matching to render different form
+  sections based on the selected event type:
 </p>
+<ul>
+  <li>
+    <strong>Conference:</strong> Shows dietary restrictions text field and
+    session track dropdown
+  </li>
+  <li>
+    <strong>Workshop:</strong> Displays skill level selector and learning goals
+    textarea
+  </li>
+  <li><strong>Default:</strong> Renders empty content for other event types</li>
+</ul>
+
+<h3><code>vip_preferences/1</code></h3>
+<p>
+  Conditionally renders VIP-specific options when "VIP" ticket type is selected.
+  Includes checkboxes for VIP lounge access, priority seating, and premium
+  welcome package. Uses <code>phx-update="ignore"</code> to maintain checkbox
+  state during re-renders.
+</p>
+
+<h3><code>student_verification/1</code></h3>
+<p>
+  Displays student verification fields (university name and student ID) when
+  "Student" ticket type is selected.
+</p>
+
 <h3><code>handle_event/3</code></h3>
 <p>
-  This function is bound to the <code>phx-change="refresh"</code> event of the
-  form, which is triggered when any input within the form changes. It receives
-  the form's data and updates the socket's assigns for color and shape, which in
-  turn causes the form to re-render with the appropriate dynamic inputs.
+  Handles the <code>phx-change="update_form"</code> event triggered when any
+  form input changes. Extracts both <code>event_type</code> and
+  <code>ticket_type</code>
+  from the form data and updates the socket assigns, causing the form to
+  re-render with appropriate conditional sections.
 </p>
-<h3><code>color_options/0</code></h3>
+
+<h3><code>phx-update="ignore"</code></h3>
 <p>
-  Provides a list of color options for the select input in the form. It's a
-  simple function that returns a list of tuples, where each tuple contains a
-  human-readable color name and its corresponding value.
+  The <code>phx-update="ignore"</code> attribute is crucial for maintaining user
+  input state in dynamic form sections. Without this attribute, LiveView would
+  completely replace the DOM elements during re-renders, causing:
 </p>
+<ul>
+  <li>
+    <strong>Lost user input:</strong> Any text typed into fields would disappear
+  </li>
+  <li>
+    <strong>Reset checkboxes:</strong> Checkbox selections would be cleared
+  </li>
+</ul>
+<p>
+  By adding <code>phx-update="ignore"</code> to conditional sections like VIP
+  preferences and student verification, we tell LiveView to preserve the
+  existing DOM elements and their current state, only showing or hiding the
+  entire section based on the conditional logic. This ensures a smooth user
+  experience where form inputs retain their values even as other parts of the
+  form change dynamically.
+</p>
+
+<h3>Helper Functions</h3>
+<p>Three helper functions provide options for select dropdowns:</p>
+<ul>
+  <li>
+    <code>get_event_type_options/0</code> - Returns conference, workshop, and
+    webinar options
+  </li>
+  <li>
+    <code>get_session_track_options/0</code> - Provides technology, business,
+    and design tracks
+  </li>
+  <li>
+    <code>get_skill_level_options/0</code> - Offers beginner, intermediate, and
+    advanced levels
+  </li>
+</ul>
