@@ -6,10 +6,19 @@ defmodule LivePlaygroundWeb.RecipesLive.KeyEvents do
       assign(socket,
         images: ["DSC02232.jpg", "DSC02234.jpg", "DSC02235.jpg"],
         current: 0,
-        playing: false
+        playing: false,
+        timer: nil
       )
 
     {:ok, socket}
+  end
+
+  def terminate(_reason, socket) do
+    if socket.assigns.timer do
+      :timer.cancel(socket.assigns.timer)
+    end
+
+    :ok
   end
 
   def render(assigns) do
@@ -43,7 +52,7 @@ defmodule LivePlaygroundWeb.RecipesLive.KeyEvents do
 
   def handle_event("set-current", %{"key" => "Enter", "value" => index}, socket) do
     case Integer.parse(index) do
-      {number, ""} when number in 0..2 ->
+      {number, ""} when number >= 0 and number < length(socket.assigns.images) ->
         {:noreply, assign(socket, :current, number)}
 
       _ ->
@@ -76,7 +85,10 @@ defmodule LivePlaygroundWeb.RecipesLive.KeyEvents do
 
     if playing do
       # Stop the timer and update the state to not playing
-      :timer.cancel(socket.assigns.timer)
+      if socket.assigns.timer do
+        :timer.cancel(socket.assigns.timer)
+      end
+
       assign(socket, playing: false, timer: nil)
     else
       # Start the timer and update the state to playing

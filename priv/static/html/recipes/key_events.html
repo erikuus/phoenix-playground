@@ -5,35 +5,77 @@
 <h3><code>mount/3</code></h3>
 <p>
   Sets up initial state containing an array of image filenames, the index of the
-  currently displayed image (<code>current</code>), and a
-  <code>playing</code> boolean indicating if the slideshow is auto-advancing.
+  currently displayed image (<code>current</code>), a
+  <code>playing</code> boolean indicating if the slideshow is auto-advancing,
+  and a <code>timer</code> reference for managing the auto-advance
+  functionality.
+</p>
+<ul>
+  <li>
+    Both <code>:timer</code> and <code>:playing</code> assigns are necessary
+    because they serve different purposes - <code>:playing</code> provides
+    readable boolean logic for determining what action to take in
+    <code>toggle_play/1</code>, while <code>:timer</code> stores the opaque
+    timer reference required for cancellation. Without <code>:playing</code>,
+    we'd have to check if <code>:timer</code> is nil, but timer references don't
+    clearly indicate intent like booleans do.
+  </li>
+</ul>
+<h3><code>terminate/2</code></h3>
+<p>
+  Ensures proper cleanup when the LiveView process ends by canceling any active
+  timer. This prevents memory leaks and ensures that timer processes don't
+  continue running after the user navigates away from the page.
 </p>
 <h3><code>render/1</code></h3>
 <p>
-  Renders a text prompt and a numeric input for manual image selection, wrapped
-  in a <code>div</code> with an event listener for keyup on the window
-  (<code>phx-window-keyup="update"</code>). It also displays the current image
-  from the <code>images</code> array using its index.
+  Demonstrates two key LiveView event binding techniques:
+  <code>phx-window-keyup="update"</code>
+  captures keyboard events globally (even when the input isn't focused), while
+  <code>phx-keyup="set-current" phx-key="Enter"</code> captures specific key
+  presses only within the input field. The template dynamically displays images
+  using <code>Enum.at(@images, @current)</code>, which re-renders automatically
+  when the <code>@current</code> assign changes.
 </p>
-<h3><code>handle_event("set-current",...)</code></h3>
-<p>
-  Handles the event when a user types an image index and presses "Enter". It
-  parses the input to ensure it's a valid index within the range of available
-  images. If valid, it updates the current image.
-</p>
-<h3><code>handle_event("update",...)</code></h3>
-<p>Responds to various keyup events:</p>
+<h3><code>handle_event/3</code></h3>
+<p>This function handles two types of user interactions:</p>
 <ul>
-  <li>"k" toggles play/pause for auto-advancing images.</li>
-  <li>"ArrowRight" moves to the next image.</li>
-  <li>"ArrowLeft" moves to the previous image.</li>
-  <li>Any other key is ignored.</li>
+  <li>
+    <strong>"set-current"</strong>
+    <p>
+      Triggered when a user types an image index in the input field and presses
+      "Enter". It parses the input using <code>Integer.parse/1</code> to ensure
+      it's a valid index within the range of available images. If valid, it
+      updates the current image; otherwise, it ignores the input and maintains
+      the current state.
+    </p>
+  </li>
+  <li>
+    <strong>"update"</strong>
+    <p>
+      Responds to global keyboard events captured by
+      <code>phx-window-keyup</code>. Uses pattern matching to handle specific
+      keys: "k" toggles play/pause for auto-advancing images, "ArrowRight" moves
+      to the next image, "ArrowLeft" moves to the previous image, and any other
+      key is gracefully ignored.
+    </p>
+  </li>
 </ul>
-<h3><code>handle_info(:tick,...)</code></h3>
-<p>
-  Is called by a timer set when the slideshow is playing. It moves to the next
-  image, making the carousel advance automatically.
-</p>
+
+<h3><code>handle_info/2</code></h3>
+<p>This function handles timer messages:</p>
+<ul>
+  <li>
+    <strong>:tick</strong>
+    <p>
+      Automatically triggered by the timer when the slideshow is in playing
+      mode. It advances to the next image using the <code>next/1</code> helper
+      function, creating the auto-advance functionality that cycles through
+      images every second.
+    </p>
+  </li>
+</ul>
+
 <h3>
   Helper Functions (<code>toggle_play</code>, <code>next</code>,
   <code>prev</code>)
@@ -46,11 +88,46 @@
     interval.
   </li>
   <li>
-    <code>next</code> calculates the next image index, wrapping around to the
-    start if currently at the end.
+    <code>next</code> implements circular navigation using
+    <code>rem/2</code> (remainder division). The remainder operator gives you
+    what's left after division:
+    <ul>
+      <li><code>rem(5, 3) = 2</code> (5 ÷ 3 = 1 remainder 2)</li>
+      <li><code>rem(6, 3) = 0</code> (6 ÷ 3 = 2 remainder 0)</li>
+      <li><code>rem(7, 3) = 1</code> (7 ÷ 3 = 2 remainder 1)</li>
+    </ul>
+    In our 3-image carousel (indices 0, 1, 2), forward navigation creates the
+    cycle 0 → 1 → 2 → 0:
+    <ul>
+      <li>
+        <code>rem(0 + 1, 3) = rem(1, 3) = 1</code> (from image 0 → image 1)
+      </li>
+      <li>
+        <code>rem(1 + 1, 3) = rem(2, 3) = 2</code> (from image 1 → image 2)
+      </li>
+      <li>
+        <code>rem(2 + 1, 3) = rem(3, 3) = 0</code> (from image 2 → wraps to
+        image 0)
+      </li>
+    </ul>
   </li>
   <li>
-    <code>prev</code> calculates the previous image index, wrapping around to
-    the end if currently at the start.
+    <code>prev</code> handles backward navigation by adding the total first to
+    avoid negative results: In our carousel, backward navigation creates the
+    cycle 2 → 1 → 0 → 2:
+    <ul>
+      <li>
+        <code>rem(2 - 1 + 3, 3) = rem(4, 3) = 1</code> (from image 2 → image 1)
+      </li>
+      <li>
+        <code>rem(1 - 1 + 3, 3) = rem(3, 3) = 0</code> (from image 1 → image 0)
+      </li>
+      <li>
+        <code>rem(0 - 1 + 3, 3) = rem(2, 3) = 2</code> (from image 0 → wraps to
+        image 2)
+      </li>
+    </ul>
   </li>
+
+  <!-- ...existing code... -->
 </ul>
