@@ -2,7 +2,7 @@ defmodule LivePlaygroundWeb.RecipesLive.SendInterval do
   use LivePlaygroundWeb, :live_view
 
   def mount(_params, _session, socket) do
-    if connected?(socket), do: :timer.send_interval(1000, self(), :tick)
+    timer_ref = if connected?(socket), do: :timer.send_interval(1000, self(), :tick), else: nil
 
     current_time = DateTime.utc_now()
     expiration_time = DateTime.add(current_time, 2 * 24 * 60 * 60, :second)
@@ -10,10 +10,19 @@ defmodule LivePlaygroundWeb.RecipesLive.SendInterval do
     socket =
       assign(socket,
         expiration_time: expiration_time,
-        seconds_remaining: seconds_remaining(expiration_time)
+        seconds_remaining: seconds_remaining(expiration_time),
+        timer_ref: timer_ref
       )
 
     {:ok, socket}
+  end
+
+  def terminate(_reason, socket) do
+    if socket.assigns[:timer_ref] do
+      :timer.cancel(socket.assigns.timer_ref)
+    end
+
+    :ok
   end
 
   def render(assigns) do
@@ -30,7 +39,7 @@ defmodule LivePlaygroundWeb.RecipesLive.SendInterval do
     </.header>
     <!-- end hiding from live code -->
     <div class="text-2xl font-semibold">
-      <%= format_duration(@seconds_remaining) %>
+      {format_duration(@seconds_remaining)}
     </div>
     <!-- start hiding from live code -->
     <div class="mt-10">
