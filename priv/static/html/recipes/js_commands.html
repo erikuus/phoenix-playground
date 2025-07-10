@@ -22,13 +22,25 @@
   </li>
   <li>
     A <code>phx-window-keydown</code> event listener for the Escape key, which
-    triggers the <code>hide_panel/1</code> function to close the panel.
+    triggers the <code>hide_panel/1</code>
+    function to close the panel. This global event binding allows users to close
+    the panel regardless of focus location.
+  </li>
+  <li>
+    A <code>phx-click-away</code> attribute that closes the panel when users
+    click outside it, providing intuitive modal behavior that matches user
+    expectations.
   </li>
 </ul>
-<h3><code>show_panel/1</code></h3>
+<h3>JS Command Functions</h3>
 <p>
-  This is a helper function that returns a chain of JavaScript (JS) commands
-  when called. These commands will:
+  The <code>%JS{}</code> struct represents a set of JavaScript commands that
+  execute sequentially in the browser. LiveView's JS commands allow you to
+  create smooth client-side interactions without custom JavaScript:
+</p>
+<h4><code>show_panel/1</code></h4>
+<p>
+  Returns a chain of JavaScript (JS) commands that execute when the panel opens:
 </p>
 <ul>
   <li>
@@ -45,7 +57,7 @@
     <code>#panel-container</code> for accessibility reasons.
   </li>
 </ul>
-<h3><code>hide_panel/1</code></h3>
+<h4><code>hide_panel/1</code></h4>
 <p>
   Another helper function that similarly returns a chain of JS commands. These
   commands will:
@@ -64,10 +76,3 @@
     (<code>JS.pop_focus()</code>).
   </li>
 </ul>
-<h3><code>%JS{}</code> Struct</h3>
-<p>
-  The <code>%JS{}</code> struct represents a set of JavaScript commands that
-  will be executed in the browser. It's part of LiveView's JavaScript
-  interoperability feature, allowing server-side Elixir code to declaratively
-  send instructions for client-side execution.
-</p>
