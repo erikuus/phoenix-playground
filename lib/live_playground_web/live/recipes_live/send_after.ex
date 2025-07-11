@@ -1,7 +1,7 @@
 defmodule LivePlaygroundWeb.RecipesLive.SendAfter do
   use LivePlaygroundWeb, :live_view
 
-  alias LivePlayground.Sales
+  alias LivePlayground.Stats
 
   @refresh_interval 2000
 
@@ -24,20 +24,20 @@ defmodule LivePlaygroundWeb.RecipesLive.SendAfter do
     </.header>
     <!-- end hiding from live code -->
     <.stats>
-      <:card title="Orders">
-        <%= @orders %>
+      <:card title="Active Connections">
+        {@active_connections}
       </:card>
-      <:card title="Amount">
-        <%= @amount %>
+      <:card title="Requests/sec">
+        {@requests_per_second}
       </:card>
-      <:card title="Satisfaction">
-        <%= @satisfaction %>
+      <:card title="Response Time (ms)">
+        {@response_time_ms}
       </:card>
     </.stats>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/recipes_live/send_after.ex" />
-      <.code_block filename="lib/live_playground/sales.ex" />
+      <.code_block filename="lib/live_playground/stats.ex" />
     </div>
     <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/send_after.html" />
     <!-- end hiding from live code -->
@@ -52,9 +52,9 @@ defmodule LivePlaygroundWeb.RecipesLive.SendAfter do
 
   defp assign_stats(socket) do
     assign(socket,
-      orders: Sales.orders(),
-      amount: Sales.amount(),
-      satisfaction: Sales.satisfaction()
+      active_connections: Stats.active_connections(),
+      requests_per_second: Stats.requests_per_second(),
+      response_time_ms: Stats.response_time_ms()
     )
   end
 end
