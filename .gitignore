@@ -42,5 +42,3 @@ npm-debug.log
 live_playground.sublime-workspace
 .DS_Store
 .vscode/settings.json
-/.continue
-.continuerules
