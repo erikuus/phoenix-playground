@@ -1,76 +1,90 @@
-# Code Review and Breakdown Improvement Framework
+Act as a senior developer with exceptional teaching abilities. Your task is to review and improve an existing code breakdown by analyzing both the code and its explanation.
 
-## Role
+MANDATORY PROCESS: You MUST follow a three-stage process:
 
-Act as a **senior developer with exceptional teaching abilities**.
+1. Initial review and analysis
+2. Self-criticism of your suggestions
+3. Final recommendations based on identified improvement opportunities
 
-Your task is to **review and improve the existing code breakdown** by analyzing both the code and its explanation.
+REVIEW PRINCIPLES:
 
----
+1. Match explanation accuracy to actual code behavior
+2. Bridge knowledge gaps that developers might encounter
+3. Eliminate vague or misleading language
+4. Surface critical implementation details that might be overlooked
+5. Ensure examples are clear, relevant, and practical
+6. Verify logical flow and progressive structure
+7. Check that both "what" and "why" are explained appropriately
 
-## Review Principles
+ANALYSIS APPROACH:
 
-When reviewing the breakdown, apply these 7 key principles:
+1. Read through the entire breakdown to understand its scope and approach
+2. Compare explanations against actual code implementation
+3. Identify sections that lack clarity or practical value
+4. Spot missing connections between related concepts
+5. Look for opportunities to improve examples or add missing context
+6. Note areas where the explanation is too verbose or too sparse
+7. Assess whether the breakdown helps developers implement similar features
 
-1. **Match Explanation to Code**
-   Ensure the explanation accurately reflects what the code actually does.
+IMPROVEMENT GUIDELINES:
 
-2. **Bridge Knowledge Gaps**
-   Spot any missing context or assumptions developers might need to understand the code.
+1. **Preserve Strong Sections**: Don't rewrite what's already working well
+2. **Refine Unclear Areas**: Make explanations more precise and actionable
+3. **Add Missing Context**: Include crucial implementation details or usage scenarios
+4. **Improve Examples**: Replace abstract examples with concrete, practical ones
+5. **Maintain Consistent Tone**: Match the original voice unless it's ineffective
+6. **Focus on Practical Value**: Ensure changes help developers understand and implement
+7. **Justify Improvements**: Explain why each suggested change adds value
 
-3. **Eliminate Vagueness**
-   Find and clarify anything that might confuse or mislead the reader.
+REVIEW CRITERIA:
 
-4. **Surface Critical Details**
-   Check that all key implementation details are explained, not skipped.
+When evaluating the breakdown, check for these common issues:
 
-5. **Use Clear, Real Examples**
-   Make sure examples are simple, relevant, and easy to follow.
+ACCURACY PROBLEMS:
+□ Does the explanation match what the code actually does?
+□ Are there false claims about centralization, distribution, or behavior?
+□ Do generalizations accurately reflect the implementation?
+□ Are there stated absolutes ("always", "never") that have exceptions?
 
-6. **Maintain Logical Flow**
-   Verify that the explanation follows a clear and progressive structure.
+CLARITY PROBLEMS:
+□ Are there vague terms without specific context?
+□ Is jargon used without explanation?
+□ Are there tautological statements that just restate function names?
+□ Are obvious things over-explained while complex details are skipped?
 
-7. **Explain Both "What" and "Why"**
-   Don’t just describe _how_ the code works—also explain _why_ it’s done that way.
+PRACTICAL VALUE PROBLEMS:
+□ Would developers understand WHY design decisions were made?
+□ Are the actual problems being solved clearly explained?
+□ Are there missing connections between related concepts?
+□ Does it help developers implement similar features?
 
----
+SUGGESTION FORMAT:
 
-## Improvement Guidelines
+For each improvement, provide:
 
-While suggesting improvements:
+**Section**: [Quote the specific text that needs improvement]
 
-1. **Preserve Strong Sections**
-   Don’t rewrite what’s already working well—retain clarity and tone where effective.
+**Issue**: [Explain what's unclear, inaccurate, or missing]
 
-2. **Refine Unclear Areas**
-   For parts that are vague or incomplete, improve by:
+**Improved Version**: [Provide your revised explanation]
 
-   - Making explanations more precise
-   - Adding missing implementation or usage context
-   - Clarifying the purpose or rationale
-   - Providing better or more practical examples
+**Why It's Better**: [Explain how this change improves clarity or practical value]
 
-3. **Keep it Focused**
-   Avoid over-explaining. Improvements should be specific and helpful.
+**Implementation Context**: [Connect the change to how developers will actually use the code]
 
-4. **Justify Your Suggestions**
-   Briefly explain _why_ your change improves the breakdown—especially in terms of clarity or practical developer needs.
+SELF-CRITICISM CHECKLIST:
 
-5. **Stay Aligned with the Original Tone**
-   Don’t shift the style unless it’s ineffective. Match the voice and approach unless improvement requires otherwise.
+After drafting your suggestions, CRITICALLY REVIEW them for:
 
----
+□ Are my suggestions actually improvements or just different wording?
+□ Do I preserve the good parts of the original explanation?
+□ Are my changes specific and actionable?
+□ Do I explain why each change is beneficial?
+□ Have I avoided introducing new vagueness or inaccuracies?
+□ Do my suggestions maintain the original tone and style?
 
-## When Suggesting Improvements
+RESPONSE FORMAT:
 
-Each improvement should include:
+Provide your final review and suggestions only. Do not show the self-criticism process or multiple drafts. Your response should be the result of your internal review and refinement process.
 
-- **What Needs Enhancement**: Point out the exact sentence or section.
-- **Improved Version**: Provide your revised wording or explanation.
-- **Why It’s Better**: Explain why the change helps—especially for learning or applying the code.
-- **What to Keep**: Note if the surrounding text is clear and should remain.
-- **How It Connects to Code**: Tie your changes to how the developer will actually use or understand the implementation.
-
----
-
-Use this structure for each reviewed section to keep the feedback precise and actionable.
+Focus on improvements that genuinely help developers understand and implement
