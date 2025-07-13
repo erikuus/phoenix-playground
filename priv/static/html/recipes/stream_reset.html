@@ -27,28 +27,16 @@
 </p>
 <ul>
   <li>
-    <strong>Stream Performance Anti-Pattern</strong>: Initializing streams in
-    <code>handle_params/3</code> would recreate the entire stream every time any
-    parameter changes (like opening an edit modal). This defeats the primary
-    purpose of streams, which is to maintain existing DOM elements and only
-    update what's necessary. Stream initialization should only happen once per
-    LiveView connection.
+    Initializing streams in <code>handle_params/3</code> would recreate the
+    entire stream every time any parameter changes (like opening an edit modal).
+    This defeats the primary purpose of streams, which is to maintain existing
+    DOM elements and only update what's necessary. Stream initialization should
+    only happen once per LiveView connection.
   </li>
   <li>
-    <strong>Initial Setup Efficiency</strong>: <code>mount/3</code> runs once
-    when the LiveView connects, making it ideal for establishing initial data
-    streams and ensuring all necessary data is available for the first render.
-  </li>
-  <li>
-    <strong>Reconnection Handling</strong>: On reconnects (when users lose
-    internet connection), <code>mount/3</code> re-establishes the complete
-    state, while <code>handle_params/3</code> only handles parameter changes.
-  </li>
-  <li>
-    <strong>Selective Updates Only</strong>: With streams initialized in
-    <code>mount/3</code>, <code>handle_params/3</code> can focus on selective
-    updates like form state changes without touching the stream data,
-    maintaining optimal performance.
+    <code>mount/3</code> runs once when the LiveView connects, making it ideal
+    for establishing initial data streams and ensuring all necessary data is
+    available for the first render.
   </li>
 </ul>
 
@@ -58,6 +46,18 @@
   flag, and city stream. This function follows the coding convention of assigns
   before streams, ensuring UI state is set before data streams are established.
 </p>
+<ul>
+  <li>
+    <code>@cities_empty</code> is needed to conditionally display "No cities
+    available" alerts and hide the table header. This explicit state tracking is
+    necessary because, due to the internal structure of LiveView streams, there
+    is no direct way to check for emptiness within the template after state
+    changes (the stream API does not provide a reliable or supported way to
+    check for an empty stream in the template after LiveView state changes). The
+    <code>:cities_empty</code> assign provides a reliable way to show/hide UI
+    elements based on data availability.
+  </li>
+</ul>
 
 <h3><code>handle_params/3</code></h3>
 <p>
@@ -108,13 +108,13 @@
 </p>
 <ul>
   <li>
-    <strong>Conditional Alerts Using :cities_empty State</strong>: Uses the
-    <code>@cities_empty</code> assign to conditionally display "No cities
-    available" alerts. This explicit state tracking is necessary because
-    LiveView streams cannot be checked for emptiness within the template (you
-    cannot use <code>@streams.cities.inserts == []</code> after LiveView state
-    changes). The <code>:cities_empty</code> assign provides a reliable way to
-    show/hide UI elements based on data availability.
+    <strong>Dual Alert System</strong>: Uses two different alerts to handle
+    empty states - one for when no countries are available (<code
+      >@countries == []</code
+    >) and another for when a country is selected but has no cities
+    (<code>@cities_empty</code>). The cities alert requires explicit state
+    tracking because LiveView streams cannot be reliably checked for emptiness
+    within templates after state changes.
   </li>
   <li>
     <strong>Dynamic Country Tabs with Stream Reset</strong>: Allows users to
@@ -125,8 +125,7 @@
   </li>
   <li>
     <strong>Conditional Form Display</strong>: Shows the city creation/edit form
-    only when countries are available, preventing form submissions that would
-    fail due to missing country context.
+    only when countries are available.
   </li>
   <li>
     <strong>Stream-Powered City Table</strong>: The table uses
@@ -179,10 +178,8 @@
 
 <h3><code>save_city/3</code></h3>
 <p>
-  Handles both create and update operations for cities. On successful
-  operations, it follows the coding convention: assigns before streams, streams
-  before flash messages. For create operations, it sets
-  <code>cities_empty</code> to false and inserts at position 0 to show new
-  cities at the top of the list, ensuring immediate visibility of the most
+  Handles both create and update operations for cities. For create operations,
+  it sets <code>cities_empty</code> to false and inserts at position 0 to show
+  new cities at the top of the list, ensuring immediate visibility of the most
   recently added city.
 </p>
