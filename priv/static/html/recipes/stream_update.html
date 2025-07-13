@@ -9,34 +9,39 @@
   "EST" locale to the client, which allows for real-time updates without full
   page reloads.
 </p>
-<h3><code>handle_params/2</code> and <code>apply_action/2</code></h3>
+<h3><code>handle_params/3</code></h3>
 <p>
-  These functions work together to route user interactions based on URL
-  parameters, enhancing the module's responsiveness to user actions:
+  Extracts parameters from the URL and delegates action handling based on these
+  parameters, using <code>apply_action/3</code>.
+</p>
+
+<h3><code>apply_action/3</code></h3>
+<p>
+  Differentiates actions such as viewing the main index or editing a specific
+  city:
 </p>
 <ul>
   <li>
-    <strong><code>handle_params/2</code></strong
-    >: Extracts parameters from the URL and delegates action handling based on
-    these parameters, using <code>apply_action/2</code>.
+    For the <code>:edit</code> action, it retrieves the city by ID using
+    <code>Cities.get_city!/1</code> (which handles 404 errors automatically),
+    sets up an edit form populated with the city's data, and updates the
+    socket's assigns for rendering.
   </li>
   <li>
-    <strong><code>apply_action/2</code></strong
-    >: Differentiates actions such as viewing the main index or editing a
-    specific city:
-    <ul>
-      <li>
-        For the <code>:edit</code> action, it retrieves the city by ID, sets up
-        an edit form populated with the city's data, and updates the socket's
-        assigns for rendering.
-      </li>
-      <li>
-        For the <code>:index</code> action, it simply maintains the current
-        state without modifications. This centralization of action handling
-        based on parameters simplifies routing logic and enhances
-        maintainability.
-      </li>
-    </ul>
+    For the <code>:index</code> action, it simply maintains the current state
+    without modifications. This centralization of action handling based on
+    parameters simplifies routing logic and enhances maintainability.
+  </li>
+</ul>
+<h3>Helper Function</h3>
+<ul>
+  <li>
+    <strong><code>get_city_form/1</code></strong
+    >: Converts a <code>City</code> struct into a form changeset. This involves
+    creating a changeset for the city using
+    <code>Cities.change_city/1</code> and then converting that changeset into a
+    form-friendly structure with <code>to_form/1</code>. This is used to prepare
+    the form for editing city details.
   </li>
 </ul>
 <h3><code>render/1</code></h3>
@@ -58,32 +63,22 @@
     cancel button to revert back to the main view.
   </li>
   <li>
-    <strong>Real-Time Feedback</strong>: Timestamps within each city row
-    visually demonstrate that only the affected parts of the LiveView are
-    updated.
+    <strong>Real-Time Feedback</strong>: Demo timestamps in each city row show
+    the current time when rendered, visually demonstrating that only the updated
+    rows are re-rendered by the stream, not the entire table.
   </li>
 </ul>
-<h3><code>handle_event/3</code> for "save"</h3>
+<h3><code>handle_event/3</code></h3>
 <p>Handles updates submitted via the edit form:</p>
 <ul>
   <li>
-    <strong>Success</strong>: Inserts the updated city back into the stream and
-    redirects to the main view with a success message, confirming the city was
-    updated.
+    <strong>Success</strong>: Updates the city in the database, then updates the
+    stream with <code>stream_insert/3</code>, displays a success flash message,
+    and redirects to the index view. The order follows the coding convention:
+    stream operations before flash messages.
   </li>
   <li>
-    <strong>Failure</strong>: Reloads the form with validation errors and
-    displays an error message to inform the user of the issue.
-  </li>
-</ul>
-<h3>Helper Functions</h3>
-<ul>
-  <li>
-    <strong><code>get_city_form/1</code></strong
-    >: Converts a <code>City</code> struct into a form changeset. This involves
-    creating a changeset for the city using
-    <code>Cities.change_city/1</code> and then converting that changeset into a
-    form-friendly structure with <code>to_form/1</code>. This is used to prepare
-    the form for editing city details.
+    <strong>Failure</strong>: Updates the form with validation errors from the
+    changeset and displays an error message to inform the user of the issue.
   </li>
 </ul>

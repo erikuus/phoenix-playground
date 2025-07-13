@@ -18,10 +18,15 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamUpdate do
   defp apply_action(%{"id" => id}, :edit, socket) do
     city = Cities.get_city!(id)
 
-    assign(socket,
-      city: city,
-      form: get_city_form(city)
-    )
+    socket
+    |> assign(:city, city)
+    |> assign(:form, get_city_form(city))
+  end
+
+  defp get_city_form(city) do
+    city
+    |> Cities.change_city()
+    |> to_form()
   end
 
   def render(assigns) do
@@ -43,9 +48,9 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamUpdate do
       phx-submit="save"
       class="flex flex-col space-x-0 space-y-4 md:flex-row md:space-x-4 md:space-y-0"
     >
-      <.input field={@form[:name]} phx-debounce="2000" label="Name" class="flex-auto" />
-      <.input field={@form[:district]} phx-debounce="2000" label="District" class="flex-auto" />
-      <.input field={@form[:population]} phx-debounce="2000" label="Population" class="flex-auto" />
+      <.input field={@form[:name]} phx-debounce="2000" label="Name" class="flex-auto" autocomplete="off" />
+      <.input field={@form[:district]} phx-debounce="2000" label="District" class="flex-auto" autocomplete="off" />
+      <.input field={@form[:population]} phx-debounce="2000" label="Population" class="flex-auto" autocomplete="off" />
       <div>
         <.button phx-disable-with="" class="w-full md:mt-8">Save</.button>
       </div>
@@ -57,19 +62,19 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamUpdate do
     </.form>
     <.table id="cities" rows={@streams.cities}>
       <:col :let={{_id, city}} label="Name">
-        <%= city.name %>
+        {city.name}
         <dl class="font-normal md:hidden">
           <dt class="sr-only">District</dt>
-          <dd class="mt-1 truncate text-gray-700"><%= city.district %></dd>
+          <dd class="mt-1 truncate text-gray-700">{city.district}</dd>
         </dl>
         <dl class="hidden md:block font-normal text-xs text-zinc-400">
           <dt>Stream inserted:</dt>
-          <dd><%= Timex.now() %></dd>
+          <dd>{Timex.now()}</dd>
         </dl>
       </:col>
-      <:col :let={{_id, city}} label="District" class="hidden md:table-cell"><%= city.district %></:col>
+      <:col :let={{_id, city}} label="District" class="hidden md:table-cell">{city.district}</:col>
       <:col :let={{_id, city}} label="Population" class="text-right md:pr-10">
-        <%= Number.Delimit.number_to_delimited(city.population, precision: 0, delimiter: " ") %>
+        {Number.Delimit.number_to_delimited(city.population, precision: 0, delimiter: " ")}
       </:col>
       <:action :let={{_id, city}}>
         <.link patch={~p"/stream-update/edit?#{[id: city.id]}"}>
@@ -107,11 +112,5 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamUpdate do
 
         {:noreply, socket}
     end
-  end
-
-  defp get_city_form(city) do
-    city
-    |> Cities.change_city()
-    |> to_form()
   end
 end
