@@ -25,17 +25,19 @@
     or when dealing with items that might have duplicate IDs across different
     contexts.
   </li>
-  <li>
-    <strong> <code>get_empty_form/0</code></strong
-    >: Creates a fresh form for city input by generating a changeset from an
-    empty <code>City</code> struct using <code>Cities.change_city()</code> and
-    converting it to a form with <code>to_form()</code>. This helper function is
-    strategically placed immediately after <code>mount/3</code> following the
-    stepdown rule, since <code>mount/3</code> calls it during initialization.
-    The function is reused after successful form submissions to reset the input
-    fields.
-  </li>
 </ul>
+
+<h3><code>get_empty_form/0</code></h3>
+<p>
+  Creates a fresh form for city input by generating a changeset from an empty
+  <code>City</code> struct using <code>Cities.change_city()</code> and
+  converting it to a form with <code>to_form()</code>. This helper function is
+  strategically placed immediately after <code>mount/3</code> following the
+  stepdown rule, since <code>mount/3</code> calls it during initialization. The
+  function is reused after successful form submissions to reset the input
+  fields.
+</p>
+
 <h3><code>render/1</code></h3>
 <p>The rendering function outlines the structure of the HTML:</p>
 <ul>
