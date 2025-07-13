@@ -75,6 +75,32 @@ socket
 |> assign(:options, options)
 ```
 
+### Ordering `put_flash` and `stream` Calls
+
+Flash messages (`put_flash`) are considered UI feedback operations and MUST come AFTER stream operations, not before. This is because:
+
+- Flash messages provide feedback about the result of data operations
+- Stream operations modify the actual data being displayed
+- The logical flow is: update data → provide feedback about the update
+
+CORRECT:
+
+```elixir
+# First handle stream, then provide feedback
+socket
+|> stream_insert(:cities, city)
+|> put_flash(:info, "City successfully updated.")
+```
+
+INCORRECT:
+
+```elixir
+# Don't provide feedback before handling stream
+socket
+|> put_flash(:info, "City successfully updated.")
+|> stream_insert(:cities, city)
+```
+
 ### Code Style for State Updates
 
 1. For multiple variables or complex logic, you MUST use expanded form:
@@ -142,3 +168,49 @@ INCORRECT:
 {event, resource}  # Missing module name
 {__MODULE__, event, resource}  # Wrong tuple structure
 ```
+
+## Error Handling
+
+### Phoenix Context Functions with !
+
+When using Phoenix context functions that end with ! (like Cities.get_city!), you MUST NOT add additional error handling for expected failure cases.
+
+Functions ending with ! are designed to:
+
+Raise exceptions for expected error cases (like "not found")
+Let Phoenix automatically handle these exceptions
+Return appropriate HTTP responses (like 404) without additional code
+
+CORRECT:
+
+```elixir
+# DO let Phoenix handle the exception
+defp apply_action(%{"id" => id}, :edit, socket) do
+  city = Cities.get_city!(id)  # Phoenix handles the 404 if not found
+
+  socket
+  |> assign(:city, city)
+  |> assign(:form, get_city_form(city))
+end
+```
+
+INCORRECT:
+
+```elixir
+# DON'T add unnecessary error handling
+defp apply_action(%{"id" => id}, :edit, socket) do
+  case Cities.get_city(id) do
+    {:ok, city} ->
+      socket
+      |> assign(:city, city)
+      |> assign(:form, get_city_form(city))
+
+    {:error, :not_found} ->
+      socket
+      |> put_flash(:error, "City not found.")
+      |> push_patch(to: ~p"/cities")
+  end
+end
+```
+
+Rule: If Phoenix's default error handling (like returning a 404 page) is sufficient, use the ! version and let Phoenix handle it automatically.
