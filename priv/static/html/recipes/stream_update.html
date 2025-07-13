@@ -33,17 +33,14 @@
     parameters simplifies routing logic and enhances maintainability.
   </li>
 </ul>
-<h3>Helper Function</h3>
-<ul>
-  <li>
-    <strong><code>get_city_form/1</code></strong
-    >: Converts a <code>City</code> struct into a form changeset. This involves
-    creating a changeset for the city using
-    <code>Cities.change_city/1</code> and then converting that changeset into a
-    form-friendly structure with <code>to_form/1</code>. This is used to prepare
-    the form for editing city details.
-  </li>
-</ul>
+<h3><code>get_city_form/1</code></h3>
+<p>
+  Converts a <code>City</code> struct into a form changeset. This involves
+  creating a changeset for the city using <code>Cities.change_city/1</code> and
+  then converting that changeset into a form-friendly structure with
+  <code>to_form/1</code>. This is used to prepare the form for editing city
+  details.
+</p>
 <h3><code>render/1</code></h3>
 <p>Defines the HTML output, including:</p>
 <ul>
