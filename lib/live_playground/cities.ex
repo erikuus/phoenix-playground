@@ -45,6 +45,35 @@ defmodule LivePlayground.Cities do
 
   # endpaginate
 
+  @doc """
+  Gets all cities for a country code ordered by name.
+
+  This is a simplified version of `list_country_city/2` designed specifically
+  for stream examples. Unlike the full version, this function does not support
+  filtering, sorting options, or pagination.
+
+  ## Parameters
+    - `countrycode`: The ISO country code (e.g., 'EST' for Estonia).
+
+  ## Returns
+    - A list of %City{} structs for the specified country, ordered by name ascending.
+
+  ## Examples
+
+      iex> list_country_city_stream("EST")
+      [%City{name: "Tallinn", ...}, %City{name: "Tartu", ...}]
+
+  """
+  # streaminsert # streamreset # streamupdate
+  def list_country_city(countrycode) do
+    from(City)
+    |> where(countrycode: ^countrycode)
+    |> order_by(asc: :name)
+    |> Repo.all()
+  end
+
+  # endstreaminsert # endstreamreset # endstreamupdate
+
   # filter
 
   @doc """
@@ -52,7 +81,7 @@ defmodule LivePlayground.Cities do
 
   ## Parameters:
     - `countrycode`: The ISO country code (e.g., 'US' for the United States).
-    - `options`: A map of options to further filter and sort the results. Default is `%{sort_by: :name, sort_order: :asc}`.
+    - `options`: A map of options to further filter and sort the results.
 
   ## Options:
     - `name`: Filter cities by name using a case-insensitive like match. (e.g., `%{name: "York"}`).
@@ -82,8 +111,8 @@ defmodule LivePlayground.Cities do
   ## Returns:
     - A list of %City{} structs matching the criteria, sorted and paginated according to the options.
   """
-  # paginate # sort # form # streaminsert # streamreset # streamupdate # streamreset # broadcaststream_ # broadcaststreamreset # tabularinsert
-  def list_country_city(countrycode, options \\ %{sort_by: :name, sort_order: :asc}) do
+  # paginate # sort # form # broadcaststream_ # broadcaststreamreset # tabularinsert
+  def list_country_city(countrycode, options) do
     from(City)
     |> where(countrycode: ^countrycode)
     |> filter_by_name(options)
@@ -94,7 +123,7 @@ defmodule LivePlayground.Cities do
     |> Repo.all()
   end
 
-  # endpaginate # endfilter # endsort # endform # endstreaminsert # endstreamreset # endstreamupdate # endstreamreset # endbroadcaststream_ # endbroadcaststreamreset # endtabularinsert
+  # endpaginate # endfilter # endsort # endform # endbroadcaststream_ # endbroadcaststreamreset # endtabularinsert
 
   # filter
   defp filter_by_name(query, %{name: name}) when name != "" do
