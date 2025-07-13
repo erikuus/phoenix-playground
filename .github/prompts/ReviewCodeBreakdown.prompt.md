@@ -58,6 +58,43 @@ PRACTICAL VALUE PROBLEMS:
 □ Are there missing connections between related concepts?
 □ Does it help developers implement similar features?
 
+RESPONSE FORMAT:
+
+## HTML Code Improvements
+
+When providing HTML improvements, return ONLY the changed sections in code blocks that can be directly inserted into the file. Do not include:
+
+- Commented lines before and after (e.g., `<!-- filepath: ... -->`)
+- Entire HTML structure
+- Unchanged surrounding content
+
+Format HTML improvements as:
+
+```html
+<section>
+  <!-- Only the improved content here -->
+</section>
+```
+
+## Language Guidelines
+
+AVOID these overused LLM terms in explanations:
+
+- "leverage" (use: use, apply, employ)
+- "utilize" (use: use)
+- "seamlessly" (use: smoothly, without issues)
+- "robust" (use: reliable, stable)
+- "cutting-edge" (use: modern, current)
+- "harness" (use: use, take advantage of)
+- "streamline" (use: simplify, optimize)
+- "facilitate" (use: enable, help, make easier)
+- "endeavor" (use: attempt, try)
+- "paradigm" (use: approach, method)
+- "synergy" (use: cooperation, combined effect)
+- "holistic" (use: complete, comprehensive)
+
+Use plain developer language that sounds natural and conversational.
+
 SUGGESTION FORMAT:
 
 For each improvement, provide:
@@ -82,9 +119,11 @@ After drafting your suggestions, CRITICALLY REVIEW them for:
 □ Do I explain why each change is beneficial?
 □ Have I avoided introducing new vagueness or inaccuracies?
 □ Do my suggestions maintain the original tone and style?
+□ Have I avoided overused LLM terminology?
+□ Are my HTML code blocks ready for direct insertion?
 
 RESPONSE FORMAT:
 
 Provide your final review and suggestions only. Do not show the self-criticism process or multiple drafts. Your response should be the result of your internal review and refinement process.
 
-Focus on improvements that genuinely help developers understand and implement
+Focus on improvements that genuinely help developers understand and
