@@ -5,122 +5,184 @@
   resource use.
 </p>
 <h3><code>mount/3</code></h3>
-<p>
-  This function initializes the LiveView based on whether a
-  <code>country_id</code> is present:
-</p>
+<p>Uses pattern matching to handle two different initialization scenarios:</p>
 <ul>
   <li>
-    <strong>With <code>country_id</code></strong
-    >: It attempts to fetch cities for the specified country. If the country
-    doesn't exist (catching <code>Ecto.NoResultsError</code>), it initializes
-    the view with empty data.
+    <strong>With <code>country_id</code> parameter</strong>: Directly loads the
+    specified country using <code>Countries.get_country!/1</code>. If the
+    country doesn't exist, Phoenix automatically returns a 404 error,
+    eliminating the need for manual error handling.
   </li>
   <li>
-    <strong>Without <code>country_id</code></strong
-    >: It automatically selects the first country from a list of Baltic
-    countries and displays its cities. If no countries are found, it initializes
-    with no data.
+    <strong>Without <code>country_id</code> parameter</strong>: Loads all Baltic
+    countries and automatically selects the first one. If no countries exist,
+    initializes with empty state. This provides a sensible default when users
+    visit the page without specifying a country.
   </li>
 </ul>
 <p>
-  Setting up streams in the <code>mount/2</code> function rather than in
-  <code>handle_params/3</code> in a Phoenix LiveView is often more effective and
-  efficient for several reasons:
+  Both scenarios delegate to <code>init_tab/4</code> for consistent state
+  initialization. Setting up streams in <code>mount/3</code> rather than
+  <code>handle_params/3</code> is critical because:
 </p>
 <ul>
   <li>
-    <p>
-      <strong>Initial Setup Efficiency</strong>: <code>mount/2</code> is invoked
-      when the LiveView is first connected, making it ideal for establishing
-      initial states, including data streams, ensuring that all necessary data
-      is available for the initial rendering.
-    </p>
+    <strong>Stream Performance Anti-Pattern</strong>: Initializing streams in
+    <code>handle_params/3</code> would recreate the entire stream every time any
+    parameter changes (like opening an edit modal). This defeats the primary
+    purpose of streams, which is to maintain existing DOM elements and only
+    update what's necessary. Stream initialization should only happen once per
+    LiveView connection.
   </li>
   <li>
-    <p>
-      <strong>Connection Resilience</strong>: On reconnects,
-      <code>mount/2</code> re-establishes the LiveView state and reinitializes
-      data streams, maintaining consistency and functionality across sessions.
-    </p>
+    <strong>Initial Setup Efficiency</strong>: <code>mount/3</code> runs once
+    when the LiveView connects, making it ideal for establishing initial data
+    streams and ensuring all necessary data is available for the first render.
   </li>
   <li>
-    <p>
-      <strong>Load Management</strong>: Setting up streams during initial
-      connection distributes the loading of data more efficiently, preventing
-      performance issues associated with redundant data fetching that could
-      occur if streams were set up in response to parameter changes in
-      <code>handle_params/3</code>.
-    </p>
+    <strong>Reconnection Handling</strong>: On reconnects (when users lose
+    internet connection), <code>mount/3</code> re-establishes the complete
+    state, while <code>handle_params/3</code> only handles parameter changes.
   </li>
   <li>
-    <p>
-      <strong>Clear Code Organization</strong>: Using <code>mount/2</code> for
-      setting up streams separates concerns by distinguishing between initial
-      setup tasks and handling updates due to user interactions, enhancing code
-      readability and maintainability.
-    </p>
+    <strong>Selective Updates Only</strong>: With streams initialized in
+    <code>mount/3</code>, <code>handle_params/3</code> can focus on selective
+    updates like form state changes without touching the stream data,
+    maintaining optimal performance.
   </li>
 </ul>
-<h3><code>handle_params/2</code> with <code>apply_action/2</code></h3>
+
+<h3><code>init_tab/4</code></h3>
 <p>
-  <code>handle_params/2</code> routes actions based on URL parameters. It
-  adjusts the LiveView state if necessary (e.g., switching tabs between
-  countries) and applies appropriate actions such as loading edit forms for
-  cities:
+  Initializes socket state with country data, selected country, cities empty
+  flag, and city stream. This function follows the coding convention of assigns
+  before streams, ensuring UI state is set before data streams are established.
+</p>
+
+<h3><code>handle_params/3</code></h3>
+<p>
+  Extracts parameters from the URL and manages country tab switching. When a
+  country change is detected (by comparing the current
+  <code>selected_country</code> with the one from the URL), it calls
+  <code>change_tab/2</code> to update the stream, then delegates to
+  <code>apply_action/3</code> for form state management.
+</p>
+
+<h3><code>change_tab/2</code></h3>
+<p>
+  Handles country switching by fetching new city data and resetting the stream.
+  Uses <code>stream(:cities, cities, reset: true)</code> to completely replace
+  existing stream content, which is more efficient than individual insertions
+  when changing entire datasets.
+</p>
+
+<h3><code>apply_action/3</code></h3>
+<p>
+  Handles different URL-based actions and prepares the appropriate form state:
 </p>
 <ul>
   <li>
-    <strong>Stream Reset on Tab Change</strong>: If the selected country changes
-    (detected by comparing <code>selected_country</code> in the socket assigns),
-    it resets the city stream (<code>stream(:cities, ..., reset: true)</code>)
-    to reload city data for the new country, which clears previous entries and
-    avoids memory leaks or residual data display.
+    <strong>For <code>:index</code> action</strong>: Creates an empty form for
+    adding new cities by initializing a blank <code>City</code> struct and
+    setting the button title to "Add".
+  </li>
+  <li>
+    <strong>For <code>:edit</code> action</strong>: Retrieves the specific city
+    using <code>Cities.get_city!/1</code> (which handles 404 errors
+    automatically), populates the form with existing city data, and sets the
+    button title to "Update".
   </li>
 </ul>
+
+<h3><code>assign_form/2</code></h3>
+<p>
+  Converts a changeset into a form-ready structure using
+  <code>to_form/1</code> and assigns it to the socket. This centralization
+  ensures consistent form handling across create and edit operations.
+</p>
+
 <h3><code>render/1</code></h3>
-<p>Defines the HTML output, which includes:</p>
+<p>
+  Defines the HTML output with several key features that demonstrate stream
+  management patterns:
+</p>
 <ul>
   <li>
-    <strong>Conditional Alerts for Data Absence</strong>: Displays alerts if
-    there are no countries or cities available, handling potentially empty
-    states that can result from direct URL manipulation.
+    <strong>Conditional Alerts Using :cities_empty State</strong>: Uses the
+    <code>@cities_empty</code> assign to conditionally display "No cities
+    available" alerts. This explicit state tracking is necessary because
+    LiveView streams cannot be checked for emptiness within the template (you
+    cannot use <code>@streams.cities.inserts == []</code> after LiveView state
+    changes). The <code>:cities_empty</code> assign provides a reliable way to
+    show/hide UI elements based on data availability.
   </li>
   <li>
-    <strong>Dynamic Tabs for Countries</strong>: Allows users to switch between
-    different countries, dynamically reloading the city list for the selected
-    country.
+    <strong>Dynamic Country Tabs with Stream Reset</strong>: Allows users to
+    switch between different countries using <code>.tabs</code> component. Each
+    tab change triggers a complete stream reset via <code>change_tab/2</code>,
+    demonstrating how to efficiently replace entire datasets while maintaining
+    stream performance benefits.
   </li>
   <li>
-    <strong>Editable City Data</strong>: Each city row includes an edit link.
+    <strong>Conditional Form Display</strong>: Shows the city creation/edit form
+    only when countries are available, preventing form submissions that would
+    fail due to missing country context.
   </li>
   <li>
-    <strong>Real-Time Feedback</strong>: Timestamps within each city row
-    visually demonstrate that only the affected parts of the LiveView are
-    updated.
+    <strong>Stream-Powered City Table</strong>: The table uses
+    <code>@streams.cities</code> to efficiently render city data. Only the rows
+    that change are re-rendered, not the entire table, showcasing the core
+    benefit of LiveView streams for large datasets.
+  </li>
+  <li>
+    <strong>Pedagogical Stream Timestamps</strong>: Each city row displays a
+    timestamp showing when it was rendered (<code>Timex.now()</code>). This is a
+    debugging/demonstration feature that visually proves that only updated rows
+    are re-rendered by the stream, not the entire table. When you edit a city,
+    only that specific row's timestamp updates, demonstrating LiveView's
+    selective rendering capabilities.
+  </li>
+  <li>
+    <strong>Optimistic UI with JavaScript</strong>: The delete action uses
+    <code>JS.push("delete", value: %{city_id: city.id}) |> hide("##{id}")</code>
+    to immediately hide the row before the server confirms deletion, providing
+    instant visual feedback while the deletion processes in the background.
   </li>
 </ul>
-<h3><code>handle_event/3</code> for "save" and "delete"</h3>
-<p>Handles saving new or updated city data or deleting a city:</p>
+
+<h3><code>handle_event/3</code></h3>
+<p>
+  Handles form validation, saving, and deletion with proper state management
+  ordering:
+</p>
 <ul>
   <li>
-    <strong>On <code>save</code></strong
-    >: Updates or creates city entries in the database. Upon success, it updates
-    the stream with new or updated city data and redirects to reflect changes.
+    <strong>"validate" event</strong>: Updates the form changeset in real-time
+    as users type, setting the changeset action to <code>:validate</code> to
+    trigger field-level validation without attempting to save.
   </li>
   <li>
-    <strong>On <code>delete</code></strong
-    >: Removes the city from both the database and the stream, ensuring the UI
-    remains consistent with the backend state.
+    <strong>"save" event</strong>: Delegates to <code>save_city/3</code> which
+    handles both create and update operations. On success, it follows the coding
+    convention: assigns before streams, streams before flash messages. For
+    create operations, it sets <code>cities_empty</code> to false and inserts at
+    position 0 to show new cities at the top.
   </li>
-</ul>
-<h3>Helper Functions</h3>
-<ul>
   <li>
-    <strong><code>assign_form/2</code></strong
-    >: Assigns a changeset to the socket as a form. This involves converting the
-    changeset into a form-friendly structure using <code>to_form/1</code> and
-    then assigning it to the <code>:form</code> key in the socket's assigns,
-    making it ready for rendering in the form.
+    <strong>"delete" event</strong>: Removes the city from the database using
+    <code>Cities.delete_city/1</code> and updates the stream with
+    <code>stream_delete/3</code>. Note that <code>cities_empty</code> is not
+    updated on delete to keep the code simple - the table header remains visible
+    even when empty.
   </li>
 </ul>
+
+<h3><code>save_city/3</code></h3>
+<p>
+  Handles both create and update operations for cities. On successful
+  operations, it follows the coding convention: assigns before streams, streams
+  before flash messages. For create operations, it sets
+  <code>cities_empty</code> to false and inserts at position 0 to show new
+  cities at the top of the list, ensuring immediate visibility of the most
+  recently added city.
+</p>
