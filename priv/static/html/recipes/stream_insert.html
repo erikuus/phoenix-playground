@@ -1,11 +1,10 @@
 <p>
-  The <code>StreamInsert</code> module leverages LiveView's streaming
-  capabilities to efficiently handle changes in a list of cities displayed to
-  the user. Each operation on the city list updates only the relevant part of
-  the DOM, specifically targeted using a unique DOM ID for each city. This
-  technique reduces the amount of data sent over the wire and enhances the user
-  experience by minimizing the visual disruption typically caused by updating
-  the user interface.
+  The <code>StreamInsert</code> module uses LiveView's streaming capabilities to
+  efficiently handle changes in a list of cities displayed to the user. Stream
+  operations (insert, update, delete) only modify the specific DOM elements
+  associated with the affected cities, rather than re-rendering the entire
+  table. This is achieved through LiveView's streaming system, which tracks each
+  item by its DOM ID and sends targeted updates to the browser.
 </p>
 <h3><code>mount/3</code></h3>
 <p>
@@ -18,18 +17,23 @@
 <ul>
   <li>
     <strong>Custom IDs with <code>stream_configure</code></strong
-    >: In Phoenix LiveView, the default behavior of <code>stream</code> allows
-    you to automatically generate DOM IDs based on each item's unique identifier
-    directly from the streamed data, typically using a primary key from a
-    database. This can be accessed and utilized in HEEx templates through tuple
-    destructuring, such as <code>:let={{id, city}}</code>. However, when custom
-    DOM IDs are required—either due to specific frontend requirements, complex
-    data structures, consistency across views, or compatibility with external
-    JavaScript libraries—<code>stream_configure</code> with the
-    <code>dom_id</code> option becomes essential. This function enables you to
-    define custom DOM ID patterns, such as combining multiple attributes or
-    adding prefixes, offering enhanced control over DOM interactions and
-    integration with third-party tools.
+    >: By default, LiveView streams use each item's primary key as the DOM ID
+    (e.g., <code>id="cities-123"</code>). This implementation uses
+    <code>stream_configure</code> with a custom <code>dom_id</code> function to
+    create composite IDs like <code>city-EST-123</code>. This pattern is useful
+    when you need predictable DOM IDs for CSS targeting, JavaScript integration,
+    or when dealing with items that might have duplicate IDs across different
+    contexts.
+  </li>
+  <li>
+    <strong> <code>get_empty_form/0</code></strong
+    >: Creates a fresh form for city input by generating a changeset from an
+    empty <code>City</code> struct using <code>Cities.change_city()</code> and
+    converting it to a form with <code>to_form()</code>. This helper function is
+    strategically placed immediately after <code>mount/3</code> following the
+    stepdown rule, since <code>mount/3</code> calls it during initialization.
+    The function is reused after successful form submissions to reset the input
+    fields.
   </li>
 </ul>
 <h3><code>render/1</code></h3>
@@ -50,42 +54,52 @@
     that the specific row can be efficiently removed from the DOM upon deletion.
   </li>
   <li>
-    <strong>Real-Time Feedback</strong>: Timestamps within each city row
-    visually demonstrate that only the affected parts of the LiveView are
-    updated.
+    <strong>Real-Time Feedback</strong>: Each city row displays a timestamp
+    using <code>{Timex.now()}</code> in the template. This serves as a visual
+    proof that only newly inserted rows are re-rendered - existing rows retain
+    their original timestamps, demonstrating LiveView's selective update
+    capability. When you add a new city, only that row shows the current time,
+    while all other rows keep their previous timestamps.
   </li>
 </ul>
-<h3><code>handle_event/3</code> for "save"</h3>
-<p>Handles the creation of a new city:</p>
+<h3><code>handle_event/3</code></h3>
+<p>This function handles two types of user interactions:</p>
 <ul>
   <li>
-    On successful creation, the city is inserted at the beginning of the stream,
-    ensuring that the city appears immediately on the UI without a full
-    re-render of the entire list.
+    <strong>"save"</strong>
+    <p>
+      Triggered when the city form is submitted. It transforms the form
+      parameters by adding <code>countrycode: "EST"</code> since this view only
+      displays Estonian cities - all new cities should automatically be Estonian
+      to appear in this filtered list. On successful creation, first the form is
+      reset with <code>assign(:form, get_empty_form())</code>, then the new city
+      is inserted at the beginning of the stream with
+      <code>stream_insert(:cities, city, at: 0)</code>. The
+      <code>at: 0</code> parameter ensures new cities appear at the top of the
+      list. On failure, only the form is updated with validation errors, leaving
+      the existing city stream unchanged.
+    </p>
   </li>
   <li>
-    On failure (e.g., due to validation errors), the form is updated to reflect
-    the changeset errors, providing feedback to the user.
+    <strong>"delete"</strong>
+    <p>
+      Triggered when a user clicks the delete button for a specific city. It
+      fetches the city by ID and deletes it from the database, then removes the
+      city from the stream using
+      <code>stream_delete(socket, :cities, city)</code>. This operation only
+      affects the specific DOM element associated with that city, demonstrating
+      the performance benefits of streaming updates.
+    </p>
   </li>
-</ul>
-<h3><code>handle_event/3</code> for "delete"</h3>
-<p>Manages the deletion of a city:</p>
-<ul>
-  <li>Fetches the city by ID and deletes it from the database.</li>
-  <li>
-    The city is then removed from the stream, again only affecting the specific
-    DOM element associated with that city, enhancing performance and user
-    experience.
-  </li>
-</ul>
-<h3>Helper Functions</h3>
-<ul>
-  <li>
-    <strong><code>get_empty_form/0</code></strong
-    >: Prepares an empty form by initializing a <code>City</code> struct and
-    transforming it into a form-compatible format using
-    <code>Cities.change_city()</code> and <code>to_form()</code>. This function
-    is used to reset the form after a successful submission or to initialize the
-    form when the LiveView mounts.
-  </li>
+  <h3>Performance Benefits of Streaming</h3>
+  <p>
+    The streaming approach provides significant performance advantages over
+    traditional <code>assign</code> updates. When using
+    <code>assign(:cities, updated_list)</code>, LiveView would need to diff the
+    entire list and potentially re-render all table rows. With streams, only the
+    specific rows that changed are updated in the DOM. This is particularly
+    beneficial for large datasets where adding, updating, or removing individual
+    items becomes a constant-time operation rather than linear with the list
+    size.
+  </p>
 </ul>
