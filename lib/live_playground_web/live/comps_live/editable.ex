@@ -4,14 +4,18 @@ defmodule LivePlaygroundWeb.CompsLive.Editable do
   alias LivePlayground.Languages
 
   def mount(_params, _session, socket) do
+    language = Languages.get_language!(228)
+
     socket =
-      assign(socket,
-        language: Languages.get_language!(228),
-        edit_field: nil,
-        form: nil
-      )
+      socket
+      |> assign(:language, language)
+      |> reset_edit_form()
 
     {:ok, socket}
+  end
+
+  defp reset_edit_form(socket) do
+    assign(socket, edit_field: nil, form: nil)
   end
 
   def render(assigns) do
@@ -30,9 +34,16 @@ defmodule LivePlaygroundWeb.CompsLive.Editable do
     </.header>
     <!-- end hiding from live code -->
     <.list class="mt-0 xl:mr-96">
-      <:item title="Countrycode"><%= @language.countrycode %></:item>
-      <:item title="Isofficial"><%= @language.isofficial %></:item>
-      <:item title="Language"><%= @language.language %></:item>
+      <:item title="Countrycode">{@language.countrycode}</:item>
+      <:item title="Isofficial">{@language.isofficial}</:item>
+      <:item title="Language">
+        <.editable id="language" save_event="nosave" form={@form} edit={@edit_field == "language"}>
+          {@language.language}
+          <:input_block>
+            <.input field={@form[:language]} type="text" class="flex-auto md:-ml-3" />
+          </:input_block>
+        </.editable>
+      </:item>
       <:item title="Percentage">
         <.editable
           save_event="nosave"
@@ -42,7 +53,7 @@ defmodule LivePlaygroundWeb.CompsLive.Editable do
           form={@form}
           edit={@edit_field == "percentage"}
         >
-          <%= @language.percentage %>
+          {@language.percentage}
           <:input_block>
             <.input field={@form[:percentage]} type="text" title="Percentage" class="flex-auto md:-ml-3" />
           </:input_block>
@@ -59,12 +70,22 @@ defmodule LivePlaygroundWeb.CompsLive.Editable do
   end
 
   def handle_event("nosave", %{"language" => params}, socket) do
-    {:noreply,
-     put_flash(
-       socket,
-       :info,
-       "PARAMS=#{inspect(params)}. Save functionality not supported in this demo. Please check the recipes section."
-     )}
+    # Example of handling save:
+    # case Languages.update_language(socket.assigns.language, params) do
+    #   {:ok, _language} ->
+    #     {:noreply, reset_edit_form(socket)}
+    #   {:error, changeset} ->
+    #     {:noreply, assign(socket, :form, to_form(changeset))}
+    # end
+    socket =
+      socket
+      |> reset_edit_form()
+      |> put_flash(
+        :info,
+        "PARAMS=#{inspect(params)}. Save functionality not supported in this demo."
+      )
+
+    {:noreply, socket}
   end
 
   def handle_event("edit", %{"field" => field}, socket) do
