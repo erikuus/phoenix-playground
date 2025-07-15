@@ -8,19 +8,11 @@ defmodule LivePlaygroundWeb.RecipesLive.Broadcast do
   def mount(_params, _session, socket) do
     if connected?(socket), do: Countries.subscribe(@country_id)
 
-    socket = reset_edit_form(socket)
-
-    try do
-      country = Countries.get_country!(@country_id)
-      {:ok, assign(socket, :country, country)}
-    rescue
-      Ecto.NoResultsError ->
-        {:ok, assign(socket, :country, nil)}
-    end
+    country = Countries.get_country!(@country_id)
+    {:ok, assign(socket, :country, country)}
   end
 
   def terminate(_reason, _socket) do
-    # Ensure we unsubscribe when the LiveView is terminated to clean up resources
     Countries.unsubscribe(@country_id)
     :ok
   end
@@ -39,9 +31,39 @@ defmodule LivePlaygroundWeb.RecipesLive.Broadcast do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <%= country_details(assigns) %>
+    <div class="mb-12">
+      <.simple_form for={get_country_form(@country)} phx-submit="save">
+        <.input field={get_country_form(@country)[:headofstate]} type="text" label="Head of state" autocomplete="off" />
+        <:actions>
+          <.button>Update Head of State</.button>
+        </:actions>
+      </.simple_form>
+    </div>
+    <div id="country" phx-update="replace">
+      <.list class="mt-6 mb-16 ml-1">
+        <:item title="Name">{@country.name}</:item>
+        <:item title="The head of state">
+          {@country.headofstate}
+        </:item>
+        <:item title="Population">
+          {Number.Delimit.number_to_delimited(@country.population, precision: 0, delimiter: " ")}
+        </:item>
+        <:item title="GNP">
+          {Number.Delimit.number_to_delimited(@country.gnp, precision: 0, delimiter: " ")}
+        </:item>
+        <:item title="Life expectancy">
+          {Number.Delimit.number_to_delimited(@country.lifeexpectancy, precision: 2)}
+        </:item>
+      </.list>
+    </div>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
+      <.note icon="hero-information-circle">
+        <a target="_blank" href="/broadcast" class="underline">
+          Open this page in multiple browser tabs or windows.
+        </a>
+        Change the head of state to see real-time updates in other tabs.
+      </.note>
       <.code_block filename="lib/live_playground_web/live/recipes_live/broadcast.ex" />
       <.code_block filename="lib/live_playground/countries.ex" from="# broadcast" to="# endbroadcast" />
     </div>
@@ -50,111 +72,44 @@ defmodule LivePlaygroundWeb.RecipesLive.Broadcast do
     """
   end
 
-  defp country_details(%{country: nil} = assigns) do
-    ~H"""
-    <.alert id="no-countries" kind={:info} close={false}>
-      No country found for the provided ID.
-    </.alert>
-    """
-  end
-
-  defp country_details(assigns) do
-    ~H"""
-    <div id="country" phx-update="replace">
-      <.list class="mt-6 mb-16 ml-1">
-        <:item title="Name"><%= @country.name %></:item>
-        <:item title="Code"><%= @country.code %></:item>
-        <:item title="Continent"><%= @country.continent %></:item>
-        <:item title="Region"><%= @country.region %></:item>
-        <:item title="The form of government"><%= @country.governmentform %></:item>
-        <:item title="The year of independence"><%= @country.indepyear %></:item>
-        <:item title="The head of state">
-          <.editable id="headofstate" form={@form} edit={@edit_field == "headofstate"}>
-            <%= @country.headofstate %>
-            <:input_block>
-              <.input field={@form[:headofstate]} type="text" class="flex-auto md:-ml-3" />
-            </:input_block>
-          </.editable>
-        </:item>
-        <:item title="Population">
-          <.editable id="population" form={@form} edit={@edit_field == "population"}>
-            <%= Number.Delimit.number_to_delimited(@country.population, precision: 0, delimiter: " ") %>
-            <:input_block>
-              <.input field={@form[:population]} type="number" step="any" class="flex-auto md:-ml-3" />
-            </:input_block>
-          </.editable>
-        </:item>
-        <:item title="GNP">
-          <.editable id="gnp" form={@form} edit={@edit_field == "gnp"}>
-            <%= Number.Delimit.number_to_delimited(@country.gnp, precision: 0, delimiter: " ") %>
-            <:input_block>
-              <.input field={@form[:gnp]} type="number" step="any" class="flex-auto md:-ml-3" />
-            </:input_block>
-          </.editable>
-        </:item>
-        <:item title="Life expectancy">
-          <.editable id="lifeexpectancy" form={@form} edit={@edit_field == "lifeexpectancy"}>
-            <%= Number.Delimit.number_to_delimited(@country.lifeexpectancy, precision: 2) %>
-            <:input_block>
-              <.input field={@form[:lifeexpectancy]} type="number" step="any" class="flex-auto md:-ml-3" />
-            </:input_block>
-          </.editable>
-        </:item>
-      </.list>
-    </div>
-    """
-  end
-
-  def handle_event("edit", %{"field" => field}, socket) do
-    form =
-      socket.assigns.country
-      |> Countries.change_country()
-      |> to_form()
-
-    socket =
-      assign(socket,
-        edit_field: field,
-        form: form
-      )
-
-    {:noreply, socket}
-  end
-
-  def handle_event("cancel", _, socket) do
-    {:noreply, reset_edit_form(socket)}
+  defp get_country_form(country) do
+    country
+    |> Countries.change_country()
+    |> to_form()
   end
 
   def handle_event("save", %{"country" => params}, socket) do
     case Countries.update_country_broadcast(socket.assigns.country, params) do
-      {:ok, _country} ->
-        {:noreply, reset_edit_form(socket)}
-
-      {:error, changeset} ->
-        socket = assign(socket, :form, to_form(changeset))
-        {:noreply, socket}
-    end
-  end
-
-  def handle_info({:update_country, updated_country}, socket) do
-    cond do
-      updated_country.id == socket.assigns.country.id && socket.assigns.edit_field != nil ->
-        # Notify the user about the update
+      {:ok, country} ->
         socket =
           socket
-          |> assign(:country, updated_country)
-          |> put_flash(:info, "This country's details have just been updated by another user.")
+          |> assign(:country, country)
+          |> put_flash(:info, "Head of state updated successfully.")
 
         {:noreply, socket}
 
-      updated_country.id == socket.assigns.country.id ->
-        {:noreply, assign(socket, country: updated_country)}
-
-      true ->
-        {:noreply, socket}
+      {:error, changeset} ->
+        {:noreply, assign(socket, :form, to_form(changeset))}
     end
   end
 
-  defp reset_edit_form(socket) do
-    assign(socket, edit_field: nil, form: nil)
+  def handle_info({LivePlayground.Countries, {:update_country, updated_country}}, socket) do
+    if country_changed?(socket.assigns.country, updated_country) do
+      socket =
+        socket
+        |> assign(:country, updated_country)
+        |> put_flash(:info, "Country data updated by another user.")
+
+      {:noreply, socket}
+    else
+      {:noreply, assign(socket, :country, updated_country)}
+    end
+  end
+
+  defp country_changed?(current, updated) do
+    current.headofstate != updated.headofstate ||
+      current.population != updated.population ||
+      current.gnp != updated.gnp ||
+      current.lifeexpectancy != updated.lifeexpectancy
   end
 end

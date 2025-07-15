@@ -19,8 +19,29 @@ defmodule LivePlayground.Countries do
     Phoenix.PubSub.unsubscribe(@pubsub, "country:#{country_id}")
   end
 
+  @doc """
+  Broadcasts a database operation result to subscribed processes.
+
+  There are two Phoenix PubSub broadcast options:
+  - `broadcast/3` - Sends message to ALL subscribed processes (including sender)
+  - `broadcast_from/4` - Sends message to ALL subscribed processes EXCEPT sender
+
+  This function uses `broadcast_from/4` with `self()` because:
+  - The calling process already has the updated data from the database operation
+  - Sending the broadcast back to the originating process would cause redundant updates
+  - Other processes need the broadcast to update their state in real-time
+
+  The function handles two possible outcomes:
+  - `{:ok, country}` - Successful operation, broadcasts the event to other processes
+  - `{:error, changeset}` - Failed operation, passes through the error unchanged
+  """
   def broadcast({:ok, country}, event) do
-    Phoenix.PubSub.broadcast(@pubsub, "country:#{country.id}", {event, country})
+    Phoenix.PubSub.broadcast_from(
+      @pubsub,
+      self(),
+      "country:#{country.id}",
+      {__MODULE__, {event, country}}
+    )
 
     {:ok, country}
   end

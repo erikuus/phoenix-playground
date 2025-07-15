@@ -1,80 +1,171 @@
 <p>
-  The <code>Broadcast</code> module uses LiveView's streaming capabilities along
-  with Phoenix PubSub to handle real-time broadcasts of changes in country data.
-  It's designed to show changes to other connected users immediately, which is
-  essential for applications where data consistency and real-time updates are
-  critical.
+  The <code>Broadcast</code> module demonstrates real-time updates using Phoenix
+  PubSub. When one user updates country data, all other connected users see the
+  changes immediately. This pattern is essential for collaborative applications
+  where multiple users work with shared data.
 </p>
+
 <h3><code>mount/3</code></h3>
 <p>
-  Sets up the LiveView session. It subscribes to updates for a predefined
-  country (ID 228) to receive real-time notifications on any changes. The
-  subscription is set up only if the socket is connected, which optimizes
-  resource usage by avoiding unnecessary subscriptions when pre-rendering on the
-  server side.
+  Sets up the LiveView session by subscribing to updates for a specific country
+  (ID 228) and loading initial data. The subscription only happens if the socket
+  is connected, which prevents unnecessary subscriptions during server-side
+  pre-rendering.
 </p>
 <ul>
   <li>
-    <strong>Error Handling</strong>: Attempts to fetch the initial country data.
-    If no country is found (handled via <code>Ecto.NoResultsError</code>), the
-    view initializes with no country data, preventing crashes and managing empty
-    states effectively.
+    Uses <code>Countries.subscribe(@country_id)</code> to create a
+    topic-specific subscription. The topic name is constructed in the Countries
+    context module as <code>"country:#{country_id}"</code> (e.g.,
+    <code>"country:228"</code>), which you can see in the code below. This
+    targeted approach means LiveView processes only receive broadcasts for the
+    specific country they're displaying, rather than all country updates. This
+    is crucial for performance in applications with many countries and users.
+  </li>
+  <li>
+    The pattern <code>"resource:id"</code> (e.g., <code>"country:228"</code>) is
+    a Phoenix convention that allows granular subscriptions. Alternative
+    approaches include global topics like <code>"countries"</code> (all country
+    updates) or user-specific topics like <code>"user:123"</code> (user's
+    subscriptions only).
+  </li>
+  <li>
+    Uses <code>Countries.get_country!(@country_id)</code> which lets Phoenix
+    automatically handle "not found" errors with appropriate HTTP responses,
+    following the convention for functions ending with <code>!</code>.
   </li>
 </ul>
+
 <h3><code>terminate/2</code></h3>
 <p>
-  Ensures cleanup by unsubscribing from the country updates when the LiveView
-  session ends. This is crucial to free up resources and avoid memory leaks.
+  Cleans up the PubSub subscription when the LiveView session ends using
+  <code>Countries.unsubscribe(@country_id)</code>. Without this cleanup, the
+  PubSub registry would maintain a reference to the dead LiveView process,
+  causing broadcast messages to be sent to non-existent processes. This creates
+  memory leaks in the PubSub registry and wasted CPU cycles attempting to
+  deliver messages to dead processes. The unsubscription uses the same
+  country-specific topic that was created during <code>mount/3</code>.
 </p>
+
 <h3><code>render/1</code></h3>
 <p>
-  Outputs the HTML based on the assigned country data. If there's no country
-  data (<code>country: nil</code>), it displays an alert informing the user.
-  Otherwise, it renders detailed information about the country, which includes
-  interactive elements for live editing of fields like population and government
-  form.
+  Displays a simple form for editing the head of state field, followed by a
+  read-only list of country details. The form is always visible, making it easy
+  for users to make changes that will be broadcast to other connected users
+  viewing the same country.
 </p>
-<h3>Event Handling</h3>
+
+<h3><code>get_country_form/1</code></h3>
+<p>
+  Helper function that creates a form for the country data. It generates a fresh
+  changeset and converts it to a form, ensuring the input always shows the
+  current value even when updated via broadcasts from other users.
+</p>
+
 <h3><code>handle_event/3</code></h3>
+<p>Processes form submissions to update the country's head of state.</p>
 <ul>
   <li>
-    <strong>"edit"</strong>: Prepares the form for updating fields by loading
-    current country data into a changeset form, allowing users to make changes.
+    <strong>Success Path</strong>: Updates the country data locally and shows
+    "Head of state updated successfully." The broadcast to other users is
+    handled automatically by the
+    <code>Countries.update_country_broadcast/2</code> function, which targets
+    the same <code>"country:228"</code> topic that other LiveView processes are
+    subscribed to.
   </li>
   <li>
-    <strong>"cancel"</strong>: Resets the form to its non-editable state,
-    discarding any unsaved changes.
-  </li>
-  <li>
-    <strong>"save"</strong>: Attempts to update the country in the database and
-    broadcast these changes. If successful, it resets the edit form; if not, it
-    re-renders the form with error messages.
+    <strong>Error Path</strong>: Converts validation errors to a form and
+    re-renders, allowing users to see and fix validation problems without losing
+    their input.
   </li>
 </ul>
+
 <h3><code>handle_info/2</code></h3>
 <p>
-  Handles broadcast messages for updates. Broadcasting, implemented in the
-  <code>Countries</code> module, pushes changes to all subscribed clients in
-  real time, ensuring all views are immediately updated to reflect the latest
-  data:
+  Handles broadcast messages when other users update the country data. This
+  function processes updates and provides user feedback when meaningful changes
+  occur.
 </p>
 <ul>
   <li>
-    If the update is relevant to the currently viewed country and the country is
-    being edited, it updates the displayed data and notifies the user of
-    external changes.
+    Uses <code>country_changed?/2</code> to check if the update contains actual
+    changes to important fields (headofstate, population, gnp, lifeexpectancy).
   </li>
   <li>
-    If the country isn't being edited, it simply updates the country data in the
-    background.
+    Shows "Country data updated by another user." only when data actually
+    changes, preventing notification spam from redundant updates.
+  </li>
+  <li>
+    Always updates the country data to maintain consistency, even if no visible
+    changes occurred.
   </li>
 </ul>
-<h3>Helper Functions</h3>
+
+<h3><code>country_changed?/2</code></h3>
+<p>
+  Helper function that compares the current country data with updated data to
+  determine if any meaningful changes occurred. This prevents unnecessary flash
+  messages when broadcasts contain identical data.
+</p>
+
+<h3>PubSub Implementation Details</h3>
+<p>
+  The broadcast functionality is implemented in the
+  <code>Countries</code> context module. Understanding the subscription and
+  broadcast topic matching is crucial for proper implementation.
+</p>
 <ul>
   <li>
-    <strong><code>reset_edit_form/1</code></strong
-    >: Resets the edit form in the socket by setting the
-    <code>edit_field</code> and <code>form</code> assigns to <code>nil</code>.
-    This clears any existing form data and exits edit mode.
+    <strong>Topic Consistency</strong><br />The subscription topic
+    <code>"country:#{country_id}"</code> in
+    <code>Countries.subscribe/1</code> must exactly match the broadcast topic in
+    <code>Countries.broadcast/2</code>. This ensures messages reach the correct
+    subscribers.
+  </li>
+  <li>
+    <strong>Preventing Self-Broadcasts</strong><br />
+    Uses <code>Phoenix.PubSub.broadcast_from/4</code> with
+    <code>self()</code> to prevent the originating process from receiving its
+    own broadcast message, avoiding redundant updates. The alternative
+    <code>Phoenix.PubSub.broadcast/3</code> would send to ALL processes
+    including the sender.
+  </li>
+  <li>
+    <strong>Message Format</strong><br />
+    Broadcasts messages as
+    <code>{__MODULE__, {:update_country, updated_country}}</code> tuples that
+    LiveView processes can handle in their <code>handle_info/2</code> functions.
+    This follows the Phoenix convention of including the module name to prevent
+    message conflicts.
+  </li>
+  <li>
+    <strong>Scalability Considerations</strong><br />
+    Using country-specific topics scales better than global topics because each
+    LiveView only receives relevant updates. In a system with 1000 countries and
+    10000 users, a user viewing one country doesn't receive 9999 irrelevant
+    broadcasts.
+  </li>
+</ul>
+
+<h3>Alternative PubSub Patterns</h3>
+<p>
+  While this example uses resource-specific topics, other patterns exist
+  depending on your application's needs:
+</p>
+<ul>
+  <li>
+    <strong>Global Topics</strong><br />
+    <code>"countries"</code> - All LiveViews receive all country updates. Simple
+    but doesn't scale well.
+  </li>
+  <li>
+    <strong>User-Specific Topics</strong><br />
+    <code>"user:#{user_id}"</code> - Each user has their own topic for
+    personalized updates.
+  </li>
+  <li>
+    <strong>Hierarchical Topics</strong><br />
+    <code>"region:europe:country:228"</code> - Allows subscribing to different
+    levels of granularity.
   </li>
 </ul>
