@@ -11,7 +11,6 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStream do
   end
 
   def terminate(_reason, _socket) do
-    # Ensure we unsubscribe when the LiveView is terminated to clean up resources
     Cities.unsubscribe()
     :ok
   end
@@ -26,15 +25,8 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStream do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    try do
-      city = Cities.get_city!(id)
-      set_form(socket, "Update", city)
-    rescue
-      Ecto.NoResultsError ->
-        socket
-        |> put_flash(:error, "City not found.")
-        |> apply_action(:index, %{})
-    end
+    city = Cities.get_city!(id)
+    set_form(socket, "Update", city)
   end
 
   defp set_form(socket, btn_title, city) do
@@ -42,6 +34,10 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStream do
     |> assign(:btn_title, btn_title)
     |> assign(:city, city)
     |> assign_form(Cities.change_city(city))
+  end
+
+  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
+    assign(socket, :form, to_form(changeset))
   end
 
   def render(assigns) do
@@ -63,11 +59,12 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStream do
       phx-submit="save"
       class="flex flex-col space-x-0 space-y-4 md:flex-row md:space-x-4 md:space-y-0"
     >
-      <.input field={@form[:name]} label="Name" class="flex-auto" />
-      <.input field={@form[:district]} label="District" class="flex-auto" />
-      <.input field={@form[:population]} label="Population" class="flex-auto" />
+      <.input field={@form[:name]} label="Name" class="flex-auto" autocomplete="off" />
+      <.input field={@form[:district]} label="District" class="flex-auto" autocomplete="off" />
+      <.input field={@form[:population]} label="Population" class="flex-auto" autocomplete="off" />
+      <.input field={@form[:lock_version]} type="hidden" />
       <div>
-        <.button phx-disable-with="" class="md:mt-8"><%= @btn_title %></.button>
+        <.button phx-disable-with="" class="md:mt-8">{@btn_title}</.button>
       </div>
       <div :if={@live_action == :edit}>
         <.button_link kind={:secondary} patch={~p"/broadcast-stream"} class="w-full md:mt-8">
@@ -77,19 +74,19 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStream do
     </.form>
     <.table id="cities" rows={@streams.cities}>
       <:col :let={{_id, city}} label="Name">
-        <%= city.name %>
+        {city.name}
         <dl class="font-normal md:hidden">
           <dt class="sr-only">District</dt>
-          <dd class="mt-1 truncate text-zinc-700"><%= city.district %></dd>
+          <dd class="mt-1 truncate text-zinc-700">{city.district}</dd>
         </dl>
         <dl class="hidden md:block font-normal text-xs text-zinc-400">
           <dt>Stream inserted:</dt>
-          <dd><%= Timex.now() %></dd>
+          <dd>{Timex.now()}</dd>
         </dl>
       </:col>
-      <:col :let={{_id, city}} label="District" class="hidden md:table-cell"><%= city.district %></:col>
+      <:col :let={{_id, city}} label="District" class="hidden md:table-cell">{city.district}</:col>
       <:col :let={{_id, city}} label="Population" class="text-right md:pr-10">
-        <%= Number.Delimit.number_to_delimited(city.population, precision: 0, delimiter: " ") %>
+        {Number.Delimit.number_to_delimited(city.population, precision: 0, delimiter: " ")}
       </:col>
       <:action :let={{id, city}}>
         <.link patch={~p"/broadcast-stream/edit?#{[id: city.id]}"} class="md:mr-4">
@@ -104,6 +101,12 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStream do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
+      <.note icon="hero-information-circle">
+        <a target="_blank" href="/broadcast-stream" class="underline">
+          Open this page in multiple browser tabs or windows.
+        </a>
+        Create or update a city to see real-time updates in other tabs.
+      </.note>
       <.code_block filename="lib/live_playground_web/live/recipes_live/broadcast_stream.ex" />
       <.code_block filename="lib/live_playground/cities.ex" from="# broadcaststream_" to="# endbroadcaststream_" />
       <.code_block filename="lib/live_playground/cities/city.ex" />
@@ -137,8 +140,14 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStream do
     params = Map.put(params, "countrycode", "EST")
 
     case Cities.create_city_broadcast(params) do
-      {:ok, _city} ->
-        {:noreply, push_patch(socket, to: ~p"/broadcast-stream")}
+      {:ok, city} ->
+        socket =
+          socket
+          |> stream_insert(:cities, city, at: 0)
+          |> put_flash(:info, "City created successfully.")
+          |> push_patch(to: ~p"/broadcast-stream")
+
+        {:noreply, socket}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}
@@ -146,51 +155,77 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStream do
   end
 
   defp save_city(socket, :edit, params) do
-    # Retrieve the city from the database using the ID stored in the socket's assigns
-    city = Cities.get_city!(socket.assigns.city.id)
+    city = socket.assigns.city
+    IO.inspect(city.lock_version, label: "Original lock_version")
+    IO.inspect(params["lock_version"], label: "Form lock_version")
 
-    # Check if the lock_version from the database matches the version in the socket's assigns
-    # This is used to detect if the city has been modified by another user since it was last fetched
-    if city.lock_version != socket.assigns.city.lock_version do
-      # If the lock_version does not match, inform the user via a flash message
-      socket = put_flash(socket, :error, "This city has been modified by someone else.")
-      # Return without making any changes as the city data on the user's side is stale
-      {:noreply, socket}
-    else
-      # If the lock_version matches, proceed to update the city with the new parameters
-      case Cities.update_city_broadcast(city, params) do
-        {:ok, _city} ->
-          {:noreply, push_patch(socket, to: ~p"/broadcast-stream")}
+    case Cities.update_city_broadcast(city, params) do
+      {:ok, updated_city} ->
+        socket =
+          socket
+          |> stream_insert(:cities, updated_city)
+          |> put_flash(:info, "City updated successfully.")
+          |> push_patch(to: ~p"/broadcast-stream")
 
-        {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, socket}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        IO.inspect(changeset.errors, label: "Changeset errors")
+
+        if changeset.errors[:lock_version] do
+          # Conflict detected - fetch latest version
+          latest_city = Cities.get_city!(city.id)
+
+          socket =
+            socket
+            |> assign(:city, latest_city)
+            |> assign_form(Cities.change_city(latest_city))
+            |> put_flash(
+              :error,
+              "This city has been modified by another user. We've loaded the latest version. Please review and submit again."
+            )
+
+          {:noreply, socket}
+        else
+          # Handle other validation errors
           {:noreply, assign_form(socket, changeset)}
-      end
+        end
     end
   end
 
-  def handle_info({:create_city, city}, socket) do
-    {:noreply, stream_insert(socket, :cities, city, at: 0)}
+  def handle_info({LivePlayground.Cities, {:create_city, city}}, socket) do
+    socket =
+      socket
+      |> stream_insert(:cities, city, at: 0)
+      |> put_flash(:info, "A new city has been added by another user.")
+
+    {:noreply, socket}
   end
 
-  def handle_info({:update_city, city}, socket) do
+  def handle_info({LivePlayground.Cities, {:update_city, city}}, socket) do
     if city.id == socket.assigns.city.id && socket.assigns.live_action == :edit do
-      # Notify the user about the update
+      {:noreply, stream_insert(socket, :cities, city)}
+    else
       socket =
         socket
         |> stream_insert(:cities, city)
-        |> put_flash(:info, "This city's details have just been updated by another user.")
+        |> put_flash(:info, "A city has been updated by another user.")
 
       {:noreply, socket}
-    else
-      {:noreply, stream_insert(socket, :cities, city)}
     end
   end
 
-  def handle_info({:delete_city, city}, socket) do
-    {:noreply, stream_delete(socket, :cities, city)}
-  end
+  def handle_info({LivePlayground.Cities, {:delete_city, city}}, socket) do
+    if city.id == socket.assigns.city.id && socket.assigns.live_action == :edit do
+      socket =
+        socket
+        |> stream_delete(:cities, city)
+        |> put_flash(:error, "This city has been deleted by another user.")
+        |> push_patch(to: ~p"/broadcast-stream")
 
-  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    assign(socket, :form, to_form(changeset))
+      {:noreply, socket}
+    else
+      {:noreply, stream_delete(socket, :cities, city)}
+    end
   end
 end

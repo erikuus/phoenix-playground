@@ -20,9 +20,24 @@ defmodule LivePlayground.Cities do
     Phoenix.PubSub.unsubscribe(@pubsub, @topic)
   end
 
-  def broadcast({:ok, city}, event) do
-    Phoenix.PubSub.broadcast(@pubsub, @topic, {event, city})
+  @doc """
+  Broadcasts a database operation result to subscribed processes.
 
+  There are two Phoenix PubSub broadcast options:
+  - `broadcast/3` - Sends message to ALL subscribed processes (including sender)
+  - `broadcast_from/4` - Sends message to ALL subscribed processes EXCEPT sender
+
+  This function uses `broadcast_from/4` with `self()` because:
+  - The calling process already has the updated data from the database operation
+  - Sending the broadcast back to the originating process would cause redundant updates
+  - Other processes need the broadcast to update their state in real-time
+
+  The function handles two possible outcomes:
+  - `{:ok, city}` - Successful operation, broadcasts the event to other processes
+  - `{:error, changeset}` - Failed operation, passes through the error unchanged
+  """
+  def broadcast({:ok, city}, event) do
+    Phoenix.PubSub.broadcast_from(@pubsub, self(), @topic, {__MODULE__, {event, city}})
     {:ok, city}
   end
 
@@ -64,7 +79,7 @@ defmodule LivePlayground.Cities do
       [%City{name: "Tallinn", ...}, %City{name: "Tartu", ...}]
 
   """
-  # streaminsert # streamreset # streamupdate
+  # streaminsert # streamreset # streamupdate # broadcaststream_
   def list_country_city(countrycode) do
     from(City)
     |> where(countrycode: ^countrycode)
@@ -72,7 +87,7 @@ defmodule LivePlayground.Cities do
     |> Repo.all()
   end
 
-  # endstreaminsert # endstreamreset # endstreamupdate
+  # endstreaminsert # endstreamreset # endstreamupdate # endbroadcaststream_
 
   # filter
 
@@ -111,7 +126,7 @@ defmodule LivePlayground.Cities do
   ## Returns:
     - A list of %City{} structs matching the criteria, sorted and paginated according to the options.
   """
-  # paginate # sort # form # broadcaststream_ # broadcaststreamreset # tabularinsert
+  # paginate # sort # form # broadcaststreamreset # tabularinsert
   def list_country_city(countrycode, options) do
     from(City)
     |> where(countrycode: ^countrycode)
@@ -123,7 +138,7 @@ defmodule LivePlayground.Cities do
     |> Repo.all()
   end
 
-  # endpaginate # endfilter # endsort # endform # endbroadcaststream_ # endbroadcaststreamreset # endtabularinsert
+  # endpaginate # endfilter # endsort # endform # endbroadcaststreamreset # endtabularinsert
 
   # filter
   defp filter_by_name(query, %{name: name}) when name != "" do
@@ -279,7 +294,7 @@ defmodule LivePlayground.Cities do
   def update_city_broadcast(%City{} = city, attrs) do
     city
     |> City.changeset(attrs)
-    |> Repo.update()
+    |> Repo.update(stale_error_field: :lock_version)
     |> broadcast(:update_city)
   end
 
