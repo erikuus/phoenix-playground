@@ -156,8 +156,6 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStream do
 
   defp save_city(socket, :edit, params) do
     city = socket.assigns.city
-    IO.inspect(city.lock_version, label: "Original lock_version")
-    IO.inspect(params["lock_version"], label: "Form lock_version")
 
     case Cities.update_city_broadcast(city, params) do
       {:ok, updated_city} ->
@@ -170,8 +168,6 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStream do
         {:noreply, socket}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        IO.inspect(changeset.errors, label: "Changeset errors")
-
         if changeset.errors[:lock_version] do
           # Conflict detected - fetch latest version
           latest_city = Cities.get_city!(city.id)
