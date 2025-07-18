@@ -1,138 +1,378 @@
 <p>
   The <code>BroadcastStreamReset</code> module demonstrates the powerful
-  combination of Phoenix LiveView’s streaming capabilities with Phoenix PubSub
-  for real-time data synchronization and navigation management.
+  combination of Phoenix PubSub broadcasting with LiveView streaming
+  capabilities, navigation, and optimistic locking. This creates a real-time
+  collaborative environment where multiple users can simultaneously work with
+  city data across different countries while maintaining data consistency and
+  preventing conflicts.
 </p>
-<h3><code>mount/3</code> and <code>init_tab/4</code></h3>
-<p>
-  These functions initialize the LiveView session based on whether a
-  <code>country_id</code> is present:
-</p>
+
+<h3><code>mount/3</code></h3>
+<p>Uses pattern matching to handle two different initialization scenarios:</p>
 <ul>
   <li>
-    <strong>With <code>country_id</code></strong
-    >: Attempts to fetch the specified country and its cities. If the country
-    doesn't exist (caught by <code>Ecto.NoResultsError</code>), it initializes
-    the view with empty data.
+    <strong>With <code>country_id</code> parameter</strong>: Directly loads the
+    specified country using <code>Countries.get_country!/1</code>. If the
+    country doesn't exist, Phoenix automatically returns a 404 error,
+    eliminating the need for manual error handling.
   </li>
   <li>
-    <strong>Without <code>country_id</code></strong
-    >: Automatically selects the first country from a list of Baltic countries
-    and displays its cities. If no countries are found, it initializes with no
-    data.
+    <strong>Without <code>country_id</code> parameter</strong>: Loads all Baltic
+    countries and automatically selects the first one. If no countries exist,
+    initializes with empty state. This provides a sensible default when users
+    visit the page without specifying a country.
   </li>
 </ul>
 <p>
-  Setting up the stream in <code>mount/3</code> ensures the data stream is
-  configured from the start, enabling efficient data handling and avoiding the
-  overhead of reconfiguring streams during parameter handling.
+  Both scenarios delegate to <code>init_tab/4</code> for consistent state
+  initialization and set up PubSub subscription using
+  <code>Cities.subscribe()</code> to listen for city changes from other users,
+  but only when the socket is connected to prevent unnecessary subscriptions
+  during server-side pre-rendering. Setting up streams in
+  <code>mount/3</code> rather than <code>handle_params/3</code> is critical
+  because initializing streams in <code>handle_params/3</code> would recreate
+  the entire stream every time any parameter changes, defeating the primary
+  purpose of streams.
 </p>
+
+<h3><code>init_tab/4</code></h3>
+<p>
+  Initializes socket state with country data, selected country, cities empty
+  flag, and city stream. This function follows the coding convention of assigns
+  before streams, ensuring UI state is set before data streams are established.
+  <code>@cities_empty</code> is needed to conditionally display "No cities
+  available" alerts because streams don't provide a built-in way to check
+  emptiness in templates - you can't use
+  <code>Enum.empty?(@streams.cities)</code>
+  in HEEx templates since streams are opaque data structures optimized for
+  efficient updates, not direct enumeration.
+</p>
+
 <h3><code>terminate/2</code></h3>
 <p>
-  Ensures cleanup by unsubscribing from city updates when the LiveView session
-  ends. This step prevents memory leaks and conserves resources.
+  Properly cleans up the PubSub subscription when the LiveView session ends
+  using <code>Cities.unsubscribe()</code>. This prevents memory leaks in the
+  PubSub registry and ensures that broadcast messages aren't sent to dead
+  processes, maintaining optimal application performance.
 </p>
-<h3>
-  <code>handle_params/2</code>, <code>change_tab/2</code>,
-  <code>apply_action/2</code>
-</h3>
-<p>These functions manage navigation and actions based on URL parameters:</p>
+
+<h3><code>handle_params/3</code></h3>
+<p>
+  Manages URL parameters and coordinates two key responsibilities: country tab
+  switching and form state management. When a country change is detected (by
+  comparing the current <code>selected_country</code> with the one from the
+  URL), it calls <code>change_tab/2</code> to reset the cities stream with new
+  data. After handling any country changes, it always calls
+  <code>apply_action/3</code> to set up the appropriate form state based on the
+  current URL action (<code>:index</code> for adding cities or
+  <code>:edit</code> for editing existing ones).
+</p>
+
+<h3><code>change_tab/2</code></h3>
+<p>
+  Handles country switching by fetching new city data and resetting the stream.
+  Uses <code>stream(:cities, cities, reset: true)</code> to completely replace
+  existing stream content, which is more efficient than individual insertions
+  when changing entire datasets.
+</p>
+
+<h3><code>apply_action/3</code></h3>
+<p>
+  Handles different URL-based actions and prepares the appropriate form state:
+</p>
 <ul>
   <li>
-    <strong>Stream Reset on Tab Change</strong>: If the selected country changes
-    (detected by comparing <code>selected_country</code> in the socket assigns),
-    it resets the city stream (<code>stream(:cities, ..., reset: true)</code>)
-    to reload city data for the new country, efficiently clearing previous
-    entries and avoiding memory leaks.
+    <strong>For <code>:index</code> action</strong>: Creates an empty form for
+    adding new cities by initializing a blank <code>City</code> struct and
+    setting the button title to "Add".
   </li>
   <li>
-    <strong>Index Action</strong>: Uses the <code>set_form/3</code> helper to
-    prepare the form for adding a new city.
-  </li>
-  <li>
-    <strong>Edit Action</strong>: Fetches an existing city based on its ID. Uses
-    the <code>set_form/3</code> helper to prepare the form for editing. If the
-    city does not exist, it redirects to the index action.
+    <strong>For <code>:edit</code> action</strong>: Retrieves the specific city
+    using <code>Cities.get_city!/1</code> (which handles 404 errors
+    automatically), populates the form with existing city data, and sets the
+    button title to "Update".
   </li>
 </ul>
+
+<h3><code>assign_form/2</code></h3>
+<p>
+  Helper function that converts an Ecto changeset into a form structure using
+  <code>to_form/1</code> and assigns it to the socket's <code>:form</code> key.
+</p>
+
 <h3><code>render/1</code></h3>
-<p>Defines the HTML output, which includes:</p>
+<p>
+  Renders an interactive interface combining form input with real-time data
+  display and navigation:
+</p>
 <ul>
   <li>
-    <strong>Conditional Alerts for Data Absence</strong>: Displays alerts if
-    there are no countries or cities available, handling potentially empty
-    states that can result from direct URL manipulation.
+    <strong>Dual Alert System</strong>: Uses two different alerts to handle
+    empty states - one for when no countries are available and another for when
+    a country is selected but has no cities.
   </li>
   <li>
-    <strong>Dynamic Tabs for Countries</strong>: Allows users to switch between
-    different countries, dynamically reloading the city list for the selected
-    country.
+    <strong>Dynamic Country Tabs with Stream Reset</strong>: Allows users to
+    switch between different countries using <code>.tabs</code> component. Each
+    tab change triggers a complete stream reset via <code>change_tab/2</code>,
+    demonstrating how to efficiently replace entire datasets while maintaining
+    stream performance benefits.
   </li>
   <li>
-    <strong>Form Interaction</strong>: Supports both creation and editing of
-    city details, adjusting dynamically based on user actions.
+    <strong>Form with Optimistic Locking</strong>: The form includes a hidden
+    <code>lock_version</code> field that's crucial for preventing concurrent
+    update conflicts. When multiple users edit the same city, this version
+    number helps detect conflicts and prevents data loss.
   </li>
   <li>
-    <strong>Table Display</strong>: Streams current city data, incorporating
-    real-time updates and deletions directly within the UI. Each table entry
-    includes a timestamp, showing when the city was last updated or inserted
-    into the stream.
+    <strong>Stream-Powered Table</strong>: Displays cities using
+    <code>@streams.cities</code>, which efficiently updates only the rows that
+    have changed. The table includes real-time timestamps showing when each row
+    was last updated in the stream, demonstrating that only modified rows are
+    re-rendered.
   </li>
 </ul>
+
 <h3><code>handle_event/3</code></h3>
-<p>Handles various user actions:</p>
+<p>Handles user interactions with different patterns for each event type:</p>
 <ul>
   <li>
-    <strong>"delete"</strong>: Deletes a city and broadcasts this change using
-    PubSub, which updates all connected clients immediately to reflect the
-    change and maintain consistency.
+    <strong>Delete</strong>: Fetches the city, calls the broadcast delete
+    function, and updates the local stream with
+    <code>stream_delete(socket, :cities, city)</code>. The local stream update
+    ensures the row stays hidden even if the stream gets reset or the page
+    refreshes. Since <code>broadcast_from</code> excludes <code>self()</code>,
+    the originating user sees immediate feedback from the local stream update,
+    while other users receive the update via broadcast.
   </li>
   <li>
-    <strong>"validate"</strong>: Provides real-time validation for form inputs,
-    helping users correct errors before submission.
+    <strong>Validate</strong>: Uses <code>Map.put(:action, :validate)</code> to
+    trigger error display in the form.
   </li>
   <li>
-    <strong>"save"</strong>: Uses the <code>save_city/3</code> helper to handle
-    form submissions for adding or updating cities. It makes use of PubSub
-    broadcasting implemented in the <code>Cities</code> module to notify all
-    connected clients of changes.
-    <ul>
-      <li>
-        <strong>Optimistic Locking</strong>: Checks the
-        <code>lock_version</code> field to ensure the city data has not been
-        modified by another user since it was last fetched. If a version
-        conflict is detected, it informs the user via a flash message and
-        prevents data overwrite, maintaining data integrity.
-      </li>
-    </ul>
+    <strong>Save</strong>: Delegates to <code>save_city/3</code> to handle the
+    complexity of create vs. update logic.
   </li>
 </ul>
+
+<h3><code>save_city/3</code></h3>
+<p>
+  Handles form submissions with different logic based on the current action:
+  <code>:index</code> for creating cities and <code>:edit</code> for updating
+  existing cities.
+</p>
+
+<h4>Create Operation (<code>:index</code>)</h4>
+<p>
+  After successful database operation, follows the coding convention of assigns
+  before streams, then streams before flash messages. Sets
+  <code>cities_empty</code>
+  to false, inserts the new city at the top of the stream with
+  <code>stream_insert(:cities, city, at: 0)</code>, provides success feedback,
+  and redirects to the index. The local stream update ensures immediate
+  visibility of the new city in the current user's interface.
+</p>
+
+<h4>Update Operation (<code>:edit</code>)</h4>
+<p>
+  More complex due to optimistic locking conflict detection. On success, it
+  updates the stream and provides feedback. However, when
+  <code>changeset.errors[:lock_version]</code> is detected, it means another
+  user modified the city while this user was editing. The system then:
+</p>
+<ol>
+  <li>Fetches the latest version from the database</li>
+  <li>Updates both the city reference and form with the latest data</li>
+  <li>Shows an error message explaining the conflict</li>
+  <li>Lets the user review the changes and decide how to proceed</li>
+</ol>
+
 <h3><code>handle_info/2</code></h3>
 <p>
-  Handles broadcast messages for city creation, updates, and deletions.
-  Broadcasting, implemented in the <code>Cities</code> module, pushes these
-  changes to all subscribed clients in real time, ensuring all views are
-  immediately updated to reflect the latest data:
+  Processes real-time broadcasts with sophisticated logic for different
+  scenarios:
 </p>
+
+<h4>Why Update Broadcasts Don't Always Update Forms</h4>
+<p>
+  This is the key insight for optimistic locking: when another user updates the
+  city being edited, the system deliberately does NOT update the form data. This
+  preserves the original <code>lock_version</code> in the form, allowing
+  conflict detection to work when the editing user submits.
+</p>
+
+<h4>Context-Aware Notifications</h4>
+<p>The system provides different user experiences based on context:</p>
 <ul>
   <li>
-    <strong>Creation and Updates</strong>: Inserts or updates city data in the
-    stream, ensuring real-time synchronization across all clients. If the city
-    being edited is updated by another user, it notifies the current user of the
-    change.
+    <strong>Same city being edited</strong>: Update stream only, no confusing
+    "another user" messages
   </li>
   <li>
-    <strong>Deletion</strong>: Removes the city from the stream, reflecting the
-    change across all client views immediately.
+    <strong>Different city</strong>: Update stream and show notification about
+    other users' activity
+  </li>
+  <li>
+    <strong>Deleted city being edited</strong>: Close form and redirect with
+    clear explanation
   </li>
 </ul>
-<h3>Helper Functions</h3>
+
+<h3>Optimistic Locking Implementation</h3>
+<p>The system prevents concurrent update conflicts through version tracking:</p>
+
+<h4>How to Implement</h4>
+<ol>
+  <li>
+    <p><strong>Add version tracking to your database table:</strong></p>
+    <pre><code>add :lock_version, :integer, default: 0</code></pre>
+  </li>
+  <li>
+    <p><strong>Add the field to your schema:</strong></p>
+    <pre><code>field :lock_version, :integer, default: 0</code></pre>
+  </li>
+  <li>
+    <p><strong>Add force_change before optimistic_lock:</strong></p>
+    <pre><code>|> force_change(:lock_version, city.lock_version)
+|> optimistic_lock(:lock_version)</code></pre>
+    <p>
+      <code>force_change</code> ensures version checks happen even when form
+      data hasn't changed, preventing silent conflicts.
+    </p>
+  </li>
+  <li>
+    <p><strong>Configure update in your context:</strong></p>
+    <pre><code>Repo.update(changeset, stale_error_field: :lock_version)</code></pre>
+    <p>
+      This ensures version conflicts appear in
+      <code>changeset.errors[:lock_version]</code> where your LiveView can
+      detect them.
+    </p>
+  </li>
+  <li>
+    <p><strong>Include the version in your form:</strong></p>
+    <pre><code>&lt;.input field={@form[:lock_version]} type="hidden" /&gt;</code></pre>
+  </li>
+  <li>
+    <p><strong>Handle conflicts in your save function:</strong></p>
+    <pre><code>if changeset.errors[:lock_version] do
+  # Fetch latest version and update form
+  # Let user merge their changes
+end</code></pre>
+  </li>
+</ol>
+
+<h4>How It Works</h4>
+<p>When two users edit the same city simultaneously:</p>
+<ol>
+  <li>Both load the record with <code>lock_version = 25</code></li>
+  <li>
+    Alice saves first—database increments to <code>lock_version = 26</code>
+  </li>
+  <li>
+    Bob's form still has <code>lock_version = 25</code> thanks to the broadcast
+    logic
+  </li>
+  <li>
+    Ecto detects the mismatch and returns a <code>:lock_version</code> error
+  </li>
+  <li>
+    Bob sees the latest data and can merge his changes with Alice's updates
+  </li>
+</ol>
+
+<hr />
+
+<h2>countries.ex</h2>
+
+<p>
+  <code>LivePlayground.Countries</code> provides country data management for
+  navigation between different regions and countries.
+</p>
+
+<p><strong>Regional Filtering</strong></p>
 <ul>
   <li>
-    <strong><code>assign_form/2</code></strong
-    >: Assigns a changeset to the socket as a form. This involves converting the
-    changeset into a form-friendly structure using <code>to_form/1</code> and
-    then assigning it to the <code>:form</code> key in the socket's assigns,
-    making it ready for rendering in the form.
+    <code>list_region_country/1</code> filters countries by region, enabling
+    focused views on specific geographical areas like "Baltic Countries".
+  </li>
+</ul>
+
+<hr />
+
+<h2>cities.ex</h2>
+
+<p>
+  <code>LivePlayground.Cities</code> provides the infrastructure for real-time
+  collaborative city management through Phoenix PubSub broadcasting and
+  optimistic locking configuration.
+</p>
+
+<p><strong>Real-time Broadcasting</strong></p>
+<ul>
+  <li>
+    <code>subscribe/0</code> enables LiveViews to receive broadcasts by
+    subscribing to a specific PubSub topic. The topic
+    <code>inspect(__MODULE__)</code> creates a single channel for all city
+    updates across the entire application. This approach works well for small
+    datasets where all users need to see all changes, but for larger
+    applications you might use resource-specific topics like
+    <code>"country:#{country.id}"</code> to only broadcast city changes within
+    specific countries, reducing message volume and improving performance.
+  </li>
+  <li>
+    <code>broadcast/2</code> uses <code>broadcast_from</code> with
+    <code>self()</code> to prevent the originating process from receiving its
+    own messages, avoiding redundant updates.
+  </li>
+  <li>
+    All database operations ending with <code>_broadcast</code> automatically
+    notify other connected users of changes.
+  </li>
+</ul>
+
+<p><strong>Optimistic Locking</strong></p>
+<ul>
+  <li>
+    <code>update_city_broadcast/2</code> includes
+    <code>stale_error_field: :lock_version</code>, which makes version conflicts
+    detectable in changesets.
+  </li>
+</ul>
+
+<p><strong>Message Structure</strong></p>
+<ul>
+  <li>
+    All broadcasts follow <code>{__MODULE__, {event, resource}}</code> format,
+    preventing message conflicts and ensuring maintainability.
+  </li>
+</ul>
+
+<hr />
+
+<h2>city.ex</h2>
+
+<p>
+  <code>LivePlayground.Cities.City</code> schema implements optimistic locking
+  through changeset configuration:
+</p>
+
+<p><strong>Optimistic Locking Setup</strong></p>
+<ul>
+  <li>
+    <code>force_change(:lock_version, city.lock_version)</code> ensures version
+    checks occur even when form data is unchanged. Without this, if a user opens
+    an edit form, another user modifies the same record, and then the first user
+    submits without changing anything, the optimistic locking check would be
+    bypassed entirely. The form would close successfully even though the
+    underlying data had changed, creating a false sense of success.
+  </li>
+  <li>
+    <code>optimistic_lock(:lock_version)</code> tells Ecto to use this field for
+    concurrency control.
+  </li>
+  <li>
+    Ecto automatically increments <code>lock_version</code> on each successful
+    update when using <code>optimistic_lock/1</code>.
   </li>
 </ul>

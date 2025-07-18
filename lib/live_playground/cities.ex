@@ -79,7 +79,7 @@ defmodule LivePlayground.Cities do
       [%City{name: "Tallinn", ...}, %City{name: "Tartu", ...}]
 
   """
-  # streaminsert # streamreset # streamupdate # broadcaststream_
+  # streaminsert # streamreset # streamupdate # broadcaststream_ # broadcaststreamreset
   def list_country_city(countrycode) do
     from(City)
     |> where(countrycode: ^countrycode)
@@ -87,7 +87,7 @@ defmodule LivePlayground.Cities do
     |> Repo.all()
   end
 
-  # endstreaminsert # endstreamreset # endstreamupdate # endbroadcaststream_
+  # endstreaminsert # endstreamreset # endstreamupdate # endbroadcaststream_  # endbroadcaststreamreset
 
   # filter
 
@@ -126,7 +126,7 @@ defmodule LivePlayground.Cities do
   ## Returns:
     - A list of %City{} structs matching the criteria, sorted and paginated according to the options.
   """
-  # paginate # sort # form # broadcaststreamreset # tabularinsert
+  # paginate # sort # form # tabularinsert
   def list_country_city(countrycode, options) do
     from(City)
     |> where(countrycode: ^countrycode)
@@ -138,7 +138,7 @@ defmodule LivePlayground.Cities do
     |> Repo.all()
   end
 
-  # endpaginate # endfilter # endsort # endform # endbroadcaststreamreset # endtabularinsert
+  # endpaginate # endfilter # endsort # endform # endtabularinsert
 
   # filter
   defp filter_by_name(query, %{name: name}) when name != "" do

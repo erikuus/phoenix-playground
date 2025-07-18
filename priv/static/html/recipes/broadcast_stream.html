@@ -103,9 +103,13 @@
     <strong>Delete</strong>: Uses
     <code>JS.push("delete", value: %{id: city.id}) |> hide("##{id}")</code> to
     immediately hide the row from the UI while the delete operation processes.
-    Since <code>broadcast_from</code> excludes <code>self()</code>, the
-    originating user sees the immediate visual feedback from the JavaScript hide
-    command, while other users receive the update via broadcast.
+    The delete handler also calls
+    <code>stream_delete(socket, :cities, city)</code> to update the LiveView's
+    stream state, ensuring the row stays hidden even if the stream gets reset or
+    the page refreshes. Since <code>broadcast_from</code> excludes
+    <code>self()</code>, the originating user sees the immediate visual feedback
+    from both the JavaScript hide command and the stream update, while other
+    users receive the update via broadcast.
   </li>
   <li>
     <strong>Validate</strong>: Uses <code>Map.put(:action, :validate)</code> to
@@ -253,15 +257,6 @@ end</code></pre>
 <p><strong>Real-time Broadcasting</strong></p>
 <ul>
   <li>
-    <code>broadcast/2</code> uses <code>broadcast_from</code> with
-    <code>self()</code> to prevent the originating process from receiving its
-    own messages, avoiding redundant updates.
-  </li>
-  <li>
-    All database operations ending with <code>_broadcast</code> automatically
-    notify other connected users of changes.
-  </li>
-  <li>
     <code>subscribe/0</code> enables LiveViews to receive broadcasts by
     subscribing to a specific PubSub topic. The topic
     <code>inspect(__MODULE__)</code> creates a single channel for all city
@@ -270,6 +265,15 @@ end</code></pre>
     applications you might use resource-specific topics like
     <code>"country:#{country.id}"</code> to only broadcast city changes within
     specific countries, reducing message volume and improving performance.
+  </li>
+  <li>
+    <code>broadcast/2</code> uses <code>broadcast_from</code> with
+    <code>self()</code> to prevent the originating process from receiving its
+    own messages, avoiding redundant updates.
+  </li>
+  <li>
+    All database operations ending with <code>_broadcast</code> automatically
+    notify other connected users of changes.
   </li>
 </ul>
 

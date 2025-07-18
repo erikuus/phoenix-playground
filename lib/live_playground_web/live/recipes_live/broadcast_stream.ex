@@ -120,7 +120,7 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStream do
     city = Cities.get_city!(id)
     {:ok, _} = Cities.delete_city_broadcast(city)
 
-    {:noreply, socket}
+    {:noreply, stream_delete(socket, :cities, city)}
   end
 
   def handle_event("validate", %{"city" => params}, socket) do
