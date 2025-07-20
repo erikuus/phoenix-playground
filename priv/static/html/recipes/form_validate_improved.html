@@ -1,0 +1,51 @@
+<p>
+  The <code>FormValidateImproved</code> module improves real-time form
+  validation in Phoenix LiveView by preventing users from seeing required field
+  errors before they've interacted with those fields. This creates a calmer,
+  less distracting experience.
+</p>
+
+<p><strong>The Challenge</strong></p>
+<p>
+  By default, LiveView validation shows errors for all fields—including required
+  fields—even if the user hasn't touched them yet. This means users see multiple
+  error messages as soon as they start typing, which can be confusing and
+  discouraging.
+</p>
+
+<p><strong>The Solution</strong></p>
+<p>
+  The validation pipeline is adjusted to filter out only "required field" errors
+  during typing, while keeping other validation errors visible. This is done by
+  updating the changeset's <code>:errors</code> key:
+</p>
+
+<pre><code>|> Map.update!(:errors, fn errors ->
+  Enum.reject(errors, fn
+    {_, {_, [validation: :required]}} -> true
+    _ -> false
+  end)
+end)</code></pre>
+
+<p>This approach:</p>
+<ol>
+  <li>Creates a changeset with all validations applied</li>
+  <li>Removes only "required field" errors during typing</li>
+  <li>Keeps other validation errors (such as format, type, or length)</li>
+  <li>Sets the action so remaining errors are displayed immediately</li>
+</ol>
+
+<p><strong>How It Works</strong></p>
+<ol>
+  <li>
+    While filling out the form, users see instant feedback for format errors
+    (for example, entering non-numeric text in the Population field)
+  </li>
+  <li>
+    Required field errors are hidden until the user submits the form, so users
+    aren't distracted by errors for fields they haven't filled in yet
+  </li>
+  <li>
+    On Save, all validations—including required fields—are checked and shown
+  </li>
+</ol>

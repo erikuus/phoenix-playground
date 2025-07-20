@@ -38,6 +38,7 @@ defmodule LivePlaygroundWeb.Router do
       live "/paginate-params", RecipesLive.PaginateParams
       live "/form-validate-on-submit", RecipesLive.FormValidateOnSubmit
       live "/form-validate-on-change", RecipesLive.FormValidateOnChange
+      live "/form-validate-improved", RecipesLive.FormValidateImproved
       live "/stream-insert", RecipesLive.StreamInsert
       live "/stream-update", RecipesLive.StreamUpdate, :index
       live "/stream-update/edit", RecipesLive.StreamUpdate, :edit

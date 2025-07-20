@@ -92,7 +92,8 @@ defmodule LivePlaygroundWeb.Menus.Recipes do
               open:
                 is_active?(current_path, [
                   "/form-validate-on-submit",
-                  "/form-validate-on-change"
+                  "/form-validate-on-change",
+                  "/form-validate-improved"
                 ])
             },
             expandable_items: [
@@ -105,6 +106,11 @@ defmodule LivePlaygroundWeb.Menus.Recipes do
                 label: "Validate on Change",
                 path: ~p"/form-validate-on-change",
                 active: is_active?(current_path, ["/form-validate-on-change"])
+              },
+              %{
+                label: "Improved Validation",
+                path: ~p"/form-validate-improved",
+                active: is_active?(current_path, ["/form-validate-improved"])
               }
             ]
           },
