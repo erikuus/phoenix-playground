@@ -86,6 +86,30 @@ defmodule LivePlaygroundWeb.Menus.Recipes do
           },
           %{
             expandable: %{
+              id: "form-validation",
+              icon: "hero-pencil-square",
+              label: "Form Validation",
+              open:
+                is_active?(current_path, [
+                  "/form-validate-on-submit",
+                  "/form-validate-on-change"
+                ])
+            },
+            expandable_items: [
+              %{
+                label: "Validate on Submit",
+                path: ~p"/form-validate-on-submit",
+                active: is_active?(current_path, ["/form-validate-on-submit"])
+              },
+              %{
+                label: "Validate on Change",
+                path: ~p"/form-validate-on-change",
+                active: is_active?(current_path, ["/form-validate-on-change"])
+              }
+            ]
+          },
+          %{
+            expandable: %{
               id: "stream",
               icon: "hero-rss",
               label: "Stream",
@@ -306,30 +330,6 @@ defmodule LivePlaygroundWeb.Menus.Recipes do
                 label: "Handle-params Pagination",
                 path: ~p"/paginate-params",
                 active: is_active?(current_path, ["/paginate-params"])
-              }
-            ]
-          },
-          %{
-            expandable: %{
-              id: "form",
-              icon: "hero-pencil-square",
-              label: "Form",
-              open:
-                is_active?(current_path, [
-                  "/form-insert",
-                  "/form-insert-validate"
-                ])
-            },
-            expandable_items: [
-              %{
-                label: "Validate on Submit",
-                path: ~p"/form-insert",
-                active: is_active?(current_path, ["/form-insert"])
-              },
-              %{
-                label: "Validate on Change",
-                path: ~p"/form-insert-validate",
-                active: is_active?(current_path, ["/form-insert-validate"])
               }
             ]
           },

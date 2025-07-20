@@ -1,4 +1,4 @@
-defmodule LivePlaygroundWeb.RecipesLive.FormInsertValidate do
+defmodule LivePlaygroundWeb.RecipesLive.FormValidateOnChange do
   use LivePlaygroundWeb, :live_view
 
   alias LivePlayground.Cities
@@ -42,23 +42,23 @@ defmodule LivePlaygroundWeb.RecipesLive.FormInsertValidate do
     </.form>
     <.table :if={@cities != []} id="cities" rows={@cities}>
       <:col :let={city} label="Name">
-        <%= city.name %>
+        {city.name}
         <dl class="font-normal md:hidden">
           <dt class="sr-only">District</dt>
-          <dd class="mt-1 truncate text-gray-700"><%= city.district %></dd>
+          <dd class="mt-1 truncate text-gray-700">{city.district}</dd>
         </dl>
       </:col>
-      <:col :let={city} label="District" class="hidden md:table-cell"><%= city.district %></:col>
+      <:col :let={city} label="District" class="hidden md:table-cell">{city.district}</:col>
       <:col :let={city} label="Population" class="text-right">
-        <%= Number.Delimit.number_to_delimited(city.population, precision: 0, delimiter: " ") %>
+        {Number.Delimit.number_to_delimited(city.population, precision: 0, delimiter: " ")}
       </:col>
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
-      <.code_block filename="lib/live_playground_web/live/recipes_live/form_insert_validate.ex" />
+      <.code_block filename="lib/live_playground_web/live/recipes_live/form_validate_on_change.ex" />
       <.code_block filename="lib/live_playground/cities.ex" from="# form" to="# endform" />
     </div>
-    <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/form_insert_validate.html" />
+    <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/form_validate_on_change.html" />
     <!-- end hiding from live code -->
     """
   end
