@@ -4,6 +4,8 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
   alias LivePlayground.Cities
   alias LivePlayground.Cities.City
 
+  @countrycode "EST"
+
   def mount(_params, _session, socket) do
     if connected?(socket), do: Cities.subscribe()
 
@@ -11,7 +13,7 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
       socket
       |> assign(:tabular_input_ids, [])
       |> stream(:tabular_inputs, [])
-      |> stream(:cities, Cities.list_country_city("EST"))
+      |> stream(:cities, Cities.list_country_city(@countrycode))
 
     {:ok, socket}
   end
@@ -75,19 +77,19 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
     </form>
     <.table id="cities" rows={@streams.cities}>
       <:col :let={{_id, city}} label="Name">
-        <%= city.name %>
+        {city.name}
         <dl class="font-normal md:hidden">
           <dt class="sr-only">District</dt>
-          <dd class="mt-1 truncate text-zinc-700"><%= city.district %></dd>
+          <dd class="mt-1 truncate text-zinc-700">{city.district}</dd>
         </dl>
         <dl class="hidden md:block font-normal text-xs text-zinc-400">
           <dt>Stream inserted:</dt>
-          <dd><%= Timex.now() %></dd>
+          <dd>{Timex.now()}</dd>
         </dl>
       </:col>
-      <:col :let={{_id, city}} label="District" class="hidden md:table-cell"><%= city.district %></:col>
+      <:col :let={{_id, city}} label="District" class="hidden md:table-cell">{city.district}</:col>
       <:col :let={{_id, city}} label="Population" class="text-right md:pr-10">
-        <%= Number.Delimit.number_to_delimited(city.population, precision: 0, delimiter: " ") %>
+        {Number.Delimit.number_to_delimited(city.population, precision: 0, delimiter: " ")}
       </:col>
       <:action :let={{id, city}}>
         <.link phx-click={JS.push("delete", value: %{id: city.id}) |> hide("##{id}")} data-confirm="Are you sure?">
@@ -221,7 +223,7 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
     for {id, index} <- Enum.with_index(tabular_input_ids) do
       params =
         Enum.reduce(tabular_params, %{}, fn {k, v}, acc -> Map.put(acc, k, Enum.at(v, index)) end)
-        |> Map.put("countrycode", "EST")
+        |> Map.put("countrycode", @countrycode)
 
       {id, params}
     end

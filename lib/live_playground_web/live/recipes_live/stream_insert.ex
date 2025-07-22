@@ -4,12 +4,14 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamInsert do
   alias LivePlayground.Cities
   alias LivePlayground.Cities.City
 
+  @countrycode "EST"
+
   def mount(_params, _session, socket) do
     socket =
       socket
       |> assign(:form, get_empty_form())
       |> stream_configure(:cities, dom_id: &"city-#{&1.countrycode}-#{&1.id}")
-      |> stream(:cities, Cities.list_country_city("EST"))
+      |> stream(:cities, Cities.list_country_city(@countrycode))
 
     {:ok, socket}
   end
@@ -75,7 +77,7 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamInsert do
   end
 
   def handle_event("save", %{"city" => params}, socket) do
-    params = Map.put(params, "countrycode", "EST")
+    params = Map.put(params, "countrycode", @countrycode)
 
     case Cities.create_city(params) do
       {:ok, city} ->

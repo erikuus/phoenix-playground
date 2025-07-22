@@ -4,14 +4,24 @@ defmodule LivePlaygroundWeb.RecipesLive.FormValidateOnChange do
   alias LivePlayground.Cities
   alias LivePlayground.Cities.City
 
+  @countrycode "EST"
+
   def mount(_params, _session, socket) do
+    cities = Cities.list_country_city(@countrycode)
+    form = get_empty_form()
+
     socket =
-      assign(socket,
-        cities: Cities.list_country_city("EST"),
-        form: get_empty_form()
-      )
+      socket
+      |> assign(:cities, cities)
+      |> assign(:form, form)
 
     {:ok, socket}
+  end
+
+  defp get_empty_form() do
+    %City{}
+    |> Cities.change_city()
+    |> to_form()
   end
 
   def render(assigns) do
@@ -64,7 +74,7 @@ defmodule LivePlaygroundWeb.RecipesLive.FormValidateOnChange do
   end
 
   def handle_event("validate", %{"city" => params}, socket) do
-    params = Map.put(params, "countrycode", "EST")
+    params = Map.put(params, "countrycode", @countrycode)
 
     form =
       %City{}
@@ -77,7 +87,7 @@ defmodule LivePlaygroundWeb.RecipesLive.FormValidateOnChange do
   end
 
   def handle_event("save", %{"city" => params}, socket) do
-    params = Map.put(params, "countrycode", "EST")
+    params = Map.put(params, "countrycode", @countrycode)
 
     case Cities.create_city(params) do
       {:ok, city} ->
@@ -93,11 +103,5 @@ defmodule LivePlaygroundWeb.RecipesLive.FormValidateOnChange do
         socket = assign(socket, :form, to_form(changeset))
         {:noreply, socket}
     end
-  end
-
-  defp get_empty_form() do
-    %City{}
-    |> Cities.change_city()
-    |> to_form()
   end
 end

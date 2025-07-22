@@ -5,15 +5,17 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamReset do
   alias LivePlayground.Cities
   alias LivePlayground.Cities.City
 
+  @region "Baltic Countries"
+
   def mount(%{"country_id" => country_id}, _session, socket) do
-    countries = Countries.list_region_country("Baltic Countries")
+    countries = Countries.list_region_country(@region)
     selected_country = Countries.get_country!(country_id)
     cities = Cities.list_country_city(selected_country.code)
     {:ok, init_tab(socket, countries, selected_country, cities)}
   end
 
   def mount(_params, _session, socket) do
-    countries = Countries.list_region_country("Baltic Countries")
+    countries = Countries.list_region_country(@region)
 
     case countries do
       [] ->

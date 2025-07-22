@@ -3,8 +3,10 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamUpdate do
 
   alias LivePlayground.Cities
 
+  @countrycode "EST"
+
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :cities, Cities.list_country_city("EST"))}
+    {:ok, stream(socket, :cities, Cities.list_country_city(@countrycode))}
   end
 
   def handle_params(params, _url, socket) do

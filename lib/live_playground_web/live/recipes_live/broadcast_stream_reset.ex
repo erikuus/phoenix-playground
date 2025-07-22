@@ -5,10 +5,12 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
   alias LivePlayground.Cities
   alias LivePlayground.Cities.City
 
+  @region "Baltic Countries"
+
   def mount(%{"country_id" => country_id}, _session, socket) do
     if connected?(socket), do: Cities.subscribe()
 
-    countries = Countries.list_region_country("Baltic Countries")
+    countries = Countries.list_region_country(@region)
     selected_country = Countries.get_country!(country_id)
     cities = Cities.list_country_city(selected_country.code)
     {:ok, init_tab(socket, countries, selected_country, cities)}
@@ -17,7 +19,7 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
   def mount(_params, _session, socket) do
     if connected?(socket), do: Cities.subscribe()
 
-    countries = Countries.list_region_country("Baltic Countries")
+    countries = Countries.list_region_country(@region)
 
     case countries do
       [] ->
@@ -172,6 +174,12 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
     </.table>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
+      <.note icon="hero-information-circle">
+        <a target="_blank" href="/broadcast-stream-reset" class="underline">
+          Open this page in multiple browser tabs or windows.
+        </a>
+        Create or update a city to see real-time updates in other tabs.
+      </.note>
       <.code_block filename="lib/live_playground_web/live/recipes_live/broadcast_stream_reset.ex" />
       <.code_block filename="lib/live_playground/countries.ex" from="# broadcaststreamreset" to="# endbroadcaststreamreset" />
       <.code_block filename="lib/live_playground/cities.ex" from="# broadcaststreamreset" to="# endbroadcaststreamreset" />

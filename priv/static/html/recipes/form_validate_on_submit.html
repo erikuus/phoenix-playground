@@ -1,18 +1,37 @@
 <p>
-  The <code>FormInsert</code> module is designed for inserting new city records
-  into a database. It combines form handling and dynamic updates to display new
-  entries immediately upon submission. Here’s a detailed explanation of the key
-  components and functionalities:
+  The <code>FormValidateOnSubmit</code> module is designed for adding new city
+  records to the database. Unlike forms that validate on every change, this
+  module only validates when the user submits the form. This approach reduces
+  unnecessary validation feedback and is useful for simpler forms or when you
+  want to avoid distracting users with immediate error messages.
 </p>
 <h3><code>mount/3</code></h3>
 <p>
-  This function initializes the LiveView by loading a list of cities from a
-  specified country ("EST") using <code>Cities.list_country_city("EST")</code>.
-  It also sets up an empty form for new city entries using
-  <code>get_empty_form()</code>, which prepares a new <code>City</code> struct
-  with initial values and assigns both the list of cities and the form to the
-  socket.
+  The function initializes the LiveView by loading a list of cities for a
+  specific country using <code>Cities.list_country_city/1</code>. It also
+  prepares an empty form for new city entries by calling
+  <code>get_empty_form/0</code>. This helper first creates a blank
+  <code>City</code> struct, then wraps it in a changeset using
+  <code>Cities.change_city/1</code> to enable validation rules and error
+  tracking. Finally, it converts the changeset into a LiveView form structure,
+  so the template can display validation errors and preserve user input.
 </p>
+
+<h3>What is a Changeset?</h3>
+<p>
+  As a developer, you'll use <code>changeset</code> all the time in Phoenix and
+  Ecto, but it's easy to miss what it actually does. Think of a changeset as a
+  smart container for user input: it holds the original struct (like
+  <code>City</code>), any new data the user tries to submit, and a set of rules
+  for what's valid. When you build a changeset, you tell it what fields are
+  required, what values are allowed, and any custom checks you need. If the user
+  enters something invalid, the changeset collects those errors so you can show
+  helpful messages in your form. In LiveView, changesets are the bridge between
+  your backend validation and the interactive UI—they keep user input,
+  validation, and error messages all in sync, so you never lose what the user
+  typed, even if there are mistakes.
+</p>
+
 <h3><code>render/1</code></h3>
 <p>The rendering function constructs the HTML:</p>
 <ul>
@@ -28,30 +47,45 @@
     devices.
   </li>
 </ul>
-<h3><code>handle_event/3</code> for "save"</h3>
+<h3><code>handle_event/3</code></h3>
 <p>This event handler processes form submissions:</p>
 <ul>
   <li>
-    <strong>Success Path</strong>: If the city is successfully created
-    (<code>Cities.create_city(params)</code>), the new city is added to the top
-    of the list in the LiveView's state, the form is reset to an empty state,
-    and a flash message is displayed to the user.
+    If the city is successfully created using
+    <code>Cities.create_city/1</code>, the new city is prepended to the list of
+    cities in the LiveView's state using <code>update/3</code>, the form is
+    reset to an empty state, and a flash message is displayed to the user.
   </li>
   <li>
-    <strong>Error Path</strong>: If there's an error (typically a validation
-    failure), the changeset is converted back to form state to display
-    validation errors and the form is re-rendered with the user's input and
-    corresponding error messages.
+    If there's an error (typically a validation failure), the changeset is
+    converted back to form state using
+    <code>to_form/1</code> to display validation errors. The form is re-rendered
+    with the user's input and corresponding error messages, allowing users to
+    correct mistakes without losing their input.
   </li>
 </ul>
-<h3>Helper Functions</h3>
+<h3>Alternative List Management Strategies</h3>
+<p>
+  While this demo uses simple prepending for immediate feedback, production
+  applications often need more sophisticated list management:
+</p>
 <ul>
   <li>
-    <strong><code>get_empty_form/0</code></strong
-    >: Prepares an empty form by initializing a <code>City</code> struct and
-    transforming it into a form-compatible format using
-    <code>Cities.change_city()</code> and <code>to_form()</code>. This function
-    is used to reset the form after a successful submission or to initialize the
-    form when the LiveView mounts.
+    Use <code>Enum.sort_by/3</code> to maintain alphabetical ordering after
+    adding cities:
+    <pre><code>socket
+|> update(:cities, fn cities ->
+  [city | cities]
+  |> Enum.sort_by(& &1.name, :asc)
+end)</code></pre>
+  </li>
+  <li>
+    For large datasets, streams provide efficient handling of thousands of items
+    with automatic DOM updates. See the dedicated stream recipes for detailed
+    examples and implementation patterns.
+  </li>
+  <li>
+    Combine with pagination for very large city lists, allowing users to
+    navigate through results without overwhelming the interface.
   </li>
 </ul>

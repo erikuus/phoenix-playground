@@ -3,8 +3,10 @@ defmodule LivePlaygroundWeb.RecipesLive.HandleParams do
 
   alias LivePlayground.Countries
 
+  @region "Baltic Countries"
+
   def mount(_params, _session, socket) do
-    countries = Countries.list_region_country("Baltic Countries")
+    countries = Countries.list_region_country(@region)
     {:ok, assign(socket, :countries, countries)}
   end
 
