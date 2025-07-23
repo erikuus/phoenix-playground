@@ -269,41 +269,56 @@ defmodule LivePlaygroundWeb.RecipesLive.BroadcastStreamReset do
   end
 
   def handle_info({LivePlayground.Cities, {:create_city, city}}, socket) do
-    socket =
-      socket
-      |> assign(:cities_empty, false)
-      |> stream_insert(:cities, city, at: 0)
-      |> put_flash(:info, "A new city has been added by another user.")
+    # Only process if city belongs to currently selected country
+    if city.countrycode == socket.assigns.selected_country.code do
+      socket =
+        socket
+        |> assign(:cities_empty, false)
+        |> stream_insert(:cities, city, at: 0)
+        |> put_flash(:info, "A new city has been added by another user.")
 
-    {:noreply, socket}
+      {:noreply, socket}
+    else
+      {:noreply, socket}
+    end
   end
 
   def handle_info({LivePlayground.Cities, {:update_city, city}}, socket) do
-    if city.id == socket.assigns.city.id && socket.assigns.live_action == :edit do
-      {:noreply, stream_insert(socket, :cities, city)}
-    else
-      socket =
-        socket
-        |> stream_insert(:cities, city)
-        |> put_flash(:info, "A city has been updated by another user.")
+    # Only process if city belongs to currently selected country
+    if city.countrycode == socket.assigns.selected_country.code do
+      if city.id == socket.assigns.city.id && socket.assigns.live_action == :edit do
+        {:noreply, stream_insert(socket, :cities, city)}
+      else
+        socket =
+          socket
+          |> stream_insert(:cities, city)
+          |> put_flash(:info, "A city has been updated by another user.")
 
+        {:noreply, socket}
+      end
+    else
       {:noreply, socket}
     end
   end
 
   def handle_info({LivePlayground.Cities, {:delete_city, city}}, socket) do
-    if city.id == socket.assigns.city.id && socket.assigns.live_action == :edit do
-      socket =
-        socket
-        |> stream_delete(:cities, city)
-        |> put_flash(:error, "This city has been deleted by another user.")
-        |> push_patch(
-          to: ~p"/broadcast-stream-reset?#{[country_id: socket.assigns.selected_country.id]}"
-        )
+    # Only process if city belongs to currently selected country
+    if city.countrycode == socket.assigns.selected_country.code do
+      if city.id == socket.assigns.city.id && socket.assigns.live_action == :edit do
+        socket =
+          socket
+          |> stream_delete(:cities, city)
+          |> put_flash(:error, "This city has been deleted by another user.")
+          |> push_patch(
+            to: ~p"/broadcast-stream-reset?#{[country_id: socket.assigns.selected_country.id]}"
+          )
 
-      {:noreply, socket}
+        {:noreply, socket}
+      else
+        {:noreply, stream_delete(socket, :cities, city)}
+      end
     else
-      {:noreply, stream_delete(socket, :cities, city)}
+      {:noreply, socket}
     end
   end
 end

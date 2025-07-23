@@ -190,7 +190,29 @@
 <h3><code>handle_info/2</code></h3>
 <p>
   Processes real-time broadcasts with sophisticated logic for different
-  scenarios:
+  scenarios.
+</p>
+
+<h4>Country Context Filtering</h4>
+<p>
+  Each <code>handle_info</code> function first checks if the broadcast city
+  belongs to the currently selected country using
+  <code>city.countrycode == socket.assigns.selected_country.code</code>. This
+  filtering is essential because:
+</p>
+<ul>
+  <li>
+    Users viewing the "Estonia" tab shouldn't see notifications about cities
+    added to "Latvia"
+  </li>
+  <li>Stream updates are scoped to the current country's data set</li>
+  <li>
+    Flash messages remain contextually relevant to the user's current focus
+  </li>
+</ul>
+<p>
+  If the city doesn't belong to the current country, the function returns
+  <code>{:noreply, socket}</code> unchanged, effectively ignoring the broadcast.
 </p>
 
 <h4>Why Update Broadcasts Don't Always Update Forms</h4>
