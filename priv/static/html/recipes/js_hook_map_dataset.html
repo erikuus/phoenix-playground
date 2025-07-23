@@ -8,12 +8,12 @@
 <p>This function initializes the LiveView and prepares the necessary data:</p>
 <ul>
   <li>
-    <strong>Fetching Data</strong>: Retrieves a list of locations from the
-    database using <code>Locations.list_est_location/0</code>.
+    Retrieves a list of locations from the database using
+    <code>Locations.list_est_location/0</code>.
   </li>
   <li>
-    <strong>Assigning Data</strong>: Assigns the fetched locations to the socket
-    under the <code>:locations</code> key, which will be used in the
+    Assigns the fetched locations to the socket under the
+    <code>:locations</code> key, which will be used in the
     <code>render/1</code> function.
   </li>
 </ul>
@@ -24,8 +24,8 @@
     <strong>Map Hook Element</strong>:
     <ul>
       <li>
-        The <code>div</code> with <code>id="map-hook"</code> is the target for
-        the JS hook and must have a unique <code>id</code>.
+        The <code>div</code> with <code>id="map"</code> is the target for the JS
+        hook and must have a unique <code>id</code>.
       </li>
       <li>
         The <code>phx-hook="MapDataset"</code> attribute attaches the JS hook
@@ -67,29 +67,26 @@
     <p><strong>Hook Implementation (<code>map-dataset.js</code>)</strong>:</p>
     <ul>
       <li>
-        <strong>Mounted Lifecycle</strong>: When the LiveView component is
-        mounted on the client-side, the <code>mounted()</code> function in
-        <code>MapDataset</code> is triggered.
+        When the LiveView component is mounted on the client-side, the
+        <code>mounted()</code> function in <code>MapDataset</code> is triggered.
         <ul>
           <li>
-            <strong>Map Initialization</strong>: The <code>Map</code> class is
-            instantiated, setting up the map with center coordinates and zoom
-            level.
+            The <code>Map</code> class is instantiated, setting up the map with
+            center coordinates and zoom level.
           </li>
           <li>
-            <strong>Extracting Data</strong>: The
+            The
             <code>data-locations</code> attribute is extracted from
-            <code>div#map-hook</code>, parsed into a JavaScript object
-            containing the location details.
+            <code>div#map</code>, parsed into a JavaScript object containing the
+            location details.
           </li>
           <li>
-            <strong>Adding Markers</strong>: The parsed location data is
-            iterated over, and for each location, a marker is added to the map
-            at the specified latitude and longitude.
+            The parsed location data is iterated over, and for each location, a
+            marker is added to the map at the specified latitude and longitude.
           </li>
           <li>
-            <strong>Auto-Fitting Markers</strong>: After all markers are added,
-            the map adjusts its view to ensure all markers are visible.
+            After all markers are added, the map adjusts its view to ensure all
+            markers are visible.
           </li>
         </ul>
       </li>
@@ -102,7 +99,7 @@
 </p>
 <h3>Data Flow from LiveView to JS</h3>
 <p>
-  Here’s how the location data is passed from the Elixir backend to the JS map
+  Here's how the location data is passed from the Elixir backend to the JS map
   library:
 </p>
 <ol>
@@ -111,7 +108,7 @@
     <ul>
       <li>
         The server-side <code>render/1</code> function embeds the location data
-        into the <code>div#map-hook</code> as a
+        into the <code>div#map</code> as a
         <code>data-locations</code> attribute.
       </li>
     </ul>
