@@ -1,3 +1,10 @@
+---
+mode: "agent"
+model: GPT-4o
+tools: ["playwright"]
+description: "Test Elixir Phoenix LiveView module using Playwright MCP server"
+---
+
 Compose a comprehensive list of test cases that fully cover the current Elixir Phoenix LiveView module, but include only those test cases that can be executed using the Playwright MCP server. Use any code breakdowns or commentaries I provide as context to improve the quality and coverage of the tests.
 
 Consider the following features, but include each only if present in the module:

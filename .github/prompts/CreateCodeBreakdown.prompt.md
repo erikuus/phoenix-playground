@@ -1,3 +1,9 @@
+---
+mode: "ask"
+model: Claude Sonnet 4
+description: "Create a Comprehensive Code Breakdown"
+---
+
 Act as a senior developer with exceptional teaching abilities. Your task is to create a comprehensive code breakdown that will be valuable for both junior and senior developers.
 
 MANDATORY PROCESS: You MUST follow a three-stage process:
