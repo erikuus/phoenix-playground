@@ -1,4 +1,7 @@
-# LiveView Coding Conventions
+---
+applyTo: "**/*.ex"
+description: "LiveView coding conventions and quality guidelines."
+---
 
 This file defines the coding conventions that MUST be followed when writing or modifying LiveView code. These conventions ensure consistency and maintainability across the codebase.
 
