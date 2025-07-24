@@ -49,11 +49,6 @@ defmodule LivePlayground.Locations do
     |> Repo.all()
   end
 
-  def get_est_location_map() do
-    list_est_location()
-    |> Map.new(&{&1.id, &1})
-  end
-
   # endjshooks
 
   @doc """

@@ -4,11 +4,13 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapHandleEvent do
   alias LivePlayground.Locations
 
   def mount(_params, _session, socket) do
-    location_map = Locations.get_est_location_map()
+    locations = Locations.list_est_location()
+    location_map = Map.new(locations, &{&1.id, &1})
 
     socket =
       socket
       |> assign(:location_map, location_map)
+      |> assign(:locations, locations)
       |> assign(:selected, [])
 
     {:ok, socket}
@@ -36,7 +38,7 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapHandleEvent do
       </div>
       <div class="h-48 sm:h-96 mt-4 sm:flex-initial sm:w-40 sm:mt-0 sm:ml-6 overflow-auto">
         <.link
-          :for={location <- Map.values(@location_map)}
+          :for={location <- @locations}
           phx-click="select-location"
           phx-value-id={location.id}
           class="text-gray-900 flex items-center px-3 py-2 mr-2 rounded-md text-sm hover:rounded-md hover:bg-gray-100"

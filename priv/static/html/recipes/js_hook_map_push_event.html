@@ -9,12 +9,15 @@
 <p>This function initializes the LiveView and prepares the necessary data:</p>
 <ul>
   <li>
-    Retrieves a list of locations from the database using
-    <code>Locations.list_est_location/0</code>.
+    Retrieves Estonian locations as a list using
+    <code>Locations.list_est_location/0</code>, then creates a map using
+    <code>Map.new(locations, &{&1.id, &1})</code> for efficient ID-based
+    lookups.
   </li>
   <li>
-    Assigns the locations to <code>:locations</code> and sets
-    <code>:selected</code> to <code>nil</code>. The
+    Assigns the location data to both <code>:location_map</code> (for efficient
+    lookups) and <code>:locations</code> (the original list for template
+    iteration), and sets <code>:selected</code> to <code>nil</code>. The
     <code>:selected</code> assign tracks which location is currently
     highlighted, demonstrating how LiveView maintains interaction state.
   </li>
@@ -39,6 +42,10 @@
   <li>
     <p><strong>List of Locations</strong>:</p>
     <ul>
+      <li>
+        Displays location names by iterating over <code>@locations</code>. This
+        uses the pre-computed list for efficient template rendering.
+      </li>
       <li>
         Renders each location as a <code>div</code> with a unique ID
         (<code>location-#{location.id}</code>) and conditional CSS classes. When
@@ -74,8 +81,8 @@
     <ul>
       <li>Receives the location ID from the JavaScript marker click event.</li>
       <li>
-        Uses <code>find_location/2</code> helper to locate the matching location
-        struct.
+        Uses <code>get_location_by_id/2</code> helper to locate the matching
+        location struct with efficient map lookup.
       </li>
       <li>
         Returns
@@ -93,6 +100,32 @@
     </ul>
   </li>
 </ul>
+
+<h3><code>get_location_by_id/2</code></h3>
+<p>
+  This helper function demonstrates an efficient pattern for ID-based lookups in
+  LiveView applications.
+</p>
+<p>
+  <strong>Why a Map Instead of a List?</strong> Using
+  <code>Map.get/2</code> provides O(1) constant-time lookups, while searching
+  through a list with <code>Enum.find/2</code> would be O(n) linear time:
+</p>
+<pre><code># Efficient O(1) approach - current implementation
+defp get_location_by_id(socket, id) do
+  Map.get(socket.assigns.location_map, id)
+end
+
+# Inefficient O(n) approach - avoid this pattern
+defp find_location_in_list(socket, id) do
+  Enum.find(socket.assigns.locations, &(&1.id == id))
+end</code></pre>
+<p>
+  The <code>Locations.get_est_location_map/0</code> function handles the
+  list-to-map transformation in the context layer, keeping the LiveView focused
+  on event handling while ensuring efficient lookups.
+</p>
+
 <h3>JavaScript Hook (<code>MapPushEvents</code>)</h3>
 <p>
   The JS hook is critical for pushing events from the client-side to LiveView:
@@ -142,6 +175,7 @@
     </ul>
   </li>
 </ul>
+
 <h3>Event-Driven Communication Flow</h3>
 <p>
   This pattern creates a conversation between LiveView and JavaScript through
@@ -164,6 +198,7 @@
     JavaScript callback handles immediate map interactions like scrolling.
   </li>
 </ol>
+
 <h3>Reply Pattern for Hooks</h3>
 <p>
   The <code>:reply</code> tuple is essential for hook communication and differs

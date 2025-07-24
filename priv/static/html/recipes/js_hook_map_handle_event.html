@@ -10,17 +10,22 @@
 <p>This function initializes the LiveView and prepares the necessary data:</p>
 <ul>
   <li>
-    Retrieves Estonian locations as a map using
-    <code>Locations.get_est_location_map/0</code>. This function returns a map
-    where location IDs are keys and location structs are values.
+    Retrieves Estonian locations as a list using
+    <code>Locations.list_est_location/0</code>, then creates a map using
+    <code>Map.new(locations, &{&1.id, &1})</code> for efficient ID-based
+    lookups.
   </li>
   <li>
     <strong>Assigning Data</strong>:
     <ul>
       <li>
-        <code>:location_map</code> is assigned the fetched location map. This
+        <code>:location_map</code> is assigned the created location map. This
         map structure allows efficient location retrieval in the
         <code>handle_event/3</code> function.
+      </li>
+      <li>
+        <code>:locations</code> is assigned the original list of locations for
+        efficient template iteration.
       </li>
       <li>
         <code>:selected</code> is initialized as an empty list. This list stores
@@ -52,10 +57,8 @@
     <p><strong>List of Locations</strong>:</p>
     <ul>
       <li>
-        Displays location names by iterating over
-        <code>Map.values(@location_map)</code>. This converts the map values to
-        a list for template iteration while preserving the map's fast lookup
-        capabilities for event handling.
+        Displays location names by iterating over <code>@locations</code>. This
+        uses the pre-computed list for efficient template rendering.
       </li>
       <li>
         The <code>phx-click="select-location"</code> attribute triggers the

@@ -5,12 +5,13 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapPushEvent do
 
   def mount(_params, _session, socket) do
     locations = Locations.list_est_location()
+    location_map = Map.new(locations, &{&1.id, &1})
 
     socket =
-      assign(socket,
-        locations: locations,
-        selected: nil
-      )
+      socket
+      |> assign(:location_map, location_map)
+      |> assign(:locations, locations)
+      |> assign(:selected, nil)
 
     {:ok, socket}
   end
@@ -44,7 +45,7 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapPushEvent do
             location == @selected && "rounded-md bg-gray-100"
           ]}
         >
-          <%= location.name %>
+          {location.name}
         </div>
       </div>
     </div>
@@ -78,11 +79,11 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapPushEvent do
   end
 
   def handle_event("marker-clicked", id, socket) do
-    location = find_location(socket, id)
+    location = get_location_by_id(socket, id)
     {:reply, %{location: location}, assign(socket, selected: location)}
   end
 
-  defp find_location(socket, id) do
-    Enum.find(socket.assigns.locations, &(&1.id == id))
+  defp get_location_by_id(socket, id) do
+    Map.get(socket.assigns.location_map, id)
   end
 end
