@@ -4,13 +4,12 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapHandleEvent do
   alias LivePlayground.Locations
 
   def mount(_params, _session, socket) do
-    locations = Locations.list_est_location()
+    location_map = Locations.get_est_location_map()
 
     socket =
-      assign(socket,
-        locations: locations,
-        selected: []
-      )
+      socket
+      |> assign(:location_map, location_map)
+      |> assign(:selected, [])
 
     {:ok, socket}
   end
@@ -37,12 +36,12 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapHandleEvent do
       </div>
       <div class="h-48 sm:h-96 mt-4 sm:flex-initial sm:w-40 sm:mt-0 sm:ml-6 overflow-auto">
         <.link
-          :for={location <- @locations}
+          :for={location <- Map.values(@location_map)}
           phx-click="select-location"
           phx-value-id={location.id}
           class="text-gray-900 flex items-center px-3 py-2 mr-2 rounded-md text-sm hover:rounded-md hover:bg-gray-100"
         >
-          <span class="flex-1"><%= location.name %></span>
+          <span class="flex-1">{location.name}</span>
           <.icon :if={location in @selected} name="hero-map-pin" class="text-gray-500" />
         </.link>
       </div>
@@ -73,26 +72,21 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapHandleEvent do
   end
 
   def handle_event("select-location", %{"id" => id}, socket) do
-    location = find_location(socket, String.to_integer(id))
+    location = get_location_by_id(socket, String.to_integer(id))
 
-    if location do
-      socket =
-        if location in socket.assigns.selected do
-          push_event(socket, "highlight-marker", location)
-        else
-          socket
-          |> update(:selected, &[location | &1])
-          |> push_event("add-marker", location)
-        end
+    socket =
+      if location in socket.assigns.selected do
+        push_event(socket, "highlight-marker", location)
+      else
+        socket
+        |> update(:selected, &[location | &1])
+        |> push_event("add-marker", location)
+      end
 
-      {:noreply, socket}
-    else
-      # If location is not found, do nothing.
-      {:noreply, socket}
-    end
+    {:noreply, socket}
   end
 
-  defp find_location(socket, id) do
-    Enum.find(socket.assigns.locations, &(&1.id == id))
+  defp get_location_by_id(socket, id) do
+    Map.get(socket.assigns.location_map, id)
   end
 end
