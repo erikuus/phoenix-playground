@@ -5,10 +5,9 @@ defmodule LivePlaygroundWeb.RecipesLive.AutocompleteCustom do
 
   def mount(_params, _session, socket) do
     socket =
-      assign(socket,
-        query: nil,
-        matches: []
-      )
+      socket
+      |> assign(:query, nil)
+      |> assign(:matches, [])
 
     {:ok, socket}
   end
@@ -53,9 +52,9 @@ defmodule LivePlaygroundWeb.RecipesLive.AutocompleteCustom do
         class="relative cursor-default select-none hover:bg-zinc-700 hover:text-white py-2 pl-3 pr-9"
       >
         <div class="flex justify-between items-center">
-          <span class="w-56 truncate font-medium"><%= match.name %></span>
-          <span class="hidden md:inline text-xs"><%= match.code %></span>
-          <span class="hidden md:inline text-xs"><%= match.code2 %></span>
+          <span class="w-56 truncate font-medium">{match.name}</span>
+          <span class="hidden md:inline text-xs">{match.code}</span>
+          <span class="hidden md:inline text-xs">{match.code2}</span>
         </div>
       </li>
     </ul>
@@ -75,20 +74,18 @@ defmodule LivePlaygroundWeb.RecipesLive.AutocompleteCustom do
 
   def handle_event("suggest", %{"query" => query}, socket) do
     socket =
-      assign(socket,
-        query: query,
-        matches: Countries.list_country(query)
-      )
+      socket
+      |> assign(:query, query)
+      |> assign(:matches, Countries.list_country(query))
 
     {:noreply, socket}
   end
 
   def handle_event("select", %{"name" => name}, socket) do
     socket =
-      assign(socket,
-        query: name,
-        matches: []
-      )
+      socket
+      |> assign(:query, name)
+      |> assign(:matches, [])
 
     {:noreply, socket}
   end

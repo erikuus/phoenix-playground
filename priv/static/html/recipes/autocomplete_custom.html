@@ -6,9 +6,12 @@
 <ul>
   <li>
     This function sets the initial state of the LiveView when it is mounted. It
-    initializes <code>:query</code> to <code>nil</code> and
-    <code>:matches</code> to an empty list, which will hold the autocomplete
-    suggestions.
+    initializes <code>:query</code> to <code>nil</code> to represent no user
+    input yet, and <code>:matches</code> to an empty list, ready to hold the
+    autocomplete suggestions. Unlike the native datalist approach, this custom
+    implementation needs to track both the current input value and the search
+    results separately because LiveView must control what text appears in the
+    input field when users select from the dropdown.
   </li>
 </ul>
 <h3><code>render/1</code></h3>
@@ -31,36 +34,45 @@
     via <code>phx-value-name</code>.
   </li>
 </ul>
-<h3><code>handle_event/3</code> for <code>"suggest"</code></h3>
+<h3><code>handle_event/3</code></h3>
+<p>Handles events pushed from the frontend to the LiveView:</p>
 <ul>
   <li>
-    There are two clauses for handling the <code>"suggest"</code> event:
+    <p><strong>"suggest"</strong>:</p>
     <ul>
       <li>
-        When the query is an empty string, it clears the matches by setting
-        <code>:matches</code> to an empty list.
+        When the query is an empty string (user cleared the input), it clears
+        the matches by setting <code>:matches</code> to an empty list. This
+        hides the dropdown and returns to the clean initial state.
       </li>
       <li>
         With a non-empty query, it searches for matching countries using
-        <code>Countries.list_country(query)</code> and updates
-        <code>:query</code> and <code>:matches</code> with the results.
+        <code>Countries.list_country(query)</code> and updates both
+        <code>:query</code> and <code>:matches</code> using the expanded pipe
+        form since multiple assigns are needed.
       </li>
     </ul>
   </li>
-</ul>
-<h3><code>handle_event/3</code> for <code>"select"</code></h3>
-<ul>
   <li>
-    When a user selects a country from the dropdown, this event handler sets the
-    <code>:query</code> to the selected country's name and clears the
-    <code>:matches</code> to hide the suggestions list.
+    <p><strong>"select"</strong>:</p>
+    <ul>
+      <li>
+        When a user selects a country from the dropdown, this event handler sets
+        the
+        <code>:query</code> to the selected country's name so it appears in the
+        input field, and clears the <code>:matches</code> to hide the
+        suggestions list.
+      </li>
+    </ul>
   </li>
-</ul>
-<h3><code>handle_event/3</code> for <code>"close"</code></h3>
-<ul>
   <li>
-    This function handles the <code>phx-click-away</code> event triggered when
-    the user clicks outside the dropdown. It hides the suggestions list by
-    setting <code>:matches</code> to an empty list.
+    <p><strong>"close"</strong>:</p>
+    <ul>
+      <li>
+        This function handles the <code>phx-click-away</code> event triggered
+        when the user clicks outside the dropdown. It hides the suggestions list
+        by setting <code>:matches</code> to an empty list.
+      </li>
+    </ul>
   </li>
 </ul>
