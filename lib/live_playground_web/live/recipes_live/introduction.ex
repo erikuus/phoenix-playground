@@ -7,14 +7,14 @@ defmodule LivePlaygroundWeb.RecipesLive.Introduction do
     <.header class="mb-6">
       Phoenix LiveView Recipes
       <:subtitle>
-        Practical code examples organized by framework concepts and implementation patterns
+        Practical code examples covering core LiveView features and common UI patterns
       </:subtitle>
     </.header>
     <div class="flex flex-col gap-x-0 gap-y-8 xl:flex-row xl:gap-x-10 xl:gap-y-0">
       <div class="flex-1 prose max-w-none rounded-md bg-gray-100 p-6">
-        <h3>Framework Concepts</h3>
+        <h3>Core LiveView Features</h3>
         <p>
-          Core LiveView mechanics and framework features that form the foundation of all LiveView applications.
+          Essential LiveView capabilities with practical examples showing real-world implementations.
         </p>
         <ul>
           <li>Event handling (click, change, key events)</li>
@@ -26,9 +26,9 @@ defmodule LivePlaygroundWeb.RecipesLive.Introduction do
         </ul>
       </div>
       <div class="flex-1 prose max-w-none rounded-md bg-gray-100 p-6">
-        <h3>Practical Patterns</h3>
+        <h3>Common UI Patterns</h3>
         <p>
-          Common implementation patterns and solutions you'll frequently need in real applications.
+          Frequently needed user interface patterns and data handling workflows.
         </p>
         <ul>
           <li>Search and autocomplete</li>
@@ -41,16 +41,19 @@ defmodule LivePlaygroundWeb.RecipesLive.Introduction do
       </div>
     </div>
     <div class="mt-10 prose max-w-none">
-      <h3>Learning Path</h3>
-      <p>
-        If you're new to LiveView, start with the <strong>Framework Concepts</strong>
-        section to understand
-        the core mechanics. Once comfortable with event handling and basic patterns, explore the <strong>Practical Patterns</strong>
-        section to see how these concepts combine into real-world solutions.
-      </p>
+      <h3>How to Use These Recipes</h3>
       <p>
         Each recipe is self-contained and includes working code you can experiment with directly.
-        The patterns shown can be adapted and combined based on your application's specific requirements.
+        The recipes vary in complexity - some are beginner-friendly while others demonstrate advanced techniques.
+      </p>
+      <p>
+        <strong>Core LiveView Features</strong>
+        focuses on platform capabilities like event handling, streams, and JavaScript integration. <strong>Common UI Patterns</strong>
+        shows practical solutions for search, forms, pagination, and data workflows.
+      </p>
+      <p>
+        Browse freely based on your current needs. The patterns shown can be adapted and combined
+        based on your application's specific requirements.
       </p>
     </div>
     """

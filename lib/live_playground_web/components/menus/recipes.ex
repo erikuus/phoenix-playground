@@ -27,7 +27,7 @@ defmodule LivePlaygroundWeb.Menus.Recipes do
       },
       %{
         section: %{
-          label: "FRAMEWORK CONCEPTS"
+          label: "CORE FEATURES"
         },
         section_items: [
           %{
@@ -216,7 +216,7 @@ defmodule LivePlaygroundWeb.Menus.Recipes do
       },
       %{
         section: %{
-          label: "PRACTICAL PATTERNS"
+          label: "COMMON PATTERNS"
         },
         section_items: [
           %{
