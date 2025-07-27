@@ -3,32 +3,44 @@ defmodule LivePlaygroundWeb.RecipesLive.SearchParam do
 
   alias LivePlayground.Countries
 
+  @demo_delay 1000
+
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok, assign_empty_search(socket)}
+  end
+
+  defp assign_empty_search(socket) do
+    socket
+    |> assign(:query, nil)
+    |> assign(:countries, [])
+    |> assign(:loading, false)
   end
 
   def handle_params(%{"q" => ""}, _url, socket) do
     socket =
       socket
-      |> put_flash(:no_result, "Please enter a search term")
       |> assign_empty_search()
+      |> put_flash(:no_result, "Please enter a search term")
 
     {:noreply, socket}
   end
 
   def handle_params(%{"q" => query}, _url, socket) do
-    send(self(), {:find, query})
+    # Only start search if query is different
+    if query != socket.assigns.query do
+      send(self(), {:find, query})
 
-    socket =
-      socket
-      |> clear_flash()
-      |> assign(
-        query: query,
-        countries: [],
-        loading: true
-      )
+      socket =
+        socket
+        |> assign(:query, query)
+        |> assign(:countries, [])
+        |> assign(:loading, true)
+        |> clear_flash()
 
-    {:noreply, socket}
+      {:noreply, socket}
+    else
+      {:noreply, socket}
+    end
   end
 
   def handle_params(_params, _url, socket) do
@@ -51,20 +63,19 @@ defmodule LivePlaygroundWeb.RecipesLive.SearchParam do
     <form phx-submit="search" class="flex flex-col space-x-0 space-y-4 md:flex-row md:space-x-4 md:space-y-0 md:w-96 mb-6">
       <.input type="text" name="query" autocomplete="off" placeholder="Country" value={@query} disabled={@loading} />
       <.button type="submit" phx-disable-with="" disabled={@loading}>
-        Search
+        Search <.loading :if={@loading} class="ml-2 -mr-2 w-5 h-5" />
       </.button>
       <.button_link kind={:secondary} patch={~p"/search-param"}>
         Clear
       </.button_link>
     </form>
-    <.loading :if={@loading} />
     <.alert flash={@flash} flash_key={:no_result} />
     <.table :if={@countries != []} id="countries" rows={@countries}>
-      <:col :let={country} label="Name"><%= country.name %></:col>
-      <:col :let={country} label="Continent"><%= country.continent %></:col>
+      <:col :let={country} label="Name">{country.name}</:col>
+      <:col :let={country} label="Continent">{country.continent}</:col>
       <:col :let={country} label="Population" class="text-right">
         <div class="text-right">
-          <%= Number.Delimit.number_to_delimited(country.population, precision: 0, delimiter: " ") %>
+          {Number.Delimit.number_to_delimited(country.population, precision: 0, delimiter: " ")}
         </div>
       </:col>
     </.table>
@@ -79,47 +90,29 @@ defmodule LivePlaygroundWeb.RecipesLive.SearchParam do
   end
 
   def handle_event("search", %{"query" => query}, socket) do
-    if query != socket.assigns.query do
-      socket =
-        push_patch(socket,
-          to: ~p"/search-param?#{[q: query]}"
-        )
-
-      {:noreply, socket}
-    else
-      {:noreply, socket}
-    end
+    socket = push_patch(socket, to: ~p"/search-param?#{[q: query]}")
+    {:noreply, socket}
   end
 
   def handle_info({:find, query}, socket) do
-    #  For demo we wait a second to show loading
-    Process.sleep(1000)
+    Process.sleep(@demo_delay)
 
     case Countries.list_country(query) do
       [] ->
         socket =
           socket
+          |> assign(:loading, false)
           |> put_flash(:no_result, "No results for \"#{query}\"")
-          |> assign(loading: false)
 
         {:noreply, socket}
 
       countries ->
         socket =
-          assign(socket,
-            countries: countries,
-            loading: false
-          )
+          socket
+          |> assign(:countries, countries)
+          |> assign(:loading, false)
 
         {:noreply, socket}
     end
-  end
-
-  defp assign_empty_search(socket) do
-    assign(socket,
-      query: nil,
-      countries: [],
-      loading: false
-    )
   end
 end

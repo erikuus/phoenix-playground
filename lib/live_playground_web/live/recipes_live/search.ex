@@ -3,8 +3,17 @@ defmodule LivePlaygroundWeb.RecipesLive.Search do
 
   alias LivePlayground.Countries
 
+  @demo_delay 1000
+
   def mount(_params, _session, socket) do
     {:ok, assign_empty_search(socket)}
+  end
+
+  defp assign_empty_search(socket) do
+    socket
+    |> assign(:query, nil)
+    |> assign(:countries, [])
+    |> assign(:loading, false)
   end
 
   def render(assigns) do
@@ -30,11 +39,11 @@ defmodule LivePlaygroundWeb.RecipesLive.Search do
     </form>
     <.alert flash={@flash} flash_key={:no_result} />
     <.table :if={@countries != []} id="countries" rows={@countries}>
-      <:col :let={country} label="Name"><%= country.name %></:col>
-      <:col :let={country} label="Continent"><%= country.continent %></:col>
+      <:col :let={country} label="Name">{country.name}</:col>
+      <:col :let={country} label="Continent">{country.continent}</:col>
       <:col :let={country} label="Population" class="text-right">
         <div class="text-right">
-          <%= Number.Delimit.number_to_delimited(country.population, precision: 0, delimiter: " ") %>
+          {Number.Delimit.number_to_delimited(country.population, precision: 0, delimiter: " ")}
         </div>
       </:col>
     </.table>
@@ -51,8 +60,8 @@ defmodule LivePlaygroundWeb.RecipesLive.Search do
   def handle_event("search", %{"query" => ""}, socket) do
     socket =
       socket
-      |> put_flash(:no_result, "Please enter a search term")
       |> assign_empty_search()
+      |> put_flash(:no_result, "Please enter a search term")
 
     {:noreply, socket}
   end
@@ -62,45 +71,33 @@ defmodule LivePlaygroundWeb.RecipesLive.Search do
 
     socket =
       socket
+      |> assign(:query, query)
+      |> assign(:countries, [])
+      |> assign(:loading, true)
       |> clear_flash()
-      |> assign(
-        query: query,
-        countries: [],
-        loading: true
-      )
 
     {:noreply, socket}
   end
 
   def handle_info({:find, query}, socket) do
-    #  For demo we wait a second to show loading
-    Process.sleep(1000)
+    Process.sleep(@demo_delay)
 
     case Countries.list_country(query) do
       [] ->
         socket =
           socket
+          |> assign(:loading, false)
           |> put_flash(:no_result, "No results for \"#{query}\"")
-          |> assign(loading: false)
 
         {:noreply, socket}
 
       countries ->
         socket =
-          assign(socket,
-            countries: countries,
-            loading: false
-          )
+          socket
+          |> assign(:countries, countries)
+          |> assign(:loading, false)
 
         {:noreply, socket}
     end
-  end
-
-  defp assign_empty_search(socket) do
-    assign(socket,
-      query: nil,
-      countries: [],
-      loading: false
-    )
   end
 end
