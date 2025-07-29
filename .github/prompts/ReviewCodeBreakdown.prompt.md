@@ -1,135 +1,164 @@
 ---
 mode: "ask"
-model: Claude Sonnet 4
 description: "Review and Improve an Existing Code Breakdown"
 ---
 
 Act as a senior developer with exceptional teaching abilities. Your task is to review and improve an existing code breakdown by analyzing both the code and its explanation.
 
-MANDATORY PROCESS: You MUST follow a three-stage process:
+Follow this three-stage process:
 
-1. Initial review and analysis
-2. Self-criticism of your suggestions
-3. Final recommendations based on identified improvement opportunities
+1. Initial Review – Understand the code and explanation
+2. Self-Critique – Reassess your own suggestions
+3. Final Recommendations – Present refined improvements
 
-REVIEW PRINCIPLES:
+---
 
-1. Match explanation accuracy to actual code behavior
-2. Bridge knowledge gaps that developers might encounter
-3. Eliminate vague or misleading language
-4. Surface critical implementation details that might be overlooked
-5. Ensure examples are clear, relevant, and practical
-6. Verify logical flow and progressive structure
-7. Check that both "what" and "why" are explained appropriately
+## What to Focus On
 
-ANALYSIS APPROACH:
+### Clarity and Accuracy
 
-1. Read through the entire breakdown to understand its scope and approach
-2. Compare explanations against actual code implementation
-3. Identify sections that lack clarity or practical value
-4. Spot missing connections between related concepts
-5. Look for opportunities to improve examples or add missing context
-6. Note areas where the explanation is too verbose or too sparse
-7. Assess whether the breakdown helps developers implement similar features
+- Does the explanation match what the code actually does?
+- Are vague or misleading terms avoided?
+- Is both what and why explained clearly?
+- Is jargon explained or replaced with plain terms?
 
-IMPROVEMENT GUIDELINES:
+### Practical Developer Value
 
-1. **Preserve Strong Sections**: Don't rewrite what's already working well
-2. **Refine Unclear Areas**: Make explanations more precise and actionable
-3. **Add Missing Context**: Include crucial implementation details or usage scenarios
-4. **Improve Examples**: Replace abstract examples with concrete, practical ones
-5. **Maintain Consistent Tone**: Match the original voice unless it's ineffective
-6. **Focus on Practical Value**: Ensure changes help developers understand and implement
-7. **Justify Improvements**: Explain why each suggested change adds value
+- Are design decisions and their reasoning clear?
+- Are examples concrete, relevant, and realistic?
+- Can a developer apply this to similar implementations?
+- Are related concepts clearly connected?
 
-REVIEW CRITERIA:
+### Structure and Tone
 
-When evaluating the breakdown, check for these common issues:
+- Is the explanation logically organized and progressive?
+- Are simple points concise and complex points fully explained?
+- Is the tone consistent and developer-friendly?
 
-ACCURACY PROBLEMS:
-□ Does the explanation match what the code actually does?
-□ Are there false claims about centralization, distribution, or behavior?
-□ Do generalizations accurately reflect the implementation?
-□ Are there stated absolutes ("always", "never") that have exceptions?
+---
 
-CLARITY PROBLEMS:
-□ Are there vague terms without specific context?
-□ Is jargon used without explanation?
-□ Are there tautological statements that just restate function names?
-□ Are obvious things over-explained while complex details are skipped?
+## What to Avoid
 
-PRACTICAL VALUE PROBLEMS:
-□ Would developers understand WHY design decisions were made?
-□ Are the actual problems being solved clearly explained?
-□ Are there missing connections between related concepts?
-□ Does it help developers implement similar features?
+- Don’t simply mirror what the code already shows
+- Avoid unexplained jargon or abstract concepts that raise more questions
+- Don’t use tautologies (e.g., “This function returns a result using return”)
+- Avoid generalizations or absolutes unless clearly true and relevant
+- Don’t over-explain what’s obvious while skipping what’s subtle
+- Avoid buzzwords or inflated language (see Language Guidelines)
 
-RESPONSE FORMAT:
+---
 
-## HTML Code Improvements
+## Suggestion Format
 
-When providing HTML improvements, return ONLY the changed sections in code blocks that can be directly inserted into the file. Do not include:
+For each improvement, include:
 
-- Commented lines before and after (e.g., `<!-- filepath: ... -->`)
-- Entire HTML structure
-- Unchanged surrounding content
+**Section**: [Quote the original text]
+**Issue**: [What’s unclear, inaccurate, or missing?]
+**Improved Version**: [Your improved version]
+**Why It’s Better**: [How it improves understanding or usability]
+**Implementation Context**: [How this helps developers in practice]
 
-Format HTML improvements as:
+---
+
+## Language and Style Guidelines
+
+Use plain, natural developer language. Avoid inflated or overused terms such as:
+
+- leverage → use
+- utilize → use
+- robust → reliable
+- seamlessly → smoothly
+- facilitate → help
+- paradigm → method
+- endeavor → attempt
+
+Be specific, clear, and practical in all explanations.
+
+---
+
+## Example
+
+**Original**
 
 ```html
-<section>
-  <!-- Only the improved content here -->
-</section>
+<h4>The Dual Key/Name Structure</h4>
+<p>
+  The <code>get_size_options/0</code> structure addresses the string vs atom
+  mismatch between form data and LiveView assigns:
+</p>
+<pre><code>%{key: :sm, name: "sm", label: "Small"}</code></pre>
+<ul>
+  <li>
+    <code>name</code>: String for HTML form submission and
+    <code>handle_event/3</code>
+    pattern matching
+  </li>
+  <li>
+    <code>key</code>: Atom for efficient access to <code>@filter</code> assigns
+    in templates
+  </li>
+  <li><code>label</code>: Human-readable text for the UI</li>
+</ul>
 ```
 
-## Language Guidelines
+**Problem**
 
-AVOID these overused LLM terms in explanations:
+The explanation introduces confusing jargon ("string vs atom mismatch") without context. The meaning of each field is vague, and the connection between them is unclear.
 
-- "leverage" (use: use, apply, employ)
-- "utilize" (use: use)
-- "seamlessly" (use: smoothly, without issues)
-- "robust" (use: reliable, stable)
-- "cutting-edge" (use: modern, current)
-- "harness" (use: use, take advantage of)
-- "streamline" (use: simplify, optimize)
-- "facilitate" (use: enable, help, make easier)
-- "endeavor" (use: attempt, try)
-- "paradigm" (use: approach, method)
-- "synergy" (use: cooperation, combined effect)
-- "holistic" (use: complete, comprehensive)
+**Improved**
 
-Use plain developer language that sounds natural and conversational.
+```html
+<h4>The Dual Key/Name Structure</h4>
+<p>
+  The <code>get_size_options/0</code> function returns maps with three fields
+  that serve different purposes:
+</p>
+<pre><code>%{key: :sm, name: "sm", label: "Small"}</code></pre>
+<ul>
+  <li>
+    <code>name</code>: The checkbox's HTML name attribute (used for form
+    submission)
+  </li>
+  <li><code>label</code>: The text displayed next to the checkbox</li>
+  <li>
+    <code>key</code>: Used to retrieve the checkbox's current value from the
+    filter assigns
+  </li>
+</ul>
 
-SUGGESTION FORMAT:
+<h4>Why We Need Both <code>name</code> and <code>key</code></h4>
+<p>
+  At first glance, having both <code>name: "sm"</code> and
+  <code>key: :sm</code> seems redundant, but each serves a distinct purpose:
+</p>
+<ul>
+  <li>
+    <strong><code>name</code> (string):</strong> Required for the HTML checkbox
+    and pattern matching in <code>handle_event/3</code>
+  </li>
+  <li>
+    <strong><code>key</code> (atom):</strong> Required to get the current
+    checkbox value from <code>@filter</code> assigns
+  </li>
+</ul>
+```
 
-For each improvement, provide:
+**Why This Is Better**
 
-**Section**: [Quote the specific text that needs improvement]
+- Removes jargon: No confusing terms like "string vs atom mismatch"
+- Simple progression: Explains each field first, then their relationship
+- Practical purpose: Shows exactly what each field does in real use
+- Clear examples: Realistic values help ground the explanation
 
-**Issue**: [Explain what's unclear, inaccurate, or missing]
+---
 
-**Improved Version**: [Provide your revised explanation]
+## Self-Criticism Checklist
 
-**Why It's Better**: [Explain how this change improves clarity or practical value]
+Before submitting your suggestions, confirm:
 
-**Implementation Context**: [Connect the change to how developers will actually use the code]
-
-SELF-CRITICISM CHECKLIST:
-
-After drafting your suggestions, CRITICALLY REVIEW them for:
-
-□ Are my suggestions actually improvements or just different wording?
-□ Do I preserve the good parts of the original explanation?
-□ Are my changes specific and actionable?
-□ Do I explain why each change is beneficial?
-□ Have I avoided introducing new vagueness or inaccuracies?
-□ Do my suggestions maintain the original tone and style?
-□ Have I avoided overused LLM terminology?
-□ Are my HTML code blocks ready for direct insertion?
-
-RESPONSE FORMAT:
-
-Provide your final review and suggestions only. Do not show the self-criticism process or multiple drafts. Your response should be the result of your internal review and refinement process.
-
-Focus on improvements that genuinely help developers understand and
+- [ ] Are these real improvements, not just rewordings?
+- [ ] Did I preserve strong parts of the original?
+- [ ] Are the suggestions specific and actionable?
+- [ ] Is each change clearly justified?
+- [ ] Did I avoid introducing new vagueness or inaccuracy?
+- [ ] Is the tone appropriate and consistent?
