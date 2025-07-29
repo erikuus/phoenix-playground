@@ -159,39 +159,40 @@ defmodule LivePlayground.Cities do
   defp filter_by_size(query, %{sm: _sm, md: _md, lg: _lg} = options) do
     size_conditions =
       dynamic(false)
-      |> condition_by_sm(options)
-      |> condition_by_md(options)
-      |> condition_by_lg(options)
+      |> add_sm_condition(options)
+      |> add_md_condition(options)
+      |> add_lg_condition(options)
 
     where(query, ^size_conditions)
   end
 
   defp filter_by_size(query, _options), do: query
 
-  defp condition_by_sm(dynamic, %{sm: "true"}) do
+  defp add_sm_condition(dynamic, %{sm: "true"}) do
     dynamic([c], c.population <= 500_000 or ^dynamic)
   end
 
-  defp condition_by_sm(dynamic, _), do: dynamic
+  defp add_sm_condition(dynamic, _), do: dynamic
 
-  defp condition_by_md(dynamic, %{md: "true"}) do
+  defp add_md_condition(dynamic, %{md: "true"}) do
     dynamic([c], (c.population > 500_000 and c.population < 1_000_000) or ^dynamic)
   end
 
-  defp condition_by_md(dynamic, _), do: dynamic
+  defp add_md_condition(dynamic, _), do: dynamic
 
-  defp condition_by_lg(dynamic, %{lg: "true"}) do
+  defp add_lg_condition(dynamic, %{lg: "true"}) do
     dynamic([c], c.population >= 1_000_000 or ^dynamic)
   end
 
-  defp condition_by_lg(dynamic, _), do: dynamic
+  defp add_lg_condition(dynamic, _), do: dynamic
 
-  def list_distinct_country_district(countrycode) do
-    from(City)
-    |> select([:district])
-    |> where(countrycode: ^countrycode)
-    |> order_by(asc: :district)
-    |> distinct(true)
+  def list_distinct_country_districts(countrycode) do
+    from(c in City,
+      where: c.countrycode == ^countrycode,
+      select: c.district,
+      distinct: true,
+      order_by: c.district
+    )
     |> Repo.all()
   end
 
