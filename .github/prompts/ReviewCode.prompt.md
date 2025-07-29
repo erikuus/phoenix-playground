@@ -1,6 +1,5 @@
 ---
 mode: "ask"
-model: Claude Sonnet 4
 description: "Review a LiveView module for coding conventions and quality."
 ---
 

@@ -1,6 +1,5 @@
 ---
 mode: "ask"
-model: Claude Sonnet 4
 description: "Revise an Existing Code Breakdown"
 ---
 
