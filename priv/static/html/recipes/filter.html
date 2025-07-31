@@ -258,7 +258,7 @@
   options. Compare it to a less efficient alternative:
 </p>
 
-<pre><code># DON'T do this - returns full structs then extracts district
+<pre><code># DON'T do this - returns full structs
 def list_distinct_country_district(countrycode) do
   from(City)
   |> select([:district])
@@ -268,7 +268,7 @@ def list_distinct_country_district(countrycode) do
   |> Repo.all()
 end</code>
 
-<code># Then in LiveView helper:
+<code># Then in LiveView extracts district
 defp get_district_options() do
   ["" | Cities.list_distinct_country_district("USA") |> Enum.map(& &1.district)]
 end</code>
