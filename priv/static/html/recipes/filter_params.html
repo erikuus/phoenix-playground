@@ -7,66 +7,363 @@
 <ul>
   <li>
     The LiveView is initialized without presetting any state, ready to handle
-    incoming URL parameters.
+    incoming URL parameters through <code>handle_params/3</code>.
   </li>
 </ul>
 <h3><code>handle_params/3</code></h3>
 <ul>
   <li>
-    This function processes the parameters from the URL query string. It
-    normalizes the boolean values for the size filters (<code>sm</code>,
-    <code>md</code>, <code>lg</code>) using <code>validate_bool/1</code> and
-    updates the LiveView state with the filter criteria.
+    This function is LiveView's entry point for URL-driven state management.
+    Every time the URL changes (initial page load, browser navigation, or
+    programmatic updates), Phoenix calls this function with the current query
+    parameters.
   </li>
   <li>
-    A default filter is applied when no or unrecognized parameters are present.
+    The function transforms raw URL parameters (like
+    <code>filter-params?name=san&sm=true&district=&lg=true&md=true</code>) into
+    a normalized filter structure that your application can reliably work with.
+  </li>
+  <li>
+    Here's the critical insight: checkbox form submissions send string values
+    (<code>"true"</code>/<code>"false"</code>), not actual booleans. The
+    <code>normalize_checkbox_value/1</code> helper ensures these strings are
+    consistently formatted.
+  </li>
+  <li>
+    When users visit malformed URLs (like
+    <code>/filter-params?sm=yes&md=invalid</code>), the function detects the
+    inconsistency and automatically redirects to a clean URL
+    (<code>/filter-params?sm=false&md=false</code>). This prevents user
+    confusion and ensures your URL always represents the actual application
+    state.
   </li>
 </ul>
+
+<h4>Helpers for <code>handle_params/3</code></h4>
+<ul>
+  <li>
+    <code>get_filter_from_params/1</code> - The URL parameter parser. It uses
+    pattern matching to extract expected parameters, automatically falling back
+    to sensible defaults when parameters are missing. This is why you can visit
+    <code>/filter-params</code> (no parameters) or
+    <code>/filter-params?name=boston</code>
+    (partial parameters) without errors.
+  </li>
+  <li>
+    <code>normalize_checkbox_value/1</code> - The checkbox value sanitizer.
+    Normally checkboxes send predictable string values (<code>"true"</code> or
+    <code>"false"</code>), but users can manually edit URLs to include invalid
+    values like <code>?sm=invalid&md=yes</code>. This function enforces that
+    only <code>"true"</code> and <code>"false"</code> strings are allowed.
+    Everything else becomes <code>"false"</code>. (See "The Checkbox Pattern"
+    section for more information.)
+  </li>
+  <li>
+    <code>get_default_filter/0</code> - Your application's "clean slate" filter
+    state. This becomes crucial when users visit the page without any URL
+    parameters.
+  </li>
+  <li>
+    <code>params_need_normalization?/2</code> - The URL consistency checker. It
+    compares the raw URL parameters against the normalized filter values that
+    will be used by the application. When they differ (indicating invalid values
+    were found and corrected), it triggers a redirect to update the URL. The
+    function includes a guard clause to avoid redirects on initial page loads
+    with no parameters.
+  </li>
+
+  <li>
+    <code>assign_filter/2</code> - The state updater that does the actual work.
+    It queries the database with the validated filter criteria and updates the
+    socket with both the filtered city results and the current filter state
+    (needed for form rendering).
+  </li>
+</ul>
+
 <h3><code>render/1</code></h3>
 <ul>
   <li>
-    The HTML markup includes a form for filtering, which upon changes, will
-    trigger a <code>phx-change="filter"</code> event. Filters include a name
-    input, district selector, and checkboxes for city sizes.
+    Constructs a form with <code>phx-change="filter"</code> that triggers the
+    "filter" event on any input change.
+  </li>
+
+  <li>
+    The name input includes <code>phx-debounce="500"</code> to throttle rapid
+    keystrokes, preventing excessive URL updates during typing.
   </li>
   <li>
-    If there are no cities to display (<code>@cities</code> is empty), an alert
-    with "No results" is shown; alternatively, if no filters are applied, it
-    indicates that all records are being shown.
+    District options are populated by <code>get_district_options()</code>, which
+    includes an empty string for "no filter" plus all unique USA districts.
   </li>
-  <li>A table lists the cities that match the current filters.</li>
+  <li>
+    Size checkboxes use a dual-structure pattern from
+    <code>get_size_options()</code> that handles the complex requirements of
+    reliable checkbox state management in LiveView (explained in detail in the
+    "Checkbox Pattern" section below).
+  </li>
+  <li>
+    Conditionally renders alerts: "Showing all records—no filters applied" when
+    using default filters, or "No results" when filters yield no matches.
+  </li>
+  <li>
+    Displays a data table when <code>@cities</code> contains matching records.
+  </li>
 </ul>
+
 <h3><code>handle_event/3</code> for <code>"filter"</code></h3>
 <ul>
   <li>
-    Responds to changes in the filter form, constructing a URL with the current
-    filter settings and calling <code>push_patch/2</code> to update the
-    browser's URL without a page reload. This enables bookmarkable and shareable
-    filter states.
+    Triggered whenever any form input changes, receiving all current form values
+    in the event payload.
+  </li>
+  <li>
+    Processes the form parameters through <code>get_filter_from_params/1</code>
+    to ensure consistent normalization with URL parameter handling.
+  </li>
+  <li>
+    Uses <code>push_patch/2</code> to update the browser's URL with the new
+    filter parameters, making the filter state bookmarkable and shareable.
+  </li>
+  <li>
+    The URL update triggers <code>handle_params/3</code>, which handles the
+    actual state update and data fetching, maintaining a single source of truth
+    for parameter processing.
   </li>
 </ul>
-<h3>Helper Functions</h3>
+
+<h4>Helpers for <code>render/1</code></h4>
 <ul>
   <li>
-    <code>validate_bool/1</code> checks the string representation of a boolean
-    value ensuring that only "true" or "false" strings are used, defaulting to
-    "false" for any invalid input.
+    <code>get_district_options/0</code> returns district options for the select
+    input.
   </li>
   <li>
-    <code>assign_filter/2</code> assigns the updated filter to the socket and
-    fetches the filtered city data using
-    <code>Cities.list_country_city/2</code>.
+    <code>get_size_options/0</code> demonstrates the essential dual-structure
+    pattern for LiveView checkboxes, containing both <code>key</code> (atom for
+    assigns access) and <code>name</code> (string for form submission).
   </li>
   <li>
-    <code>no_filters_applied/1</code> checks if the default filters are applied,
-    indicating no specific user-driven filtering.
-  </li>
-  <li>
-    <code>district_options/0</code> retrieves distinct district options for the
-    district select input.
-  </li>
-  <li>
-    <code>size_options/0</code> prepares the size filter options to ensure
-    correct state across LiveView re-renders.
+    <code>no_filters_applied?/1</code> checks if the current filter matches the
+    default filter state, used to show the "all records" alert.
   </li>
 </ul>
+
+<h3>URL Parameter vs Socket State</h3>
+<p>
+  This module demonstrates a fundamentally different approach from the
+  <code>Filter</code>
+  module. Instead of maintaining filter state in socket assigns, all state is
+  managed through URL parameters:
+</p>
+
+<h4>Benefits of URL-Based State</h4>
+<ul>
+  <li>
+    <strong>Bookmarkable:</strong> Users can bookmark specific filter
+    combinations
+  </li>
+  <li><strong>Shareable:</strong> Filter states can be shared via URL</li>
+  <li>
+    <strong>Browser navigation:</strong> Back/forward buttons work as expected
+  </li>
+  <li>
+    <strong>Refresh-persistent:</strong> Page refreshes maintain the current
+    filter state
+  </li>
+</ul>
+
+<h4>The Parameter Flow</h4>
+<ol>
+  <li>
+    User changes form input → <code>handle_event/3</code> receives form data
+  </li>
+  <li>
+    <code>handle_event/3</code> calls <code>push_patch/2</code> to update URL
+  </li>
+  <li>URL change triggers <code>handle_params/3</code> with new parameters</li>
+  <li>
+    <code>handle_params/3</code> normalizes parameters and updates socket state
+  </li>
+  <li>Template re-renders with new data</li>
+</ol>
+
+<h3>The Checkbox Pattern: Critical Implementation Detail</h3>
+<p>
+  This module showcases a sophisticated but non-intuitive pattern essential for
+  reliable checkbox handling in Phoenix LiveView. Understanding this pattern is
+  crucial for any LiveView application using checkboxes.
+</p>
+
+<h4>The Core Problem</h4>
+<p>
+  HTML checkboxes have inconsistent form submission behavior that breaks
+  LiveView's pattern matching expectations:
+</p>
+<ul>
+  <li>
+    <strong>Checked checkbox:</strong> Submits <code>name=value</code> in form
+    data
+  </li>
+  <li>
+    <strong>Unchecked checkbox:</strong> Submits nothing (key doesn't exist)
+  </li>
+</ul>
+<p>
+  This inconsistency would cause <code>get_filter_from_params/1</code> pattern
+  matching to fail when checkboxes are unchecked, as the expected keys would be
+  missing from the payload.
+</p>
+
+<h4>Phoenix's Solution</h4>
+<p>
+  Phoenix's checkbox component solves this by generating two HTML inputs per
+  checkbox:
+</p>
+<pre><code>&lt;input type="hidden" name="sm" value="false" /&gt;
+&lt;input type="checkbox" name="sm" value="true" /&gt;</code></pre>
+<p>This ensures consistent form submission:</p>
+<ul>
+  <li>
+    <strong>Unchecked:</strong> Only hidden input submits →
+    <code>"sm" => "false"</code>
+  </li>
+  <li>
+    <strong>Checked:</strong> Checkbox overrides hidden input →
+    <code>"sm" => "true"</code>
+  </li>
+</ul>
+
+<h4>The Dual Key/Name Structure</h4>
+<p>
+  The <code>get_size_options/0</code> function returns maps with three fields
+  that serve different purposes:
+</p>
+<pre><code>%{key: :sm, name: "sm", label: "Small"}</code></pre>
+<ul>
+  <li>
+    <code>name</code>: The checkbox's HTML name attribute (used for form
+    submission)
+  </li>
+  <li><code>label</code>: The text displayed next to the checkbox</li>
+  <li>
+    <code>key</code>: Used to retrieve the checkbox's current value from the
+    filter assigns
+  </li>
+</ul>
+
+<h4>Why We Need Both <code>name</code> and <code>key</code></h4>
+<p>
+  At first glance, having both <code>name: "sm"</code> and
+  <code>key: :sm</code> seems redundant, but each serves a distinct purpose:
+</p>
+<ul>
+  <li>
+    <strong><code>name</code> (string):</strong> Required for the HTML checkbox
+    and pattern matching in <code>handle_event/3</code>
+  </li>
+  <li>
+    <strong><code>key</code> (atom):</strong> Required to get the current
+    checkbox value from <code>@filter</code> assigns
+  </li>
+</ul>
+
+<h4>Template Implementation</h4>
+<p>In the template, you can see both in action:</p>
+<pre><code>&lt;.input :for={size &lt;- get_size_options()}
+         type="checkbox"
+         label={size.label}        # "Small", "Medium", "Large"
+         name={size.name}          # "sm", "md", "lg" (for form submission)
+         value={@filter[size.key]} # @filter[:sm], @filter[:md], @filter[:lg]
+/&gt;</code></pre>
+<p>
+  The <code>value</code> attribute gets the current state ("true" or "false")
+  from the filter assigns to determine if the checkbox should be checked or
+  unchecked when the page renders.
+</p>
+
+<hr />
+
+<h2>cities.ex</h2>
+
+<h3><code>list_country_city/2</code></h3>
+<p>
+  This function demonstrates Ecto's pipe-friendly query functions to build SQL
+  step by step.
+</p>
+
+<h4>Query Building Pipeline</h4>
+<ul>
+  <li>Starts with a base query for cities in the specified country code</li>
+  <li>Pipes through filter functions that conditionally add WHERE clauses</li>
+  <li>
+    Each filter function returns the query unchanged if no filtering is needed
+  </li>
+</ul>
+
+<h4><code>filter_by_name/2</code></h4>
+<ul>
+  <li>
+    Uses pattern matching to only apply filtering when <code>name</code> is not
+    empty
+  </li>
+  <li>
+    Implements case-insensitive partial matching with <code>ilike/2</code>
+  </li>
+  <li>
+    Uses the pin operator (<code>^</code>) to safely inject the search pattern
+    into <code>ilike/2</code>
+  </li>
+</ul>
+
+<h4><code>filter_by_district/2</code></h4>
+<ul>
+  <li>Uses exact string matching against the district field</li>
+  <li>Only applies the filter when district is not an empty string</li>
+</ul>
+
+<h4><code>filter_by_size/2</code> - Dynamic Query Building</h4>
+
+<ul>
+  <li>
+    This function uses Ecto's <code>dynamic/1</code> to build conditional WHERE
+    clauses. While filter functions in the pipeline add conditions to build
+    query, <code>dynamic/1</code> adds partial SQL fragments to build complex
+    condition.
+  </li>
+  <li>
+    <code>dynamic/1</code> works like building a sentence. You start with an
+    empty sentence, and each function reads the current sentence and creates a
+    new, longer sentence by adding "AND this condition" or "OR that condition"
+    to it, passing the expanded sentence to the next function in the pipeline.
+  </li>
+  <li>
+    Given a filter map like <code>%{sm: "true", md: "true", lg: "true"}</code>,
+    <code>filter_by_size/2</code> dynamically builds a SQL WHERE clause such as:
+    <code
+      >WHERE (c.population &lt;= 500000) OR ((c.population &gt; 500000) AND
+      (c.population &lt; 1000000)) OR (c.population &gt;= 1000000)</code
+    >
+  </li>
+</ul>
+
+<h3><code>list_distinct_country_districts/1</code></h3>
+<p>
+  This function demonstrates an optimized approach for populating select
+  options. Compare it to a less efficient alternative:
+</p>
+
+<pre><code># DON'T do this - returns full structs
+def list_distinct_country_district(countrycode) do
+  from(City)
+  |> select([:district])
+  |> where(countrycode: ^countrycode)
+  |> order_by(asc: :district)
+  |> distinct(true)
+  |> Repo.all()
+end</code>
+
+<code># Then in LiveView extracts district
+defp get_district_options() do
+  ["" | Cities.list_distinct_country_district("USA") |> Enum.map(& &1.district)]
+end</code>
+</pre>

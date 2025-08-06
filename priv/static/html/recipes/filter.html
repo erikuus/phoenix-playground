@@ -84,8 +84,7 @@
 <ul>
   <li>
     <code>get_district_options/0</code> returns district options for the select
-    input, following the <code>get_</code> prefix convention for
-    value-retrieving functions.
+    input.
   </li>
   <li>
     <code>get_size_options/0</code> demonstrates the essential dual-structure
@@ -233,14 +232,15 @@
 <ul>
   <li>
     This function uses Ecto's <code>dynamic/1</code> to build conditional WHERE
-    clauses. While query pipelines add conditions to build queries,
-    <code>dynamic/1</code> adds partial SQL fragments to build complex
-    conditions.
+    clauses. While filter functions in the pipeline add conditions to build
+    query, <code>dynamic/1</code> adds partial SQL fragments to build complex
+    condition.
   </li>
   <li>
-    <code>dynamic/1</code> works like a basket that collects SQL condition
-    fragments. You start with an empty basket, add pieces of WHERE logic, then
-    dump the entire basket into your query at once.
+    <code>dynamic/1</code> works like building a sentence. You start with an
+    empty sentence, and each function reads the current sentence and creates a
+    new, longer sentence by adding "AND this condition" or "OR that condition"
+    to it, passing the expanded sentence to the next function in the pipeline.
   </li>
   <li>
     Given a filter map like <code>%{sm: "true", md: "true", lg: "true"}</code>,

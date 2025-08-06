@@ -7,36 +7,40 @@ defmodule LivePlaygroundWeb.RecipesLive.FilterParams do
     {:ok, socket}
   end
 
-  def handle_params(
-        %{"name" => name, "district" => district, "sm" => sm, "md" => md, "lg" => lg},
-        _url,
+  def handle_params(params, _url, socket) do
+    filter = get_filter_from_params(params)
+
+    socket =
+      if params_need_normalization?(params, filter) do
+        push_patch(socket, to: ~p"/filter-params?#{filter}")
+      else
         socket
-      ) do
-    filter = %{
-      district: district,
-      name: name,
-      sm: validate_bool(sm),
-      md: validate_bool(md),
-      lg: validate_bool(lg)
-    }
+      end
 
     {:noreply, assign_filter(socket, filter)}
   end
 
-  def handle_params(_params, _url, socket) do
-    {:noreply, assign_filter(socket, get_default_filter())}
+  defp get_filter_from_params(%{
+         "name" => name,
+         "district" => district,
+         "sm" => sm,
+         "md" => md,
+         "lg" => lg
+       }) do
+    %{
+      district: district,
+      name: name,
+      sm: normalize_checkbox_value(sm),
+      md: normalize_checkbox_value(md),
+      lg: normalize_checkbox_value(lg)
+    }
   end
 
-  defp validate_bool(value) when value in ["true", "false"], do: value
+  defp get_filter_from_params(_params), do: get_default_filter()
 
-  defp validate_bool(_), do: "false"
+  defp normalize_checkbox_value("true"), do: "true"
 
-  defp assign_filter(socket, filter) do
-    assign(socket,
-      cities: Cities.list_country_city("USA", filter),
-      filter: filter
-    )
-  end
+  defp normalize_checkbox_value(_), do: "false"
 
   defp get_default_filter do
     %{
@@ -46,6 +50,21 @@ defmodule LivePlaygroundWeb.RecipesLive.FilterParams do
       md: "false",
       lg: "false"
     }
+  end
+
+  defp params_need_normalization?(%{} = params, filter) when map_size(params) > 0 do
+    Map.get(params, "sm") != filter.sm or
+      Map.get(params, "md") != filter.md or
+      Map.get(params, "lg") != filter.lg
+  end
+
+  defp params_need_normalization?(_params, _filter), do: false
+
+  defp assign_filter(socket, filter) do
+    assign(socket,
+      cities: Cities.list_country_city("USA", filter),
+      filter: filter
+    )
   end
 
   def render(assigns) do
@@ -100,21 +119,10 @@ defmodule LivePlaygroundWeb.RecipesLive.FilterParams do
     """
   end
 
-  @doc """
-  Handles the 'filter' event for the name textbox, district select, and size checkboxes. The values for 'sm', 'md', and 'lg'
-  are guaranteed to be strings "true" or "false". This consistent behavior is ensured by the checkbox component design, which
-  always returns "true" if checked and "false" if not, thanks to the combination of a hidden input and a checkbox input with
-  pre-defined values.
-  """
-  def handle_event(
-        "filter",
-        %{"name" => name, "district" => district, "sm" => sm, "md" => md, "lg" => lg},
-        socket
-      ) do
-    socket =
-      push_patch(socket,
-        to: ~p"/filter-params?#{[name: name, district: district, sm: sm, md: md, lg: lg]}"
-      )
+  def handle_event("filter", params, socket) do
+    filter = get_filter_from_params(params)
+
+    socket = push_patch(socket, to: ~p"/filter-params?#{filter}")
 
     {:noreply, socket}
   end
@@ -123,14 +131,11 @@ defmodule LivePlaygroundWeb.RecipesLive.FilterParams do
     ["" | Cities.list_distinct_country_districts("USA")]
   end
 
-  # Provides options for size-related checkboxes. Each option includes a `key` corresponding to an atom used
-  # in the `@filter` assigns. The `key` is essential for ensuring that checkbox states (checked or unchecked)
-  # are accurately maintained across LiveView re-renders.
-  defp get_size_options() do
+  defp get_size_options do
     [
-      %{key: :sm, name: "sm", label: "Small"},
-      %{key: :md, name: "md", label: "Medium"},
-      %{key: :lg, name: "lg", label: "Large"}
+      %{key: :sm, name: "sm", label: "Small (≤ 500K)"},
+      %{key: :md, name: "md", label: "Medium (500K - 1M)"},
+      %{key: :lg, name: "lg", label: "Large (≥ 1M)"}
     ]
   end
 

@@ -70,12 +70,6 @@ defmodule LivePlaygroundWeb.RecipesLive.Filter do
     """
   end
 
-  @doc """
-  Handles the 'filter' event for the name textbox, district select, and size checkboxes. The values for 'sm', 'md', and 'lg'
-  are guaranteed to be strings "true" or "false". This consistent behavior is ensured by the checkbox component design, which
-  always returns "true" if checked and "false" if not, thanks to the combination of a hidden input and a checkbox input with
-  pre-defined values.
-  """
   def handle_event(
         "filter",
         %{"name" => name, "district" => district, "sm" => sm, "md" => md, "lg" => lg},
@@ -100,9 +94,6 @@ defmodule LivePlaygroundWeb.RecipesLive.Filter do
     ["" | Cities.list_distinct_country_districts("USA")]
   end
 
-  # Provides options for size-related checkboxes. Each option includes a `key` corresponding to an atom used
-  # in the `@filter` assigns. The `key` is essential for ensuring that checkbox states (checked or unchecked)
-  # are accurately maintained across LiveView re-renders.
   defp get_size_options do
     [
       %{key: :sm, name: "sm", label: "Small (≤ 500K)"},
