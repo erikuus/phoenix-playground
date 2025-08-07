@@ -1,6 +1,6 @@
 ---
 mode: "agent"
-model: GPT-4o
+model: GPT-4.1
 tools: ["playwright"]
 description: "Test Elixir Phoenix LiveView module using Playwright MCP server"
 ---

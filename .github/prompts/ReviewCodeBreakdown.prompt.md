@@ -162,3 +162,5 @@ Before submitting your suggestions, confirm:
 - [ ] Is each change clearly justified?
 - [ ] Did I avoid introducing new vagueness or inaccuracy?
 - [ ] Is the tone appropriate and consistent?
+
+Before finalizing, check your response for alignment with all instructions above. Note any discrepancies, correct them, and ensure your answer matches the requirements as closely as possible.
