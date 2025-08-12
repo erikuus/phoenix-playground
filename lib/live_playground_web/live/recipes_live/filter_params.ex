@@ -3,6 +3,8 @@ defmodule LivePlaygroundWeb.RecipesLive.FilterParams do
 
   alias LivePlayground.Cities
 
+  @countrycode "USA"
+
   def mount(_params, _session, socket) do
     {:ok, socket}
   end
@@ -62,7 +64,7 @@ defmodule LivePlaygroundWeb.RecipesLive.FilterParams do
 
   defp assign_filter(socket, filter) do
     assign(socket,
-      cities: Cities.list_country_city("USA", filter),
+      cities: Cities.list_country_city(@countrycode, filter),
       filter: filter
     )
   end
@@ -128,7 +130,7 @@ defmodule LivePlaygroundWeb.RecipesLive.FilterParams do
   end
 
   defp get_district_options() do
-    ["" | Cities.list_distinct_country_districts("USA")]
+    ["" | Cities.list_distinct_country_districts(@countrycode)]
   end
 
   defp get_size_options do
