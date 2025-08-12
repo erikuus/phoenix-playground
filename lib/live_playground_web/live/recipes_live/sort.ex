@@ -3,6 +3,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Sort do
 
   alias LivePlayground.Cities
 
+  @countrycode "EST"
   @permitted_sort_orders ~w(asc desc)
   @permitted_sort_by ~w(name district population)
 
@@ -12,7 +13,14 @@ defmodule LivePlaygroundWeb.RecipesLive.Sort do
       sort_by: :name
     }
 
-    {:ok, assign_sorting_options(socket, options)}
+    {:ok, apply_sorting_options(socket, options)}
+  end
+
+  defp apply_sorting_options(socket, options) do
+    assign(socket,
+      cities: Cities.list_country_city(@countrycode, options),
+      options: options
+    )
   end
 
   def render(assigns) do
@@ -30,16 +38,16 @@ defmodule LivePlaygroundWeb.RecipesLive.Sort do
     <!-- end hiding from live code -->
     <.table :if={@cities != []} id="cities" rows={@cities}>
       <:col :let={city} label={sort_link("Name", :name, @options)}>
-        <%= city.name %>
+        {city.name}
       </:col>
       <:col :let={city} label={sort_link("District", :district, @options)}>
-        <%= city.district %>
+        {city.district}
       </:col>
-      <:col :let={city} label={sort_link("Population", :population, @options)} class="text-right">
-        <%= Number.Delimit.number_to_delimited(city.population,
+      <:col :let={city} label={sort_link("Population", :population, @options)}>
+        {Number.Delimit.number_to_delimited(city.population,
           precision: 0,
           delimiter: " "
-        ) %>
+        )}
       </:col>
     </.table>
     <!-- start hiding from live code -->
@@ -54,53 +62,51 @@ defmodule LivePlaygroundWeb.RecipesLive.Sort do
 
   defp sort_link(label, col, options) do
     assigns = %{
-      label: label <> get_indicator(col, options),
-      sort_order: get_sort_order(col, options),
+      label: label,
+      indicator: get_indicator(col, options),
+      sort_order: get_next_sort_order(col, options),
       sort_by: col
     }
 
     ~H"""
-    <.link phx-click="sort" phx-value-order={@sort_order} phx-value-by={@sort_by}>
-      <%= @label %>
+    <.link phx-click="sort" phx-value-order={@sort_order} phx-value-by={@sort_by} class="flex gap-x-1">
+      <span>{@label}</span>
+      <span>{@indicator}</span>
     </.link>
     """
   end
 
   def handle_event("sort", %{"order" => sort_order, "by" => sort_by}, socket) do
     options = %{
-      sort_order: safe_to_atom(sort_order, @permitted_sort_orders, :asc),
-      sort_by: safe_to_atom(sort_by, @permitted_sort_by, :name)
+      sort_order: to_permitted_atom(sort_order, @permitted_sort_orders, :asc),
+      sort_by: to_permitted_atom(sort_by, @permitted_sort_by, :name)
     }
 
-    {:noreply, assign_sorting_options(socket, options)}
-  end
-
-  defp assign_sorting_options(socket, options) do
-    assign(socket,
-      cities: Cities.list_country_city("EST", options),
-      options: options
-    )
+    {:noreply, apply_sorting_options(socket, options)}
   end
 
   defp get_indicator(col, options) when col == options.sort_by do
     case options.sort_order do
-      :asc -> "▴"
-      :desc -> "▾"
+      :asc -> "↑"
+      :desc -> "↓"
     end
   end
 
   defp get_indicator(_, _), do: ""
 
-  defp get_sort_order(col, options) when col == options.sort_by do
+  defp get_next_sort_order(col, options) when col == options.sort_by do
     case options.sort_order do
       :asc -> :desc
       :desc -> :asc
     end
   end
 
-  defp get_sort_order(_, _), do: :asc
+  defp get_next_sort_order(_, _), do: :asc
 
-  defp safe_to_atom(str, whitelist, fallback) do
+  defp to_permitted_atom(str, whitelist, fallback)
+       when is_binary(str) and byte_size(str) <= 20 do
     if str in whitelist, do: String.to_existing_atom(str), else: fallback
   end
+
+  defp to_permitted_atom(_, _, fallback), do: fallback
 end
