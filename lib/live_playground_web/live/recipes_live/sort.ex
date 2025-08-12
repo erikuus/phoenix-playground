@@ -6,6 +6,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Sort do
   @countrycode "EST"
   @permitted_sort_orders ~w(asc desc)
   @permitted_sort_by ~w(name district population)
+  @max_param_length 20
 
   def mount(_params, _session, socket) do
     options = %{
@@ -104,7 +105,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Sort do
   defp get_next_sort_order(_, _), do: :asc
 
   defp to_permitted_atom(str, whitelist, fallback)
-       when is_binary(str) and byte_size(str) <= 20 do
+       when is_binary(str) and byte_size(str) <= @max_param_length do
     if str in whitelist, do: String.to_existing_atom(str), else: fallback
   end
 

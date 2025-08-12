@@ -3,8 +3,14 @@ defmodule LivePlaygroundWeb.RecipesLive.SortParams do
 
   alias LivePlayground.Cities
 
+  # Sort configuration
   @permitted_sort_orders ~w(asc desc)
   @permitted_sort_by ~w(name district population)
+  @default_sort_options %{sort_order: :asc, sort_by: :name}
+
+  # Data configuration
+  @countrycode "EST"
+  @max_param_length 20
 
   def mount(_params, _session, socket) do
     {:ok, socket}
@@ -12,20 +18,30 @@ defmodule LivePlaygroundWeb.RecipesLive.SortParams do
 
   def handle_params(%{"sort_order" => sort_order, "sort_by" => sort_by}, _url, socket) do
     options = %{
-      sort_order: safe_to_atom(sort_order, @permitted_sort_orders, :asc),
-      sort_by: safe_to_atom(sort_by, @permitted_sort_by, :name)
+      sort_order:
+        to_permitted_atom(sort_order, @permitted_sort_orders, @default_sort_options.sort_order),
+      sort_by: to_permitted_atom(sort_by, @permitted_sort_by, @default_sort_options.sort_by)
     }
 
-    {:noreply, assign_sorting_options(socket, options)}
+    {:noreply, apply_sorting_options(socket, options)}
   end
 
   def handle_params(_params, _url, socket) do
-    options = %{
-      sort_order: :asc,
-      sort_by: :name
-    }
+    {:noreply, apply_sorting_options(socket, @default_sort_options)}
+  end
 
-    {:noreply, assign_sorting_options(socket, options)}
+  defp to_permitted_atom(str, whitelist, fallback)
+       when is_binary(str) and byte_size(str) <= @max_param_length do
+    if str in whitelist, do: String.to_existing_atom(str), else: fallback
+  end
+
+  defp to_permitted_atom(_, _, fallback), do: fallback
+
+  defp apply_sorting_options(socket, options) do
+    assign(socket,
+      cities: Cities.list_country_city(@countrycode, options),
+      options: options
+    )
   end
 
   def render(assigns) do
@@ -43,16 +59,16 @@ defmodule LivePlaygroundWeb.RecipesLive.SortParams do
     <!-- end hiding from live code -->
     <.table :if={@cities != []} id="cities" rows={@cities}>
       <:col :let={city} label={sort_link("Name", :name, @options)}>
-        <%= city.name %>
+        {city.name}
       </:col>
       <:col :let={city} label={sort_link("District", :district, @options)}>
-        <%= city.district %>
+        {city.district}
       </:col>
-      <:col :let={city} label={sort_link("Population", :population, @options)} class="text-right">
-        <%= Number.Delimit.number_to_delimited(city.population,
+      <:col :let={city} label={sort_link("Population", :population, @options)}>
+        {Number.Delimit.number_to_delimited(city.population,
           precision: 0,
           delimiter: " "
-        ) %>
+        )}
       </:col>
     </.table>
     <!-- start hiding from live code -->
@@ -67,43 +83,34 @@ defmodule LivePlaygroundWeb.RecipesLive.SortParams do
 
   defp sort_link(label, col, options) do
     assigns = %{
-      label: label <> get_indicator(col, options),
-      to: ~p"/sort-params?#{[sort_by: col, sort_order: get_sort_order(col, options)]}"
+      label: label,
+      indicator: get_indicator(col, options),
+      to: ~p"/sort-params?#{[sort_by: col, sort_order: get_next_sort_order(col, options)]}"
     }
 
     ~H"""
-    <.link patch={@to}>
-      <%= @label %>
+    <.link patch={@to} class="flex gap-x-1">
+      <span>{@label}</span>
+      <span>{@indicator}</span>
     </.link>
     """
   end
 
-  defp assign_sorting_options(socket, options) do
-    assign(socket,
-      cities: Cities.list_country_city("EST", options),
-      options: options
-    )
-  end
-
   defp get_indicator(col, options) when col == options.sort_by do
     case options.sort_order do
-      :asc -> "▴"
-      :desc -> "▾"
+      :asc -> "↑"
+      :desc -> "↓"
     end
   end
 
   defp get_indicator(_, _), do: ""
 
-  defp get_sort_order(col, options) when col == options.sort_by do
+  defp get_next_sort_order(col, options) when col == options.sort_by do
     case options.sort_order do
       :asc -> :desc
       :desc -> :asc
     end
   end
 
-  defp get_sort_order(_, _), do: :asc
-
-  defp safe_to_atom(str, whitelist, fallback) do
-    if str in whitelist, do: String.to_existing_atom(str), else: fallback
-  end
+  defp get_next_sort_order(_, _), do: :asc
 end
