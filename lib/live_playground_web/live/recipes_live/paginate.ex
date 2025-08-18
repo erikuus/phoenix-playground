@@ -3,20 +3,30 @@ defmodule LivePlaygroundWeb.RecipesLive.Paginate do
 
   alias LivePlayground.Cities
 
+  @countrycode "USA"
+  @default_per_page 10
+
   def mount(_params, _session, socket) do
-    count = Cities.count_country_city("USA")
+    count = Cities.count_country_city(@countrycode)
 
     options = %{
       page: 1,
-      per_page: 10
+      per_page: @default_per_page
     }
 
     socket =
       socket
       |> assign(:count, count)
-      |> assign_pagination_options(options)
+      |> apply_pagination_options(options)
 
     {:ok, socket}
+  end
+
+  defp apply_pagination_options(socket, options) do
+    assign(socket,
+      cities: Cities.list_country_city(@countrycode, options),
+      options: options
+    )
   end
 
   def render(assigns) do
@@ -33,24 +43,24 @@ defmodule LivePlaygroundWeb.RecipesLive.Paginate do
     </.header>
     <!-- end hiding from live code -->
     <form phx-change="select-per-page" class="flex md:flex-row-reverse md:-mt-10 md:-mb-6">
-      <.input type="select" name="per_page" label="Cities per page" options={[5, 10, 20, 50, 100]} value={@options.per_page} />
+      <.input type="select" name="per_page" label="Cities per page" options={get_per_page_options()} value={@options.per_page} />
     </form>
     <.table :if={@cities != []} id="cities" rows={@cities}>
       <:col :let={city} label="Name">
-        <%= city.name %>
+        {city.name}
         <dl class="font-normal md:hidden">
           <dt class="sr-only">District</dt>
-          <dd class="mt-1 truncate text-gray-700"><%= city.district %></dd>
+          <dd class="mt-1 truncate text-gray-700">{city.district}</dd>
         </dl>
       </:col>
       <:col :let={city} label="District" class="hidden md:table-cell w-1/3">
-        <%= city.district %>
+        {city.district}
       </:col>
       <:col :let={city} label="Population" class="text-right w-1/3">
-        <%= Number.Delimit.number_to_delimited(city.population,
+        {Number.Delimit.number_to_delimited(city.population,
           precision: 0,
           delimiter: " "
-        ) %>
+        )}
       </:col>
     </.table>
     <.pagination event="select-page" page={@options.page} per_page={@options.per_page} count_all={@count} />
@@ -65,27 +75,38 @@ defmodule LivePlaygroundWeb.RecipesLive.Paginate do
   end
 
   def handle_event("select-per-page", %{"per_page" => per_page}, socket) do
-    per_page = String.to_integer(per_page)
+    per_page =
+      per_page
+      |> to_integer(@default_per_page)
+      |> get_permitted_per_page(get_per_page_options(), @default_per_page)
+
     page = get_existing_page(socket.assigns.options.page, per_page, socket.assigns.count)
     options = %{socket.assigns.options | per_page: per_page, page: page}
 
-    {:noreply, assign_pagination_options(socket, options)}
+    {:noreply, apply_pagination_options(socket, options)}
   end
 
   def handle_event("select-page", %{"page" => page}, socket) do
-    page = String.to_integer(page)
+    page = to_integer(page, 1)
     options = %{socket.assigns.options | page: page}
-    {:noreply, assign_pagination_options(socket, options)}
+    {:noreply, apply_pagination_options(socket, options)}
   end
 
-  defp assign_pagination_options(socket, options) do
-    assign(socket,
-      cities: Cities.list_country_city("USA", options),
-      options: options
-    )
+  defp to_integer(value, default_value) do
+    case Integer.parse(value) do
+      {i, _} -> i
+      :error -> default_value
+    end
   end
 
-  # Ensures users aren't left on an invalid page when changing the number of items per page
+  defp get_per_page_options() do
+    [5, 10, 20, 50, 100]
+  end
+
+  defp get_permitted_per_page(per_page, whitelist, fallback) do
+    if per_page in whitelist, do: per_page, else: fallback
+  end
+
   defp get_existing_page(page, per_page, count) do
     max_page = ceil_div(count, per_page)
 
@@ -96,17 +117,6 @@ defmodule LivePlaygroundWeb.RecipesLive.Paginate do
     end
   end
 
-  # Performs ceiling division on two integers.
-  # It calculates how many complete or partial units of `denom` fit into `num` and rounds up if there is any remainder.
-  # This method is particularly useful for scenarios like pagination where you need to determine the number of pages.
-  # This approach avoids floating-point operations by adding `denom - 1` to `num` before dividing.
-  # This addition ensures that any remainder in the division results in rounding up the quotient to the next integer.
-  #
-  # Example:
-  #   ceil_div(45, 10) returns 5, calculating 5 pages needed to display 45 items with 10 items per page.
-  #
-  # This function is preferred over floating-point ceil(num / denom) to avoid potential precision issues and to maintain
-  # integer arithmetic for efficiency and accuracy, especially important in environments where consistency of data types is crucial.
   defp ceil_div(num, denom) do
     div(num + denom - 1, denom)
   end

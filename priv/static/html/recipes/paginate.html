@@ -1,77 +1,159 @@
 <p>
-  The <code>Paginate</code> module is designed to enable pagination for
-  displaying city data within a dynamic web table. It handles user interactions
-  related to changing the number of items displayed per page and navigating
-  through pages. Here’s a detailed breakdown of the module:
+  The <code>Paginate</code> module demonstrates handle-event pagination using
+  LiveView's <code>handle_event</code> mechanism rather than URL parameters.
+  This approach maintains pagination state in the socket assigns, providing
+  instant pagination feedback without page navigation while keeping the URL
+  clean and unchanged.
 </p>
+
 <h3><code>mount/3</code></h3>
-<p>
-  This function is the entry point for setting up the LiveView with initial
-  state. It calculates the total number of cities in the "USA" with
-  <code>Cities.count_country_city("USA")</code>, and initializes pagination
-  settings (<code>page: 1, per_page: 10</code>). These initial settings are
-  stored in the socket's assigns using <code>assign_pagination_options</code>,
-  preparing the LiveView for the first render.
-</p>
+<ul>
+  <li>
+    Counts the total number of cities in the USA using
+    <code>Cities.count_country_city/1</code>, which is needed for calculating
+    total pages and navigation limits in the pagination controls.
+  </li>
+  <li>
+    Initializes default pagination options (<code>page: 1</code> and
+    <code>per_page: 10</code>), ensuring the table displays the first page of
+    data immediately when the page loads.
+  </li>
+  <li>
+    Calls <code>apply_pagination_options/2</code> to load the initial subset of
+    city data based on the default pagination settings, storing both the
+    paginated cities and pagination options in socket assigns.
+  </li>
+</ul>
+
+<h3><code>apply_pagination_options/2</code></h3>
+<ul>
+  <li>
+    Updates the socket with the correct subset of city data from
+    <code>Cities.list_country_city/2</code> based on current pagination settings
+    (page number and items per page).
+  </li>
+  <li>
+    Stores the pagination options in socket assigns, making the current page
+    number and items-per-page setting available to the template for rendering
+    pagination controls.
+  </li>
+</ul>
+
 <h3><code>render/1</code></h3>
+<ul>
+  <li>
+    Creates a form with a select dropdown for choosing items per page (5, 10,
+    20, 50, 100), using <code>phx-change="select-per-page"</code> to trigger an
+    event when users change their selection.
+  </li>
+  <li>
+    Displays a table of cities using the <code>@cities</code> assign. The table
+    only renders when cities are available (using
+    <code>:if={@cities != []}</code>), preventing empty table display during
+    loading or when no results exist.
+  </li>
+  <li>
+    Includes pagination controls using the
+    <code>&lt;.pagination/&gt;</code> component (see
+    <a href="/pagination">demo</a>) that renders page navigation buttons. The
+    component's <code>event_name="select-page"</code> attribute tells it which
+    LiveView event to trigger when users click page buttons.
+  </li>
+</ul>
+
+<h3><code>handle_event/3</code></h3>
 <p>
-  The render function constructs the HTML using HEEx syntax, tailored for
-  dynamic interaction:
+  This function handles user interactions with pagination controls, processing
+  form submissions and page navigation clicks to update the displayed data.
 </p>
 <ul>
   <li>
-    A form allows users to select the number of cities displayed per page, with
-    options like 5, 10, 20, 50, and 100.
+    <strong>"select-per-page"</strong>
+    <p>
+      When users change the items-per-page dropdown, this event safely converts
+      the selection to an integer, validates it against allowed options,
+      performs critical page adjustment to prevent invalid page states, and
+      updates the view with the correct subset of cities.
+    </p>
+    <ul>
+      <li>
+        Safely converts the user's per-page selection to an integer using
+        <code>to_integer/2</code>, falling back to the default value if the
+        input is invalid.
+      </li>
+      <li>
+        Validates the converted value against allowed options using
+        <code>get_permitted_per_page/3</code> to prevent malicious input or UI
+        tampering.
+      </li>
+      <li>
+        Performs critical page adjustment using
+        <code>get_existing_page/3</code>: if changing items per page would make
+        the current page invalid (for example, jumping from 10 to 50 items per
+        page might eliminate pages 3-5), it calculates a valid page number to
+        prevent users from seeing an empty page.
+      </li>
+      <li>
+        Updates the pagination state and refreshes the view with
+        <code>apply_pagination_options/2</code> to show the correct subset of
+        cities based on the new settings.
+      </li>
+    </ul>
   </li>
   <li>
-    A responsive table displays cities, only rendered if <code>@cities</code> is
-    not empty. It includes columns for city name, district, and population. The
-    district is displayed conditionally based on the screen size, and the
-    population numbers are formatted for readability.
-  </li>
-  <li>
-    Pagination controls (<code>&lt;.pagination/&gt;</code>) enable navigation
-    through pages based on current page settings and total city count,
-    responding to user input without full page reloads.
+    <strong>"select-page"</strong>
+    <p>
+      When users click pagination navigation buttons, this event converts the
+      page number to an integer and updates the view to display the selected
+      page of cities.
+    </p>
+    <ul>
+      <li>
+        Converts the selected page number to an integer using
+        <code>to_integer/2</code>, ensuring safe handling of form input.
+      </li>
+      <li>
+        Updates the pagination options with the new page number and refreshes
+        the view to display the selected page of cities using
+        <code>apply_pagination_options/2</code>.
+      </li>
+    </ul>
   </li>
 </ul>
-<h3><code>handle_event/3</code> for "select-per-page"</h3>
-<p>
-  This event handler adjusts the number of cities per page according to user
-  selection. It converts the selected string value to an integer, recalculates
-  the current page to prevent viewing an empty page (if the last page becomes
-  non-existent with more items per page), and updates the state accordingly. The
-  updated pagination settings are then applied to the socket assigns.
-</p>
-<h3><code>handle_event/3</code> for "select-page"</h3>
-<p>
-  This function manages page navigation events. It updates the current page
-  based on user input and refreshes the view to show the newly selected page of
-  cities. This is handled similarly to the "select-per-page" event, focusing on
-  updating the page number in the pagination settings.
-</p>
-<h3><code>assign_pagination_options/2</code></h3>
-<p>
-  Central to managing state updates, this function assigns updated city data and
-  pagination options to the socket. It fetches the appropriate subset of city
-  data based on the current pagination settings, ensuring the view is
-  consistently synchronized with the user's navigation choices.
-</p>
+
 <h3>Helper Functions</h3>
+<h4>Input Validation</h4>
+<ul>
+  <li>
+    <code>to_integer/2</code> safely converts form values to integers using
+    <code>Integer.parse/1</code>, returning a fallback default value if the
+    input is invalid. This approach is preferred over
+    <code>String.to_integer/1</code>, which raises exceptions on invalid input.
+  </li>
+  <li>
+    <code>get_permitted_per_page/3</code> validates the per-page selection
+    against allowed values (5, 10, 20, 50, 100), rejecting any other values.
+  </li>
+</ul>
+
+<h4>Page Validation</h4>
 <ul>
   <li>
     <strong><code>get_existing_page/3</code></strong
-    >: Ensures the requested page number is valid after a change in
-    <code>per_page</code> settings. It recalculates the maximum page number and
-    adjusts the current page if necessary, ensuring users are never directed to
-    a non-existent page.
+    >: Prevents users from landing on invalid pages when pagination settings
+    change. It calculates the maximum valid page number using
+    <code>ceil_div/2</code>, then ensures the current page falls within bounds
+    (1 to max_page). For example, if you're on page 5 but changing from 10 to 50
+    items per page reduces the total to 3 pages, this function returns page 3
+    instead of leaving you on non-existent page 5.
   </li>
   <li>
     <strong><code>ceil_div/2</code></strong
-    >: Provides a utility for calculating the ceiling of an integer division,
-    used here to determine the maximum number of pages based on the total count
-    of items and the number per page. This function is designed for precision
-    and efficiency in pagination calculations, avoiding floating-point
-    arithmetic.
+    >: Calculates how many pages are needed by dividing the total item count by
+    items per page and rounding up. For example, 45 cities with 10 per page
+    needs 5 pages (not 4.5). This function uses integer math (<code
+      >div(num + denom - 1, denom)</code
+    >) instead of floating-point division to avoid precision issues that could
+    cause pagination bugs.
   </li>
 </ul>
