@@ -4,14 +4,14 @@ defmodule LivePlaygroundWeb.RecipesLive.Paginate do
   alias LivePlayground.Cities
 
   @countrycode "USA"
-  @default_per_page 10
+  @per_page 10
 
   def mount(_params, _session, socket) do
     count = Cities.count_country_city(@countrycode)
 
     options = %{
       page: 1,
-      per_page: @default_per_page
+      per_page: @per_page
     }
 
     socket =
@@ -77,8 +77,8 @@ defmodule LivePlaygroundWeb.RecipesLive.Paginate do
   def handle_event("select-per-page", %{"per_page" => per_page}, socket) do
     per_page =
       per_page
-      |> to_integer(@default_per_page)
-      |> get_permitted_per_page(get_per_page_options(), @default_per_page)
+      |> to_integer(@per_page)
+      |> get_permitted_per_page(get_per_page_options(), @per_page)
 
     page = get_existing_page(socket.assigns.options.page, per_page, socket.assigns.count)
     options = %{socket.assigns.options | per_page: per_page, page: page}
