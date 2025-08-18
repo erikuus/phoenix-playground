@@ -1,5 +1,3 @@
-# LiveView Coding Conventions
-
 This file defines the coding conventions that MUST be followed when writing or modifying LiveView code. These conventions ensure consistency and maintainability across the codebase.
 
 ## Core Principles
@@ -37,6 +35,7 @@ You MUST order functions in LiveView modules as follows:
 4. `render/1` function (if present)
 
    - MUST come after mount/handle_params and before event handlers
+   - Functional components called by `render/1` MUST be placed immediately after `render/1` following the stepdown rule
 
 5. `handle_event/3` function
 
@@ -45,6 +44,7 @@ You MUST order functions in LiveView modules as follows:
 7. Helper functions for `render`, `handle_event`, and `handle_info`
    - MUST be placed at the end
    - Group helpers with their main function
+   - NOTE: This applies only to helper functions, NOT functional components. Functional components follow the stepdown rule and are placed immediately after their caller.
 
 ## State Management
 
@@ -71,6 +71,32 @@ INCORRECT:
 socket
 |> stream(:data, items, reset: true)
 |> assign(:options, options)
+```
+
+### Ordering `put_flash` and `stream` Calls
+
+Flash messages (`put_flash`) are considered UI feedback operations and MUST come AFTER stream operations, not before. This is because:
+
+- Flash messages provide feedback about the result of data operations
+- Stream operations modify the actual data being displayed
+- The logical flow is: update data → provide feedback about the update
+
+CORRECT:
+
+```elixir
+# First handle stream, then provide feedback
+socket
+|> stream_insert(:cities, city)
+|> put_flash(:info, "City successfully updated.")
+```
+
+INCORRECT:
+
+```elixir
+# Don't provide feedback before handling stream
+socket
+|> put_flash(:info, "City successfully updated.")
+|> stream_insert(:cities, city)
 ```
 
 ### Code Style for State Updates
@@ -140,3 +166,49 @@ INCORRECT:
 {event, resource}  # Missing module name
 {__MODULE__, event, resource}  # Wrong tuple structure
 ```
+
+## Error Handling
+
+### Phoenix Context Functions with !
+
+When using Phoenix context functions that end with ! (like Cities.get_city!), you MUST NOT add additional error handling for expected failure cases.
+
+Functions ending with ! are designed to:
+
+Raise exceptions for expected error cases (like "not found")
+Let Phoenix automatically handle these exceptions
+Return appropriate HTTP responses (like 404) without additional code
+
+CORRECT:
+
+```elixir
+# DO let Phoenix handle the exception
+defp apply_action(%{"id" => id}, :edit, socket) do
+  city = Cities.get_city!(id)  # Phoenix handles the 404 if not found
+
+  socket
+  |> assign(:city, city)
+  |> assign(:form, get_city_form(city))
+end
+```
+
+INCORRECT:
+
+```elixir
+# DON'T add unnecessary error handling
+defp apply_action(%{"id" => id}, :edit, socket) do
+  case Cities.get_city(id) do
+    {:ok, city} ->
+      socket
+      |> assign(:city, city)
+      |> assign(:form, get_city_form(city))
+
+    {:error, :not_found} ->
+      socket
+      |> put_flash(:error, "City not found.")
+      |> push_patch(to: ~p"/cities")
+  end
+end
+```
+
+Rule: If Phoenix's default error handling (like returning a 404 page) is sufficient, use the ! version and let Phoenix handle it automatically.
