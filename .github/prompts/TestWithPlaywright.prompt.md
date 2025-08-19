@@ -1,35 +1,49 @@
 ---
 mode: "agent"
-model: GPT-4.1
 tools: ["playwright"]
-description: "Test Elixir Phoenix LiveView module using Playwright MCP server"
+description: "Test Elixir Phoenix LiveView module using the Playwright MCP browser (no test scripts)"
 ---
 
-Compose a comprehensive list of test cases that fully cover the current Elixir Phoenix LiveView module, but include only those test cases that can be executed using the Playwright MCP server. Use any code breakdowns or commentaries I provide as context to improve the quality and coverage of the tests.
+Goal: Execute tests by driving the Playwright MCP browser directly (navigate, click, type, wait, assert), NOT by generating Playwright code or spec files.
 
-Consider the following features, but include each only if present in the module:
+Strict operating rules:
 
-- Flash messages
-- Data changes (create, update, delete)
-- Stream changes (including timestamp verification for inserted items, if applicable)
-- Multi-user edge cases (e.g., optimistic locking for concurrent edits and deletes)
-- URL manipulation (deep-linking, direct navigation, and browser back/forward navigation)
-- Error pages and error handling (e.g., 404, 500, unauthorized access)
-- Validation and error feedback for forms
-- Real-time updates/broadcasts (presence, PubSub, etc.)
-- Access control/authorization
-- Loading and empty states
+- Use only the Playwright MCP browser to perform actions:
+  - Navigate to URLs, wait for text/element states, click, type, select options, capture minimal snapshots or screenshots.
+- Do NOT:
+  - Generate Playwright test scripts/spec files or code in any language.
+  - Create/modify files or run CLI tools like `npx playwright`.
+  - Suggest code unless I explicitly ask you to propose a fix patch.
+- If the Playwright tool or localhost is unavailable, pause and ask for enablement instead of generating code.
 
-**Important:**
-Avoid any duplication of test cases. If features overlap (e.g., testing optimistic locking or real-time broadcasting can also verify correct flash messages), combine them into a single, efficient test case. The goal is to keep the test set minimal, non-redundant, and focused.
+Test design scope:
+Compose a minimal, non-duplicative checklist of Playwright-MCP-executable tests that fully cover the current LiveView, prioritizing:
 
-**Checklist and Execution Requirements:**
+- URL manipulation (direct navigation, deep links, back/forward)
+- Validation/error states (if forms exist)
+- Flash messages and UI feedback (if present)
+- Data/stream updates and real-time broadcasts (if present)
+- Loading/empty states, error pages, and access control (if present)
+  Combine overlapping verifications to avoid redundancy.
 
-- Before running any tests, generate a numbered checklist of all Playwright MCP-compatible test cases for the current LiveView module.
-- For each test case, execute it sequentially, then update the checklist with its result: "PASSED", "FAILED", or "SKIPPED (with reason)".
-- Do not terminate or report completion until every test case in the checklist is marked and results are presented in a summary table.
-- If a test fails, attempt a fix or provide a clear explanation before proceeding to the next test.
-- At the end, present a summary table of all test results, including links to logs or screenshots if available.
+Execution protocol:
 
-After compiling the checklist, present it to me for confirmation.
-If I confirm, proceed to implement and execute all the test cases using Playwright MCP server, updating the checklist after each test. Do not report completion until all cases are marked and summarized.
+1. Present a numbered checklist of all Playwright MCP-compatible tests for confirmation before running.
+2. After confirmation, execute tests sequentially using the MCP browser.
+3. After each test, update the checklist item with PASSED/FAILED/SKIPPED (with reason).
+4. Evidence per test (keep concise):
+   - Final URL
+   - Page title
+   - 1–2 key selector checks (e.g., selected per_page value, active page)
+   - Optional: link to screenshot or minimal DOM snapshot
+5. On failure:
+   - Provide a clear explanation and minimal repro evidence.
+   - If a fix is obvious, describe it; do NOT change files unless I explicitly authorize a patch.
+6. At the end, present a compact summary table of all results with links to any artifacts.
+
+Performance/verbosity:
+
+- Prefer minimal waits (event- or selector-based), avoid arbitrary timeouts.
+- Keep snapshots small and relevant; avoid large DOM dumps unless requested.
+
+After compiling the checklist, present it to me for confirmation. If I confirm, run all tests in the MCP browser, update results inline, and provide the final summary.
