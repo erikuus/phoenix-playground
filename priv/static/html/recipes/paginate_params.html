@@ -1,128 +1,207 @@
 <p>
-  The <code>PaginateParams</code> module utilizes Phoenix LiveView to manage
-  pagination with dynamic updates through URL parameters, allowing for a
-  stateful and interactive pagination experience that persists across page
-  reloads. Here is a detailed breakdown of how this module operates:
+  The <code>PaginateParams</code> module demonstrates URL parameter-based
+  pagination that maintains pagination state in the browser's address bar. This
+  approach makes pagination states bookmarkable, shareable, and persistent
+  across browser refreshes and navigation.
 </p>
+
 <h3><code>mount/3</code></h3>
 <p>
-  This function initializes the LiveView session by counting the total number of
-  cities in the "USA" using the
-  <code>Cities.count_country_city("USA")</code> function. It assigns this count
-  to the socket, setting the groundwork for pagination calculations.
+  Counts the total number of cities in the USA using
+  <code>Cities.count_country_city/1</code>, which is needed for calculating
+  total pages and navigation limits in the pagination controls.
 </p>
+
 <h3><code>handle_params/3</code></h3>
 <p>
-  This function is crucial for managing pagination state through URL parameters.
-  It processes <code>page</code> and <code>per_page</code> parameters:
+  This function is LiveView's entry point for URL-driven pagination state
+  management. Every time the URL changes (initial page load, browser navigation,
+  or <code>push_patch</code> updates), Phoenix calls this function with the
+  current query parameters.
 </p>
 <ul>
   <li>
-    It converts received parameters to integers using <code>to_integer/2</code>,
-    providing defaults if necessary.
+    We call <code>convert_params/2</code> with the empty options and URL params
+    to obtain new pagination options. This function determines the values either
+    from the URL params (converting strings like "2" and "20" to integers) or
+    defaults (page 0 and per_page 0). Missing and invalid values like "abc" are
+    intentionally converted to 0 rather than immediately applying valid defaults
+    (page 1 and per_page 10). This creates a detectable difference between
+    converted and validated options, which triggers URL synchronization when
+    needed.
   </li>
   <li>
-    Ensures that the requested <code>page</code> value is valid and adjusts it
-    as necessary using <code>get_existing_page/3</code> to keep it within the
-    bounds determined by the total count of cities. The
-    <code>per_page</code> value is verified against a list of allowed values
-    using <code>get_allowed_per_page/1</code> to ensure it conforms to
-    predefined options. If it doesn't match any allowed value, a default setting
-    is used.
+    We validate these options using <code>validate_options/2</code>. If the
+    validated options differ from the original options, we redirect the user to
+    the correct URL using <code>push_navigate</code>. This ensures that the URL
+    accurately reflects the validated state, maintaining consistency and
+    preventing invalid parameters from affecting the application. For example,
+    if someone types page 6 in the URL (like
+    <code>/paginate-params?page=6</code>), but there are only 5 pages available,
+    they will be automatically redirected to the last valid page.
   </li>
   <li>
-    The pagination settings are then updated in the socket's assigns, preparing
-    for a page re-render with the new settings.
+    If the options are valid, we call <code>apply_pagination_options/2</code>
+    to load the paginated city data based on the current pagination settings,
+    storing both the paginated cities and pagination options in socket assigns.
   </li>
 </ul>
-<p>There are two variants of this function:</p>
-<ol>
+
+<h3><code>convert_params/2</code></h3>
+<p>
+  Converts string parameters from URLs to their appropriate types, preserving
+  invalid values as "0" to enable URL correction.
+</p>
+<ul>
   <li>
-    One that specifically handles defined <code>page</code> and
-    <code>per_page</code> parameters.
+    First clause handles the case when both "page" and "per_page" parameters are
+    present in the URL:
+    <ul>
+      <li>Valid numeric strings ("2", "20") are converted to integers</li>
+      <li>Invalid strings ("abc", "-5") are converted to 0</li>
+    </ul>
   </li>
-  <li>A fallback that sets defaults when these parameters are not present.</li>
-</ol>
+  <li>
+    Second clause handles the case when only "page" parameter is present:
+    <ul>
+      <li>Valid page numbers are converted to integers</li>
+      <li>Invalid page values are converted to 0</li>
+      <li>per_page is intentionally set to 0</li>
+    </ul>
+  </li>
+  <li>
+    Third clause handles the case when only "per_page" parameter is present:
+    <ul>
+      <li>Valid per_page numbers are converted to integers</li>
+      <li>Invalid per_page values are converted to 0</li>
+      <li>page is intentionally set to 0</li>
+    </ul>
+  </li>
+  <li>
+    Final clause handles the case when no pagination parameters are present:
+    <ul>
+      <li>Sets both page and per_page to 0</li>
+      <li>Ensures validation will apply correct defaults</li>
+    </ul>
+  </li>
+</ul>
+
+<p>
+  <strong>Why we use 0 for invalid inputs:</strong> When convert_params receives
+  invalid values, it returns 0 instead of immediately applying defaults. This
+  creates a difference between converted and validated options. When validation
+  fixes these values, LiveView detects the difference and redirects to fix the
+  URL.
+</p>
+
+<h3><code>validate_options/2</code></h3>
+<p>
+  Ensures that <code>page</code> and <code>per_page</code> are within acceptable
+  ranges.
+</p>
+<ul>
+  <li>
+    It calls <code>get_existing_page/3</code>, which first ensures
+    <code>per_page</code> is never zero with <code>max(per_page, 1)</code>. This
+    protection is crucial because <code>convert_params</code> may have set
+    invalid per_page values to 0. Then it uses <code>ceil_div/2</code> to
+    calculate the maximum number of pages. For example, if there are 45 items
+    and <code>per_page</code> is set to 10, the function computes 5 pages. If
+    someone requests page 6 in the URL, it will automatically adjust to page 5.
+  </li>
+  <li>
+    If <code>per_page</code> is not one of the allowed options, it defaults to
+    the module's default value of 10.
+  </li>
+</ul>
+
+<h3><code>apply_pagination_options/2</code></h3>
+<ul>
+  <li>
+    Updates the socket with the correct subset of city data from
+    <code>Cities.list_country_city/2</code> based on current pagination settings
+    (page number and items per page).
+  </li>
+  <li>
+    Stores the pagination options in socket assigns, making the current page
+    number and items-per-page setting available to the template for rendering
+    pagination controls.
+  </li>
+</ul>
+
 <h3><code>render/1</code></h3>
 <p>The render function constructs the HTML output, including:</p>
 <ul>
   <li>
     A form that allows users to select the number of items per page. This form
-    triggers the <code>update-pagination</code> event upon changes.
+    triggers the <code>change-per-page</code> event upon changes.
   </li>
   <li>
     A table that displays cities' data only if the list is not empty. It
     includes responsive design elements for better display on different devices.
   </li>
   <li>
-    Pagination controls that are linked to the
-    <code>update-pagination</code> event, allowing users to navigate through
-    pages.
+    Pagination controls using the <code>&lt;.pagination/&gt;</code> component
+    (see <a href="/pagination">demo</a>) that renders page navigation buttons
+    and includes a hook that automatically scrolls back to the top of the page
+    whenever the page number changes, providing a smoother navigation
+    experience.
   </li>
 </ul>
-<h3><code>handle_event/3</code> for "update-pagination"</h3>
+
+<h3><code>handle_event/3</code> for "change-per-page"</h3>
 <p>
-  This event handler manages updates triggered by user interactions with
-  pagination controls and the per-page selector:
+  This event handler responds to changes in the per-page selector dropdown. The
+  implementation is intentionally simple: it extracts the new per_page value and
+  updates the URL with <code>push_patch</code>. This triggers
+  <code>handle_params/3</code>, which handles all validation logic, including
+  adjusting the page number if the new per_page value makes the current page
+  invalid. Having the correct settings in the URL means users can bookmark or
+  share their preferred view.
 </p>
+
+<h3>Helper Functions</h3>
+<h4>Parameter Conversion and Validation</h4>
 <ul>
   <li>
-    <p>
-      <strong>URL and State Update</strong>: The function updates the URL
-      parameters to reflect the selected options by using
-      <code>push_patch/2</code>. This method not only updates the LiveView's URL
-      but also triggers a call to <code>handle_params/3</code> with the new
-      parameters. This is a crucial step as
-      <code>handle_params/3</code> validates these parameters and, upon ensuring
-      their validity, calls <code>assign_pagination_options/2</code> to update
-      the LiveView state. This sequence ensures that the changes are accurately
-      reflected both in the browser's URL and in the internal state of the
-      LiveView.
-    </p>
+    <code>to_integer/2</code> safely converts form values to integers using
+    <code>Integer.parse/1</code>, returning a fallback default value if the
+    input is invalid. This approach is preferred over
+    <code>String.to_integer/1</code>, which raises exceptions on invalid input.
   </li>
   <li>
-    <p>
-      <strong>Parameter Processing</strong>: <code>update_params/2</code> plays
-      a critical role in this process by preparing the pagination settings based
-      on user input. This function adjusts either the <code>page</code> or
-      <code>per_page</code> settings before they are used to update the URL and
-      subsequently processed by <code>handle_params/3</code>.
-    </p>
+    <code>get_allowed_per_page/1</code> validates the per-page selection against
+    allowed values (5, 10, 20, 50, 100), rejecting any other values.
   </li>
 </ul>
-<h3>Helper Functions</h3>
+
+<h4>Page Calculation</h4>
 <ul>
-  <li>
-    <strong><code>assign_pagination_options/2</code></strong
-    >: Updates the LiveView's state with the current list of cities based on
-    pagination settings and updates the socket assigns.
-  </li>
-  <li>
-    <strong><code>get_pagination_url/1</code></strong
-    >: Constructs the URL used for the <code>push_patch</code> function,
-    appending current pagination parameters.
-  </li>
-  <li>
-    <strong
-      ><code>get_allowed_per_page/1</code> and
-      <code>get_per_page_options/0</code></strong
-    >: Validate and provide options for the number of items per page.
-  </li>
   <li>
     <strong><code>get_existing_page/3</code></strong
-    >: Adjusts the current page to ensure it is valid after a change in
-    <code>per_page</code>. This is crucial when the selected
-    <code>per_page</code> increases or decreases the number of pages,
-    potentially leaving the current page number out of range.
+    >: Prevents users from landing on invalid pages when pagination settings
+    change. It calculates the maximum valid page number using
+    <code>ceil_div/2</code>, then ensures the current page falls within bounds
+    (1 to max_page). For example, if you're on page 5 but changing from 10 to 50
+    items per page reduces the total to 3 pages, this function returns page 3
+    instead of leaving you on non-existent page 5.
   </li>
   <li>
     <strong><code>ceil_div/2</code></strong
-    >: Utility function for computing the ceiling of integer division, useful
-    for calculating the total number of pages.
+    >: Calculates how many pages are needed by dividing the total item count by
+    items per page and rounding up. For example, 45 cities with 10 per page
+    needs 5 pages (not 4.5). This function uses integer math (<code
+      >div(num + denom - 1, denom)</code
+    >) instead of floating-point division to avoid precision issues that could
+    cause pagination bugs.
   </li>
+</ul>
+
+<h4>URL Management</h4>
+<ul>
   <li>
-    <strong><code>to_integer/2</code></strong
-    >: Safely parses integers from strings, providing a default if parsing
-    fails.
+    <strong><code>get_pagination_url/1</code></strong
+    >: Constructs URLs for <code>push_patch</code> operations, converting the
+    options map into proper query parameters for the pagination route.
   </li>
 </ul>
