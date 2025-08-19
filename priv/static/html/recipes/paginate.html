@@ -43,7 +43,7 @@
 <ul>
   <li>
     Creates a form with a select dropdown for choosing items per page (5, 10,
-    20, 50, 100), using <code>phx-change="select-per-page"</code> to trigger an
+    20, 50, 100), using <code>phx-change="change-per-page"</code> to trigger an
     event when users change their selection.
   </li>
   <li>
@@ -56,7 +56,7 @@
     Includes pagination controls using the
     <code>&lt;.pagination/&gt;</code> component (see
     <a href="/pagination">demo</a>) that renders page navigation buttons. The
-    component's <code>event_name="select-page"</code> attribute tells it which
+    component's <code>event="change-page"</code> attribute tells it which
     LiveView event to trigger when users click page buttons.
   </li>
 </ul>
@@ -68,7 +68,7 @@
 </p>
 <ul>
   <li>
-    <strong>"select-per-page"</strong>
+    <strong>"change-per-page"</strong>
     <p>
       When users change the items-per-page dropdown, this event safely converts
       the selection to an integer, validates it against allowed options,
@@ -83,7 +83,7 @@
       </li>
       <li>
         Validates the converted value against allowed options using
-        <code>get_permitted_per_page/3</code> to prevent malicious input or UI
+        <code>get_allowed_per_page/1</code> to prevent malicious input or UI
         tampering.
       </li>
       <li>
@@ -101,7 +101,7 @@
     </ul>
   </li>
   <li>
-    <strong>"select-page"</strong>
+    <strong>"change-page"</strong>
     <p>
       When users click pagination navigation buttons, this event converts the
       page number to an integer and updates the view to display the selected
@@ -131,8 +131,8 @@
     <code>String.to_integer/1</code>, which raises exceptions on invalid input.
   </li>
   <li>
-    <code>get_permitted_per_page/3</code> validates the per-page selection
-    against allowed values (5, 10, 20, 50, 100), rejecting any other values.
+    <code>get_allowed_per_page/1</code> validates the per-page selection against
+    allowed values (5, 10, 20, 50, 100), rejecting any other values.
   </li>
 </ul>
 

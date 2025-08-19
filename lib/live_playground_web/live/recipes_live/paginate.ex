@@ -42,7 +42,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Paginate do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <form phx-change="select-per-page" class="flex md:flex-row-reverse md:-mt-10 md:-mb-6">
+    <form phx-change="change-per-page" class="flex md:flex-row-reverse md:-mt-10 md:-mb-6">
       <.input type="select" name="per_page" label="Cities per page" options={get_per_page_options()} value={@options.per_page} />
     </form>
     <.table :if={@cities != []} id="cities" rows={@cities}>
@@ -63,7 +63,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Paginate do
         )}
       </:col>
     </.table>
-    <.pagination event="select-page" page={@options.page} per_page={@options.per_page} count_all={@count} />
+    <.pagination event="change-page" page={@options.page} per_page={@options.per_page} count_all={@count} />
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/recipes_live/paginate.ex" />
@@ -74,11 +74,11 @@ defmodule LivePlaygroundWeb.RecipesLive.Paginate do
     """
   end
 
-  def handle_event("select-per-page", %{"per_page" => per_page}, socket) do
+  def handle_event("change-per-page", %{"per_page" => per_page}, socket) do
     per_page =
       per_page
       |> to_integer(@per_page)
-      |> get_permitted_per_page(get_per_page_options(), @per_page)
+      |> get_allowed_per_page()
 
     page = get_existing_page(socket.assigns.options.page, per_page, socket.assigns.count)
     options = %{socket.assigns.options | per_page: per_page, page: page}
@@ -86,7 +86,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Paginate do
     {:noreply, apply_pagination_options(socket, options)}
   end
 
-  def handle_event("select-page", %{"page" => page}, socket) do
+  def handle_event("change-page", %{"page" => page}, socket) do
     page = to_integer(page, 1)
     options = %{socket.assigns.options | page: page}
     {:noreply, apply_pagination_options(socket, options)}
@@ -103,8 +103,8 @@ defmodule LivePlaygroundWeb.RecipesLive.Paginate do
     [5, 10, 20, 50, 100]
   end
 
-  defp get_permitted_per_page(per_page, whitelist, fallback) do
-    if per_page in whitelist, do: per_page, else: fallback
+  defp get_allowed_per_page(per_page) do
+    if per_page in get_per_page_options(), do: per_page, else: @per_page
   end
 
   defp get_existing_page(page, per_page, count) do
