@@ -63,14 +63,15 @@
 </p>
 <ul>
   <li>
-    First clause handles both "page" and "per_page" parameters in the URL:
+    First clause handles the case when both "page" and "per_page" parameters are
+    present in the URL:
     <ul>
       <li>Valid numeric strings ("2", "20") are converted to integers</li>
       <li>Invalid strings ("abc", "-5") are converted to 0</li>
     </ul>
   </li>
   <li>
-    Second clause handles only "page" parameter:
+    Second clause handles the case when only "page" parameter is present:
     <ul>
       <li>Valid page numbers are converted to integers</li>
       <li>Invalid page values are converted to 0</li>
@@ -78,7 +79,7 @@
     </ul>
   </li>
   <li>
-    Third clause handles only "per_page" parameter:
+    Third clause handles the case when only "per_page" parameter is present:
     <ul>
       <li>Valid per_page numbers are converted to integers</li>
       <li>Invalid per_page values are converted to 0</li>
@@ -86,14 +87,53 @@
     </ul>
   </li>
   <li>
-    Fourth clause detects if options already contain valid pagination fields:
+    Fourth clause handles internal state updates with existing atom-keyed
+    options:
     <ul>
-      <li>If both page and per_page exist, returns options unchanged</li>
-      <li>Used when updating internal state without URL changes</li>
+      <li>
+        Pattern matches when options already contain atom keys :page and
+        :per_page from <code>socket.assigns.options</code>
+      </li>
+      <li>
+        Returns options unchanged since they're already in the correct format
+      </li>
+      <li>
+        <strong>Three possible callers:</strong>
+        <ul>
+          <li>
+            <code>handle_event("change-per-page", params, socket)</code> - when
+            user changes items per page
+          </li>
+          <li>
+            <code>handle_event("reset-stream", %{} = params, socket)</code> -
+            when user clicks reset link
+          </li>
+          <li>
+            <code>apply_action(socket, :index, params)</code> - when navigating
+            back to index from edit/new modal
+          </li>
+        </ul>
+      </li>
+      <li>
+        <strong>UI actions that trigger it:</strong>
+        <ul>
+          <li>User selects different items per page from dropdown</li>
+          <li>
+            User clicks "Click here to reload and sort now" link in flash
+            messages
+          </li>
+          <li>
+            User opens edit modal (URL changes to
+            <code>/steps/paginated/123/edit</code>) then closes it or navigates
+            back (URL returns to
+            <code>/steps/paginated?page=2&per_page=10</code>)
+          </li>
+        </ul>
+      </li>
     </ul>
   </li>
   <li>
-    Final clause handles no pagination parameters at all:
+    Final clause handles the case when no pagination parameters are present:
     <ul>
       <li>Sets both page and per_page to 0</li>
       <li>Ensures validation will apply correct defaults</li>
