@@ -31,7 +31,6 @@ defmodule LivePlaygroundWeb.RecipesLive.Upload do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-
     <.form for={@form} phx-change="validate" class="space-y-6">
       <!-- Form input field -->
       <.input field={@form[:name]} placeholder="Name" />
@@ -81,7 +80,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Upload do
           >
             {entry.client_name}
           </div>
-          <!-- Upload progress and controls -->
+          <!-- Upload progress and controls container -->
           <div class="flex justify-between items-center space-x-2">
             <!-- Progress ring indicator -->
             <div :if={upload_errors(@uploads.photos, entry) == []} class="mt-3 flex gap-3 text-sm leading-6">
