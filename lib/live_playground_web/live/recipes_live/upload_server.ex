@@ -27,6 +27,10 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadServer do
     {:ok, socket}
   end
 
+  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
+    assign(socket, :form, to_form(changeset))
+  end
+
   def render(assigns) do
     ~H"""
     <!-- start hiding from live code -->
@@ -44,31 +48,43 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadServer do
       <.input type="select" field={@form[:id]} label="Location" options={@options} />
       <.uploads_upload_area uploads_name={@uploads.photos} />
       <.error :for={err <- upload_errors(@uploads.photos)}>
-        <%= Phoenix.Naming.humanize(err) %>
+        {Phoenix.Naming.humanize(err)}
       </.error>
       <.uploads_photo_preview_area uploads_name={@uploads.photos} />
       <.button :if={Enum.count(@uploads.photos.entries) > 0} phx-disable-with="Uploading...">
         Upload
       </.button>
     </.form>
-    <.table id="locations" rows={@streams.locations}>
-      <:col :let={{_id, location}} label="Name">
-        <%= location.name %>
-      </:col>
-      <:col :let={{_id, location}} label="Photos">
-        <div class="flex flex-wrap gap-4">
-          <a :for={photo <- location.photos} href={static_path(@socket, "/uploads/#{photo}")} target="_blank">
-            <img src={static_path(@socket, "/uploads/#{photo}")} class="h-10 rounded" />
-          </a>
+
+    <div id="locations" phx-update="stream" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-8">
+      <div
+        :for={{dom_id, location} <- @streams.locations}
+        id={dom_id}
+        class="rounded-lg bg-gray-50 border border-gray-200 text-xs xl:text-sm"
+      >
+        <div class="flex justify-between items-center px-6 py-3 text-gray-500">
+          <h3 class="font-medium text-sm">{location.name}</h3>
+          <.link
+            :if={location.photos != []}
+            phx-click={JS.push("remove", value: %{id: location.id})}
+            data-confirm="Are you sure to remove photos?"
+          >
+            <.icon name="hero-trash" class="w-4 h-4" />
+          </.link>
         </div>
-      </:col>
-      <:action :let={{_id, location}}>
-        <.link :if={location.photos != []} phx-click={JS.push("remove", value: %{id: location.id})} data-confirm="Are you sure?">
-          <span class="hidden md:inline">Remove Images</span>
-          <.icon name="hero-trash-mini" class="md:hidden" />
-        </.link>
-      </:action>
-    </.table>
+        <div class="bg-white p-6 rounded-b-lg">
+          <div :if={location.photos != []} class="grid grid-cols-4 gap-1">
+            <a :for={photo <- location.photos} href={static_path(@socket, "/uploads/#{photo}")} target="_blank">
+              <img src={static_path(@socket, "/uploads/#{photo}")} class="w-full h-12 object-cover rounded" />
+            </a>
+          </div>
+          <div :if={location.photos == []} class="text-gray-400 text-xs text-center py-4">
+            No photos uploaded
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/recipes_live/upload_server.ex" />
@@ -100,7 +116,7 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadServer do
   end
 
   def handle_event("save", %{"location" => params}, socket) do
-    id = params["id"] |> String.to_integer()
+    id = to_integer(params["id"])
     selected_location = Locations.get_location!(id)
     old_photos = selected_location.photos
 
@@ -115,7 +131,24 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadServer do
 
     params = Map.put(params, "photos", new_photos)
 
-    case Locations.update_location(selected_location, params) do
+    update_location_photos(socket, selected_location, params, old_photos)
+  end
+
+  def handle_event("remove", %{"id" => id}, socket) do
+    id = to_integer(id)
+    selected_location = Locations.get_location!(id)
+    photos = selected_location.photos
+    params = %{"photos" => []}
+
+    update_location_photos(socket, selected_location, params, photos)
+  end
+
+  def handle_info({:update_location, location}, socket) do
+    {:noreply, stream_insert(socket, :locations, location)}
+  end
+
+  defp update_location_photos(socket, location, params, old_photos) do
+    case Locations.update_location(location, params) do
       {:ok, _location} ->
         remove_photos(old_photos)
         {:noreply, socket}
@@ -125,37 +158,23 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadServer do
     end
   end
 
-  def handle_event("remove", %{"id" => id}, socket) do
-    selected_location = Locations.get_location!(id)
-    photos = selected_location.photos
-    params = Map.put(%{}, "photos", [])
-
-    case Locations.update_location(selected_location, params) do
-      {:ok, _location} ->
-        remove_photos(photos)
-        {:noreply, socket}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+  defp remove_photos(photos) do
+    for photo <- photos do
+      photo_dest = Path.join([@uploads, photo])
+      File.rm!(photo_dest)
     end
-  end
-
-  def handle_info({:update_location, location}, socket) do
-    {:noreply, stream_insert(socket, :locations, location)}
-  end
-
-  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    assign(socket, :form, to_form(changeset))
   end
 
   defp filename(entry) do
     "#{entry.uuid}-#{entry.client_name}"
   end
 
-  defp remove_photos(photos) do
-    for photo <- photos do
-      photo_dest = Path.join([@uploads, photo])
-      File.rm!(photo_dest)
+  defp to_integer(value) when is_integer(value), do: value
+
+  defp to_integer(value) when is_binary(value) do
+    case Integer.parse(value) do
+      {i, _} -> i
+      _ -> 0
     end
   end
 end
