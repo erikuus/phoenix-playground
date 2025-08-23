@@ -64,6 +64,24 @@
     while all other rows keep their previous timestamps.
   </li>
 </ul>
+
+<h4>Important: Use <code>phx-update="stream"</code> on the container</h4>
+<p>
+  When rendering streamed entries manually (not via
+  <code>&lt;.table&gt;</code>), give the parent element a stable
+  <code>id</code> and set <code>phx-update="stream"</code>. Otherwise, unrelated
+  patches (like form validation) can clear the list in the DOM.
+</p>
+<pre><code class="language-elixir">&lt;div id="cities" phx-update="stream"&gt;
+  &lt;div :for={{dom_id, city} &lt;- @streams.cities} id={dom_id}&gt;...&lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+<p>
+  Note: The example here uses the <code>&lt;.table&gt;</code> component, which
+  already applies the correct update strategy for streams. Add
+  <code>phx-update="stream"</code> only when rolling your own markup.
+</p>
+
 <h3><code>handle_event/3</code></h3>
 <p>This function handles two types of user interactions:</p>
 <ul>
