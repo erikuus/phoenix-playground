@@ -72,7 +72,7 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadCloud do
       <.input type="select" field={@form[:id]} label="Location" options={@options} />
       <.uploads_upload_area uploads_name={@uploads.photos} />
       <.error :for={err <- upload_errors(@uploads.photos)}>
-        <%= Phoenix.Naming.humanize(err) %>
+        {Phoenix.Naming.humanize(err)}
       </.error>
       <.uploads_photo_preview_area uploads_name={@uploads.photos} />
       <.button :if={Enum.count(@uploads.photos.entries) > 0} phx-disable-with="Uploading...">
@@ -81,7 +81,7 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadCloud do
     </.form>
     <.table id="locations" rows={@streams.locations}>
       <:col :let={{_id, location}} label="Name">
-        <%= location.name %>
+        {location.name}
         <div class="flex flex-wrap gap-4 mt-4 md:hidden">
           <a :for={photo_s3 <- location.photos_s3} href={photo_s3} target="_blank">
             <img src={photo_s3} } class="h-10 rounded" />
@@ -172,7 +172,7 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadCloud do
     {:noreply, socket}
   end
 
-  def handle_info({:update_location, location}, socket) do
+  def handle_info({LivePlayground.Locations, {:update_location, location}}, socket) do
     {:noreply, stream_insert(socket, :locations, location)}
   end
 
