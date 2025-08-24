@@ -19,12 +19,17 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadServer do
       |> stream(:locations, locations)
       |> allow_upload(
         :photos,
-        accept: ~w(.png .jpg),
+        accept: ~w(.png .jpg .jpeg),
         max_entries: 8,
         max_file_size: 10_000_000
       )
 
     {:ok, socket}
+  end
+
+  def terminate(_reason, _socket) do
+    Locations.unsubscribe()
+    :ok
   end
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
@@ -143,7 +148,7 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadServer do
     update_location_photos(socket, selected_location, params, photos)
   end
 
-  def handle_info({:update_location, location}, socket) do
+  def handle_info({LivePlayground.Locations, {:update_location, location}}, socket) do
     {:noreply, stream_insert(socket, :locations, location)}
   end
 
@@ -166,7 +171,8 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadServer do
   end
 
   defp filename(entry) do
-    "#{entry.uuid}-#{entry.client_name}"
+    base = Path.basename(entry.client_name)
+    "#{entry.uuid}-#{base}"
   end
 
   defp to_integer(value) when is_integer(value), do: value
