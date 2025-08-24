@@ -184,6 +184,36 @@ defmodule LivePlaygroundWeb.Menus.Recipes do
           },
           %{
             expandable: %{
+              id: "file-uploads",
+              icon: "hero-arrow-up-tray",
+              label: "File Uploads",
+              open:
+                is_active?(current_path, [
+                  "/upload",
+                  "/upload-cloud",
+                  "/upload-server"
+                ])
+            },
+            expandable_items: [
+              %{
+                label: "File Uploads UI",
+                path: ~p"/upload",
+                active: is_active?(current_path, ["/upload"])
+              },
+              %{
+                label: "File Uploads to Server",
+                path: ~p"/upload-server",
+                active: is_active?(current_path, ["/upload-server"])
+              },
+              %{
+                label: "File Uploads to Cloud",
+                path: ~p"/upload-cloud",
+                active: is_active?(current_path, ["/upload-cloud"])
+              }
+            ]
+          },
+          %{
+            expandable: %{
               id: "js-hooks",
               icon: "hero-map",
               label: "JS Hooks",
@@ -211,36 +241,6 @@ defmodule LivePlaygroundWeb.Menus.Recipes do
                 active: is_active?(current_path, ["/js-hook-map-handle-event"])
               }
             ]
-          }
-        ]
-      },
-      %{
-        expandable: %{
-          id: "file-uploads",
-          icon: "hero-arrow-up-tray",
-          label: "File Uploads",
-          open:
-            is_active?(current_path, [
-              "/upload",
-              "/upload-cloud",
-              "/upload-server"
-            ])
-        },
-        expandable_items: [
-          %{
-            label: "File Uploads UI",
-            path: ~p"/upload",
-            active: is_active?(current_path, ["/upload"])
-          },
-          %{
-            label: "File Uploads to Server",
-            path: ~p"/upload-server",
-            active: is_active?(current_path, ["/upload-server"])
-          },
-          %{
-            label: "File Uploads to Cloud",
-            path: ~p"/upload-cloud",
-            active: is_active?(current_path, ["/upload-cloud"])
           }
         ]
       },
