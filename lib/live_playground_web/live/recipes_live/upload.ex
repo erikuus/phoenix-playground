@@ -1,13 +1,10 @@
 defmodule LivePlaygroundWeb.RecipesLive.Upload do
   use LivePlaygroundWeb, :live_view
 
-  alias LivePlayground.Locations
-  alias LivePlayground.Locations.Location
-
   def mount(_params, _session, socket) do
     socket =
       socket
-      |> assign(form: to_form(Locations.change_location(%Location{})))
+      |> assign(form: to_form(%{}))
       |> allow_upload(
         :photos,
         accept: ~w(.png .jpg),
@@ -32,8 +29,6 @@ defmodule LivePlaygroundWeb.RecipesLive.Upload do
     </.header>
     <!-- end hiding from live code -->
     <.form for={@form} phx-change="validate" class="space-y-6">
-      <!-- Form input field -->
-      <.input field={@form[:name]} placeholder="Name" />
       <!-- File upload drop zone -->
       <div
         phx-drop-target={@uploads.photos.ref}
@@ -138,14 +133,33 @@ defmodule LivePlaygroundWeb.RecipesLive.Upload do
     {:noreply, cancel_upload(socket, :photos, ref)}
   end
 
-  def handle_event("validate", %{"location" => params}, socket) do
-    changeset =
-      %Location{}
-      |> Locations.change_location(params)
-      |> Map.put(:action, :validate)
-
-    {:noreply, assign(socket, :form, to_form(changeset))}
+  def handle_event("validate", params, socket) do
+    {:noreply, assign(socket, :form, to_form(params))}
   end
+
+  # Example: Save uploaded photos into the local "uploads" folder
+  #
+  # Notes:
+  # - Uncomment this handler and wire up a submit (e.g., add phx-submit="save" on the form)
+  # - Ensure the "uploads/" folder exists and is served by your endpoint/static config if you
+  #   plan to display files back in the browser.
+  #
+  # def handle_event("save", _params, socket) do
+  #   # Make sure the uploads directory exists
+  #   File.mkdir_p!("uploads")
+  #
+  #   saved_paths =
+  #     consume_uploaded_entries(socket, :photos, fn %{path: path}, entry ->
+  #       ext = Path.extname(entry.client_name)
+  #       dest = Path.join("uploads", entry.uuid <> ext)
+  #       File.cp!(path, dest)
+  #       {:ok, dest}
+  #     end)
+  #
+  #   {:noreply,
+  #    socket
+  #    |> put_flash(:info, "#{length(saved_paths)} file(s) uploaded")}
+  # end
 
   defp format_accept_filetypes_list(accept) do
     accept

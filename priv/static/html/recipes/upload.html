@@ -3,7 +3,7 @@
   interface with drag-and-drop functionality, file selection, real-time
   previews, and progress tracking. The upload handling uses LiveView's built-in
   upload system, though the actual file storage is not implemented in this
-  example.
+  example. (See <a href="/upload-server">next recipe</a>.)
 </p>
 <h3><code>mount/3</code></h3>
 <p>
@@ -12,11 +12,10 @@
 </p>
 <ul>
   <li>
-    <strong>Form Initialization</strong>: The socket is assigned a form using
-    <code>Locations.change_location/1</code>, which creates a changeset for a
-    new <code>Location</code> struct. While the form field doesn't relate to the
-    photos being uploaded, Phoenix LiveView requires a form context for file
-    uploads to work properly.
+    <strong>Form Initialization</strong>: The socket is assigned a simple form
+    using <code>to_form(%{})</code>. For uploads, you only need a form wrapper
+    plus <code>allow_upload/3</code> and a file input. The form does not have to
+    be changeset‑backed and it doesn't need any other fields to enable uploads.
   </li>
   <li>
     <strong>Enabling File Uploads</strong>:
@@ -60,7 +59,6 @@
 </p>
 
 <pre><code>&lt;.form&gt;
-  &lt;.input /&gt;
   &lt;div phx-drop-target={@uploads.photos.ref}&gt;
     &lt;label for={@uploads.photos.ref}&gt;
       &lt;.live_file_input upload={@uploads.photos} /&gt;
@@ -84,16 +82,11 @@
     <p><strong>Form Setup</strong>:</p>
     <ul>
       <li>
-        The file upload interface is wrapped inside a
-        <code>&lt;.form&gt;</code> element that connects to the
-        <code>@form</code> assign and triggers "validate" events on changes.
-        LiveView requires this form context for upload functionality to work.
-      </li>
-      <li>
-        The form includes a text input field for the
-        <code>name</code> attribute. This demonstrates how file uploads can
-        coexist with other form fields in a real application, where you might
-        collect additional data alongside the uploaded files.
+        The upload UI is wrapped in a <code>&lt;.form&gt;</code> bound to the
+        <code>@form</code> assign. You can use <code>phx-change</code> to
+        re-render as files are selected, but no additional form fields are
+        required for uploads to work. The form does not need to be backed by a
+        changeset.
       </li>
     </ul>
   </li>
@@ -197,18 +190,18 @@
     <p><strong>"validate"</strong>:</p>
     <ul>
       <li>
-        Triggered when the form changes, including when users type in the name
-        field or when files are selected/dropped for upload.
+        Triggered when files are selected/dropped for upload (and any optional
+        fields you might add).
       </li>
       <li>
-        Creates a changeset using <code>Locations.change_location/2</code> with
-        the updated form data and assigns it back to the socket.
+        Reassigns the form using <code>to_form(params)</code> for a lightweight,
+        non‑changeset approach.
       </li>
       <li>
-        This validation is essential for the upload system because it processes
-        file selections and triggers the re-rendering that updates the preview
-        display with any file validation errors (like "too large" or "not
-        accepted").
+        LiveView manages the upload entries (in <code>@uploads.photos</code>)
+        regardless of changeset usage. The change event here simply updates the
+        assigns and re-renders so the UI reflects new selections and any upload
+        errors.
       </li>
     </ul>
   </li>
