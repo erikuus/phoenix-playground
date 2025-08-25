@@ -23,6 +23,15 @@ defmodule LivePlaygroundWeb.Endpoint do
     gzip: false,
     only: LivePlaygroundWeb.static_paths()
 
+  # Serve uploaded files from a writable directory outside priv/static
+  # uploadserver
+  plug Plug.Static,
+    at: "/uploads",
+    from: "uploads",
+    gzip: false
+
+  # enduploadserver
+
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do

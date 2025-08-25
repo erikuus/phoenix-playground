@@ -206,11 +206,11 @@
             using <code>filename/1</code> to generate a unique filename (UUID +
             original name) and <code>File.cp!/2</code> to copy it to the
             directory defined by the <code>@uploads</code> module attribute
-            (<code>priv/static/uploads</code>). The
-            <code>new_photos</code> variable collects these filenames into a
-            list like <code>["abc123-beach.jpg", "def456-sunset.png"]</code> and
-            gets passed to the update function as the
-            <code>photos</code> parameter.
+            (<code>uploads/</code>, served at <code>/uploads</code> by
+            <code>Plug.Static</code>). The <code>new_photos</code> variable
+            collects these filenames into a list like
+            <code>["abc123-beach.jpg", "def456-sunset.png"]</code> and gets
+            passed to the update function as the <code>photos</code> parameter.
           </li>
           <li>
             <strong>Update Location</strong>:
@@ -343,3 +343,25 @@
     </ul>
   </li>
 </ul>
+
+<hr />
+
+<h2>endpoint.ex</h2>
+<h3>Serving Uploaded Images</h3>
+<p>
+  Uploaded files are stored on local disk and served directly by the web
+  endpoint. An additional <code>Plug.Static</code> is configured to expose the
+  upload directory so that requests like
+  <code>/uploads/abc123-photo.jpg</code> are returned without going through
+  LiveView.
+</p>
+<pre><code>plug Plug.Static,
+  at: "/uploads",
+  from: "uploads",
+  gzip: false
+</code></pre>
+<p>
+  Only the filename is stored in the database (for example,
+  <code>"abc123-photo.jpg"</code>), and the UI builds image URLs accordingly
+  (e.g., <code>/uploads/abc123-photo.jpg</code>).
+</p>

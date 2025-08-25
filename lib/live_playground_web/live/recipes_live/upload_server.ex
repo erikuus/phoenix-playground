@@ -4,7 +4,7 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadServer do
   alias LivePlayground.Locations
   alias LivePlayground.Locations.Location
 
-  @uploads Path.join(["priv", "static", "uploads"])
+  @uploads "uploads"
 
   def mount(_params, _session, socket) do
     if connected?(socket), do: Locations.subscribe()
@@ -93,14 +93,9 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadServer do
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/recipes_live/upload_server.ex" />
+      <.code_block filename="lib/live_playground_web/endpoint.ex" from="# uploadserver" to="# enduploadserver" />
       <.code_block filename="lib/live_playground/locations.ex" from="# uploadserver" to="# enduploadserver" />
       <.code_block filename="lib/live_playground/locations/location.ex" from="# uploadserver" to="# enduploadserver" />
-      <.code_block filename="lib/live_playground_web.ex" from="# uploadserver" to="# enduploadserver" />
-      <.code_block
-        filename="config/dev.exs"
-        from="# Watch static and templates for browser reloading."
-        to="# Enable dev routes for dashboard and mailbox"
-      />
     </div>
     <.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/recipes/upload_server.html" />
     <!-- end hiding from live code -->

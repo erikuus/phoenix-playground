@@ -17,9 +17,7 @@ defmodule LivePlaygroundWeb do
   those modules here.
   """
 
-  # uploadserver
-  def static_paths, do: ~w(assets fonts images uploads favicon.ico robots.txt)
-  # enduploadserver
+  def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
 
   def router do
     quote do
