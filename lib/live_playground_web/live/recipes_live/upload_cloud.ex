@@ -21,13 +21,22 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadCloud do
       |> stream(:locations, locations)
       |> allow_upload(
         :photos,
-        accept: ~w(.png .jpg),
+        accept: ~w(.png .jpg .jpeg),
         max_entries: 8,
         max_file_size: 10_000_000,
         external: &presign_upload/2
       )
 
     {:ok, socket}
+  end
+
+  def terminate(_reason, _socket) do
+    Locations.unsubscribe()
+    :ok
+  end
+
+  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
+    assign(socket, :form, to_form(changeset))
   end
 
   defp presign_upload(entry, socket) do
@@ -45,14 +54,19 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadCloud do
         expires_in: :timer.hours(1)
       )
 
-    metadata = %{
+    upload_instructions = %{
       uploader: "S3",
       key: filename(entry),
       url: @s3_url,
       fields: fields
     }
 
-    {:ok, metadata, socket}
+    {:ok, upload_instructions, socket}
+  end
+
+  defp filename(entry) do
+    base = Path.basename(entry.client_name)
+    "#{entry.uuid}-#{base}"
   end
 
   def render(assigns) do
@@ -79,29 +93,36 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadCloud do
         Upload
       </.button>
     </.form>
-    <.table id="locations" rows={@streams.locations}>
-      <:col :let={{_id, location}} label="Name">
-        {location.name}
-        <div class="flex flex-wrap gap-4 mt-4 md:hidden">
-          <a :for={photo_s3 <- location.photos_s3} href={photo_s3} target="_blank">
-            <img src={photo_s3} } class="h-10 rounded" />
-          </a>
+
+    <div id="locations" phx-update="stream" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-8">
+      <div
+        :for={{dom_id, location} <- @streams.locations}
+        id={dom_id}
+        class="rounded-lg bg-gray-50 border border-gray-200 text-xs xl:text-sm"
+      >
+        <div class="flex justify-between items-center px-6 py-3 text-gray-500">
+          <h3 class="font-medium text-sm">{location.name}</h3>
+          <.link
+            :if={location.photos_s3 != []}
+            phx-click={JS.push("remove", value: %{id: location.id})}
+            data-confirm="Are you sure to remove photos?"
+          >
+            <.icon name="hero-trash" class="w-4 h-4" />
+          </.link>
         </div>
-      </:col>
-      <:col :let={{_id, location}} label="Photos" class="hidden md:table-cell">
-        <div class="flex flex-wrap gap-4">
-          <a :for={photo_s3 <- location.photos_s3} href={photo_s3} target="_blank">
-            <img src={photo_s3} } class="h-10 rounded" />
-          </a>
+        <div class="bg-white p-6 rounded-b-lg">
+          <div :if={location.photos_s3 != []} class="grid grid-cols-4 gap-1">
+            <a :for={photo_s3 <- location.photos_s3} href={photo_s3} target="_blank">
+              <img src={photo_s3} class="w-full h-12 object-cover rounded" />
+            </a>
+          </div>
+          <div :if={location.photos_s3 == []} class="text-gray-400 text-xs text-center py-4">
+            No photos uploaded
+          </div>
         </div>
-      </:col>
-      <:action :let={{_id, location}}>
-        <.link :if={location.photos_s3 != []} phx-click={JS.push("remove", value: %{id: location.id})} data-confirm="Are you sure?">
-          <span class="hidden md:inline">Remove Images</span>
-          <.icon name="hero-trash-mini" class="md:hidden" />
-        </.link>
-      </:action>
-    </.table>
+      </div>
+    </div>
+
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/recipes_live/upload_cloud.ex" />
@@ -151,7 +172,7 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadCloud do
   end
 
   def handle_event("save", %{"location" => params}, socket) do
-    id = params["id"] |> String.to_integer()
+    id = to_integer(params["id"])
     selected_location = Locations.get_location!(id)
 
     photos_s3 =
@@ -166,8 +187,9 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadCloud do
   end
 
   def handle_event("remove", %{"id" => id}, socket) do
+    id = to_integer(id)
     selected_location = Locations.get_location!(id)
-    params = Map.put(%{}, "photos_s3", [])
+    params = %{"photos_s3" => []}
     Locations.update_location(selected_location, params)
     {:noreply, socket}
   end
@@ -176,11 +198,12 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadCloud do
     {:noreply, stream_insert(socket, :locations, location)}
   end
 
-  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    assign(socket, :form, to_form(changeset))
-  end
+  defp to_integer(value) when is_integer(value), do: value
 
-  defp filename(entry) do
-    "#{entry.uuid}-#{entry.client_name}"
+  defp to_integer(value) when is_binary(value) do
+    case Integer.parse(value) do
+      {i, _} -> i
+      _ -> 0
+    end
   end
 end

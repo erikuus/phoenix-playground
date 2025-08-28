@@ -84,6 +84,12 @@
   </li>
 </ul>
 
+<h3><code>assign_form/2</code></h3>
+<p>
+  Updates the form in the socket with the given changeset, allowing the form to
+  reflect the latest validation state and errors.
+</p>
+
 <h3><code>render/1</code></h3>
 <p>
   The <code>render/1</code> function generates the HTML structure for the page,
@@ -320,11 +326,12 @@
     </p>
     <ul>
       <li>
-        Creates a unique filename by prefixing LiveView’s generated UUID to the
-        file’s base name (e.g., <code>"abc123-photo.jpg"</code>). Using the base
-        name (<code>Path.basename/1</code>) avoids path issues, and the UUID
-        prevents collisions when different users upload files with the same
-        name.
+        Creates a unique filename by prefixing LiveView's generated UUID to the
+        file's base name (e.g., <code>"abc123-photo.jpg"</code>). Using
+        <code>Path.basename/1</code> ensures the function is generically safe by
+        extracting only the filename, even if called with full paths in other
+        contexts, and the UUID prevents collisions when different users upload
+        files with the same name.
       </li>
     </ul>
   </li>
