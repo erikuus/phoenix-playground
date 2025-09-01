@@ -1,169 +1,225 @@
 <p>
-  The <code>TabularInsert</code> module demonstrates how to implement a tabular
-  insert form using Phoenix LiveView streams. The module also uses streaming
-  capabilities along with Phoenix PubSub to manage and update city data in
-  real-time.
+  The <code>TabularInsert</code> module shows how to build dynamic tabular forms
+  that handle multiple record creation in a single submit event. Each record is
+  inserted individually, so valid rows are saved while rows with errors stay in
+  the form with validation messages.
 </p>
 <h3><code>mount/3</code></h3>
 <p>Initializes the LiveView:</p>
 <ul>
   <li>
-    <strong>Subscription</strong>: Subscribes to city updates if the socket is
-    connected, allowing the LiveView to receive real-time updates.
+    <strong>Subscription</strong>: Uses <code>Cities.subscribe()</code> to
+    listen for city changes from other users, but only when the socket is
+    connected to prevent unnecessary subscriptions during server-side
+    pre-rendering. This creates a collaborative environment where users can see
+    cities being added or removed by others in real-time, which is especially
+    important in data entry scenarios where multiple team members might be
+    working simultaneously.
   </li>
   <li>
     <strong>Initial State</strong>:
     <ul>
       <li>
-        <code>tabular_input_ids</code> is set to an empty list to track dynamic
-        form input IDs.
+        <code>max_tabular_inputs</code>: configurable limit (5) for input rows
       </li>
       <li>
-        Initializes the <code>tabular_inputs</code> stream to manage dynamic
-        form inputs.
+        <code>tabular_input_ids</code>: tracks which input sets are active
       </li>
       <li>
-        Initializes the <code>cities</code> stream with a list of cities from
-        Estonia (<code>"EST"</code>).
+        <code>tabular_inputs</code>: stream holding each input set and its
+        validation state
       </li>
+      <li><code>cities</code>: stream of Estonian cities loaded on mount</li>
     </ul>
   </li>
 </ul>
 <p>
-  Tabular inputs are kept in a stream to ensure the text in inputs remains
-  consistent when inputs are added or deleted, while their IDs are maintained in
-  the state for easy management and tracking.
+  The combination of a stream (<code>tabular_inputs</code>) and an ID list
+  (<code>tabular_input_ids</code>) keeps inputs stable as rows are added and
+  removed. The stream preserves each row’s content and errors, while the ID list
+  provides a stable order for correlating submitted arrays back to the right
+  rows.
 </p>
+
 <h3><code>terminate/2</code></h3>
 <p>
-  Cleans up by unsubscribing from city updates when the LiveView terminates.
-  This ensures that resources are properly released.
+  Properly cleans up the PubSub subscription when the LiveView session ends
+  using <code>Cities.unsubscribe()</code>. This prevents memory leaks in the
+  PubSub registry and ensures that broadcast messages aren't sent to dead
+  processes, maintaining optimal application performance.
 </p>
+
 <h3><code>render/1</code></h3>
-<p>Defines the HTML structure for the LiveView:</p>
+<p>Defines the UI:</p>
 <ul>
   <li>
-    <p>
-      <strong>Form Interaction</strong>: Contains dynamically added city input
-      fields for name, district, and population. Each set of inputs can be
-      removed individually. Includes "Add" button to add more input fields,
-      limited to 5, and "Save" button to submit the form if there are inputs to
-      save.
-    </p>
+    <strong>Form Interaction</strong>: Dynamically added inputs for name,
+    district, and population. Each row can be removed individually. An “Add”
+    button appends a row up to the configured limit; a “Save” button appears
+    when there are rows to submit.
   </li>
   <li>
-    <p>
-      <strong>Table Display</strong>: Streams current city data, incorporating
-      real-time updates and deletions directly within the UI. Each table entry
-      includes a timestamp showing when the city was last updated or inserted
-      into the stream.
-    </p>
+    <strong>Dynamic Table Display</strong>: A table displays each city's name,
+    district, and population. The table is enhanced with dynamic stream
+    identifiers for each row, allowing for real-time updates.
+  </li>
+  <li>
+    <strong>Delete Functionality</strong>: Each city has a delete button,
+    equipped with an action to trigger the "delete" event. This setup ensures
+    that the specific row can be efficiently removed from the DOM upon deletion.
+  </li>
+  <li>
+    <strong>Real-Time Feedback</strong>: Each city row displays a timestamp
+    using <code>{Timex.now()}</code> in the template. This serves as a visual
+    proof that only newly inserted rows are re-rendered - existing rows retain
+    their original timestamps, demonstrating LiveView's selective update
+    capability. When you add a new city, only that row shows the current time,
+    while all other rows keep their previous timestamps.
   </li>
 </ul>
+
 <h3><code>handle_event/3</code></h3>
 <p>Manages user interactions:</p>
 <ul>
   <li>
-    <p><strong>"add-tabular-input"</strong>:</p>
+    <p><strong>"add-tabular-input"</strong></p>
     <ul>
-      <li>Generates a new, empty set of input fields with a unique ID.</li>
       <li>
-        Sends a message to handle the addition of the new input through
-        <code>handle_info/2</code>.
+        Defensive guard enforces <code>@max_tabular_inputs</code> on the server.
+      </li>
+      <li>
+        Generates per-session incremental IDs (<code>List.last + 1</code>) for
+        predictable ordering; each LiveView session has its own ID space.
+      </li>
+      <li>
+        Each row starts with a fresh form from <code>get_empty_form()</code> to
+        ensure correct bindings and validation.
       </li>
     </ul>
   </li>
   <li>
-    <p><strong>"remove-tabular-input"</strong>:</p>
+    <p><strong>"remove-tabular-input"</strong></p>
     <ul>
       <li>
-        Identifies the specific set of city input fields to remove based on its
-        ID.
+        Parses the string ID from the UI and removes the row from both the
+        stream and the tracking list in one step.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>"save"</strong></p>
+    <ul>
+      <li>
+        Inputs marked <code>multiple={true}</code> submit arrays (e.g., names,
+        districts). <code>convert_params/2</code> aligns array positions to the
+        tracked IDs using their order, producing one parameter map per row and
+        adding the fixed country code.
       </li>
       <li>
-        Sends a message to handle the removal of the input through
-        <code>handle_info/2</code>.
+        Partial success: successful rows are added to the table and removed from
+        the form; rows with validation errors remain with their errors so users
+        can fix them.
+      </li>
+      <li>
+        Uses <code>Enum.reduce/3</code> to process inserts sequentially within a
+        single event, which keeps UI updates coherent. This is not a database
+        transaction; use <code>Ecto.Multi</code> in a transaction if you need
+        all-or-nothing behavior.
+      </li>
+      <li>
+        Consider summarizing results in a single flash after processing all rows
+        (e.g., “2 added, 1 needs fixes”) to avoid multiple flashes during one
+        submit.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>"delete"</strong></p>
+    <ul>
+      <li>
+        Deletes the city and removes the row immediately in the current session
+        (optimistic UI).
+      </li>
+      <li>
+        The <code>Cities</code> context broadcasts the change; other sessions
+        remove the row in <code>handle_info/2</code>. If the current session
+        receives the same broadcast, removing again is a no-op.
       </li>
     </ul>
   </li>
 </ul>
-<p>
-  Using <code>send/2</code> to delegate to <code>handle_info/2</code> for adding
-  and removing inputs is a design choice to centralize stream operations.
-</p>
-<ul>
-  <li>
-    <p><strong>"save"</strong>:</p>
-    <ul>
-      <li>
-        Gathers the data from tabular input fields using
-        <code>get_city_params/2</code> to convert the input data into a list of
-        tuples. Each tuple consists of an input ID and a map of city fields.
-      </li>
-      <li>
-        Validates the data using the input ID to identify the input in the
-        stream and the map to check the city fields. If validation fails, the
-        stream is updated to show errors in the form. If all fields are valid,
-        the data is saved to the database and the tabular inputs are removed
-        from the stream.
-      </li>
-      <li>
-        The <code>Cities</code> module broadcasts new additions to all connected
-        users.
-      </li>
-      <li>
-        <code>handle_info/2</code> receives the broadcasted message and updates
-        the stream with the new cities.
-      </li>
-    </ul>
-  </li>
-  <li>
-    <p><strong>"delete"</strong>:</p>
-    <ul>
-      <li>Deletes a city from the database.</li>
-      <li>
-        The <code>Cities</code> module broadcasts the change to all connected
-        users.
-      </li>
-      <li>
-        <code>handle_info/2</code> processes the broadcast and removes the city
-        from the stream, ensuring other parts of the page are unaffected.
-      </li>
-    </ul>
-  </li>
-</ul>
+
 <h3><code>handle_info/2</code></h3>
-<p>Processes asynchronous messages to update streams:</p>
+<p>Processes real-time broadcasts:</p>
 <ul>
   <li>
-    <strong><code>{:add_tabular_input, tabular_input}</code></strong
-    >: Inserts a new tabular input into the stream.
+    <strong><code>{LivePlayground.Cities, {:create_city, city}}</code></strong
+    >: Adds a city created by another user to the top of the stream and shows a
+    notification.
   </li>
   <li>
-    <strong><code>{:remove_tabular_input, tabular_input}</code></strong
-    >: Removes a tabular input from the stream.
-  </li>
-  <li>
-    <strong><code>{:create_city, city}</code></strong
-    >: Inserts a new city into the stream at the top of the list.
-  </li>
-  <li>
-    <strong><code>{:delete_city, city}</code></strong
-    >: Removes a city from the stream.
+    <strong><code>{LivePlayground.Cities, {:delete_city, city}}</code></strong
+    >: Removes a city deleted by another user from the stream.
   </li>
 </ul>
+
 <h3>Helper Functions</h3>
 <ul>
   <li>
-    <strong><code>get_city_params/2</code></strong
-    >: Converts the map received from tabular inputs
-    (<code>multiple={true}</code>) into a list of tuples that can be validated
-    and saved. This ensures that each set of inputs is correctly associated with
-    a city.
+    <strong><code>convert_params/2</code></strong> correlates array fields from
+    the form with the tracked IDs by position. Index 0 in each array maps to the
+    first ID, index 1 to the second, and so on. It also sets
+    <code>"countrycode"</code> to the fixed value.
   </li>
   <li>
-    <strong><code>get_empty_form/0</code></strong
-    >: Creates an empty form structure for new tabular inputs, ensuring that
-    each new set of inputs starts with a blank form.
+    <strong><code>get_empty_form/0</code></strong> builds a blank Phoenix form
+    for a new tabular row so fields and validations are set up correctly.
+  </li>
+  <li>
+    <strong><code>to_integer/1</code></strong> parses string IDs and falls back
+    to <code>0</code> for invalid input; in this view, <code>0</code> safely
+    results in no deletion. Use strict handling if you need to detect invalid
+    IDs explicitly.
+  </li>
+</ul>
+
+<h3>Tabular Form Architecture</h3>
+<p>
+  The module implements a sophisticated approach to managing dynamic forms that
+  maintains both performance and user experience:
+</p>
+
+<h4>Why Streams Over Simple Assigns</h4>
+<p>Using streams for tabular inputs provides several critical benefits:</p>
+<ul>
+  <li>
+    <strong>State Preservation</strong>: When inputs are added or removed,
+    existing form data and validation errors remain exactly where users expect
+    them, preventing frustrating data loss.
+  </li>
+  <li>
+    <strong>Efficient Updates</strong>: Only the specific inputs that change are
+    re-rendered, rather than rebuilding the entire form structure.
+  </li>
+  <li>
+    <strong>Unique Identity</strong>: Each input set gets a stable DOM ID that
+    persists across operations, enabling proper focus management and
+    accessibility.
+  </li>
+</ul>
+
+<h4>The ID Tracking Strategy</h4>
+<ul>
+  <li>
+    <strong>Form Correlation</strong>: Maps submitted arrays back to specific
+    rows during save.
+  </li>
+  <li>
+    <strong>Predictable Ordering</strong>: Per-session incremental IDs ensure
+    consistent local order.
+  </li>
+  <li>
+    <strong>State Queries</strong>: Enables quick checks like “are there inputs
+    to save?” or “can we add more?”
   </li>
 </ul>
