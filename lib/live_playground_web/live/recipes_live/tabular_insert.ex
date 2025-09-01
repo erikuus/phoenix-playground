@@ -5,12 +5,14 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
   alias LivePlayground.Cities.City
 
   @countrycode "EST"
+  @max_tabular_inputs 5
 
   def mount(_params, _session, socket) do
     if connected?(socket), do: Cities.subscribe()
 
     socket =
       socket
+      |> assign(:max_tabular_inputs, @max_tabular_inputs)
       |> assign(:tabular_input_ids, [])
       |> stream(:tabular_inputs, [])
       |> stream(:cities, Cities.list_country_city(@countrycode))
@@ -19,7 +21,6 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
   end
 
   def terminate(_reason, _socket) do
-    # Ensure we unsubscribe when the LiveView is terminated to clean up resources
     Cities.unsubscribe()
     :ok
   end
@@ -37,7 +38,7 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <form phx-submit="save" class="space-y-6 md:space-y-4">
+    <form phx-submit="save" class="space-y-2 md:space-y-4">
       <div id="tabular_inputs" phx-update="stream" class="space-y-4">
         <div
           :for={{id, tabular_input} <- @streams.tabular_inputs}
@@ -59,20 +60,32 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
             placeholder="Population"
             class="flex-1"
           />
-          <div class="flex flex-col md:flex-none">
-            <.button type="button" kind={:secondary} phx-click="remove-tabular-input" phx-value-id={tabular_input.id} class="md:flex">
-              Remove
-            </.button>
+          <div class="flex-none text-right">
+            <.link
+              phx-click="remove-tabular-input"
+              phx-value-id={tabular_input.id}
+              class="rounded-full inline-flex items-center p-3 bg-zinc-100 hover:bg-zinc-200"
+            >
+              <.icon name="hero-minus-mini" class="h-5 w-5" />
+            </.link>
           </div>
         </div>
       </div>
-      <div class="flex flex-col space-x-0 space-y-2 md:flex-row md:space-x-2 md:space-y-0">
-        <.button :if={Enum.count(@tabular_input_ids) < 5} type="button" phx-click="add-tabular-input">
-          Add
-        </.button>
-        <.button :if={Enum.count(@tabular_input_ids) > 0} type="submit">
-          Save
-        </.button>
+      <div class="flex items-center justify-between">
+        <span>
+          <.button :if={Enum.count(@tabular_input_ids) > 0} type="submit">
+            Save
+          </.button>
+        </span>
+        <span>
+          <.link
+            :if={Enum.count(@tabular_input_ids) < @max_tabular_inputs}
+            phx-click="add-tabular-input"
+            class="rounded-full inline-flex items-center p-3 bg-zinc-100 hover:bg-zinc-200"
+          >
+            <.icon name="hero-plus-mini" class="h-5 w-5" />
+          </.link>
+        </span>
       </div>
     </form>
     <.table id="cities" rows={@streams.cities}>
@@ -97,6 +110,7 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
         </.link>
       </:action>
     </.table>
+
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/recipes_live/tabular_insert.ex" />
@@ -108,97 +122,97 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
   end
 
   def handle_event("add-tabular-input", _, socket) do
-    last_id = List.last(socket.assigns.tabular_input_ids, 0)
-    new_id = last_id + 1
-
-    # Create a new tabular input with a unique ID and empty form
-    tabular_input = %{
-      id: new_id,
-      form: get_empty_form()
-    }
-
-    # Send message to add the new tabular input into stream
-    send(self(), {:add_tabular_input, tabular_input})
-
-    # Update the socket state with the new tabular input ID
-    {:noreply, update(socket, :tabular_input_ids, &(&1 ++ [new_id]))}
-  end
-
-  def handle_event("remove-tabular-input", %{"id" => id}, socket) do
-    id = String.to_integer(id)
-
-    # Send message to remove the tabular input with the given ID from stream
-    send(self(), {:remove_tabular_input, %{id: id}})
-
-    # Update the socket state by removing the tabular input ID
-    {:noreply, update(socket, :tabular_input_ids, &List.delete(&1, id))}
-  end
-
-  def handle_event("save", %{"city" => tabular_params}, socket) do
-    city_params = get_city_params(socket.assigns.tabular_input_ids, tabular_params)
-
-    # Validate each set of city parameters
-    validations =
-      for {id, params} <- city_params do
-        changeset =
-          %City{}
-          |> Cities.change_city(params)
-          |> Map.put(:action, :validate)
-
-        tabular_input = %{
-          id: id,
-          form: to_form(changeset)
-        }
-
-        # Send message to update tabular input with validation results within stream
-        send(self(), {:add_tabular_input, tabular_input})
-
-        changeset.valid?
-      end
-
-    # If all validations pass, save the cities and clear the inputs
-    if Enum.all?(validations) do
-      for {id, params} <- city_params do
-        Cities.create_city_broadcast(params)
-        send(self(), {:remove_tabular_input, %{id: id}})
-      end
-
-      {:noreply, assign(socket, :tabular_input_ids, [])}
+    # Defensive guard in case the client bypasses UI constraints
+    if length(socket.assigns.tabular_input_ids) >= socket.assigns.max_tabular_inputs do
+      {:noreply, socket}
     else
+      last_id = List.last(socket.assigns.tabular_input_ids, 0)
+      new_id = last_id + 1
+
+      tabular_input = %{
+        id: new_id,
+        form: get_empty_form()
+      }
+
+      socket =
+        socket
+        |> stream_insert(:tabular_inputs, tabular_input)
+        |> update(:tabular_input_ids, &(&1 ++ [new_id]))
+
       {:noreply, socket}
     end
   end
 
-  def handle_event("delete", %{"id" => id}, socket) do
-    city = Cities.get_city!(id)
-    {:ok, _} = Cities.delete_city_broadcast(city)
+  def handle_event("remove-tabular-input", %{"id" => id}, socket) do
+    id = to_integer(id)
+
+    socket =
+      socket
+      |> stream_delete(:tabular_inputs, %{id: id})
+      |> update(:tabular_input_ids, &List.delete(&1, id))
 
     {:noreply, socket}
   end
 
-  def handle_info({:add_tabular_input, tabular_input}, socket) do
-    {:noreply, stream_insert(socket, :tabular_inputs, tabular_input)}
+  def handle_event("save", %{"city" => tabular_params}, socket) do
+    city_params = convert_params(socket.assigns.tabular_input_ids, tabular_params)
+
+    socket =
+      Enum.reduce(city_params, socket, fn {id, params}, acc ->
+        case Cities.create_city_broadcast(params) do
+          {:ok, city} ->
+            acc
+            |> stream_delete(:tabular_inputs, %{id: id})
+            |> stream_insert(:cities, city, at: 0)
+            |> update(:tabular_input_ids, &List.delete(&1, id))
+            |> put_flash(:info, "City record(s) added.")
+
+          {:error, %Ecto.Changeset{} = changeset} ->
+            # If creation failed, push the changeset back into the tabular input stream so the user can fix it
+            tabular_input = %{id: id, form: to_form(changeset)}
+            stream_insert(acc, :tabular_inputs, tabular_input)
+        end
+      end)
+
+    {:noreply, socket}
   end
 
-  def handle_info({:remove_tabular_input, tabular_input}, socket) do
-    # Remove the tabular input from the stream using a map with the key %{id: id}
-    # Note: stream_delete/3 does not necessarily assume an ID; it simply requires
-    # a unique identifier to locate and remove the element from the stream.
-    # Example: If the stream contains a list of maps with keys :code, :firstname, and :lastname,
-    # you can remove an entry by specifying the unique :code value
-    # Example usage: stream_delete(socket, :persons, %{code: unique_code})
-    {:noreply, stream_delete(socket, :tabular_inputs, tabular_input)}
-  end
+  def handle_event("delete", %{"id" => id}, socket) do
+    city = Cities.get_city!(to_integer(id))
+    {:ok, _} = Cities.delete_city_broadcast(city)
 
-  def handle_info({:create_city, city}, socket) do
-    {:noreply, stream_insert(socket, :cities, city, at: 0)}
-  end
-
-  def handle_info({:delete_city, city}, socket) do
     {:noreply, stream_delete(socket, :cities, city)}
   end
 
-  defp get_city_params(tabular_input_ids, tabular_params) do
+  def handle_info({LivePlayground.Cities, {:create_city, city}}, socket) do
+    socket =
+      socket
+      |> stream_insert(:cities, city, at: 0)
+      |> put_flash(:info, "City record(s) added by another user.")
+
+    {:noreply, socket}
+  end
+
+  def handle_info({LivePlayground.Cities, {:delete_city, city}}, socket) do
+    {:noreply, stream_delete(socket, :cities, city)}
+  end
+
+  defp get_empty_form() do
+    %City{}
+    |> Cities.change_city()
+    |> to_form()
+  end
+
+  defp to_integer(value) when is_integer(value), do: value
+
+  defp to_integer(value) when is_binary(value) do
+    case Integer.parse(value) do
+      {i, _} -> i
+      _ -> 0
+    end
+  end
+
+  defp convert_params(tabular_input_ids, tabular_params) do
     # Converts a map received from multiple inputs into a list of tuples that can be used to validate and save data.
     #
     # ## Parameters
@@ -214,7 +228,7 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
     #       "district" => ["Tartu Maakond", "Harju Maakond"],
     #       "population" => ["101 246", "403 981"]
     #     }
-    #     iex> get_city_params(tabular_input_ids, tabular_params)
+    #     iex> convert_params(tabular_input_ids, tabular_params)
     #     [
     #       {2, %{"name" => "Tartu", "district" => "Tartu Maakond", "population" => "101 246", "countrycode" => "EST"}},
     #       {5, %{"name" => "Tallinn", "district" => "Harju Maakond", "population" => "403 981", "countrycode" => "EST"}}
@@ -227,11 +241,5 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
 
       {id, params}
     end
-  end
-
-  defp get_empty_form() do
-    %City{}
-    |> Cities.change_city()
-    |> to_form()
   end
 end
