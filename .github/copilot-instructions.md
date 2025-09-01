@@ -15,6 +15,76 @@ ALWAYS organize functions in a top-down manner, where each function is followed 
 - Creates a natural flow through the code
 - Helps maintain clear dependencies between functions
 
+### Function Extraction Guidelines
+
+You MUST follow these guidelines when deciding whether to extract code into separate functions:
+
+**DO NOT extract functions when:**
+
+- The logic is only used once (no reusability benefit)
+- The code is few lines and conceptually part of the main operation
+- It would create unnecessary function jumping that hurts readability
+- The extracted function would just be a simple wrapper
+
+**DO extract functions when:**
+
+- Logic is reused across multiple events or functions
+- Complex algorithms span 10+ lines with intricate logic
+- Clear conceptual boundaries exist (like data transformation utilities)
+- Helper utilities serve multiple purposes
+
+**Example of appropriate inline code:**
+
+```elixir
+case Cities.create_city_broadcast(params) do
+  {:ok, city} ->
+    acc
+    |> stream_delete(:tabular_inputs, %{id: id})
+    |> stream_insert(:cities, city, at: 0)
+    |> update(:tabular_input_ids, &List.delete(&1, id))
+    |> put_flash(:info, "City created successfully.")
+
+  {:error, %Ecto.Changeset{} = changeset} ->
+    tabular_input = %{id: id, form: to_form(changeset)}
+    stream_insert(acc, :tabular_inputs, tabular_input)
+end
+```
+
+This code should NOT be extracted because the success/error handling is conceptually part of the save operation and each branch is short and readable.
+
+### Template Component Extraction Guidelines
+
+You MUST follow these guidelines when deciding whether to extract template components:
+
+**DO NOT extract template components when:**
+
+- The component is only used in one place (no reusability benefit)
+- The component is tightly coupled to the parent's assigns
+- The extracted part is conceptually part of the main template
+- Editor features like code folding provide sufficient organization
+
+**DO extract template components when:**
+
+- The component is reused across multiple templates
+- The component represents a complex, self-contained widget
+- Clear conceptual boundaries exist (like shared navigation components)
+- The component has its own logic that benefits from isolation
+
+**Example of appropriate inline template code:**
+
+```heex
+def render(assigns) do
+  ~H"""
+  <.header>...</.header>           <!-- Page header -->
+  <form phx-submit="save">...</form>  <!-- Tabular input form -->
+  <.table>...</.table>             <!-- Results table -->
+  <div class="mt-10">...</div>     <!-- Code examples -->
+  """
+end
+```
+
+This template structure should NOT be extracted into components because each section is conceptually part of the main page flow and is only used once. Editor code folding provides sufficient organization for managing large templates.
+
 ## Module Structure
 
 ### Function Ordering Convention
