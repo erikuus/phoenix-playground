@@ -64,7 +64,7 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
             <.link
               phx-click="remove-tabular-input"
               phx-value-id={tabular_input.id}
-              class="rounded-full inline-flex items-center p-3 bg-zinc-100 hover:bg-zinc-200"
+              class="rounded-full inline-flex items-center p-3 bg-zinc-100"
             >
               <.icon name="hero-minus-mini" class="h-5 w-5" />
             </.link>
@@ -81,7 +81,7 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
           <.link
             :if={Enum.count(@tabular_input_ids) < @max_tabular_inputs}
             phx-click="add-tabular-input"
-            class="rounded-full inline-flex items-center p-3 bg-zinc-100 hover:bg-zinc-200"
+            class="rounded-full inline-flex items-center p-3 bg-zinc-100"
           >
             <.icon name="hero-plus-mini" class="h-5 w-5" />
           </.link>
@@ -155,26 +155,34 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
   end
 
   def handle_event("save", %{"city" => tabular_params}, socket) do
-    city_params = convert_params(socket.assigns.tabular_input_ids, tabular_params)
+    converted_params = convert_params(socket.assigns.tabular_input_ids, tabular_params)
 
-    socket =
-      Enum.reduce(city_params, socket, fn {id, params}, acc ->
+    # Collect results instead of showing individual flashes
+    {final_socket, results} =
+      Enum.reduce(converted_params, {socket, %{saved: 0, failed: 0}}, fn {id, params},
+                                                                         {acc, results} ->
         case Cities.create_city_broadcast(params) do
           {:ok, city} ->
-            acc
-            |> stream_delete(:tabular_inputs, %{id: id})
-            |> stream_insert(:cities, city, at: 0)
-            |> update(:tabular_input_ids, &List.delete(&1, id))
-            |> put_flash(:info, "City record(s) added.")
+            updated_socket =
+              acc
+              |> stream_delete(:tabular_inputs, %{id: id})
+              |> stream_insert(:cities, city, at: 0)
+              |> update(:tabular_input_ids, &List.delete(&1, id))
+
+            {updated_socket, %{results | saved: results.saved + 1}}
 
           {:error, %Ecto.Changeset{} = changeset} ->
-            # If creation failed, push the changeset back into the tabular input stream so the user can fix it
             tabular_input = %{id: id, form: to_form(changeset)}
-            stream_insert(acc, :tabular_inputs, tabular_input)
+            updated_socket = stream_insert(acc, :tabular_inputs, tabular_input)
+
+            {updated_socket, %{results | failed: results.failed + 1}}
         end
       end)
 
-    {:noreply, socket}
+    # Show single summary flash message
+    final_socket = put_summary_flash(final_socket, results)
+
+    {:noreply, final_socket}
   end
 
   def handle_event("delete", %{"id" => id}, socket) do
@@ -242,4 +250,21 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
       {id, params}
     end
   end
+
+  # Helper function for summary flash messages
+  defp put_summary_flash(socket, %{saved: 0, failed: failed}) when failed > 0 do
+    message = if failed == 1, do: "1 city needs fixes", else: "#{failed} cities need fixes"
+    put_flash(socket, :error, message)
+  end
+
+  defp put_summary_flash(socket, %{saved: saved, failed: 0}) when saved > 0 do
+    message = if saved == 1, do: "1 city added", else: "#{saved} cities added"
+    put_flash(socket, :info, message)
+  end
+
+  defp put_summary_flash(socket, %{saved: saved, failed: failed}) when saved > 0 and failed > 0 do
+    put_flash(socket, :info, "#{saved} cities added, #{failed} need fixes")
+  end
+
+  defp put_summary_flash(socket, _results), do: socket
 end
