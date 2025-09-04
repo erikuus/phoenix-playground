@@ -244,7 +244,9 @@ defmodule LivePlaygroundWeb.RecipesLive.TabularInsert do
     #
     for {id, index} <- Enum.with_index(tabular_input_ids) do
       params =
-        Enum.reduce(tabular_params, %{}, fn {k, v}, acc -> Map.put(acc, k, Enum.at(v, index)) end)
+        Enum.reduce(tabular_params, %{}, fn {field_name, value_list}, acc ->
+          Map.put(acc, field_name, Enum.at(value_list, index))
+        end)
         |> Map.put("countrycode", @countrycode)
 
       {id, params}

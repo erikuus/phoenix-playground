@@ -62,14 +62,24 @@
         ID is sufficient for most dynamic form operations.
       </li>
       <li>
-        <strong>The Core Problem</strong>: HTML forms with multiple inputs
-        submit params like
-        <code
-          >%{"name" => ["Tallinn", "Tartu"], "district" => ["Harju", "Tartu"],
-          "population" => ["", "101246"]}</code
-        >. These collections lose the connection to which original stream item
-        they came from - you can't tell if position 0 corresponds to stream item
-        ID 2, 5, or 7.
+        <strong>The Core Problem: A Structural Mismatch</strong>
+        <p>
+          An HTML form with multiple inputs of the same name submits data
+          grouped by field, not by row. For example, two input rows will produce
+          a single map like this:
+          <code
+            >%{"name" => ["City A", "City B"], "district" => ["District A",
+            "District B"]}</code
+          >
+        </p>
+        <p>
+          The data is organized into lists under each field name, losing the
+          original row structure. When validation fails for "City A", we only
+          know it's at position <code>0</code> in the <code>name</code> list. We
+          have no direct way to link this error back to the specific stream item
+          (e.g., the one with <code>id="tabular_inputs-2"</code>) that needs to
+          display the error message.
+        </p>
       </li>
       <li>
         <strong>Validation Error Mapping</strong>: When validation fails (like
@@ -226,14 +236,26 @@
         with their validation errors.
       </li>
       <li>
-        <strong>Stream State Management</strong>: For successful saves, removes
-        the row from the tabular inputs stream and adds the new city to the
-        results stream. For validation failures, updates the existing stream
-        item with the error-containing changeset while preserving the essential
-        ID: <code>%{id: id, form: to_form(changeset)}</code>. This ID is crucial
-        - it ensures the validation errors appear in the correct row by
-        maintaining the connection between the failed form data and its specific
-        DOM element.
+        <strong>Stream State Management</strong>: The <code>Enum.reduce</code>
+        loop manages the state of each row based on the outcome:
+        <ul>
+          <li>
+            <strong>On Success</strong>: The row is removed from the
+            <code>:tabular_inputs</code> stream using
+            <code>stream_delete</code>, and the newly created city is added to
+            the <code>:cities</code> stream. The row's ID is also removed from
+            the <code>@tabular_input_ids</code> tracking list.
+          </li>
+          <li>
+            <strong>On Failure</strong>: The original item is
+            <em>replaced</em> in the <code>:tabular_inputs</code> stream.
+            <code>stream_insert</code> is called with the same ID but with a new
+            form containing the validation errors:
+            <code>%{id: id, form: to_form(changeset)}</code>. This replacement
+            is what makes the validation errors appear on the correct row in the
+            UI.
+          </li>
+        </ul>
       </li>
       <li>
         <strong>Flash Message Strategy</strong>: Collects results during
@@ -285,15 +307,9 @@
     results stream using <code>stream_delete/3</code>.
   </li>
   <li>
-    <strong>Message Structure Pattern</strong>: Both messages follow Phoenix's
-    recommended pattern of <code>{module, {event, resource}}</code>, which helps
-    organize broadcasts and prevents message collisions between different
-    contexts.
-  </li>
-  <li>
-    <strong>Selective Updates</strong>: These broadcasts only update the results
-    table, never the tabular input form. This preserves users' work-in-progress
-    while keeping them informed of changes made by their teammates.
+    These broadcasts only update the results table, never the tabular input
+    form. This preserves users' work-in-progress while keeping them informed of
+    changes made by their teammates.
   </li>
 </ul>
 
@@ -312,11 +328,42 @@
   </li>
   <li>
     <strong><code>convert_params/2</code></strong
-    >: The core function that makes the dual tracking system work - maps HTML
-    form lists back to specific row IDs using positional correspondence. This
-    function is essential for the validation error mapping and form submission
-    processing explained in the dual tracking system breakdown above. See the
-    function's detailed code comments for examples of the transformation.
+    >: This is the function that solves the structural mismatch from the form
+    submission. It takes the flat lists of parameters (e.g.,
+    <code>%{"name" => ["A", "B"]}</code>) and the ordered list of row IDs (e.g.,
+    <code>[2, 7]</code>) and transforms them back into a row-oriented data
+    structure.
+    <p>
+      It produces a list of tuples, where each tuple contains the original row
+      <code>id</code> and a complete parameter map for that single row:
+      <code>[{2, %{"name" => "A", ...}}, {7, %{"name" => "B", ...}}]</code>
+    </p>
+    <p>
+      This structure is ideal because it allows the
+      <code>handle_event("save", ...)</code> function to process each submitted
+      row individually in the <code>Enum.reduce</code> loop, enabling the
+      partial success/failure logic.
+    </p>
+    <p><strong>The Magic Explained:</strong></p>
+    <ul>
+      <li>
+        Create pairs of ID and position using
+        <code>Enum.with_index(tabular_input_ids)</code> - transforms
+        <code>[2, 7]</code> into <code>[{2, 0}, {7, 1}]</code>
+      </li>
+      <li>
+        For each ID and position pair, use
+        <code>Enum.reduce</code>
+        to walk through each field name ("name", "district") and its value list
+        (["Tallinn", "Tartu"]), "fishing out" data from the same position using
+        <code>Enum.at(value_list, index)</code> to rebuild each row's complete
+        data
+      </li>
+      <li>
+        Add the fixed country code and pair with the original ID to get
+        <code>{2, %{"name" => "Tallinn", ...}}</code>
+      </li>
+    </ul>
   </li>
   <li>
     <strong><code>put_summary_flash/2</code></strong
