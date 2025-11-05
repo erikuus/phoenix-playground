@@ -3,8 +3,9 @@
     <Sidebar.menu current_layout={:page} />
   </:narrow_sidebar>
 </.multi_column_layout>
+<.auth_menu current_user={@current_user} />
 <div class="ml-14 md:ml-20">
   <div class="mx-auto max-w-7xl p-4 md:p-6">
-    <%= @inner_content %>
+    {@inner_content}
   </div>
 </div>

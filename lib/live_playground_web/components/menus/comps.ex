@@ -490,6 +490,43 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             ]
           },
           %{
+            expandable: %{
+              id: "auth-menu",
+              icon: "hero-queue-list",
+              label: "Auth Menu",
+              open:
+                is_active?(current_path, [
+                  "/auth-menu",
+                  "/auth-menu-slot",
+                  "/auth-menu-real"
+                ])
+            },
+            expandable_items: [
+              %{
+                label: "Auth Menu Basic",
+                path: ~p"/auth-menu",
+                active: is_active?(current_path, ["/auth-menu"])
+              },
+              %{
+                label: "Auth Menu Customized",
+                path: ~p"/auth-menu-slot",
+                active: is_active?(current_path, ["/auth-menu-slot"])
+              }
+            ]
+          },
+          %{
+            icon: "hero-shield-check",
+            label: "Protected",
+            path: ~p"/protected-content",
+            active: is_active?(current_path, ["/protected-content"])
+          },
+          %{
+            icon: "hero-user-circle",
+            label: "Avatar",
+            path: ~p"/avatar",
+            active: is_active?(current_path, ["/avatar"])
+          },
+          %{
             icon: "hero-cursor-arrow-rays",
             label: "Button Link",
             path: ~p"/button-link",

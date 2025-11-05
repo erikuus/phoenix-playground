@@ -5,6 +5,15 @@ defmodule LivePlaygroundWeb.MoreComponents do
   The components in this module use Tailwind CSS, a utility-first CSS framework.
   See the [Tailwind CSS documentation](https://tailwindcss.com) to learn how to
   customize the generated components in this module.
+
+  ## Component Organization
+
+  Components are organized by complexity and purpose:
+  - Layout components (multi_column_layout, narrow_sidebar, vertical_navigation)
+  - Simple visual elements (badge, button_link, alert, note)
+  - List and navigation components (simple_list, steps, tabs, stats)
+  - State indicators (loading, avatar, auth_menu, protected_content)
+  - Complex interactive components (pagination, editable, slideover, uploads)
   """
   use Phoenix.Component
 
@@ -833,6 +842,308 @@ defmodule LivePlaygroundWeb.MoreComponents do
       >
       </path>
     </svg>
+    """
+  end
+
+  @doc """
+  Renders user avatar with initials or image.
+
+  The avatar displays:
+  - User's profile image if `image_url` field exists in the user struct
+  - The first two characters of the user's email (before @) in uppercase as fallback
+  - Color is based on email hash, or can be customized with `color` attribute
+
+  This component works seamlessly with Phoenix's default authentication system. If your router
+  mounts the current user to the view (via `:mount_current_user`), you can pass `@current_user`
+  directly to this component.
+
+  ## Examples
+
+      <.avatar user={@user} />
+      <.avatar user={@user} class="w-12 h-12" />
+      <.avatar user={@user} color="bg-purple-500" />
+      <.avatar user={@user} class="w-10 h-10 border-2 border-white" />
+
+      # With Phoenix authentication (when :mount_current_user is configured in router)
+      <.avatar user={@current_user} />
+
+      # With profile image
+      <.avatar user={%{email: "user@example.com", image_url: "/images/avatar.jpg"}} />
+  """
+  attr :user, :map, required: true
+  attr :class, :string, default: "w-8 h-8"
+  attr :color, :string, default: nil, doc: "Optional fixed color class (e.g., 'bg-purple-500')"
+
+  def avatar(assigns) do
+    ~H"""
+    <%= if Map.get(@user, :image_url) do %>
+      <img src={@user.image_url} alt="User avatar" class={["rounded-full object-cover border-2 border-white shadow-lg", @class]} />
+    <% else %>
+      <div class={[
+        "inline-flex items-center justify-center rounded-full text-white text-sm font-medium",
+        @color || get_avatar_color(@user),
+        @class
+      ]}>
+        {get_avatar_initials(@user)}
+      </div>
+    <% end %>
+    """
+  end
+
+  defp get_avatar_initials(user) do
+    user.email
+    |> String.split("@")
+    |> List.first()
+    |> String.slice(0, 2)
+    |> String.upcase()
+  end
+
+  defp get_avatar_color(user) do
+    colors = [
+      "bg-red-500",
+      "bg-blue-500",
+      "bg-green-500",
+      "bg-yellow-500",
+      "bg-purple-500",
+      "bg-pink-500"
+    ]
+
+    # :erlang.phash2/2 is a portable hash function that converts any term into an integer
+    # The second argument (6) limits the result to range 0-5 (0 to length-1)
+    # It always returns the same number for the same input, so "john@example.com"
+    # will always map to the same color index across all sessions and servers
+    hash = :erlang.phash2(user.email, length(colors))
+    Enum.at(colors, hash)
+  end
+
+  @doc """
+  Renders authentication menu banner.
+
+  Displays different content based on whether a user is authenticated:
+  - For authenticated users: shows avatar, email, member since date, and a dropdown menu with settings/sign out
+  - For guest users: shows Log in and Sign up buttons, with optional custom content
+
+  This component works seamlessly with Phoenix's default authentication system. If your router
+  mounts the current user to the view (via `:mount_current_user`), you can pass `@current_user`
+  directly to this component.
+
+  ## Examples
+
+      <.auth_menu current_user={@current_user} />
+      <.auth_menu current_user={@current_user} class="flex items-center gap-x-6" />
+      <.auth_menu current_user={@current_user} id="custom-menu" />
+
+      # Avatar only (without button wrapper, email, etc.)
+      <.auth_menu current_user={@current_user} avatar_only={true} />
+
+      # With custom avatar color and size
+      <.auth_menu current_user={@current_user} avatar_color="bg-purple-500" avatar_class="w-10 h-10" />
+
+      # With custom user dropdown content
+      <.auth_menu current_user={@current_user}>
+        <:user_content>
+          <.link navigate="/profile" class="block relative cursor-pointer select-none py-2 pl-3 pr-9 font-medium text-sm text-gray-900 hover:bg-gray-100">
+            <.icon name="hero-user" class="inline-block h-4 w-4 mr-2" /> Profile
+          </.link>
+          <.link navigate="/billing" class="block relative cursor-pointer select-none py-2 pl-3 pr-9 font-medium text-sm text-gray-900 hover:bg-gray-100">
+            <.icon name="hero-credit-card" class="inline-block h-4 w-4 mr-2" /> Billing
+          </.link>
+        </:user_content>
+      </.auth_menu>
+
+      # With custom guest content
+      <.auth_menu current_user={nil}>
+        <:guest_content>
+          <div class="flex items-center space-x-3">
+            <.icon name="hero-user-circle" class="w-8 h-8 text-gray-400" />
+            <div>
+              <p class="text-sm font-medium text-gray-900">Welcome, Guest!</p>
+              <p class="text-xs text-gray-500">Join us today</p>
+            </div>
+          </div>
+        </:guest_content>
+      </.auth_menu>
+  """
+  attr :current_user, :any, default: nil
+  attr :class, :string, default: "flex justify-end px-4 sm:px-6 lg:px-8 py-4"
+  attr :id, :string, default: "auth-menu"
+
+  attr :avatar_only, :boolean,
+    default: false,
+    doc: "Show only avatar without button wrapper and user info"
+
+  attr :avatar_color, :string,
+    default: nil,
+    doc: "Optional fixed color class for avatar (e.g., 'bg-purple-500')"
+
+  attr :avatar_class, :string,
+    default: "w-8 h-8",
+    doc: "Optional CSS classes for avatar sizing and styling (e.g., 'w-10 h-10')"
+
+  slot :guest_content, doc: "Optional custom content to display for guests (left side of buttons)"
+
+  slot :user_content,
+    doc: "Optional custom content to display in the authenticated user dropdown menu"
+
+  def auth_menu(%{current_user: nil} = assigns) do
+    ~H"""
+    <div class={@class}>
+      <div :if={@guest_content != []}>
+        {render_slot(@guest_content)}
+      </div>
+      <div class="flex items-center gap-2">
+        <.link
+          navigate="/users/log_in"
+          class="inline-flex items-center justify-center rounded-full py-2 px-5 text-sm font-semibold bg-zinc-900 hover:bg-zinc-700 text-white"
+        >
+          Log in
+        </.link>
+        <.link
+          navigate="/users/register"
+          class="inline-flex items-center justify-center rounded-full py-2 px-5 text-sm font-semibold border border-zinc-200 bg-white hover:bg-zinc-100 text-gray-700"
+        >
+          Sign up
+        </.link>
+      </div>
+    </div>
+    """
+  end
+
+  def auth_menu(%{current_user: %{}, avatar_only: true} = assigns) do
+    ~H"""
+    <div class={@class}>
+      <div class="relative">
+        <button
+          id={"#{@id}-button"}
+          phx-click={toggle_auth_menu(@id)}
+          type="button"
+          class="cursor-pointer"
+          aria-expanded="false"
+          aria-haspopup="true"
+        >
+          <.avatar user={@current_user} color={@avatar_color} class={@avatar_class} />
+        </button>
+        <.auth_menu_dropdown id={@id} user_content={@user_content} />
+      </div>
+    </div>
+    """
+  end
+
+  def auth_menu(%{current_user: %{}} = assigns) do
+    ~H"""
+    <div class={@class}>
+      <div class="relative">
+        <button
+          id={"#{@id}-button"}
+          phx-click={toggle_auth_menu(@id)}
+          type="button"
+          class="inline-flex gap-x-3 items-center rounded-xl p-4 bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+          aria-expanded="false"
+          aria-haspopup="true"
+        >
+          <.avatar user={@current_user} color={@avatar_color} class={@avatar_class} />
+          <div class="text-left">
+            <p class="text-sm font-medium text-gray-900">
+              {@current_user.email}
+            </p>
+            <p class="text-xs text-gray-500">
+              Member since {format_user_since(@current_user)}
+            </p>
+          </div>
+        </button>
+        <.auth_menu_dropdown id={@id} user_content={@user_content} />
+      </div>
+    </div>
+    """
+  end
+
+  defp auth_menu_dropdown(assigns) do
+    ~H"""
+    <ul
+      id={"#{@id}-dropdown"}
+      phx-click-away={JS.hide(to: "##{@id}-dropdown")}
+      class="hidden absolute right-0 z-10 mt-1 overflow-auto rounded-md shadow-lg border border-gray-200 bg-white py-1 max-h-64 w-48"
+      role="menu"
+      aria-orientation="vertical"
+      aria-labelledby={"#{@id}-menu-button"}
+    >
+      <li :if={@user_content != []} role="menuitem">
+        {render_slot(@user_content)}
+      </li>
+      <li :if={@user_content != []} class="border-t border-gray-200 my-1"></li>
+      <li role="menuitem">
+        <.link
+          navigate="/users/settings"
+          class="block relative cursor-pointer select-none py-2 pl-3 pr-9 font-medium text-sm text-gray-900 hover:bg-gray-100"
+        >
+          <.icon name="hero-cog-6-tooth" class="inline-block h-4 w-4 mr-2" /> Settings
+        </.link>
+      </li>
+      <li role="menuitem">
+        <.link
+          href="/users/log_out"
+          method="delete"
+          class="block relative cursor-pointer select-none py-2 pl-3 pr-9 font-medium text-sm text-gray-900 hover:bg-gray-100"
+        >
+          <.icon name="hero-arrow-right-on-rectangle" class="inline-block h-4 w-4 mr-2" /> Sign out
+        </.link>
+      </li>
+    </ul>
+    """
+  end
+
+  defp format_user_since(user) do
+    Timex.from_now(user.inserted_at)
+  end
+
+  defp toggle_auth_menu(id) do
+    JS.toggle(to: "##{id}-dropdown")
+  end
+
+  @doc """
+  Renders protected content wrapper.
+
+  Shows the inner content only to authenticated users. For guest users, displays
+  a lock icon with a message and a sign-in button.
+
+  ## Examples
+
+      <.protected_content current_user={@current_user}>
+        <p>This content is only visible to authenticated users.</p>
+      </.protected_content>
+
+      <.protected_content current_user={@current_user} message="Premium content requires authentication.">
+        <p>Premium content here...</p>
+      </.protected_content>
+  """
+  attr :current_user, :any, default: nil
+  attr :message, :string, default: "You must be signed in to view this content."
+  slot :inner_block, required: true
+
+  def protected_content(assigns) do
+    ~H"""
+    <%= if @current_user do %>
+      {render_slot(@inner_block)}
+    <% else %>
+      <div class="min-h-[60vh] min-h-[60vh] grid place-items-center rounded-md bg-gray-100 p-6">
+        <div class="w-full max-w-md rounded-2xl bg-white bodrer border-gray-200 px-12 pt-12 pb-16 text-center shadow-sm">
+          <.icon name="hero-shield-check" class="mx-auto h-12 w-12 text-zinc-400" />
+          <h3 class="mt-3 text-xl font-semibold text-zinc-900">Protected Content</h3>
+          <p class="mt-2 text-zinc-600">{@message}</p>
+          <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <.link
+              navigate="/users/log_in"
+              class="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold bg-zinc-900 text-white hover:bg-zinc-700"
+            >
+              Sign in to continue
+            </.link>
+            <.link navigate="/users/register" class="text-sm text-gray-600 hover:text-gray-900 underline-offset-4 hover:underline">
+              Create an account
+            </.link>
+          </div>
+        </div>
+      </div>
+    <% end %>
     """
   end
 

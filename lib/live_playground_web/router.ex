@@ -1,6 +1,8 @@
 defmodule LivePlaygroundWeb.Router do
   use LivePlaygroundWeb, :router
 
+  import LivePlaygroundWeb.UserAuth
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -8,6 +10,7 @@ defmodule LivePlaygroundWeb.Router do
     plug :put_root_layout, {LivePlaygroundWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :fetch_current_user
   end
 
   pipeline :api do
@@ -16,7 +19,7 @@ defmodule LivePlaygroundWeb.Router do
 
   live_session :recipes,
     layout: {LivePlaygroundWeb.Layouts, :recipes},
-    on_mount: LivePlaygroundWeb.InitLive do
+    on_mount: [LivePlaygroundWeb.InitLive, {LivePlaygroundWeb.UserAuth, :mount_current_user}] do
     scope "/", LivePlaygroundWeb do
       pipe_through :browser
 
@@ -63,7 +66,7 @@ defmodule LivePlaygroundWeb.Router do
 
   live_session :comps,
     layout: {LivePlaygroundWeb.Layouts, :comps},
-    on_mount: LivePlaygroundWeb.InitLive do
+    on_mount: [LivePlaygroundWeb.InitLive, {LivePlaygroundWeb.UserAuth, :mount_current_user}] do
     scope "/", LivePlaygroundWeb do
       pipe_through :browser
 
@@ -127,6 +130,10 @@ defmodule LivePlaygroundWeb.Router do
       live "/tabs-demo", CompsLive.TabsDemo
       live "/stats", CopmsLive.Stats
       live "/loading", CompsLive.Loading
+      live "/avatar", CompsLive.Avatar
+      live "/auth-menu", CompsLive.AuthMenu
+      live "/auth-menu-slot", CompsLive.AuthMenuSlot
+      live "/protected-content", CompsLive.ProtectedContent
       live "/pagination", CompsLive.Pagination
       live "/pagination-page", CompsLive.PaginationPage
       live "/pagination-per-page", CompsLive.PaginationPerPage
@@ -143,7 +150,7 @@ defmodule LivePlaygroundWeb.Router do
 
   live_session :steps,
     layout: {LivePlaygroundWeb.Layouts, :steps},
-    on_mount: LivePlaygroundWeb.InitLive do
+    on_mount: [LivePlaygroundWeb.InitLive, {LivePlaygroundWeb.UserAuth, :mount_current_user}] do
     scope "/", LivePlaygroundWeb do
       pipe_through :browser
 
@@ -207,6 +214,44 @@ defmodule LivePlaygroundWeb.Router do
 
       live_dashboard "/dashboard", metrics: LivePlaygroundWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
+    end
+  end
+
+  ## Authentication routes
+
+  scope "/", LivePlaygroundWeb do
+    pipe_through [:browser, :redirect_if_user_is_authenticated]
+
+    live_session :redirect_if_user_is_authenticated,
+      on_mount: [{LivePlaygroundWeb.UserAuth, :redirect_if_user_is_authenticated}] do
+      live "/users/register", AuthLive.Registration, :new
+      live "/users/log_in", AuthLive.Login, :new
+      live "/users/reset_password", AuthLive.ForgotPassword, :new
+      live "/users/reset_password/:token", AuthLive.ResetPassword, :edit
+    end
+
+    post "/users/log_in", UserSessionController, :create
+  end
+
+  scope "/", LivePlaygroundWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
+    live_session :require_authenticated_user,
+      on_mount: [{LivePlaygroundWeb.UserAuth, :ensure_authenticated}] do
+      live "/users/settings", AuthLive.Settings, :edit
+      live "/users/settings/confirm_email/:token", AuthLive.Settings, :confirm_email
+    end
+  end
+
+  scope "/", LivePlaygroundWeb do
+    pipe_through [:browser]
+
+    delete "/users/log_out", UserSessionController, :delete
+
+    live_session :current_user,
+      on_mount: [{LivePlaygroundWeb.UserAuth, :mount_current_user}] do
+      live "/users/confirm/:token", AuthLive.Confirmation, :edit
+      live "/users/confirm", AuthLive.ConfirmationInstructions, :new
     end
   end
 end

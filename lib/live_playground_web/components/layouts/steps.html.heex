@@ -1,4 +1,5 @@
 <.flash_group flash={@flash} />
+<.auth_menu class="hidden lg:flex justify-end px-6 lg:px-8 py-4" current_user={@current_user} />
 <.multi_column_layout>
   <:narrow_sidebar>
     <Sidebar.menu current_layout={:steps} />
@@ -9,5 +10,5 @@
   <:desktop_menu>
     <Steps.menu current_path={@current_path} />
   </:desktop_menu>
-  <%= @inner_content %>
+  {@inner_content}
 </.multi_column_layout>
