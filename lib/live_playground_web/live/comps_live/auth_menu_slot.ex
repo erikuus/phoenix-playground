@@ -25,7 +25,7 @@ defmodule LivePlaygroundWeb.CompsLive.AuthMenuSlot do
     <.header class="mb-6">
       Auth Menu Customized
       <:subtitle>
-        Interactive demo of custom slot content.
+        Avatar-only mode with custom dropdown menu items and enhanced guest experience using slots.
       </:subtitle>
       <:actions>
         <.goto_definition filename="lib/live_playground_web/components/more_components.ex" definition="def auth_menu">

@@ -1125,8 +1125,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
     <%= if @current_user do %>
       {render_slot(@inner_block)}
     <% else %>
-      <div class="min-h-[60vh] min-h-[60vh] grid place-items-center rounded-md bg-gray-100 p-6">
-        <div class="w-full max-w-md rounded-2xl bg-white bodrer border-gray-200 px-12 pt-12 pb-16 text-center shadow-sm">
+      <div class="min-h-[60vh] grid place-items-center rounded-lg bg-gray-100 p-6">
+        <div class="w-full max-w-md rounded-lg bg-white bodrer border-gray-300 px-12 pt-12 pb-16 text-center shadow-sm">
           <.icon name="hero-shield-check" class="mx-auto h-12 w-12 text-zinc-400" />
           <h3 class="mt-3 text-xl font-semibold text-zinc-900">Protected Content</h3>
           <p class="mt-2 text-zinc-600">{@message}</p>
