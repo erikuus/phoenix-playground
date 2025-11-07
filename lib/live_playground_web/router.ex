@@ -132,7 +132,8 @@ defmodule LivePlaygroundWeb.Router do
       live "/loading", CompsLive.Loading
       live "/avatar", CompsLive.Avatar
       live "/auth-menu", CompsLive.AuthMenu
-      live "/auth-menu-slot", CompsLive.AuthMenuSlot
+      live "/auth-menu-custom", CompsLive.AuthMenuCustom
+      live "/auth-menu-advanced", CompsLive.AuthMenuAdvanced
       live "/protected-content", CompsLive.ProtectedContent
       live "/pagination", CompsLive.Pagination
       live "/pagination-page", CompsLive.PaginationPage

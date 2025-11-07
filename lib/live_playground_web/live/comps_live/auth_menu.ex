@@ -2,21 +2,21 @@ defmodule LivePlaygroundWeb.CompsLive.AuthMenu do
   use LivePlaygroundWeb, :live_view
 
   def mount(_params, _session, socket) do
-    authenticated_user = %{
-      email: "john.doe@example.com",
-      inserted_at: ~N[2023-06-15 10:30:00]
-    }
-
-    socket =
-      socket
-      |> assign(:authenticated_user, authenticated_user)
-      |> assign(:show_authenticated, false)
-
-    {:ok, socket}
+    {:ok, assign(socket, :authenticated_user, nil)}
   end
 
   def handle_event("toggle_auth", _params, socket) do
-    {:noreply, assign(socket, :show_authenticated, !socket.assigns.show_authenticated)}
+    authenticated_user =
+      if socket.assigns.authenticated_user do
+        nil
+      else
+        %{
+          email: "john.doe@example.com",
+          inserted_at: ~N[2023-06-15 10:30:00]
+        }
+      end
+
+    {:noreply, assign(socket, :authenticated_user, authenticated_user)}
   end
 
   def render(assigns) do
@@ -38,7 +38,9 @@ defmodule LivePlaygroundWeb.CompsLive.AuthMenu do
       <.button phx-click="toggle_auth">
         Toggle Auth State
       </.button>
-      <.auth_menu id="demo-auth-menu" class="flex" current_user={if @show_authenticated, do: @authenticated_user, else: nil} />
+      <div class="flex items-center h-14">
+        <.auth_menu id="demo-auth-menu" class="flex" current_user={@authenticated_user} />
+      </div>
     </div>
     <!-- start hiding from live code -->
     <div class="mt-10">

@@ -980,6 +980,10 @@ defmodule LivePlaygroundWeb.MoreComponents do
     default: "w-8 h-8",
     doc: "Optional CSS classes for avatar sizing and styling (e.g., 'w-10 h-10')"
 
+  attr :dropdown_position, :string,
+    default: "bottom-right",
+    doc: "Dropdown position: 'bottom-right', 'bottom-left', 'top-right', 'top-left'"
+
   slot :guest_content, doc: "Optional custom content to display for guests (left side of buttons)"
 
   slot :user_content,
@@ -1023,7 +1027,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         >
           <.avatar user={@current_user} color={@avatar_color} class={@avatar_class} />
         </button>
-        <.auth_menu_dropdown id={@id} user_content={@user_content} />
+        <.auth_menu_dropdown id={@id} user_content={@user_content} dropdown_position={@dropdown_position} />
       </div>
     </div>
     """
@@ -1051,18 +1055,31 @@ defmodule LivePlaygroundWeb.MoreComponents do
             </p>
           </div>
         </button>
-        <.auth_menu_dropdown id={@id} user_content={@user_content} />
+        <.auth_menu_dropdown id={@id} user_content={@user_content} dropdown_position={@dropdown_position} />
       </div>
     </div>
     """
   end
 
   defp auth_menu_dropdown(assigns) do
+    position_classes =
+      case assigns.dropdown_position do
+        "bottom-left" -> "left-0 mt-1"
+        "top-right" -> "right-0 bottom-full mb-1"
+        "top-left" -> "left-0 bottom-full mb-1"
+        _ -> "right-0 mt-1"
+      end
+
+    assigns = assign(assigns, :position_classes, position_classes)
+
     ~H"""
     <ul
       id={"#{@id}-dropdown"}
       phx-click-away={JS.hide(to: "##{@id}-dropdown")}
-      class="hidden absolute right-0 z-10 mt-1 overflow-auto rounded-md shadow-lg border border-zinc-200 bg-white py-1 max-h-64 w-48"
+      class={[
+        "hidden absolute z-10 overflow-auto rounded-md shadow-lg border border-zinc-200 bg-white py-1 max-h-64 w-48",
+        @position_classes
+      ]}
       role="menu"
       aria-orientation="vertical"
       aria-labelledby={"#{@id}-menu-button"}

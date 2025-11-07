@@ -497,8 +497,8 @@ defmodule LivePlaygroundWeb.Menus.Comps do
               open:
                 is_active?(current_path, [
                   "/auth-menu",
-                  "/auth-menu-slot",
-                  "/auth-menu-real"
+                  "/auth-menu-custom",
+                  "/auth-menu-advanced"
                 ])
             },
             expandable_items: [
@@ -508,9 +508,14 @@ defmodule LivePlaygroundWeb.Menus.Comps do
                 active: is_active?(current_path, ["/auth-menu"])
               },
               %{
-                label: "Auth Menu Customized",
-                path: ~p"/auth-menu-slot",
-                active: is_active?(current_path, ["/auth-menu-slot"])
+                label: "Auth Menu Custom",
+                path: ~p"/auth-menu-custom",
+                active: is_active?(current_path, ["/auth-menu-custom"])
+              },
+              %{
+                label: "Auth Menu Advanced",
+                path: ~p"/auth-menu-advanced",
+                active: is_active?(current_path, ["/auth-menu-advanced"])
               }
             ]
           },
