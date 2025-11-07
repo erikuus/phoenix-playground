@@ -29,8 +29,6 @@ defmodule LivePlaygroundWeb.CompsLive.Modal do
         id={:image}
         title="Image Component"
         images={["DSC02232.jpg", "DSC02234.jpg", "DSC02235.jpg"]}
-        return_text="Close"
-        return_to={~p"/modal"}
       />
     </.modal>
     <!-- start hiding from live code -->

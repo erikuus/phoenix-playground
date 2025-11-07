@@ -29,8 +29,6 @@ defmodule LivePlaygroundWeb.CompsLive.Slideover do
         id={:image}
         title="Image Component"
         images={["DSC02232.jpg", "DSC02234.jpg", "DSC02235.jpg"]}
-        return_text="Close"
-        return_to={~p"/slideover"}
       />
     </.slideover>
     <!-- start hiding from live code -->

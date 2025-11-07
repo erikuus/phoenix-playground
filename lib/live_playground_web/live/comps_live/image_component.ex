@@ -20,14 +20,9 @@ defmodule LivePlaygroundWeb.CompsLive.ImageComponent do
       <div class="my-6 space-y-3">
         <img src={"/images/#{Enum.at(@images, @current)}"} class="w-full" />
       </div>
-      <div class="flex justify-between">
-        <div class="flex space-x-1">
-          <.button phx-click="prev" phx-target={@myself}><.icon name="hero-arrow-left-circle" class="h-6 w-6" /></.button>
-          <.button phx-click="next" phx-target={@myself}><.icon name="hero-arrow-right-circle" class="h-6 w-6" /></.button>
-        </div>
-        <div>
-          <.button_link patch={@return_to} type="secondary"><%= @return_text %></.button_link>
-        </div>
+      <div class="flex space-x-1">
+        <.button phx-click="prev" phx-target={@myself}><.icon name="hero-arrow-left-circle" class="h-6 w-6" /></.button>
+        <.button phx-click="next" phx-target={@myself}><.icon name="hero-arrow-right-circle" class="h-6 w-6" /></.button>
       </div>
     </div>
     """
