@@ -4,3 +4,8 @@
 @import "./scrollbar.css";
 
 /* This file is for your main application CSS */
+
+/* Override Makeup syntax highlighting background only within #rules-page */
+#rules-page .highlight {
+  background-color: #f3f4f6 !important; /* matches bg-gray-100 */
+}
