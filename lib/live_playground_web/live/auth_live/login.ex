@@ -9,12 +9,12 @@ defmodule LivePlaygroundWeb.AuthLive.Login do
 
   def render(assigns) do
     ~H"""
-    <div class="bg-gray-100 min-h-screen flex flex-col justify-center sm:px-6 lg:px-8">
+    <div class="bg-zinc-100 min-h-screen flex flex-col justify-center sm:px-6 lg:px-8">
       <div class="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 class="text-center text-2xl font-bold text-gray-900">
+        <h2 class="text-center text-2xl font-bold text-zinc-900">
           Sign in to your account
         </h2>
-        <p class="mt-2 text-center text-sm text-gray-600">
+        <p class="mt-2 text-center text-sm text-zinc-600">
           Don't have an account?
           <.link navigate={~p"/users/register"} class="font-semibold">
             Sign up
@@ -23,7 +23,7 @@ defmodule LivePlaygroundWeb.AuthLive.Login do
       </div>
 
       <div class="mt-10 mb-20 sm:mx-auto sm:w-full sm:max-w-[480px]">
-        <div class="bg-white bodrer border-gray-300 px-6 pt-4 pb-12 shadow-sm sm:rounded-lg sm:px-12">
+        <div class="bg-white bodrer border-zinc-300 px-6 pt-4 pb-12 shadow-sm sm:rounded-lg sm:px-12">
           <.simple_form for={@form} id="login_form" action={~p"/users/log_in"} phx-update="ignore">
             <.input field={@form[:email]} type="email" label="Email address" required autocomplete="email" />
             <.input field={@form[:password]} type="password" label="Password" required autocomplete="current-password" />

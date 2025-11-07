@@ -41,8 +41,8 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapPushEvent do
           :for={location <- @locations}
           id={"location-#{location.id}"}
           class={[
-            "text-gray-900 group flex items-center px-3 py-2 mr-2 rounded-md text-sm",
-            location == @selected && "rounded-md bg-gray-100"
+            "text-zinc-900 group flex items-center px-3 py-2 mr-2 rounded-md text-sm",
+            location == @selected && "rounded-md bg-zinc-100"
           ]}
         >
           {location.name}

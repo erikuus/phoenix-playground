@@ -54,7 +54,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
   def modal(assigns) do
     ~H"""
     <div id={@id} phx-mounted={@show && show_modal(@id)} phx-remove={hide_modal(@id)} class="relative z-50 hidden">
-      <div id={"#{@id}-bg"} class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" />
+      <div id={"#{@id}-bg"} class="fixed inset-0 bg-zinc-500 bg-opacity-75 transition-opacity" aria-hidden="true" />
       <div class="fixed inset-0 overflow-y-auto" aria-labelledby={"#{@id}-title"} role="dialog" aria-modal="true" tabindex="0">
         <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
           <div class="relative overflow-hidden rounded-lg bg-white text-left shadow-xl sm:my-8 sm:p-0">
@@ -67,7 +67,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
             >
               <div class="absolute top-0 right-0 hidden pt-4 pr-4 sm:block">
                 <.link phx-click={hide_modal(@on_cancel, @id)} aria-label="Close">
-                  <.icon name="hero-x-mark-solid" class="w-6 h-6 text-gray-400 hover:text-gray-500" />
+                  <.icon name="hero-x-mark-solid" class="w-6 h-6 text-zinc-400 hover:text-zinc-500" />
                 </.link>
               </div>
 
@@ -83,7 +83,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
 
                     <div class="mt-3 text-center sm:mt-0 sm:text-left">
                       <header :if={@title != []}>
-                        <h3 id={"#{@id}-title"} class="text-lg font-medium leading-6 text-gray-900">
+                        <h3 id={"#{@id}-title"} class="text-lg font-medium leading-6 text-zinc-900">
                           {render_slot(@title)}
                         </h3>
 
@@ -93,7 +93,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
                       </header>
 
                       <div class="mt-2">
-                        <p class="text-sm text-gray-500">
+                        <p class="text-sm text-zinc-500">
                           {render_slot(@inner_block)}
                         </p>
                       </div>
@@ -106,7 +106,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
                       phx-click={hide_modal(@on_cancel, @id)}
                       class={[
                         "inline-flex items-center justify-center rounded-lg border border-zinc-200 bg-zinc-100 hover:bg-zinc-200",
-                        "py-2 px-5 text-sm font-semibold leading-6 text-gray-700 active:text-gray-800",
+                        "py-2 px-5 text-sm font-semibold leading-6 text-zinc-700 active:text-zinc-800",
                         "w-full sm:w-auto sm:ml-3"
                       ]}
                     >
@@ -273,7 +273,7 @@ defmodule LivePlaygroundWeb.CoreComponents do
         "inline-flex items-center justify-center rounded-lg py-2 px-5 ring-inset",
         "text-sm font-semibold leading-6",
         @kind == :primary && "bg-zinc-900 hover:bg-zinc-700 text-white active:text-white/80",
-        @kind == :secondary && "border border-zinc-200 bg-zinc-100 hover:bg-zinc-200 text-gray-700 active:text-gray-800",
+        @kind == :secondary && "border border-zinc-200 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 active:text-zinc-800",
         @kind == :dangerous && "bg-red-600 hover:bg-red-700 text-white active:text-white/80",
         @class
       ]}

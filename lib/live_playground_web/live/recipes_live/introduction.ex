@@ -11,7 +11,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Introduction do
       </:subtitle>
     </.header>
     <div class="flex flex-col gap-x-0 gap-y-8 xl:flex-row xl:gap-x-10 xl:gap-y-0">
-      <div class="flex-1 prose max-w-none rounded-lg bg-gray-100 p-6">
+      <div class="flex-1 prose max-w-none rounded-lg bg-zinc-100 p-6">
         <h3>Core LiveView Features</h3>
         <p>
           Essential LiveView capabilities with practical examples showing real-world implementations.
@@ -25,7 +25,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Introduction do
           <li>JavaScript integration</li>
         </ul>
       </div>
-      <div class="flex-1 prose max-w-none rounded-lg bg-gray-100 p-6">
+      <div class="flex-1 prose max-w-none rounded-lg bg-zinc-100 p-6">
         <h3>Common UI Patterns</h3>
         <p>
           Frequently needed user interface patterns and data handling workflows.

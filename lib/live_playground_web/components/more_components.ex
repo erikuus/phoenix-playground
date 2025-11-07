@@ -58,7 +58,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
     </div>
     <div :if={@mobile_menu != [] && @desktop_menu != []} class="pl-14 md:pl-20">
       <div id={"#{@id}-mobile-menu"} class="relative z-40 hidden" role="dialog" aria-modal="true" aria-label="Mobile Menu">
-        <div class="fixed inset-0 bg-gray-600 bg-opacity-75" aria-hidden="true"></div>
+        <div class="fixed inset-0 bg-zinc-600 bg-opacity-75" aria-hidden="true"></div>
         <div class="fixed inset-0 z-40 flex">
           <div class="relative flex w-full max-w-xs flex-1 flex-col bg-white" role="document">
             <div class="absolute top-0 right-0 -mr-12 pt-2">
@@ -88,7 +88,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         </div>
       </div>
       <div class="relative hidden lg:fixed lg:inset-y-0 lg:flex lg:flex-col" role="complementary" aria-label="Desktop Menu">
-        <div class="flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white">
+        <div class="flex min-h-0 flex-1 flex-col border-r border-zinc-200 bg-white">
           <div
             :for={desktop_menu <- @desktop_menu}
             id={"#{@id}-desktop-menu-content"}
@@ -108,7 +108,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
           title="Click to toggle sidebar"
           aria-label="Toggle sidebar"
         >
-          <div class="h-6 w-1 rounded-full bg-gray-300 group-hover:bg-gray-400"></div>
+          <div class="h-6 w-1 rounded-full bg-zinc-300 group-hover:bg-zinc-400"></div>
         </div>
       </div>
       <div id={"#{@id}-main-container"} class="flex flex-1 flex-col lg:pl-64" role="main" aria-label="Main Content">
@@ -116,7 +116,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
           <button
             phx-click={JS.show(to: "##{@id}-mobile-menu")}
             type="button"
-            class="-mt-0.5 inline-flex h-12 w-12 items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-100"
+            class="-mt-0.5 inline-flex h-12 w-12 items-center justify-center rounded-md text-zinc-500 hover:text-zinc-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-zinc-100"
             aria-label="Open sidebar"
           >
             <span class="sr-only">Open sidebar</span> <.icon name="hero-bars-3" class="h-6 w-6" />
@@ -287,13 +287,13 @@ defmodule LivePlaygroundWeb.MoreComponents do
   """
   attr :id, :string
   attr :item, :map, required: true
-  attr :item_class, :string, default: "font-medium text-gray-900 hover:bg-gray-100"
-  attr :item_active_class, :string, default: "font-medium text-gray-900 bg-gray-100"
+  attr :item_class, :string, default: "font-medium text-zinc-900 hover:bg-zinc-100"
+  attr :item_active_class, :string, default: "font-medium text-zinc-900 bg-zinc-100"
 
   def vertical_navigation_item(%{item: %{section: %{}, section_items: [%{} | _]}} = assigns) do
     ~H"""
     <div class={["space-y-1", Map.has_key?(@item.section, :class) && @item.section.class]} role="group">
-      <div class="ml-2 font-semibold leading-6 text-gray-500 text-xs">
+      <div class="ml-2 font-semibold leading-6 text-zinc-500 text-xs">
         {@item.section.label}
       </div>
       <.vertical_navigation_item :for={section_item <- @item.section_items} id={@id} item={section_item} />
@@ -321,7 +321,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         <.icon
           :if={Map.has_key?(@item.expandable, :icon)}
           name={@item.expandable.icon}
-          class="mr-1 flex-shrink-0 h-5 w-5 text-gray-500"
+          class="mr-1 flex-shrink-0 h-5 w-5 text-zinc-500"
         />
         <span :if={Map.has_key?(@item.expandable, :label)} class="flex-1 ml-2">
           {@item.expandable.label}
@@ -330,8 +330,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
           :if={Map.has_key?(@item.expandable, :badge) && Map.has_key?(@item.expandable, :open)}
           class={[
             "mx-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full",
-            @item.expandable.open == false && "bg-gray-100 group-hover:bg-gray-200",
-            @item.expandable.open == true && "bg-gray-200"
+            @item.expandable.open == false && "bg-zinc-100 group-hover:bg-zinc-200",
+            @item.expandable.open == true && "bg-zinc-200"
           ]}
         >
           {@item.expandable.badge}
@@ -339,7 +339,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         <.icon
           name="hero-chevron-right"
           class={[
-            "mr-1 flex-shrink-0 h-3.5 w-3.5 text-gray-500",
+            "mr-1 flex-shrink-0 h-3.5 w-3.5 text-zinc-500",
             @item.expandable.open == true && "rotate-90"
           ]}
         />
@@ -348,8 +348,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
         <.vertical_navigation_item
           :for={expandable_item <- @item.expandable_items}
           item={expandable_item}
-          item_class="pl-8 font-normal text-gray-900 hover:bg-gray-100"
-          item_active_class="pl-8 font-normal text-gray-900 bg-gray-100"
+          item_class="pl-8 font-normal text-zinc-900 hover:bg-zinc-100"
+          item_active_class="pl-8 font-normal text-zinc-900 bg-zinc-100"
         />
       </div>
     </div>
@@ -371,7 +371,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <.icon
         :if={Map.has_key?(@item, :icon) && Map.has_key?(@item, :active)}
         name={@item.icon}
-        class="mr-1 flex-shrink-0 h-5 w-5 text-gray-500"
+        class="mr-1 flex-shrink-0 h-5 w-5 text-zinc-500"
       />
       <span :if={Map.has_key?(@item, :label)} class="flex-1 ml-2">
         {@item.label}
@@ -380,8 +380,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
         :if={Map.has_key?(@item, :badge) && Map.has_key?(@item, :active)}
         class={[
           "ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full",
-          @item.active == false && "bg-gray-100 group-hover:bg-gray-200",
-          @item.active == true && "bg-gray-200"
+          @item.active == false && "bg-zinc-100 group-hover:bg-zinc-200",
+          @item.active == true && "bg-zinc-200"
         ]}
       >
         {@item.badge}
@@ -414,7 +414,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
     ~H"""
     <span class={[
       "inline-flex items-center rounded-full ring-1 ring-inset",
-      @kind == :gray && "bg-gray-50 text-gray-600 ring-gray-500/10",
+      @kind == :gray && "bg-zinc-50 text-zinc-600 ring-zinc-500/10",
       @kind == :red && "bg-red-50 text-red-700 ring-red-600/10",
       @kind == :yellow && "bg-yellow-50 text-yellow-800 ring-yellow-600/20",
       @kind == :green && "bg-green-50 text-green-700 ring-green-600/20",
@@ -450,7 +450,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         "inline-flex items-center justify-center rounded-lg py-2 px-5",
         "text-sm font-semibold leading-6",
         @kind == :primary && "bg-zinc-900 hover:bg-zinc-700 text-white active:text-white/80",
-        @kind == :secondary && "border border-zinc-200 bg-zinc-100 hover:bg-zinc-200 text-gray-700 active:text-gray-800",
+        @kind == :secondary && "border border-zinc-200 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 active:text-zinc-800",
         @kind == :dangerous && "bg-red-600 hover:bg-red-700 text-white active:text-white/80",
         @class
       ]}
@@ -554,7 +554,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   def note(assigns) do
     ~H"""
     <div
-      class={["flex flex-col sm:flex-row px-4 py-5 sm:p-6 overflow-hidden shadow-sm border border-gray-200 rounded-md ", @class]}
+      class={["flex flex-col sm:flex-row px-4 py-5 sm:p-6 overflow-hidden shadow-sm border border-zinc-200 rounded-md ", @class]}
       role="note"
     >
       <div :if={@icon} class="flex-shrink-0">
@@ -638,17 +638,17 @@ defmodule LivePlaygroundWeb.MoreComponents do
           step == @last_step && "h-6",
           step != @last_step && "-bottom-6"
         ]}>
-          <div class="w-px bg-gray-200"></div>
+          <div class="w-px bg-zinc-200"></div>
         </div>
 
         <div :if={Map.has_key?(step, :checked)} class="relative flex mt-2 h-6 w-6 flex-none items-center justify-center bg-white">
-          <div :if={step.checked == false} class="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300"></div>
-          <.icon :if={step.checked == true} name="hero-check-circle" class="h-6 w-6 text-gray-400" />
+          <div :if={step.checked == false} class="h-1.5 w-1.5 rounded-full bg-zinc-100 ring-1 ring-zinc-300"></div>
+          <.icon :if={step.checked == true} name="hero-check-circle" class="h-6 w-6 text-zinc-400" />
         </div>
 
         <div :if={!Map.has_key?(step, :checked)} class="relative flex mt-2 h-6 w-6 flex-none items-center justify-center bg-white">
-          <div :if={step.active == false} class="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300"></div>
-          <.icon :if={step.active == true} name="hero-check-circle" class="h-6 w-6 text-gray-400" />
+          <div :if={step.active == false} class="h-1.5 w-1.5 rounded-full bg-zinc-100 ring-1 ring-zinc-300"></div>
+          <.icon :if={step.active == true} name="hero-check-circle" class="h-6 w-6 text-zinc-400" />
         </div>
 
         <div class="flex-auto leading-5">
@@ -661,8 +661,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
             navigate={step.path}
             class={[
               "block p-2 mb-1 rounded-md",
-              step.active == false && "hover:bg-gray-100",
-              step.active == true && "bg-gray-100"
+              step.active == false && "hover:bg-zinc-100",
+              step.active == true && "bg-zinc-100"
             ]}
           >
             {render_slot(step)}
@@ -701,7 +701,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
     ~H"""
     <div
       class={[
-        "border-b border-gray-200",
+        "border-b border-zinc-200",
         @modifier && "hidden #{@modifier}:block",
         @class
       ]}
@@ -747,7 +747,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <ul
         id={"#{@id}-dropdown"}
         phx-click-away={JS.hide(to: "##{@id}-dropdown") |> JS.hide(to: "##{@id}-close") |> JS.show(to: "##{@id}-open")}
-        class="hidden absolute z-10 -mt-3 rounded-md shadow-lg py-1 border border-gray-200 bg-white"
+        class="hidden absolute z-10 -mt-3 rounded-md shadow-lg py-1 border border-zinc-200 bg-white"
         role="menu"
       >
         <li
@@ -798,11 +798,11 @@ defmodule LivePlaygroundWeb.MoreComponents do
     <dl class={["grid grid-cols-1 gap-5 sm:grid-cols-3 xl:grid-cols-4", @class]} role="list">
       <div
         :for={card <- @card}
-        class="relative overflow-hidden rounded-lg shadow-sm border border-gray-200 bg-white px-4 py-5 sm:p-6"
+        class="relative overflow-hidden rounded-lg shadow-sm border border-zinc-200 bg-white px-4 py-5 sm:p-6"
         role="listitem"
       >
-        <dt class="truncate text-sm font-medium text-gray-500">{card.title}</dt>
-        <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900">
+        <dt class="truncate text-sm font-medium text-zinc-500">{card.title}</dt>
+        <dd class="mt-1 text-3xl font-semibold tracking-tight text-zinc-900">
           {render_slot(card)}
         </dd>
       </div>
@@ -942,10 +942,10 @@ defmodule LivePlaygroundWeb.MoreComponents do
       # With custom user dropdown content
       <.auth_menu current_user={@current_user}>
         <:user_content>
-          <.link navigate="/profile" class="block relative cursor-pointer select-none py-2 pl-3 pr-9 font-medium text-sm text-gray-900 hover:bg-gray-100">
+          <.link navigate="/profile" class="block relative cursor-pointer select-none py-2 pl-3 pr-9 font-medium text-sm text-zinc-900 hover:bg-zinc-100">
             <.icon name="hero-user" class="inline-block h-4 w-4 mr-2" /> Profile
           </.link>
-          <.link navigate="/billing" class="block relative cursor-pointer select-none py-2 pl-3 pr-9 font-medium text-sm text-gray-900 hover:bg-gray-100">
+          <.link navigate="/billing" class="block relative cursor-pointer select-none py-2 pl-3 pr-9 font-medium text-sm text-zinc-900 hover:bg-zinc-100">
             <.icon name="hero-credit-card" class="inline-block h-4 w-4 mr-2" /> Billing
           </.link>
         </:user_content>
@@ -955,10 +955,10 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <.auth_menu current_user={nil}>
         <:guest_content>
           <div class="flex items-center space-x-3">
-            <.icon name="hero-user-circle" class="w-8 h-8 text-gray-400" />
+            <.icon name="hero-user-circle" class="w-8 h-8 text-zinc-400" />
             <div>
-              <p class="text-sm font-medium text-gray-900">Welcome, Guest!</p>
-              <p class="text-xs text-gray-500">Join us today</p>
+              <p class="text-sm font-medium text-zinc-900">Welcome, Guest!</p>
+              <p class="text-xs text-zinc-500">Join us today</p>
             </div>
           </div>
         </:guest_content>
@@ -1000,7 +1000,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         </.link>
         <.link
           navigate="/users/register"
-          class="inline-flex items-center justify-center rounded-full py-2 px-5 text-sm font-semibold border border-zinc-200 bg-white hover:bg-zinc-100 text-gray-700"
+          class="inline-flex items-center justify-center rounded-full py-2 px-5 text-sm font-semibold border border-zinc-200 bg-white hover:bg-zinc-100 text-zinc-700"
         >
           Sign up
         </.link>
@@ -1037,16 +1037,16 @@ defmodule LivePlaygroundWeb.MoreComponents do
           id={"#{@id}-button"}
           phx-click={toggle_auth_menu(@id)}
           type="button"
-          class="inline-flex gap-x-3 items-center rounded-xl p-4 bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+          class="inline-flex gap-x-3 items-center rounded-xl p-4 bg-zinc-50 text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
           aria-expanded="false"
           aria-haspopup="true"
         >
           <.avatar user={@current_user} color={@avatar_color} class={@avatar_class} />
           <div class="text-left">
-            <p class="text-sm font-medium text-gray-900">
+            <p class="text-sm font-medium text-zinc-900">
               {@current_user.email}
             </p>
-            <p class="text-xs text-gray-500">
+            <p class="text-xs text-zinc-500">
               Member since {format_user_since(@current_user)}
             </p>
           </div>
@@ -1062,7 +1062,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
     <ul
       id={"#{@id}-dropdown"}
       phx-click-away={JS.hide(to: "##{@id}-dropdown")}
-      class="hidden absolute right-0 z-10 mt-1 overflow-auto rounded-md shadow-lg border border-gray-200 bg-white py-1 max-h-64 w-48"
+      class="hidden absolute right-0 z-10 mt-1 overflow-auto rounded-md shadow-lg border border-zinc-200 bg-white py-1 max-h-64 w-48"
       role="menu"
       aria-orientation="vertical"
       aria-labelledby={"#{@id}-menu-button"}
@@ -1070,11 +1070,11 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <li :if={@user_content != []} role="menuitem">
         {render_slot(@user_content)}
       </li>
-      <li :if={@user_content != []} class="border-t border-gray-200 my-1"></li>
+      <li :if={@user_content != []} class="border-t border-zinc-200 my-1"></li>
       <li role="menuitem">
         <.link
           navigate="/users/settings"
-          class="block relative cursor-pointer select-none py-2 pl-3 pr-9 font-medium text-sm text-gray-900 hover:bg-gray-100"
+          class="block relative cursor-pointer select-none py-2 pl-3 pr-9 font-medium text-sm text-zinc-900 hover:bg-zinc-100"
         >
           <.icon name="hero-cog-6-tooth" class="inline-block h-4 w-4 mr-2" /> Settings
         </.link>
@@ -1083,7 +1083,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
         <.link
           href="/users/log_out"
           method="delete"
-          class="block relative cursor-pointer select-none py-2 pl-3 pr-9 font-medium text-sm text-gray-900 hover:bg-gray-100"
+          class="block relative cursor-pointer select-none py-2 pl-3 pr-9 font-medium text-sm text-zinc-900 hover:bg-zinc-100"
         >
           <.icon name="hero-arrow-right-on-rectangle" class="inline-block h-4 w-4 mr-2" /> Sign out
         </.link>
@@ -1125,8 +1125,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
     <%= if @current_user do %>
       {render_slot(@inner_block)}
     <% else %>
-      <div class="min-h-[60vh] grid place-items-center rounded-lg bg-gray-100 p-6">
-        <div class="w-full max-w-md rounded-lg bg-white bodrer border-gray-300 px-12 pt-12 pb-16 text-center shadow-sm">
+      <div class="min-h-[60vh] grid place-items-center rounded-lg bg-zinc-100 p-6">
+        <div class="w-full max-w-md rounded-lg bg-white bodrer border-zinc-300 px-12 pt-12 pb-16 text-center shadow-sm">
           <.icon name="hero-shield-check" class="mx-auto h-12 w-12 text-zinc-400" />
           <h3 class="mt-3 text-xl font-semibold text-zinc-900">Protected Content</h3>
           <p class="mt-2 text-zinc-600">{@message}</p>
@@ -1137,7 +1137,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
             >
               Sign in to continue
             </.link>
-            <.link navigate="/users/register" class="text-sm text-gray-600 hover:text-gray-900 underline-offset-4 hover:underline">
+            <.link navigate="/users/register" class="text-sm text-zinc-600 hover:text-zinc-900 underline-offset-4 hover:underline">
               Create an account
             </.link>
           </div>
@@ -1275,7 +1275,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
       id={@id}
       phx-hook={@hook}
       data-current-page={@page}
-      class={["flex items-center justify-between border-t border-gray-200 px-4 sm:px-0", @class]}
+      class={["flex items-center justify-between border-t border-zinc-200 px-4 sm:px-0", @class]}
       aria-label="Pagination"
     >
       <div class="-mt-px flex w-0 flex-1 flex-shrink-0">
@@ -1289,7 +1289,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
               ]}
               aria-label="Previous page"
             >
-              <.icon name="hero-arrow-long-left" class="mr-3 h-5 w-5 text-gray-500" /> Previous
+              <.icon name="hero-arrow-long-left" class="mr-3 h-5 w-5 text-zinc-500" /> Previous
             </.link>
           <% else %>
             <.link
@@ -1301,7 +1301,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
               ]}
               aria-label="Previous page"
             >
-              <.icon name="hero-arrow-long-left" class="mr-3 h-5 w-5 text-gray-500" /> Previous
+              <.icon name="hero-arrow-long-left" class="mr-3 h-5 w-5 text-zinc-500" /> Previous
             </.link>
           <% end %>
         <% end %>
@@ -1353,7 +1353,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
               ]}
               aria-label="Next page"
             >
-              Next <.icon name="hero-arrow-long-right" class="ml-3 h-5 w-5 text-gray-500" />
+              Next <.icon name="hero-arrow-long-right" class="ml-3 h-5 w-5 text-zinc-500" />
             </.link>
           <% else %>
             <.link
@@ -1365,7 +1365,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
               ]}
               aria-label="Next page"
             >
-              Next <.icon name="hero-arrow-long-right" class="ml-3 h-5 w-5 text-gray-500" />
+              Next <.icon name="hero-arrow-long-right" class="ml-3 h-5 w-5 text-zinc-500" />
             </.link>
           <% end %>
         <% end %>
@@ -1512,7 +1512,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <div
         :if={!@enable_main_content}
         id={"#{@id}-bg"}
-        class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity hidden"
+        class="fixed inset-0 bg-zinc-500 bg-opacity-75 transition-opacity hidden"
         aria-hidden="true"
       />
       <div
@@ -1534,7 +1534,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
               >
                 <div class="flex items-start justify-between">
                   <header>
-                    <h3 id={"#{@id}-title"} class="text-xl font-medium leading-6 text-gray-900">
+                    <h3 id={"#{@id}-title"} class="text-xl font-medium leading-6 text-zinc-900">
                       {render_slot(@title)}
                     </h3>
 
@@ -1545,7 +1545,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
                   <div class="ml-3 flex h-7">
                     <.link phx-click={hide_slideover(@on_cancel, @id)} aria-label="Close">
-                      <.icon name="hero-x-mark-solid" class="w-6 h-6 text-gray-400 hover:text-gray-500" />
+                      <.icon name="hero-x-mark-solid" class="w-6 h-6 text-zinc-400 hover:text-zinc-500" />
                     </.link>
                   </div>
                 </div>
@@ -1560,7 +1560,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
                     phx-click={hide_slideover(@on_cancel, @id)}
                     class={[
                       "inline-flex items-center justify-center rounded-lg border border-zinc-200 bg-zinc-100 hover:bg-zinc-200",
-                      "py-2 px-5 text-sm font-semibold leading-6 text-gray-700 active:text-gray-800",
+                      "py-2 px-5 text-sm font-semibold leading-6 text-zinc-700 active:text-zinc-800",
                       "w-full sm:w-auto sm:ml-3"
                     ]}
                     aria-label="Cancel"

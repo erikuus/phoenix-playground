@@ -38,11 +38,11 @@ defmodule LivePlaygroundWeb.CompsLive.Avatar do
         <.avatar :for={user <- @users} user={user} />
       </div>
       <div>
-        <h3 class="text-sm font-medium text-gray-700 mb-3">Custom Style</h3>
+        <h3 class="text-sm font-medium text-zinc-700 mb-3">Custom Style</h3>
         <div class="flex items-center space-x-3">
           <.avatar user={Enum.at(@users, 0)} color="bg-zinc-900 hover:bg-zinc-700" />
           <.avatar user={Enum.at(@users, 1)} class="w-10 h-10 border-2 border-white shadow-lg" />
-          <.avatar user={Enum.at(@users, 2)} class="w-12 h-12 border-2 border-gray-300" />
+          <.avatar user={Enum.at(@users, 2)} class="w-12 h-12 border-2 border-zinc-300" />
           <.avatar user={Enum.at(@users, 3)} class="w-14 h-14 ring-2 ring-offset-2 ring-blue-500" />
         </div>
       </div>

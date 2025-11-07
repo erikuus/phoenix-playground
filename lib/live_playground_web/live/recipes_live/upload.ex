@@ -81,7 +81,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Upload do
             <div :if={upload_errors(@uploads.photos, entry) == []} class="mt-3 flex gap-3 text-sm leading-6">
               <svg class="mt-0.5 w-5 h-5 flex-none">
                 <!-- Background circle -->
-                <circle class="text-gray-300" stroke-width="3" stroke="currentColor" fill="transparent" r="7.5" cx="10" cy="10" />
+                <circle class="text-zinc-300" stroke-width="3" stroke="currentColor" fill="transparent" r="7.5" cx="10" cy="10" />
                 <!-- Progress circle (not showing up in this demo that showcases select/drop and preview area) -->
                 <circle
                   class="text-zinc-600"

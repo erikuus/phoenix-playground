@@ -50,8 +50,8 @@ defmodule LivePlaygroundWeb.DemoHelpers do
         aria-label="Resize handler"
         role="slider"
       >
-        <div class="h-6 w-1 rounded-full bg-gray-300 group-hover:bg-gray-400"></div>
-        <span class="hidden 2xl:inline ml-2 w-16 text-gray-500 text-xs group-hover:hidden">
+        <div class="h-6 w-1 rounded-full bg-zinc-300 group-hover:bg-zinc-400"></div>
+        <span class="hidden 2xl:inline ml-2 w-16 text-zinc-500 text-xs group-hover:hidden">
           Drag to adjust size
         </span>
       </div>
@@ -221,12 +221,12 @@ defmodule LivePlaygroundWeb.DemoHelpers do
       end)
 
     ~H"""
-    <div class="rounded-lg bg-[#f9f9f9] border border-gray-200 text-xs xl:text-sm" aria-label="Code block">
-      <div class="flex justify-between items-center px-4 py-3 sm:px-6 text-gray-500">
+    <div class="rounded-lg bg-[#f9f9f9] border border-zinc-200 text-xs xl:text-sm" aria-label="Code block">
+      <div class="flex justify-between items-center px-4 py-3 sm:px-6 text-zinc-500">
         <div class="flex items-center">
           <button
             phx-click={JS.toggle(to: "##{@id}-content") |> JS.toggle(to: "##{@id}-show") |> JS.toggle(to: "##{@id}-hide")}
-            class="-ml-3 mr-1 flex rounded-full p-2 hover:bg-gray-200"
+            class="-ml-3 mr-1 flex rounded-full p-2 hover:bg-zinc-200"
             aria-label="Toggle code visibility"
           >
             <.icon id={"#{@id}-hide"} name="hero-chevron-down" class="w-4 h-4" />
@@ -243,7 +243,7 @@ defmodule LivePlaygroundWeb.DemoHelpers do
             phx-hook="CopyToClipboard"
             data-target-container={"#{@id}-target"}
             data-message-container={"#{@id}-message"}
-            class="flex rounded-full p-2 hover:bg-gray-200"
+            class="flex rounded-full p-2 hover:bg-zinc-200"
             aria-label="Copy to clipboard"
           >
             <.icon name="hero-clipboard-document" class="w-4 h-4" />
@@ -251,7 +251,7 @@ defmodule LivePlaygroundWeb.DemoHelpers do
           <a
             target="_blank"
             href={github_url(assigns.filename)}
-            class="flex rounded-full p-2 hover:bg-gray-200"
+            class="flex rounded-full p-2 hover:bg-zinc-200"
             aria-label="Open in GitHub"
           >
             <.icon name="hero-arrow-top-right-on-square" class="w-4 h-4" />
@@ -259,11 +259,11 @@ defmodule LivePlaygroundWeb.DemoHelpers do
         </div>
       </div>
       <div id={"#{@id}-content"} class="overflow-auto overscroll-auto bg-white px-4 py-5 sm:p-6 rounded-b-lg">
-        <div class="text-lg text-gray-500 tracking-widest -mt-2 mb-3">...</div>
+        <div class="text-lg text-zinc-500 tracking-widest -mt-2 mb-3">...</div>
         <div id={"#{@id}-target"}>
           <%= @highlighted_code %>
         </div>
-        <div class="text-lg text-gray-500 tracking-widest mb-1">...</div>
+        <div class="text-lg text-zinc-500 tracking-widest mb-1">...</div>
       </div>
     </div>
     """
@@ -287,12 +287,12 @@ defmodule LivePlaygroundWeb.DemoHelpers do
       end)
 
     ~H"""
-    <div class="rounded-lg bg-[#f9f9f9] border border-gray-200 text-xs xl:text-sm" aria-label="Code block">
-      <div class="flex justify-between items-center px-4 py-3 sm:px-6 text-gray-500">
+    <div class="rounded-lg bg-[#f9f9f9] border border-zinc-200 text-xs xl:text-sm" aria-label="Code block">
+      <div class="flex justify-between items-center px-4 py-3 sm:px-6 text-zinc-500">
         <div class="flex items-center">
           <button
             phx-click={JS.toggle(to: "##{@id}-content") |> JS.toggle(to: "##{@id}-show") |> JS.toggle(to: "##{@id}-hide")}
-            class="-ml-3 mr-1 flex rounded-full p-2 hover:bg-gray-200"
+            class="-ml-3 mr-1 flex rounded-full p-2 hover:bg-zinc-200"
             aria-label="Toggle code visibility"
           >
             <.icon id={"#{@id}-hide"} name="hero-chevron-down" class="w-4 h-4" />
@@ -309,7 +309,7 @@ defmodule LivePlaygroundWeb.DemoHelpers do
             phx-hook="CopyToClipboard"
             data-target-container={"#{@id}-target"}
             data-message-container={"#{@id}-message"}
-            class="flex rounded-full p-2 hover:bg-gray-200"
+            class="flex rounded-full p-2 hover:bg-zinc-200"
             aria-label="Copy to clipboard"
           >
             <.icon name="hero-clipboard-document" class="w-4 h-4" />
@@ -317,7 +317,7 @@ defmodule LivePlaygroundWeb.DemoHelpers do
           <a
             target="_blank"
             href={github_url(assigns.filename)}
-            class="flex rounded-full p-2 hover:bg-gray-200"
+            class="flex rounded-full p-2 hover:bg-zinc-200"
             aria-label="Open in GitHub"
           >
             <.icon name="hero-arrow-top-right-on-square" class="w-4 h-4" />

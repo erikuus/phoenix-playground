@@ -25,7 +25,7 @@ defmodule LivePlaygroundWeb.CompsLive.PaginationHook do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <div class="py-10 text-center text-gray-500">
+    <div class="py-10 text-center text-zinc-500">
       Scroll down slightly to observe how the page automatically scrolls back to the top when you navigate to a different page.
     </div>
     <div id="pagination-hook" phx-hook="ScrollToTop">

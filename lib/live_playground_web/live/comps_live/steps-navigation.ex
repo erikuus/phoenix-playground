@@ -26,10 +26,10 @@ defmodule LivePlaygroundWeb.CompsLive.StepsNavigation do
     <!-- end hiding from live code -->
     <.steps>
       <:step :for={menu <- get_steps(@current_step)} path={menu.path} checked={menu.checked} active={menu.active}>
-        <p class="text-sm text-gray-900 font-medium">
+        <p class="text-sm text-zinc-900 font-medium">
           <%= menu.title %>
         </p>
-        <p class="text-xs text-gray-600">
+        <p class="text-xs text-zinc-600">
           <%= menu.description %>
         </p>
       </:step>

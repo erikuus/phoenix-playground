@@ -73,7 +73,7 @@
       Update core UI-related state before handling data streams. This ensures that any code referencing assigned
       values works with the latest state before the stream update is applied.
     </p>
-    <div class="not-prose rounded-lg overflow-auto overscroll-auto bg-gray-100 text-xs p-6">
+    <div class="not-prose rounded-lg overflow-auto overscroll-auto bg-zinc-100 text-xs p-6">
       {Makeup.highlight("socket
 |> assign(:options, options)
 |> stream(:data, items, reset: true)
@@ -86,7 +86,7 @@
       Use an expanded version if setting multiple variables or performing complex logic. This approach makes it
       easier to follow and modify each part.
     </p>
-    <div class="not-prose rounded-lg overflow-auto overscroll-auto bg-gray-100 text-xs p-6">
+    <div class="not-prose rounded-lg overflow-auto overscroll-auto bg-zinc-100 text-xs p-6">
       {Makeup.highlight("data = fetch_data(params)
 count = count_items(data)
 
@@ -97,7 +97,7 @@ socket =
 ") |> raw()}
     </div>
     <p>For a single variable or straightforward logic, a concise version keeps code simple and focused.</p>
-    <div class="not-prose rounded-lg overflow-auto overscroll-auto bg-gray-100 text-xs p-6">
+    <div class="not-prose rounded-lg overflow-auto overscroll-auto bg-zinc-100 text-xs p-6">
       {Makeup.highlight("socket
 |> assign(:data, fetch_data(params))
 ") |> raw()}
@@ -127,7 +127,7 @@ socket =
     <p>
       Always structure broadcasted messages as a tuple containing the module name, event, and resource.
     </p>
-    <div class="not-prose rounded-lg overflow-auto overscroll-auto bg-gray-100 text-xs p-6">
+    <div class="not-prose rounded-lg overflow-auto overscroll-auto bg-zinc-100 text-xs p-6">
       {Makeup.highlight("{__MODULE__, {event, resource}}") |> raw()}
     </div>
   </section>

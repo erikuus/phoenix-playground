@@ -67,7 +67,7 @@ defmodule LivePlaygroundWeb.RecipesLive.StreamUpdate do
         {city.name}
         <dl class="font-normal md:hidden">
           <dt class="sr-only">District</dt>
-          <dd class="mt-1 truncate text-gray-700">{city.district}</dd>
+          <dd class="mt-1 truncate text-zinc-700">{city.district}</dd>
         </dl>
         <dl class="hidden md:block font-normal text-xs text-zinc-400">
           <dt>Stream inserted:</dt>

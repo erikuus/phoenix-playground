@@ -41,10 +41,10 @@ defmodule LivePlaygroundWeb.RecipesLive.JsHookMapHandleEvent do
           :for={location <- @locations}
           phx-click="select-location"
           phx-value-id={location.id}
-          class="text-gray-900 flex items-center px-3 py-2 mr-2 rounded-md text-sm hover:rounded-md hover:bg-gray-100"
+          class="text-zinc-900 flex items-center px-3 py-2 mr-2 rounded-md text-sm hover:rounded-md hover:bg-zinc-100"
         >
           <span class="flex-1">{location.name}</span>
-          <.icon :if={location in @selected} name="hero-map-pin" class="text-gray-500" />
+          <.icon :if={location in @selected} name="hero-map-pin" class="text-zinc-500" />
         </.link>
       </div>
     </div>

@@ -35,7 +35,7 @@ defmodule LivePlaygroundWeb.RecipesLive.KeyEvents do
     </.header>
     <!-- end hiding from live code -->
     <div class="space-y-4" phx-window-keyup="update">
-      <div class="px-6 py-3 bg-gray-100 rounded-lg space-y-4 xl:space-y-0 xl:space-x-4 xl:flex xl:items-center">
+      <div class="px-6 py-3 bg-zinc-100 rounded-lg space-y-4 xl:space-y-0 xl:space-x-4 xl:flex xl:items-center">
         <span>Press "k" for play/pause, "←" for previous, "→" for next. Or type image index (0, 1, 2) and press "Enter" here:</span>
         <.input name="current" type="number" step="1" value={@current} phx-keyup="set-current" phx-key="Enter" class="xl:w-20" />
       </div>

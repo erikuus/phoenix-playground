@@ -65,9 +65,9 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadServer do
       <div
         :for={{dom_id, location} <- @streams.locations}
         id={dom_id}
-        class="rounded-lg bg-gray-50 border border-gray-200 text-xs xl:text-sm"
+        class="rounded-lg bg-zinc-50 border border-zinc-200 text-xs xl:text-sm"
       >
-        <div class="flex justify-between items-center px-6 py-3 text-gray-500">
+        <div class="flex justify-between items-center px-6 py-3 text-zinc-500">
           <h3 class="font-medium text-sm">{location.name}</h3>
           <.link
             :if={location.photos != []}
@@ -83,7 +83,7 @@ defmodule LivePlaygroundWeb.RecipesLive.UploadServer do
               <img src={static_path(@socket, "/uploads/#{photo}")} class="w-full h-12 object-cover rounded" />
             </a>
           </div>
-          <div :if={location.photos == []} class="text-gray-400 text-xs text-center py-4">
+          <div :if={location.photos == []} class="text-zinc-400 text-xs text-center py-4">
             No photos uploaded
           </div>
         </div>

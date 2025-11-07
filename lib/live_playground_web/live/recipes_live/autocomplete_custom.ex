@@ -43,7 +43,7 @@ defmodule LivePlaygroundWeb.RecipesLive.AutocompleteCustom do
     <ul
       :if={@matches != []}
       phx-click-away="close"
-      class="absolute z-10 mt-1 overflow-auto rounded-md shadow-lg border border-gray-200 bg-white py-1 block max-h-64 md:w-96"
+      class="absolute z-10 mt-1 overflow-auto rounded-md shadow-lg border border-zinc-200 bg-white py-1 block max-h-64 md:w-96"
     >
       <li
         :for={match <- @matches}

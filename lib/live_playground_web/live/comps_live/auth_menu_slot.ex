@@ -49,27 +49,27 @@ defmodule LivePlaygroundWeb.CompsLive.AuthMenuSlot do
         <:user_content>
           <.link
             navigate="/profile"
-            class="block relative cursor-pointer select-none py-2 pl-3 pr-9 font-medium text-sm text-gray-900 hover:bg-gray-100"
+            class="block relative cursor-pointer select-none py-2 pl-3 pr-9 font-medium text-sm text-zinc-900 hover:bg-zinc-100"
           >
             <.icon name="hero-user" class="inline-block h-4 w-4 mr-2" /> Profile
           </.link>
           <.link
             navigate="/billing"
-            class="block relative cursor-pointer select-none py-2 pl-3 pr-9 font-medium text-sm text-gray-900 hover:bg-gray-100"
+            class="block relative cursor-pointer select-none py-2 pl-3 pr-9 font-medium text-sm text-zinc-900 hover:bg-zinc-100"
           >
             <.icon name="hero-credit-card" class="inline-block h-4 w-4 mr-2" /> Billing
           </.link>
         </:user_content>
         <:guest_content>
-          <div class="flex items-center space-x-3 bg-gray-50 p-4 rounded-lg">
-            <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-              <.icon name="hero-user" class="h-4 w-4 text-gray-500" />
+          <div class="flex items-center space-x-3 bg-zinc-50 p-4 rounded-lg">
+            <div class="w-8 h-8 bg-zinc-200 rounded-full flex items-center justify-center">
+              <.icon name="hero-user" class="h-4 w-4 text-zinc-500" />
             </div>
             <div>
-              <p class="text-sm font-medium text-gray-900">
+              <p class="text-sm font-medium text-zinc-900">
                 You're browsing as a guest
               </p>
-              <p class="text-xs text-gray-500">
+              <p class="text-xs text-zinc-500">
                 Sign in to access all features
               </p>
             </div>

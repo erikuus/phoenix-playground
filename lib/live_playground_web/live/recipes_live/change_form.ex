@@ -28,7 +28,7 @@ defmodule LivePlaygroundWeb.RecipesLive.ChangeForm do
       <.input type="select" label="Event Type" name="event_type" options={get_event_type_options()} value={@event_type} />
       <.event_specific_fields event_type={@event_type} />
       <div class="ml-1 space-y-2">
-        <label class="text-sm font-medium text-gray-700">Ticket Type</label>
+        <label class="text-sm font-medium text-zinc-700">Ticket Type</label>
         <.input type="radio" name="ticket_type" label="Regular" id="regular" value="regular" checked={@ticket_type == "regular"} />
         <.input type="radio" name="ticket_type" label="VIP" id="vip" value="vip" checked={@ticket_type == "vip"} />
         <.vip_preferences ticket_type={@ticket_type} />

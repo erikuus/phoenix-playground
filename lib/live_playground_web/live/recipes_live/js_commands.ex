@@ -18,7 +18,7 @@ defmodule LivePlaygroundWeb.RecipesLive.JsCommands do
       Show
     </.button>
     <div class="relative z-50" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
-      <div id="panel-bg" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity hidden" />
+      <div id="panel-bg" class="fixed inset-0 bg-zinc-500 bg-opacity-75 transition-opacity hidden" />
       <div id="panel" class="fixed inset-0 overflow-hidden hidden">
         <div class="absolute inset-0 overflow-hidden">
           <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
@@ -31,7 +31,7 @@ defmodule LivePlaygroundWeb.RecipesLive.JsCommands do
                 class="flex h-full flex-col bg-white py-6 shadow-xl px-4 sm:px-6"
               >
                 <div class="flex items-center justify-between">
-                  <h2 class="text-base font-semibold leading-6 text-gray-900" id="slide-over-title">Panel title</h2>
+                  <h2 class="text-base font-semibold leading-6 text-zinc-900" id="slide-over-title">Panel title</h2>
                   <div class="ml-3 flex h-7">
                     <button phx-click={hide_panel()} type="button">
                       <.icon name="hero-x-mark" class="h-6 w-6" />

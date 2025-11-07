@@ -7,5 +7,5 @@
 
 /* Override Makeup syntax highlighting background only within #rules-page */
 #rules-page .highlight {
-  background-color: #f3f4f6 !important; /* matches bg-gray-100 */
+  background-color: #f4f4f5 !important; /* matches bg-zinc-100 */
 }
