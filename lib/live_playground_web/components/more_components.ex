@@ -49,12 +49,10 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   def multi_column_layout(assigns) do
     ~H"""
-    <div
-      class="fixed inset-y-0 flex flex-col pl-1.5 pr-1.5 py-1.5 space-y-1 items-center overflow-y-auto bg-zinc-700 w-14 md:w-20 z-20"
-      role="complementary"
-      aria-label="Sidebar"
-    >
-      {render_slot(@narrow_sidebar)}
+    <div class="fixed inset-y-0 w-14 md:w-20 z-20 overflow-visible">
+      <div class="flex h-full w-full flex-col pl-1.5 pr-1.5 py-1.5 items-center bg-zinc-700" role="complementary" aria-label="Sidebar">
+        {render_slot(@narrow_sidebar)}
+      </div>
     </div>
     <div :if={@mobile_menu != [] && @desktop_menu != []} class="pl-14 md:pl-20">
       <div id={"#{@id}-mobile-menu"} class="relative z-40 hidden" role="dialog" aria-modal="true" aria-label="Mobile Menu">
@@ -152,18 +150,20 @@ defmodule LivePlaygroundWeb.MoreComponents do
 
   def narrow_sidebar(assigns) do
     ~H"""
-    <.link
-      :for={item <- @items}
-      href={item.path}
-      class={[
-        "flex w-full flex-col items-center rounded-md p-3 text-xs font-medium",
-        item.active == true && "bg-zinc-600 bg-opacity-50 text-white",
-        item.active == false && "text-zinc-100 hover:bg-zinc-600 hover:bg-opacity-50 hover:text-white"
-      ]}
-      aria-label={item.label}
-    >
-      <.icon :if={item.icon} name={item.icon} class="h-6 w-6" /> <span class="mt-1 hidden md:block">{item.label}</span>
-    </.link>
+    <div class="space-y-1">
+      <.link
+        :for={item <- @items}
+        href={item.path}
+        class={[
+          "flex w-full flex-col items-center rounded-md p-3 text-xs font-medium",
+          item.active == true && "bg-zinc-600 bg-opacity-50 text-white",
+          item.active == false && "text-zinc-100 hover:bg-zinc-600 hover:bg-opacity-50 hover:text-white"
+        ]}
+        aria-label={item.label}
+      >
+        <.icon :if={item.icon} name={item.icon} class="h-6 w-6" /> <span class="mt-1 hidden md:block">{item.label}</span>
+      </.link>
+    </div>
     """
   end
 
@@ -1077,7 +1077,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
       id={"#{@id}-dropdown"}
       phx-click-away={JS.hide(to: "##{@id}-dropdown")}
       class={[
-        "hidden absolute z-10 overflow-auto rounded-md shadow-lg border border-zinc-200 bg-white py-1 max-h-64 w-48",
+        "hidden absolute z-50 overflow-auto rounded-md shadow-lg border border-zinc-200 bg-white py-1 max-h-64 w-48",
         @position_classes
       ]}
       role="menu"

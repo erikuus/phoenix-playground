@@ -42,7 +42,7 @@ defmodule LivePlaygroundWeb.CompsLive.AuthMenuAdvanced do
         <div class="border-b border-zinc-200 px-6 py-4">
           <div class="flex items-center justify-between h-14">
             <h2 class="text-lg font-semibold text-zinc-900">Page Header</h2>
-            <.auth_menu :if={!@authenticated_user} id="demo-auth-menu-header" class="flex" current_user={@authenticated_user} />
+            <.auth_menu :if={!@authenticated_user} id="demo-auth-menu-header" class="flex" current_user={nil} />
           </div>
         </div>
         <div class="flex h-80">

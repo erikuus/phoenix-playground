@@ -7,30 +7,30 @@ defmodule LivePlaygroundWeb.CompsLive.NarrowSidebarDemo do
 
   def render(assigns) do
     ~H"""
-    <div class="fixed inset-y-0 bg-zinc-700 w-14 md:w-20 pl-1.5 pr-1.5 py-1.5 space-y-1">
+    <div class="fixed inset-y-0 bg-zinc-700 w-14 md:w-20 pl-1.5 pr-1.5 py-1.5">
       <.narrow_sidebar items={[
         %{
           icon: "hero-home",
           label: "Home",
-          path: "/",
+          path: "/narrow-sidebar-demo",
           active: true
         },
         %{
           icon: "hero-book-open",
           label: "Recipes",
-          path: "/click-buttons",
+          path: "/narrow-sidebar-demo",
           active: false
         },
         %{
           icon: "hero-rectangle-group",
           label: "Comps",
-          path: "/modal",
+          path: "/narrow-sidebar-demo",
           active: false
         },
         %{
           icon: "hero-square-3-stack-3d",
           label: "Steps",
-          path: "/languages",
+          path: "/narrow-sidebar-demo",
           active: false
         }
       ]} />
