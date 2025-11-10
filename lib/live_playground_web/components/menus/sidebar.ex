@@ -65,7 +65,7 @@ defmodule LivePlaygroundWeb.Menus.Sidebar do
           id="auth-menu-sidebar"
           class="flex justify-center"
           avatar_only={true}
-          avatar_class="w-12 h-12 border-2 border-zinc-600 hover:border-zinc-400"
+          avatar_class="w-10 h-10 md:w-12 md:h-12 border-2 border-zinc-600 hover:border-zinc-400"
           avatar_color="text-zinc-100 hover:bg-zinc-600 hover:bg-opacity-50 hover:text-white"
           dropdown_position="top-left"
           current_user={@current_user}

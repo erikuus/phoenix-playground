@@ -16,20 +16,8 @@ defmodule LivePlaygroundWeb.CompsLive.NarrowSidebarDemo do
           active: true
         },
         %{
-          icon: "hero-book-open",
-          label: "Recipes",
-          path: "/narrow-sidebar-demo",
-          active: false
-        },
-        %{
-          icon: "hero-rectangle-group",
+          icon: "hero-puzzle-piece",
           label: "Comps",
-          path: "/narrow-sidebar-demo",
-          active: false
-        },
-        %{
-          icon: "hero-square-3-stack-3d",
-          label: "Steps",
           path: "/narrow-sidebar-demo",
           active: false
         }
