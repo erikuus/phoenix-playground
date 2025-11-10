@@ -70,8 +70,15 @@ defmodule LivePlaygroundWeb.CompsLive.AuthMenuAdvanced do
       </div>
     </div>
     <!-- start hiding from live code -->
-    <div class="mt-10">
+    <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/comps_live/auth_menu_advanced.ex" />
+      <.note icon="hero-information-circle">
+        This playground itself implements the split authentication pattern demonstrated above.
+        For guest users, login/signup buttons appear in the
+        <.github_link filename="lib/live_playground_web/components/layouts/home.html.heex">home layout</.github_link>,
+        while authenticated users see an avatar menu at the bottom of the
+        <.github_link filename="lib/live_playground_web/components/menus/sidebar.ex">sidebar component</.github_link>.
+      </.note>
     </div>
     <!-- end hiding from live code -->
     """
