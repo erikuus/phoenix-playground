@@ -1,8 +1,8 @@
 <.flash_group flash={@flash} />
-<.auth_menu class="hidden lg:flex justify-end px-6 lg:px-8 py-4" current_user={@current_user} />
+<.auth_menu :if={!@current_user} id="auth-menu-header" current_user={nil} class="hidden lg:flex justify-end px-6 lg:px-8 py-4" />
 <.multi_column_layout>
   <:narrow_sidebar>
-    <Sidebar.menu current_layout={:recipes} />
+    <Sidebar.menu current_layout={:recipes} current_user={@current_user} />
   </:narrow_sidebar>
   <:mobile_menu>
     <Recipes.menu id="recipes-mobile-menu" current_path={@current_path} />

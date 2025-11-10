@@ -1,9 +1,9 @@
 <.multi_column_layout>
   <:narrow_sidebar>
-    <Sidebar.menu current_layout={:page} />
+    <Sidebar.menu current_layout={:page} current_user={@current_user} />
   </:narrow_sidebar>
 </.multi_column_layout>
-<.auth_menu current_user={@current_user} />
+<.auth_menu :if={!@current_user} id="auth-menu-header" current_user={nil} />
 <div class="ml-14 md:ml-20">
   <div class="mx-auto max-w-7xl p-4 md:p-6">
     {@inner_content}
