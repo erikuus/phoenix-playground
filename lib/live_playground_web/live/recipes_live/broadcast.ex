@@ -31,7 +31,7 @@ defmodule LivePlaygroundWeb.RecipesLive.Broadcast do
       </:actions>
     </.header>
     <!-- end hiding from live code -->
-    <div class="mb-12">
+    <div class="mt-10 mb-12">
       <.simple_form for={get_country_form(@country)} phx-submit="save">
         <.input field={get_country_form(@country)[:headofstate]} type="text" label="Head of state" autocomplete="off" />
         <:actions>

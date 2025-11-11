@@ -31,20 +31,22 @@ defmodule LivePlaygroundWeb.CompsLive.SimpleForm do
     </.header>
     <.flash kind={:info} flash={@flash} title="Notice:" />
     <!-- end hiding from live code -->
-    <.simple_form for={@form} phx-change="validate" phx-submit="nosave">
-      <.input field={@form[:name]} label="Name" />
-      <.input field={@form[:district]} label="District" />
-      <.input field={@form[:population]} label="Population" />
-      <:actions>
-        <.button>Save</.button>
-      </:actions>
-    </.simple_form>
+    <div class="mt-10">
+      <.simple_form for={@form} phx-change="validate" phx-submit="nosave">
+        <.input field={@form[:name]} label="Name" />
+        <.input field={@form[:district]} label="District" />
+        <.input field={@form[:population]} label="Population" />
+        <:actions>
+          <.button>Save</.button>
+        </:actions>
+      </.simple_form>
+    </div>
     <!-- start hiding from live code -->
     <div class="mt-10 space-y-6">
       <.code_block filename="lib/live_playground_web/live/comps_live/simple_form.ex" />
       <.note icon="hero-information-circle">
         <%= html_escape("
-          The <.simple_form> component enhances the <.form> component by automatically wrapping form fields within a <div class=\"space-y-8 bg-white mt-10\">
+          The <.simple_form> component enhances the <.form> component by automatically wrapping form fields within a <div class=\"space-y-8 bg-white\">
           for optimal spacing and styling, and encapsulating action buttons in a <div class=\"mt-2 flex items-center justify-between gap-6\">. This is done by
           calling the <.form> component internally, thereby streamlining the presentation and organization of forms with minimal manual HTML structuring.
         ") %>

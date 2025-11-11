@@ -12,15 +12,17 @@ defmodule LivePlaygroundWeb.StepsLive.Generated.FormComponent do
         <:subtitle>Use this form to manage language records in your database.</:subtitle>
       </.header>
 
-      <.simple_form for={@form} id="language-form" phx-target={@myself} phx-change="validate" phx-submit="save">
-        <.input field={@form[:countrycode]} type="text" label="Countrycode" />
-        <.input field={@form[:isofficial]} type="checkbox" label="Isofficial" />
-        <.input field={@form[:language]} type="text" label="Language" />
-        <.input field={@form[:percentage]} type="number" label="Percentage" step="any" />
-        <:actions>
-          <.button phx-disable-with="Saving...">Save Language</.button>
-        </:actions>
-      </.simple_form>
+      <div class="mt-6">
+        <.simple_form for={@form} id="language-form" phx-target={@myself} phx-change="validate" phx-submit="save">
+          <.input field={@form[:countrycode]} type="text" label="Countrycode" />
+          <.input field={@form[:isofficial]} type="checkbox" label="Isofficial" />
+          <.input field={@form[:language]} type="text" label="Language" />
+          <.input field={@form[:percentage]} type="number" label="Percentage" step="any" />
+          <:actions>
+            <.button phx-disable-with="Saving...">Save Language</.button>
+          </:actions>
+        </.simple_form>
+      </div>
     </div>
     """
   end
