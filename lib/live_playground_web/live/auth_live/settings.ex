@@ -3,62 +3,6 @@ defmodule LivePlaygroundWeb.AuthLive.Settings do
 
   alias LivePlayground.Accounts
 
-  def render(assigns) do
-    ~H"""
-    <.header class="text-center">
-      Account Settings
-      <:subtitle>Manage your account email address and password settings</:subtitle>
-    </.header>
-
-    <div class="space-y-12 divide-y">
-      <div>
-        <.simple_form for={@email_form} id="email_form" phx-submit="update_email" phx-change="validate_email">
-          <.input field={@email_form[:email]} type="email" label="Email" required />
-          <.input
-            field={@email_form[:current_password]}
-            name="current_password"
-            id="current_password_for_email"
-            type="password"
-            label="Current password"
-            value={@email_form_current_password}
-            required
-          />
-          <:actions>
-            <.button phx-disable-with="Changing...">Change Email</.button>
-          </:actions>
-        </.simple_form>
-      </div>
-      <div>
-        <.simple_form
-          for={@password_form}
-          id="password_form"
-          action={~p"/users/log_in?_action=password_updated"}
-          method="post"
-          phx-change="validate_password"
-          phx-submit="update_password"
-          phx-trigger-action={@trigger_submit}
-        >
-          <input name={@password_form[:email].name} type="hidden" id="hidden_user_email" value={@current_email} />
-          <.input field={@password_form[:password]} type="password" label="New password" required />
-          <.input field={@password_form[:password_confirmation]} type="password" label="Confirm new password" />
-          <.input
-            field={@password_form[:current_password]}
-            name="current_password"
-            type="password"
-            label="Current password"
-            id="current_password_for_password"
-            value={@current_password}
-            required
-          />
-          <:actions>
-            <.button phx-disable-with="Changing...">Change Password</.button>
-          </:actions>
-        </.simple_form>
-      </div>
-    </div>
-    """
-  end
-
   def mount(%{"token" => token}, _session, socket) do
     socket =
       case Accounts.update_user_email(socket.assigns.current_user, token) do
@@ -87,6 +31,73 @@ defmodule LivePlaygroundWeb.AuthLive.Settings do
       |> assign(:trigger_submit, false)
 
     {:ok, socket}
+  end
+
+  def render(assigns) do
+    ~H"""
+    <div class="bg-zinc-100 min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div class="sm:mx-auto sm:w-full sm:max-w-4xl">
+        <div class="md:grid md:grid-cols-3 md:gap-6">
+          <div class="mx-6 sm:mx-0 md:col-span-1">
+            <h2 class="text-2xl font-bold text-zinc-900">
+              Account Settings
+            </h2>
+            <p class="mt-2 text-sm text-zinc-600">
+              Update your email address and password
+            </p>
+          </div>
+
+          <div class="mt-5 md:mt-0 md:col-span-2 space-y-6">
+            <div class="bg-white bodrer border-zinc-300 px-6 py-6 shadow-sm sm:rounded-lg">
+              <.simple_form for={@email_form} id="email_form" phx-submit="update_email" phx-change="validate_email">
+                <.input field={@email_form[:email]} type="email" label="Email" required />
+                <.input
+                  field={@email_form[:current_password]}
+                  name="current_password"
+                  id="current_password_for_email"
+                  type="password"
+                  label="Current password"
+                  value={@email_form_current_password}
+                  required
+                />
+                <:actions>
+                  <.button phx-disable-with="Changing...">Change Email</.button>
+                </:actions>
+              </.simple_form>
+            </div>
+
+            <div class="bg-white bodrer border-zinc-300 px-6 py-6 shadow-sm sm:rounded-lg">
+              <.simple_form
+                for={@password_form}
+                id="password_form"
+                action={~p"/users/log_in?_action=password_updated"}
+                method="post"
+                phx-change="validate_password"
+                phx-submit="update_password"
+                phx-trigger-action={@trigger_submit}
+              >
+                <input name={@password_form[:email].name} type="hidden" id="hidden_user_email" value={@current_email} />
+                <.input field={@password_form[:password]} type="password" label="New password" required />
+                <.input field={@password_form[:password_confirmation]} type="password" label="Confirm new password" />
+                <.input
+                  field={@password_form[:current_password]}
+                  name="current_password"
+                  type="password"
+                  label="Current password"
+                  id="current_password_for_password"
+                  value={@current_password}
+                  required
+                />
+                <:actions>
+                  <.button phx-disable-with="Changing...">Change Password</.button>
+                </:actions>
+              </.simple_form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    """
   end
 
   def handle_event("validate_email", params, socket) do
