@@ -3,30 +3,6 @@ defmodule LivePlaygroundWeb.AuthLive.ResetPassword do
 
   alias LivePlayground.Accounts
 
-  def render(assigns) do
-    ~H"""
-    <div class="mx-auto max-w-sm">
-      <.header class="text-center">Reset Password</.header>
-
-      <.simple_form for={@form} id="reset_password_form" phx-submit="reset_password" phx-change="validate">
-        <.error :if={@form.errors != []}>
-          Oops, something went wrong! Please check the errors below.
-        </.error>
-
-        <.input field={@form[:password]} type="password" label="New password" required />
-        <.input field={@form[:password_confirmation]} type="password" label="Confirm new password" required />
-        <:actions>
-          <.button phx-disable-with="Resetting..." class="w-full">Reset Password</.button>
-        </:actions>
-      </.simple_form>
-
-      <p class="text-center text-sm mt-4">
-        <.link href={~p"/users/register"}>Register</.link> | <.link href={~p"/users/log_in"}>Log in</.link>
-      </p>
-    </div>
-    """
-  end
-
   def mount(params, _session, socket) do
     socket = assign_user_and_token(socket, params)
 
@@ -40,6 +16,55 @@ defmodule LivePlaygroundWeb.AuthLive.ResetPassword do
       end
 
     {:ok, assign_form(socket, form_source), temporary_assigns: [form: nil]}
+  end
+
+  def render(assigns) do
+    ~H"""
+    <div class="bg-zinc-100 min-h-screen flex flex-col justify-center sm:px-6 lg:px-8">
+      <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <h2 class="text-center text-2xl font-bold text-zinc-900">
+          Reset your password
+        </h2>
+        <p class="mt-2 text-center text-sm text-zinc-600">
+          Remembered it?
+          <.link navigate={~p"/users/log_in"} class="font-semibold">
+            Sign in
+          </.link>
+        </p>
+      </div>
+
+      <div class="mt-10 mb-20 sm:mx-auto sm:w-full sm:max-w-[480px]">
+        <div class="bg-white bodrer border-zinc-300 px-6 pt-4 pb-12 shadow-sm sm:rounded-lg sm:px-12">
+          <.simple_form
+            for={@form}
+            id="reset_password_form"
+            phx-submit="reset_password"
+            phx-change="validate"
+          >
+            <.error :if={@form.errors != []}>
+              Oops, something went wrong! Please check the errors below.
+            </.error>
+
+            <.input field={@form[:password]} type="password" label="New password" required autocomplete="new-password" />
+            <.input field={@form[:password_confirmation]} type="password" label="Confirm new password" required autocomplete="new-password" />
+
+            <:actions>
+              <.button phx-disable-with="Resetting..." class="w-full">
+                Reset password
+              </.button>
+            </:actions>
+          </.simple_form>
+
+          <p class="mt-4 text-center text-sm text-zinc-600">
+            Need an account?
+            <.link navigate={~p"/users/register"} class="font-semibold">
+              Sign up
+            </.link>
+          </p>
+        </div>
+      </div>
+    </div>
+    """
   end
 
   # Do not log in the user after reset password to avoid a
