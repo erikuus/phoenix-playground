@@ -255,4 +255,21 @@ defmodule LivePlaygroundWeb.Router do
       live "/users/confirm", AuthLive.ConfirmationInstructions, :new
     end
   end
+
+  # Example: Requiring confirmed email for specific routes
+  #
+  # This scope demonstrates how to protect routes that require both authentication
+  # AND email confirmation. The plugs work in sequence:
+  # 1. :require_authenticated_user - Ensures user is logged in
+  # 2. :require_confirmed_user - Ensures user has confirmed their email
+  #
+  # Use this pattern when you want to restrict access to features that should only
+  # be available to users who have verified their email address. For example:
+  # - Admin panels or sensitive operations
+  # - Payment or billing pages
+  # - Features that send emails on behalf of the user
+  #
+  # scope "/", LivePlaygroundWeb do
+  #   pipe_through [:browser, :require_authenticated_user, :require_confirmed_user]
+  # end
 end
