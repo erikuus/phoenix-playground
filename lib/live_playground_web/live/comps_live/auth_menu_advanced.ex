@@ -59,7 +59,13 @@ defmodule LivePlaygroundWeb.CompsLive.AuthMenuAdvanced do
               avatar_color="bg-zinc-900 hover:bg-zinc-700"
               dropdown_position="top-left"
               current_user={@authenticated_user}
-            />
+            >
+              <:user_content>
+                <p class="rounded-xl px-4 py-2 text-sm font-medium text-zinc-400">
+                  {@authenticated_user.email}
+                </p>
+              </:user_content>
+            </.auth_menu>
           </div>
           <div class="flex-1 p-6">
             <p class="text-sm text-zinc-600">

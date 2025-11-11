@@ -69,7 +69,13 @@ defmodule LivePlaygroundWeb.Menus.Sidebar do
           avatar_color="text-zinc-100 hover:bg-zinc-600 hover:bg-opacity-50 hover:text-white"
           dropdown_position="top-left"
           current_user={@current_user}
-        />
+        >
+          <:user_content>
+            <p class="rounded-xl px-4 py-2 text-sm font-medium text-zinc-400">
+              {@current_user.email}
+            </p>
+          </:user_content>
+        </.auth_menu>
       </div>
     </div>
     """
