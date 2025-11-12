@@ -520,10 +520,28 @@ defmodule LivePlaygroundWeb.Menus.Comps do
             ]
           },
           %{
-            icon: "hero-shield-check",
-            label: "Protected",
-            path: ~p"/protected-content",
-            active: is_active?(current_path, ["/protected-content"])
+            expandable: %{
+              id: "protected-content",
+              icon: "hero-shield-check",
+              label: "Protected Content",
+              open:
+                is_active?(current_path, [
+                  "/protected-content",
+                  "/protected-content-bg-image"
+                ])
+            },
+            expandable_items: [
+              %{
+                label: "Protected Content Basic",
+                path: ~p"/protected-content",
+                active: is_active?(current_path, ["/protected-content"])
+              },
+              %{
+                label: "With Background Image",
+                path: ~p"/protected-content-bg-image",
+                active: is_active?(current_path, ["/protected-content-bg-image"])
+              }
+            ]
           },
           %{
             icon: "hero-user-circle",

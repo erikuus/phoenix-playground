@@ -1132,35 +1132,96 @@ defmodule LivePlaygroundWeb.MoreComponents do
       <.protected_content current_user={@current_user} message="Premium content requires authentication.">
         <p>Premium content here...</p>
       </.protected_content>
+
+      <.protected_content
+        current_user={@current_user}
+        background_image="/images/feature-preview.png"
+        background_opacity="0.12"
+        background_position="top"
+        background_size="contain"
+      >
+        <:footer>
+          <div class="mt-4 pt-4 border-t border-zinc-200">
+            <p class="text-sm text-zinc-600">
+              Want to see it in action?
+              <a href="/demo" class="text-zinc-900 font-medium hover:underline">Watch demo</a>
+            </p>
+          </div>
+        </:footer>
+        <p>Protected content...</p>
+      </.protected_content>
   """
   attr :current_user, :any, default: nil
   attr :message, :string, default: "You must be signed in to view this content."
+
+  attr :background_image, :string,
+    default: nil,
+    doc: "URL to background image shown to guests (e.g., screenshot of protected content)"
+
+  attr :background_opacity, :string,
+    default: "0.5",
+    doc: "Opacity level for background image (0.0 to 1.0)"
+
+  attr :background_position, :string,
+    default: "top",
+    doc: "Background position (top/center/bottom or custom CSS value)"
+
+  attr :background_size, :string,
+    default: "contain",
+    doc: "Background size (contain/cover/auto or custom CSS value)"
+
   slot :inner_block, required: true
+  slot :footer, doc: "Additional content shown below auth buttons for guests"
+
+  def protected_content(%{current_user: %{}} = assigns) do
+    ~H"""
+    {render_slot(@inner_block)}
+    """
+  end
+
+  def protected_content(%{background_image: image} = assigns) when is_binary(image) do
+    ~H"""
+    <div class="relative min-h-[60vh] grid place-items-center rounded-lg overflow-hidden p-6">
+      <div
+        class="absolute inset-0 bg-no-repeat"
+        style={"background-image: url(#{@background_image}); background-position: #{@background_position}; background-size: #{@background_size}; opacity: #{@background_opacity}"}
+      >
+      </div>
+      <div class="absolute inset-0 bg-white/80"></div>
+      <div class="relative z-10 w-full max-w-lg rounded-lg bg-white px-12 pt-12 pb-12 text-center backdrop-blur-sm shadow-lg">
+        <.protected_content_card message={@message} footer={@footer} />
+      </div>
+    </div>
+    """
+  end
 
   def protected_content(assigns) do
     ~H"""
-    <%= if @current_user do %>
-      {render_slot(@inner_block)}
-    <% else %>
-      <div class="min-h-[60vh] grid place-items-center rounded-lg bg-zinc-100 p-6">
-        <div class="w-full max-w-md rounded-lg bg-white bodrer border-zinc-300 px-12 pt-12 pb-16 text-center shadow-sm">
-          <.icon name="hero-shield-check" class="mx-auto h-12 w-12 text-zinc-400" />
-          <h3 class="mt-3 text-xl font-semibold text-zinc-900">Protected Content</h3>
-          <p class="mt-2 text-zinc-600">{@message}</p>
-          <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <.link
-              navigate="/users/log_in"
-              class="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold bg-zinc-900 text-white hover:bg-zinc-700"
-            >
-              Sign in to continue
-            </.link>
-            <.link navigate="/users/register" class="text-sm text-zinc-600 hover:text-zinc-900 underline-offset-4 hover:underline">
-              Create an account
-            </.link>
-          </div>
-        </div>
+    <div class="min-h-[60vh] grid place-items-center rounded-lg bg-zinc-100 p-6">
+      <div class="w-full max-w-lg rounded-lg bg-white px-12 pt-12 pb-16 text-center shadow-sm">
+        <.protected_content_card message={@message} footer={@footer} />
       </div>
-    <% end %>
+    </div>
+    """
+  end
+
+  defp protected_content_card(assigns) do
+    ~H"""
+    <.icon name="hero-shield-check" class="mx-auto h-12 w-12 text-zinc-400" />
+    <h3 class="mt-3 text-xl font-semibold text-zinc-900">Protected Content</h3>
+    <p class="mt-2 text-zinc-600">{@message}</p>
+    <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+      <.link
+        navigate="/users/log_in"
+        class="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold bg-zinc-900 text-white hover:bg-zinc-700"
+      >
+        Sign in to continue
+      </.link>
+      <.link navigate="/users/register" class="text-sm text-zinc-600 hover:text-zinc-900 underline-offset-4 hover:underline">
+        Create an account
+      </.link>
+    </div>
+    {render_slot(@footer)}
     """
   end
 

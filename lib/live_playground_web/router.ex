@@ -135,6 +135,7 @@ defmodule LivePlaygroundWeb.Router do
       live "/auth-menu-custom", CompsLive.AuthMenuCustom
       live "/auth-menu-advanced", CompsLive.AuthMenuAdvanced
       live "/protected-content", CompsLive.ProtectedContent
+      live "/protected-content-bg-image", CompsLive.ProtectedContentBgImage
       live "/pagination", CompsLive.Pagination
       live "/pagination-page", CompsLive.PaginationPage
       live "/pagination-per-page", CompsLive.PaginationPerPage
