@@ -48,7 +48,7 @@ defmodule LivePlaygroundWeb.AuthLive.Settings do
           </div>
 
           <div class="mt-5 md:mt-0 md:col-span-2 space-y-6">
-            <div class="bg-white bodrer border-zinc-300 px-6 py-6 shadow-sm sm:rounded-lg">
+            <div class="bg-white px-6 py-6 shadow-sm sm:rounded-lg">
               <.simple_form for={@email_form} id="email_form" phx-submit="update_email" phx-change="validate_email">
                 <.input field={@email_form[:email]} type="email" label="Email" required />
                 <.input
@@ -66,7 +66,7 @@ defmodule LivePlaygroundWeb.AuthLive.Settings do
               </.simple_form>
             </div>
 
-            <div class="bg-white bodrer border-zinc-300 px-6 py-6 shadow-sm sm:rounded-lg">
+            <div class="bg-white px-6 py-6 shadow-sm sm:rounded-lg">
               <.simple_form
                 for={@password_form}
                 id="password_form"

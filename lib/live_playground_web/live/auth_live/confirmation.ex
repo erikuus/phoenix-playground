@@ -24,7 +24,7 @@ defmodule LivePlaygroundWeb.AuthLive.Confirmation do
       </div>
 
       <div class="mt-10 mb-20 sm:mx-auto sm:w-full sm:max-w-[480px]">
-        <div class="bg-white bodrer border-zinc-300 px-6 py-6 shadow-sm sm:rounded-lg sm:px-12">
+        <div class="bg-white px-6 py-6 shadow-sm sm:rounded-lg sm:px-12">
           <.simple_form for={@form} id="confirmation_form" phx-submit="confirm_account">
             <input type="hidden" name={@form[:token].name} value={@form[:token].value} />
             <:actions>

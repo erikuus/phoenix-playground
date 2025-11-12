@@ -23,7 +23,7 @@ defmodule LivePlaygroundWeb.AuthLive.Login do
       </div>
 
       <div class="mt-10 mb-20 sm:mx-auto sm:w-full sm:max-w-[480px]">
-        <div class="bg-white bodrer border-zinc-300 px-6 py-6 shadow-sm sm:rounded-lg sm:px-12">
+        <div class="bg-white px-6 py-6 shadow-sm sm:rounded-lg sm:px-12">
           <.simple_form for={@form} id="login_form" action={~p"/users/log_in"} phx-update="ignore">
             <.input field={@form[:email]} type="email" label="Email address" required autocomplete="email" />
             <.input field={@form[:password]} type="password" label="Password" required autocomplete="current-password" />
