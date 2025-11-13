@@ -14,10 +14,6 @@ defmodule LivePlaygroundWeb.CompsLive.ProtectedContentBgImage do
     {:ok, socket}
   end
 
-  def handle_event("toggle_auth", _params, socket) do
-    {:noreply, assign(socket, :show_authenticated, !socket.assigns.show_authenticated)}
-  end
-
   def render(assigns) do
     ~H"""
     <!-- start hiding from live code -->
@@ -39,27 +35,20 @@ defmodule LivePlaygroundWeb.CompsLive.ProtectedContentBgImage do
       </.button>
       <.protected_content
         current_user={if @show_authenticated, do: %{email: "user@example.com"}, else: nil}
-        background_image="/images/screenshot.png"
-        background_opacity="1"
-        background_position="center"
+        background_image="/images/DSC04195.jpg"
         message="This demo is available to authenticated users only."
       >
         <:footer>
-          <div class="mt-6 pt-6 border-t border-zinc-200">
+          <div class="mt-6 pt-6 border-t border-zinc-400">
             <p class="text-xs text-zinc-600">
-              Want to see it in action first?
+              Explore Mediterranean destinations.
               <a href="#" class="text-zinc-900 font-medium hover:underline">
-                Watch the 2-minute demo video
+                Browse Greece travel guide
               </a>
             </p>
           </div>
         </:footer>
-        <.table id="with-text-only" rows={@languages}>
-          <:col :let={language} label="Countrycode">{language.countrycode}</:col>
-          <:col :let={language} label="Isofficial">{language.isofficial}</:col>
-          <:col :let={language} label="Language">{language.language}</:col>
-          <:col :let={language} label="Percentage" class="hidden sm:table-cell">{language.percentage}</:col>
-        </.table>
+        <img src="/images/DSC04195.jpg" class="w-full rounded-lg" />
       </.protected_content>
     </div>
     <!-- start hiding from live code -->
@@ -68,5 +57,9 @@ defmodule LivePlaygroundWeb.CompsLive.ProtectedContentBgImage do
     </div>
     <!-- end hiding from live code -->
     """
+  end
+
+  def handle_event("toggle_auth", _params, socket) do
+    {:noreply, assign(socket, :show_authenticated, !socket.assigns.show_authenticated)}
   end
 end

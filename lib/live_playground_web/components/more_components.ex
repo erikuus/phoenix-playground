@@ -1158,17 +1158,14 @@ defmodule LivePlaygroundWeb.MoreComponents do
     default: nil,
     doc: "URL to background image shown to guests (e.g., screenshot of protected content)"
 
-  attr :background_opacity, :string,
-    default: "0.5",
-    doc: "Opacity level for background image (0.0 to 1.0)"
+  attr :image_bg_class, :string,
+    default: "bg-no-repeat bg-cover bg-center opacity-50",
+    doc: "Background CSS classes for image container"
 
-  attr :background_position, :string,
-    default: "top",
-    doc: "Background position (top/center/bottom or custom CSS value)"
-
-  attr :background_size, :string,
-    default: "contain",
-    doc: "Background size (contain/cover/auto or custom CSS value)"
+  attr :image_card_bg_class, :string,
+    default:
+      "border-t border-white/50 backdrop-filter backdrop-blur-md shadow-[0_-4px_12px_rgba(0,0,0,0.15)]",
+    doc: "Background CSS class for card when using background image"
 
   slot :inner_block, required: true
   slot :footer, doc: "Additional content shown below auth buttons for guests"
@@ -1182,13 +1179,8 @@ defmodule LivePlaygroundWeb.MoreComponents do
   def protected_content(%{background_image: image} = assigns) when is_binary(image) do
     ~H"""
     <div class="relative min-h-[60vh] grid place-items-center rounded-lg overflow-hidden p-6">
-      <div
-        class="absolute inset-0 bg-no-repeat"
-        style={"background-image: url(#{@background_image}); background-position: #{@background_position}; background-size: #{@background_size}; opacity: #{@background_opacity}"}
-      >
-      </div>
-      <div class="absolute inset-0 bg-white/80"></div>
-      <div class="relative z-10 w-full max-w-lg rounded-lg bg-white px-12 pt-12 pb-12 text-center backdrop-blur-sm shadow-lg">
+      <div class={["absolute inset-0", @image_bg_class]} style={"background-image: url(#{@background_image})"}></div>
+      <div class={["relative z-10 w-full max-w-lg rounded-lg px-12 pt-10 pb-12 text-center", @image_card_bg_class]}>
         <.protected_content_card message={@message} footer={@footer} />
       </div>
     </div>
@@ -1198,7 +1190,7 @@ defmodule LivePlaygroundWeb.MoreComponents do
   def protected_content(assigns) do
     ~H"""
     <div class="min-h-[60vh] grid place-items-center rounded-lg bg-zinc-100 p-6">
-      <div class="w-full max-w-lg rounded-lg bg-white px-12 pt-12 pb-16 text-center shadow-sm">
+      <div class="w-full max-w-lg rounded-lg bg-white px-12 pt-10 pb-16 text-center shadow-sm">
         <.protected_content_card message={@message} footer={@footer} />
       </div>
     </div>

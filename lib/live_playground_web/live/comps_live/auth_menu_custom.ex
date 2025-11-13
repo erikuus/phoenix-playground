@@ -5,20 +5,6 @@ defmodule LivePlaygroundWeb.CompsLive.AuthMenuCustom do
     {:ok, assign(socket, :authenticated_user, nil)}
   end
 
-  def handle_event("toggle_auth", _params, socket) do
-    authenticated_user =
-      if socket.assigns.authenticated_user do
-        nil
-      else
-        %{
-          email: "john.doe@example.com",
-          inserted_at: ~N[2023-06-15 10:30:00]
-        }
-      end
-
-    {:noreply, assign(socket, :authenticated_user, authenticated_user)}
-  end
-
   def render(assigns) do
     ~H"""
     <!-- start hiding from live code -->
@@ -86,5 +72,19 @@ defmodule LivePlaygroundWeb.CompsLive.AuthMenuCustom do
     </div>
     <!-- end hiding from live code -->
     """
+  end
+
+  def handle_event("toggle_auth", _params, socket) do
+    authenticated_user =
+      if socket.assigns.authenticated_user do
+        nil
+      else
+        %{
+          email: "john.doe@example.com",
+          inserted_at: ~N[2023-06-15 10:30:00]
+        }
+      end
+
+    {:noreply, assign(socket, :authenticated_user, authenticated_user)}
   end
 end

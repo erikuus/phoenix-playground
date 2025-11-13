@@ -15,10 +15,6 @@ defmodule LivePlaygroundWeb.CompsLive.ProtectedContent do
     {:ok, socket}
   end
 
-  def handle_event("toggle_auth", _params, socket) do
-    {:noreply, assign(socket, :show_authenticated, !socket.assigns.show_authenticated)}
-  end
-
   def render(assigns) do
     ~H"""
     <!-- start hiding from live code -->
@@ -53,5 +49,9 @@ defmodule LivePlaygroundWeb.CompsLive.ProtectedContent do
     </div>
     <!-- end hiding from live code -->
     """
+  end
+
+  def handle_event("toggle_auth", _params, socket) do
+    {:noreply, assign(socket, :show_authenticated, !socket.assigns.show_authenticated)}
   end
 end
