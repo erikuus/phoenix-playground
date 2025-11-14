@@ -36,26 +36,41 @@ defmodule LivePlaygroundWeb.StepsLive.Index do
       </p>
 
       <ol>
-        <li><strong>Generate Foundation:</strong> Start with basic Phoenix LiveView generated code</li>
+        <li><strong>Generate baseline CRUD:</strong> Use <code>mix phx.gen.live</code></li>
         <li><strong>Implement Pagination:</strong> Add advanced pagination with real-time updates</li>
-        <li><strong>Extract Pagination Helper:</strong> Refactor into reusable helper module</li>
+        <li><strong>Extract Pagination Helper:</strong> Refactor pagination into reusable helper module</li>
         <li><strong>Add Sorting Helper:</strong> Implement column sorting using the same pattern</li>
-        <li><strong>Add Filtering Helper:</strong> Complete the system with search and filtering</li>
+        <li><strong>Add Filtering Helper:</strong> Complete the system with filtering</li>
       </ol>
 
       <h4><strong>Intentionally Ambitious Approach</strong></h4>
 
       <p>
-        We've chosen an intentionally ambitious UX strategy that handles scenarios where
-        many users are updating the same table simultaneously. This approach demonstrates advanced
-        LiveView patterns including:
+        We've chosen an intentionally ambitious implementation that goes beyond basic CRUD.
+        Along the way you'll learn how to:
       </p>
 
       <ul>
-        <li>Real-time updates with conflict resolution</li>
-        <li>Optimistic locking for concurrent edits</li>
-        <li>Sophisticated state management across multiple users</li>
-        <li>Clear visual feedback for all user actions</li>
+        <li>
+          <strong>URL State Management:</strong>
+          Keep pagination, sorting, and filtering in URL query strings, with validation that ensures even manually-edited or invalid URLs display valid pages
+        </li>
+        <li>
+          <strong>Efficient DOM Updates:</strong>
+          Update tables efficiently so that when one row is inserted, updated, or deleted, only that specific row's DOM changes while the rest of the page remains untouched
+        </li>
+        <li>
+          <strong>Real-time Broadcasting:</strong>
+          Broadcast database changes so that when a record changes in one browser, other open browsers update their tables automatically without full page reloads
+        </li>
+        <li>
+          <strong>Concurrent Edit Detection:</strong>
+          Handle concurrent edits by detecting when someone else has modified a record after you opened the form, showing a clear message, reloading the latest data, and allowing you to retry
+        </li>
+        <li>
+          <strong>Contextual User Feedback:</strong>
+          Display contextual flash messages that adapt to what users see: your own actions versus others' actions (create, update, delete) generate different messages depending on whether the record appears on your current page; deleted rows remain visible but greyed out with strikethrough; and a "reload and sort now" link lets users deliberately refresh counts and pagination without sudden jumps or page changes
+        </li>
       </ul>
 
       <p>
