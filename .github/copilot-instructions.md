@@ -1,5 +1,5 @@
 ---
-applyTo: "**/*.ex"
+applyTo: "**/*.{ex,heex}"
 description: "LiveView coding conventions and quality guidelines."
 ---
 
@@ -287,3 +287,80 @@ end
 ```
 
 Rule: If Phoenix's default error handling (like returning a 404 page) is sufficient, use the ! version and let Phoenix handle it automatically.
+
+## Component Usage Guidelines
+
+When generating HEEx or LiveView code, you MUST prefer using the existing function components from `LivePlaygroundWeb.CoreComponents` and `LivePlaygroundWeb.MoreComponents`. These modules contain reusable, fully styled UI components. You MUST avoid re-implementing raw HTML + Tailwind when an equivalent component already exists.
+
+### Component Discovery Workflow
+
+Before writing any HTML markup, you MUST follow this workflow:
+
+1. **Check attached files**: If `core_components.ex` or `more_components.ex` are provided in the conversation context, search them for matching components
+2. **Use code search**: If files aren't attached or you need more details, use semantic or text search to find relevant components in the codebase
+3. **Read component documentation**: Once found, read the component's `@doc` and examples to understand its usage
+4. **Use the component**: Follow the documented attribute/slot structure exactly as shown in examples
+
+Common component categories to search for: layout/navigation, forms, actions (buttons/links), feedback (alerts/flash), data display (tables/lists), modals, authentication, uploads, and interactive elements.
+
+### Component Usage Rules
+
+You MUST follow these rules when writing templates:
+
+- **Never write raw HTML** when a matching component exists in `LivePlaygroundWeb.CoreComponents` or `LivePlaygroundWeb.MoreComponents` for: `<button>`, `<a>`, `<nav>`, `<form>`, `<input>`, `<select>`, `<textarea>`, `<table>`, modals, alerts, or badges
+- **Always copy from examples**: Use the exact attribute/slot structure from the component's `@doc` examples—do not invent new attribute names or structures
+- **Prefer components over custom markup**: Even if it requires restructuring your data, use existing components rather than duplicating their styling
+
+### When Custom HTML Is Acceptable
+
+You MAY write raw HTML only when:
+
+- No existing component covers the specific UI pattern
+- The pattern is unique to a single use case and unlikely to be reused
+- Using a component would require significant, unreasonable data restructuring
+
+In these cases, you SHOULD still consider whether extracting a new reusable component in `more_components.ex` would benefit the codebase.
+
+### Examples: Raw HTML vs Components
+
+You MUST transform raw HTML + Tailwind into component usage where possible.
+
+**Buttons**
+
+INCORRECT (raw HTML):
+
+```heex
+<button class="px-4 py-2 rounded bg-blue-600 text-white" phx-click="save">
+  Save
+</button>
+```
+
+CORRECT (component):
+
+```heex
+<.button phx-click="save">
+  Save
+</.button>
+```
+
+**Navigation**
+
+INCORRECT (raw `<nav>`):
+
+```heex
+<nav class="flex gap-4">
+  <a href={~p"/cities"} class="text-sm font-medium">Cities</a>
+  <a href={~p"/countries"} class="text-sm font-medium">Countries</a>
+</nav>
+```
+
+CORRECT (component):
+
+```heex
+<.vertical_navigation id="main-nav" items={[
+  %{label: "Cities", path: "/cities", active: true},
+  %{label: "Countries", path: "/countries", active: false}
+]} />
+```
+
+You MUST follow these conventions to ensure consistent design and reduce duplication.
