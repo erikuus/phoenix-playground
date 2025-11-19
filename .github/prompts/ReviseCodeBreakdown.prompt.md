@@ -1,5 +1,5 @@
 ---
-mode: "ask"
+agent: "ask"
 description: "Revise an Existing Code Breakdown"
 ---
 

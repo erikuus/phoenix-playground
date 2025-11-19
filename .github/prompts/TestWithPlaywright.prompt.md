@@ -1,6 +1,5 @@
 ---
-mode: "agent"
-tools: ["playwright"]
+agent: "agent"
 description: "Test Elixir Phoenix LiveView module using the Playwright MCP browser (no test scripts)"
 ---
 

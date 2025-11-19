@@ -1,5 +1,5 @@
 ---
-mode: "ask"
+agent: "ask"
 description: "Review a LiveView module for coding conventions and quality."
 ---
 

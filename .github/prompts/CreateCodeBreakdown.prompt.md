@@ -1,5 +1,5 @@
 ---
-mode: "ask"
+agent: "ask"
 model: Claude Sonnet 4
 description: "Create a Comprehensive Code Breakdown"
 ---
