@@ -1,0 +1,90 @@
+<p>
+  This section explains the rationale behind creating a purely functional
+  pagination helper module. If you haven't reviewed the initial pagination setup
+  in the previous section, it's recommended to
+  <a href="/grid/paginated">start there</a> to understand the complete context
+  and functionality of the code being refactored.
+</p>
+
+<h3>Core Design Goals</h3>
+<ul>
+  <li>Make pagination reusable across all LiveViews</li>
+  <li>Keep all pagination settings in one place</li>
+  <li>
+    Keep pagination logic separate from LiveView lifecycle - the helper just
+    handles data, while LiveView handles UI updates
+  </li>
+</ul>
+
+<h3>The Pagination Context</h3>
+<p>
+  Instead of passing multiple settings around, we use a simple
+  <code>Context</code> struct that holds configuration like
+  <code>per_page_options</code> and <code>default_per_page</code>. This struct
+  lives in your LiveView's assigns as
+  <code>socket.assigns.pagination_context</code>.
+</p>
+
+<h3>Key Functions</h3>
+
+<h4>Setting Up Pagination</h4>
+<ul>
+  <li>
+    <code>convert_params</code>: Transforms URL parameters into appropriate
+    pagination values. Handles string-to-integer conversions and detects invalid
+    inputs, using placeholder values that ensure proper URL synchronization
+    during validation.
+  </li>
+  <li>
+    <code>validate_options</code>: Ensures pagination values stay within valid
+    ranges. Uses <code>max(per_page, 1)</code> to prevent division issues when
+    calculating max pages, preserving valid page numbers even when per_page
+    values need correction.
+  </li>
+  <li>
+    <code>init_pagination</code>: Initializes pagination assigns with counts,
+    context, and visible_ids tracking. Returns values like total counts, visible
+    row count, deletion status, and visible_ids for tracking currently displayed
+    items.
+  </li>
+</ul>
+
+<h4>Handling Pagination Changes</h4>
+<ul>
+  <li>
+    <code>resolve_pagination_changes</code>: Handles pagination changes (like
+    page number) and tells LiveView if it needs to reload data
+  </li>
+  <li>
+    <code>update_per_page_option</code>: Updates how many items show per page
+    when user changes this setting
+  </li>
+</ul>
+
+<h4>Processing Data After DB Changes</h4>
+<ul>
+  <li>
+    <code>process_created</code>: Increments counts (total, summary, visible),
+    updates visible_ids tracking, and marks item with created: true
+  </li>
+  <li><code>process_updated</code>: Marks modified items with updated: true</li>
+  <li>
+    <code>process_deleted</code>: Decrements total count, sets pending_deletion
+    flag, and marks items with deleted: true
+  </li>
+</ul>
+
+<h4>Template Helper</h4>
+<ul>
+  <li>
+    <code>get_summary</code>: Creates readable text like "Showing 1 - 20 of 100"
+    for displaying pagination status
+  </li>
+</ul>
+
+<p>
+  This clean separation makes the code easier to test and maintain. Each helper
+  function does one thing well, working with just the data it needs. The
+  LiveView remains in charge of the UI, handling all the visual updates and user
+  interactions.
+</p>

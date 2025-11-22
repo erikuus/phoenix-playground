@@ -150,43 +150,43 @@ defmodule LivePlaygroundWeb.Router do
     end
   end
 
-  live_session :steps,
-    layout: {LivePlaygroundWeb.Layouts, :steps},
+  live_session :grid,
+    layout: {LivePlaygroundWeb.Layouts, :grid},
     on_mount: [LivePlaygroundWeb.InitLive, {LivePlaygroundWeb.UserAuth, :mount_current_user}] do
     scope "/", LivePlaygroundWeb do
       pipe_through :browser
 
-      live "/steps/introduction", StepsLive.Index, :index
+      live "/grid/introduction", GridLive.Index, :index
 
-      live "/steps/generated", StepsLive.Generated.Index, :index
-      live "/steps/generated/new", StepsLive.Generated.Index, :new
-      live "/steps/generated/:id/edit", StepsLive.Generated.Index, :edit
-      live "/steps/generated/:id", StepsLive.Generated.Show, :show
-      live "/steps/generated/:id/show/edit", StepsLive.Generated.Show, :edit
+      live "/grid/generated", GridLive.Generated.Index, :index
+      live "/grid/generated/new", GridLive.Generated.Index, :new
+      live "/grid/generated/:id/edit", GridLive.Generated.Index, :edit
+      live "/grid/generated/:id", GridLive.Generated.Show, :show
+      live "/grid/generated/:id/show/edit", GridLive.Generated.Show, :edit
 
-      live "/steps/paginated", StepsLive.Paginated.Index, :index
-      live "/steps/paginated/new", StepsLive.Paginated.Index, :new
-      live "/steps/paginated/:id/edit", StepsLive.Paginated.Index, :edit
-      live "/steps/paginated/:id", StepsLive.Paginated.Show, :show
-      live "/steps/paginated/:id/show/edit", StepsLive.Paginated.Show, :edit
+      live "/grid/paginated", GridLive.Paginated.Index, :index
+      live "/grid/paginated/new", GridLive.Paginated.Index, :new
+      live "/grid/paginated/:id/edit", GridLive.Paginated.Index, :edit
+      live "/grid/paginated/:id", GridLive.Paginated.Show, :show
+      live "/grid/paginated/:id/show/edit", GridLive.Paginated.Show, :edit
 
-      live "/steps/refactored", StepsLive.Refactored.Index, :index
-      live "/steps/refactored/new", StepsLive.Refactored.Index, :new
-      live "/steps/refactored/:id/edit", StepsLive.Refactored.Index, :edit
-      live "/steps/refactored/:id", StepsLive.Refactored.Show, :show
-      live "/steps/refactored/:id/show/edit", StepsLive.Refactored.Show, :edit
+      live "/grid/refactored", GridLive.Refactored.Index, :index
+      live "/grid/refactored/new", GridLive.Refactored.Index, :new
+      live "/grid/refactored/:id/edit", GridLive.Refactored.Index, :edit
+      live "/grid/refactored/:id", GridLive.Refactored.Show, :show
+      live "/grid/refactored/:id/show/edit", GridLive.Refactored.Show, :edit
 
-      live "/steps/sorted", StepsLive.Sorted.Index, :index
-      live "/steps/sorted/new", StepsLive.Sorted.Index, :new
-      live "/steps/sorted/:id/edit", StepsLive.Sorted.Index, :edit
-      live "/steps/sorted/:id", StepsLive.Sorted.Show, :show
-      live "/steps/sorted/:id/show/edit", StepsLive.Sorted.Show, :edit
+      live "/grid/sorted", GridLive.Sorted.Index, :index
+      live "/grid/sorted/new", GridLive.Sorted.Index, :new
+      live "/grid/sorted/:id/edit", GridLive.Sorted.Index, :edit
+      live "/grid/sorted/:id", GridLive.Sorted.Show, :show
+      live "/grid/sorted/:id/show/edit", GridLive.Sorted.Show, :edit
 
-      live "/steps/filtered", StepsLive.Filtered.Index, :index
-      live "/steps/filtered/new", StepsLive.Filtered.Index, :new
-      live "/steps/filtered/:id/edit", StepsLive.Filtered.Index, :edit
-      live "/steps/filtered/:id", StepsLive.Filtered.Show, :show
-      live "/steps/filtered/:id/show/edit", StepsLive.Filtered.Show, :edit
+      live "/grid/filtered", GridLive.Filtered.Index, :index
+      live "/grid/filtered/new", GridLive.Filtered.Index, :new
+      live "/grid/filtered/:id/edit", GridLive.Filtered.Index, :edit
+      live "/grid/filtered/:id", GridLive.Filtered.Show, :show
+      live "/grid/filtered/:id/show/edit", GridLive.Filtered.Show, :edit
     end
   end
 

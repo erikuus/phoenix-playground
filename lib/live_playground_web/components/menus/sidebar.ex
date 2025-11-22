@@ -108,10 +108,10 @@ defmodule LivePlaygroundWeb.Menus.Sidebar do
         layout: :recipes
       },
       %{
-        icon: "hero-chart-bar",
-        label: "Steps",
-        path: ~p"/steps/introduction",
-        layout: :steps
+        icon: "hero-table-cells",
+        label: "Grid",
+        path: ~p"/grid/introduction",
+        layout: :grid
       },
       %{
         icon: "hero-clipboard-document-list",
