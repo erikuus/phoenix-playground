@@ -5,16 +5,11 @@ defmodule LivePlaygroundWeb.GridsLive.Index do
     ~H"""
     <.header class="mb-6">
       Introduction
-      <:subtitle>
-        A step-by-step guide to building advanced LiveView CRUD with reusable helpers
-      </:subtitle>
     </.header>
 
     <div class="prose">
-      <h3><strong>What We're Building</strong></h3>
-
       <p>
-        This tutorial demonstrates how to build a sophisticated CRUD interface using Phoenix LiveView,
+        This tutorial demonstrates how to build a sophisticated data grid using Phoenix LiveView,
         progressing from basic generated code to a fully-featured system with pagination, sorting,
         and filtering.
       </p>
@@ -47,7 +42,7 @@ defmodule LivePlaygroundWeb.GridsLive.Index do
 
       <p>
         We've chosen an intentionally ambitious implementation that goes beyond basic CRUD.
-        Along the way you'll learn how to:
+        Along the way you'll learn:
       </p>
 
       <ul>
