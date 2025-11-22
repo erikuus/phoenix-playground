@@ -1,0 +1,29 @@
+<.header>
+  Language <%= @language.id %>
+  <:subtitle>This is a language record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/grids/generated/#{@language}/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit language</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Countrycode"><%= @language.countrycode %></:item>
+  <:item title="Isofficial"><%= @language.isofficial %></:item>
+  <:item title="Language"><%= @language.language %></:item>
+  <:item title="Percentage"><%= @language.percentage %></:item>
+</.list>
+
+<.back navigate={~p"/grids/generated"}>Back to languages</.back>
+
+<.modal :if={@live_action == :edit} id="language-modal" show on_cancel={JS.patch(~p"/grids/generated/#{@language}")}>
+  <.live_component
+    module={LivePlaygroundWeb.GridsLive.Generated.FormComponent}
+    id={@language.id}
+    title={@page_title}
+    action={@live_action}
+    language={@language}
+    patch={~p"/grids/generated/#{@language}"}
+  />
+</.modal>

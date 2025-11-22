@@ -1,0 +1,108 @@
+<!-- start hiding from live code -->
+<.header>
+  Listing Languages
+  <:subtitle>
+    Advanced pagination with real-time updates and concurrent user handling.
+  </:subtitle>
+  <:actions class="items-center gap-x-5">
+    <.slideout_link slideout_id="ux-strategy" title="UX Startegy" />
+    <.slideout_link slideout_id="test-cases" title="Test Cases" />
+    <.slideout_link slideout_id="code-breakdown" title="Code Breakdown" />
+  </:actions>
+</.header>
+<.slideout title="UX Strategy" id="ux-strategy" filename="priv/static/html/grids/paginated_ux.html" />
+<.slideout title="Test Cases" id="test-cases" filename="priv/static/html/grids/paginated_test.html" />
+<.slideout title="Code Breakdown" id="code-breakdown" filename="priv/static/html/grids/paginated_code.html" />
+<!-- end hiding from live code -->
+<div class="flex justify-end my-5">
+  <.link patch={get_pagination_url(@options, ~p"/grids/paginated/new")}>
+    <.button>New Language</.button>
+  </.link>
+</div>
+<form phx-change="change-per-page" class="flex flex-col gap-y-2 items-end justify-end md:flex-row md:gap-y-0 md:justify-between">
+  <div class={["text-sm", @pending_deletion && "text-zinc-300", !@pending_deletion && "text-zinc-600"]}>
+    {get_page_summary(@count_all_summary, @options.page, @options.per_page, @count_visible_rows)}
+  </div>
+  <div class="flex items-center">
+    <label for="rows-per-page" class="mr-2 text-zinc-600 text-sm">
+      Rows per page:
+    </label>
+    <.input type="select" name="per_page" options={[5, 10, 20, 50, 100]} value={@options.per_page} />
+  </div>
+</form>
+
+<.table
+  id="languages"
+  rows={@streams.languages}
+  row_click={fn {_id, language} -> JS.navigate(get_pagination_url(@options, ~p"/grids/paginated/#{language}")) end}
+  row_class={fn {_id, language} -> get_row_class(language) end}
+>
+  <:col :let={{_id, language}} label="Countrycode">
+    {language.countrycode}
+    <.badge :if={Map.get(language, :created, false)} kind={:green}>New</.badge>
+    <.badge :if={Map.get(language, :updated, false)} kind={:blue}>Edited</.badge>
+    <.badge :if={Map.get(language, :deleted, false)} kind={:gray}>Deleted</.badge>
+    <dl class="hidden md:block font-normal text-xs text-zinc-500">
+      <dt>Stream inserted:</dt>
+      <dd>{Timex.now()}</dd>
+    </dl>
+  </:col>
+  <:col :let={{_id, language}} label="Language">{language.language}</:col>
+  <:col :let={{_id, language}} label="Isofficial">
+    <.icon :if={language.isofficial} name="hero-check" />
+  </:col>
+  <:col :let={{_id, language}} label="Percentage">
+    {format_percentage(language.percentage)}
+  </:col>
+  <:action :let={{_id, language}}>
+    <div class="sr-only">
+      <.link navigate={get_pagination_url(@options, ~p"/grids/paginated/#{language}")}>Show</.link>
+    </div>
+    <.link :if={!Map.get(language, :deleted, false)} patch={get_pagination_url(@options, ~p"/grids/paginated/#{language}/edit")}>
+      Edit
+    </.link>
+  </:action>
+  <:action :let={{_id, language}}>
+    <.link
+      :if={!Map.get(language, :deleted, false)}
+      phx-click={JS.push("delete", value: %{id: language.id})}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.pagination
+  patch_path="/grids/paginated"
+  page={@options.page}
+  per_page={@options.per_page}
+  count_all={@count_all_pagination}
+  params_per_page_key="per_page"
+  hook="ScrollToTop"
+/>
+
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="language-modal"
+  show
+  on_cancel={JS.patch(get_pagination_url(@options, ~p"/grids/paginated"))}
+>
+  <.live_component
+    module={LivePlaygroundWeb.GridsLive.Paginated.FormComponent}
+    id={@language.id || :new}
+    title={@page_title}
+    action={@live_action}
+    language={@language}
+    patch={get_pagination_url(@options, ~p"/grids/paginated")}
+  />
+</.modal>
+<!-- start hiding from live code -->
+<div class="mt-10 space-y-6">
+  <.code_block filename="lib/live_playground_web/live/grids_live/paginated/index.ex" />
+  <.code_block filename="lib/live_playground_web/live/grids_live/paginated/index.html.heex" />
+  <.code_block filename="lib/live_playground_web/live/grids_live/paginated/form_component.ex" />
+  <.code_block filename="lib/live_playground/paginated_languages/language.ex" />
+  <.code_block filename="lib/live_playground/paginated_languages.ex" />
+</div>
+<!-- end hiding from live code -->

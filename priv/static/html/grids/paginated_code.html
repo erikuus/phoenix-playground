@@ -1,0 +1,893 @@
+<h2>index.ex</h2>
+
+<p>
+  The <code>LivePlaygroundWeb.GridsLive.Paginated.Index</code> module is a
+  Phoenix LiveView that manages a paginated list of languages. It incorporates
+  real-time updates, pagination controls, and concurrency.
+</p>
+
+<h3><code>mount/3</code></h3>
+<p>
+  Initializes the LiveView when a user visits <code>/grids/paginated</code>,
+  handling both scenarios where query parameters are present (e.g.,
+  <code>?page=2&per_page=10</code>) and when they are absent. It ensures that
+  pagination parameters are correctly parsed, validated, and applied.
+</p>
+<ul>
+  <li>
+    If the socket is connected, we subscribe to language updates using
+    <code>PaginatedLanguages.subscribe()</code>. This allows us to display
+    messages when other connected users add, edit, or delete languages. For
+    example, if another user adds a new language, you'll see a notification like
+    "A new language was added by another user," and the item will appear in your
+    list.
+  </li>
+  <li>
+    We assign the total count of languages to the socket using
+    <code>PaginatedLanguages.count_languages()</code>. This needs to be done
+    before other assigns because we'll need this total count when validating
+    pagination parameters to ensure we don't exceed the actual number of pages
+    available.
+  </li>
+  <li>
+    We call <code>convert_params/2</code> with the empty options and URL params
+    to obtain new pagination options. This function determines the values either
+    from the URL params (converting strings like "2" and "20" to integers),
+    existing options (already integers), or defaults (page 0 and per_page 0).
+    Default and invalid values like "abc" are intentionally converted to 0
+    rather than immediately applying valid defaults (page 1 and per_page 10).
+    This creates a detectable difference between converted and validated
+    options, which triggers URL synchronization when needed.
+  </li>
+  <li>
+    We validate these options using <code>validate_options/2</code>. If the
+    validated options differ from the original options, we redirect the user to
+    the correct URL using <code>push_navigate</code>. This ensures that the URL
+    accurately reflects the validated state, maintaining consistency and
+    preventing invalid parameters from affecting the application. For example,
+    if someone types page 6 in the URL (like
+    <code>/grids/paginated?page=6</code>), but there are only 5 pages available,
+    they will be automatically redirected to the last valid page.
+  </li>
+  <li>
+    If the options are valid, we initialize the socket with these options by
+    calling the <code>init/2</code> function. This sets up the necessary assigns
+    and prepares the socket for rendering the paginated content.
+  </li>
+</ul>
+
+<h3><code>convert_params/2</code></h3>
+<p>
+  Converts string parameters from URLs to their appropriate types, preserving
+  invalid values as "0" to enable URL correction.
+</p>
+<ul>
+  <li>
+    First clause handles the case when both "page" and "per_page" parameters are
+    present in the URL:
+    <ul>
+      <li>Valid numeric strings ("2", "20") are converted to integers</li>
+      <li>Invalid strings ("abc", "-5") are converted to 0</li>
+    </ul>
+  </li>
+  <li>
+    Second clause handles the case when only "page" parameter is present:
+    <ul>
+      <li>Valid page numbers are converted to integers</li>
+      <li>Invalid page values are converted to 0</li>
+      <li>per_page is intentionally set to 0</li>
+    </ul>
+  </li>
+  <li>
+    Third clause handles the case when only "per_page" parameter is present:
+    <ul>
+      <li>Valid per_page numbers are converted to integers</li>
+      <li>Invalid per_page values are converted to 0</li>
+      <li>page is intentionally set to 0</li>
+    </ul>
+  </li>
+  <li>
+    Fourth clause handles internal state updates with existing atom-keyed
+    options:
+    <ul>
+      <li>
+        Pattern matches when options already contain atom keys :page and
+        :per_page from <code>socket.assigns.options</code>
+      </li>
+      <li>
+        Returns options unchanged since they're already in the correct format
+      </li>
+      <li>
+        <strong>Three possible callers:</strong>
+        <ul>
+          <li>
+            <code>handle_event("change-per-page", params, socket)</code> - when
+            user changes items per page
+          </li>
+          <li>
+            <code>handle_event("reset-stream", %{} = params, socket)</code> -
+            when user clicks reset link
+          </li>
+          <li>
+            <code>apply_action(socket, :index, params)</code> - when navigating
+            back to index from edit/new modal
+          </li>
+        </ul>
+      </li>
+      <li>
+        <strong>UI actions that trigger it:</strong>
+        <ul>
+          <li>User selects different items per page from dropdown</li>
+          <li>
+            User clicks "Click here to reload and sort now" link in flash
+            messages
+          </li>
+          <li>
+            User opens edit modal (URL changes to
+            <code>/grids/paginated/123/edit</code>) then closes it or navigates
+            back (URL returns to
+            <code>/grids/paginated?page=2&per_page=10</code>)
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    Final clause handles the case when no pagination parameters are present:
+    <ul>
+      <li>Sets both page and per_page to 0</li>
+      <li>Ensures validation will apply correct defaults</li>
+    </ul>
+  </li>
+</ul>
+
+<p>
+  <strong>Why we use 0 for invalid inputs:</strong> When convert_params receives
+  invalid values, it returns 0 instead of immediately applying defaults. This
+  creates a difference between converted and validated options. When validation
+  fixes these values, LiveView detects the difference and redirects to fix the
+  URL.
+</p>
+
+<h3><code>validate_options/2</code></h3>
+<p>
+  Ensures that <code>page</code> and <code>per_page</code> are within acceptable
+  ranges.
+</p>
+<ul>
+  <li>
+    It calls <code>get_existing_page/3</code>, which first ensures
+    <code>per_page</code> is never zero with <code>max(per_page, 1)</code>. This
+    protection is crucial because <code>convert_params</code> may have set
+    invalid per_page values to 0. Then it uses <code>ceil_div/2</code> to
+    calculate the maximum number of pages. For example, if there are 45 items
+    and <code>per_page</code> is set to 10, the function computes 5 pages. If
+    someone requests page 6 in the URL, it will automatically adjust to page 5.
+  </li>
+  <li>
+    If <code>per_page</code> is not one of the allowed options, it defaults to
+    <code>@per_page</code>.
+  </li>
+</ul>
+
+<h3><code>init/2</code></h3>
+<p>Handles all the initial setup that pagination logic needs.</p>
+<ol>
+  <li>
+    <p>
+      <strong><code>:options</code></strong
+      >: Stores the current pagination options (<code>page</code> and
+      <code>per_page</code>).
+    </p>
+  </li>
+  <li>
+    <p>
+      We maintain three different count variables, each serving a specific
+      purpose in our UI:
+    </p>
+    <ul>
+      <li><code>:count_all</code> - The real database count</li>
+      <li>
+        <code>:count_all_summary</code> - What users see in the "Showing X of Y"
+        text
+      </li>
+      <li>
+        <code>:count_all_pagination</code> - Used for calculating page numbers
+      </li>
+    </ul>
+    <p>Let's see why we need all three:</p>
+    <p>
+      <code>:count_all</code> serves as the definitive count of all language
+      items present in the database. It reflects the true state of the data at
+      any given moment. Whenever a language is added or deleted,
+      <code>:count_all</code> is immediately updated to mirror these changes.
+    </p>
+    <p>
+      <code>:count_all_summary</code> is specifically used for the summary
+      display presented to the user, such as "Showing 1 - 5 of 100." The key
+      reason for keeping <code>:count_all_summary</code> separate from
+      <code>:count_all</code> lies in handling deletions gracefully.
+    </p>
+    <p>When a user deletes an item:</p>
+    <ul>
+      <li>
+        <strong><code>:count_all</code></strong> decreases immediately to
+        reflect the removal from the database.
+      </li>
+      <li>
+        <strong><code>:count_all_summary</code></strong> remains unchanged
+        because the deleted item is still visible on the current page, marked
+        appropriately (e.g., with a badge, gray background, and strikethrough).
+        This ensures that the summary accurately represents what the user sees.
+      </li>
+    </ul>
+    <p>
+      <code>:count_all_pagination</code> needs to differ from
+      <code>:count_all</code> to maintain stable pagination controls. While
+      <code>:count_all</code>
+      immediately reflects any changes in the total number of items,
+      <code>:count_all_pagination</code> deliberately maintains the current page
+      structure and only updates during specific user interactions—such as
+      resorting the list, reloading the page, or navigating away.
+    </p>
+    <p>Consider the following scenario:</p>
+    <ul>
+      <li>There are 100 items distributed over 5 pages (20 items per page).</li>
+      <li>
+        After adding an item:
+        <ul>
+          <li><code>:count_all</code> increases to 101.</li>
+          <li>
+            <code>:count_all_summary</code> also increases to 101, updating the
+            summary to display "Showing 1 - 21 of 101."
+          </li>
+          <li>
+            <code>:count_all_pagination</code> remains at 100 to prevent the
+            immediate appearance of a 6th page.
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <p>
+      This is because the new item fits into the existing pages by temporarily
+      displaying 21 items on the current page (1-21), keeping all items within
+      the original 5 pages. The 6th page only appears when the user resorts the
+      list or navigates away. At that point,
+      <code>:count_all_pagination</code> is updated to reflect the new total
+      count of 101, allowing the pagination to adjust appropriately.
+    </p>
+  </li>
+  <li>
+    <p>
+      <strong><code>:visible_ids</code></strong
+      >: Stores IDs of items currently visible on the page. This is used to
+      optimize broadcasts by only updating the UI when changes affect items that
+      are actually visible to the user. For example, if another user updates a
+      language that isn't on your current page, your UI won't need to process
+      that update.
+    </p>
+  </li>
+  <li>
+    <p>
+      <strong><code>:count_visible_rows</code></strong> represents the number of
+      items currently visible to the user on the page. This value can exceed the
+      <code>per_page</code> limit temporarily when new items are added to the
+      current view. For example, if <code>per_page</code> is set to 10 and a new
+      item is added, <code>:count_visible_rows</code> becomes 11 to accommodate
+      the newly added item. This ensures that the user sees the addition
+      immediately without needing to resort or navigate away. Once the user
+      resorts the list or moves to another page,
+      <code>:count_visible_rows</code> returns to align with the
+      <code>per_page</code> value, ensuring consistency in the pagination view.
+    </p>
+  </li>
+  <li>
+    <p>
+      The <code>:pending_deletion</code> flag is set to <code>true</code> when
+      items are marked as deleted in the UI but have already been removed from
+      the database. When this flag is true, the summary section is grayed out to
+      indicate that the displayed counts may not accurately reflect the current
+      data.
+    </p>
+  </li>
+  <li>
+    <p>
+      <strong>Stream Initialization</strong>: We use <code>stream/3</code> to
+      set up the initial list of languages. We do this in
+      <code>init/2</code> (which is called by <code>mount/3</code>) rather than
+      in <code>handle_params/3</code>. This ensures the stream is established
+      just once when the LiveView mounts, not every time URL parameters change,
+      avoiding unnecessary reloads.
+    </p>
+  </li>
+</ol>
+
+<h3><code>handle_params/3</code></h3>
+<p>
+  Simply passes the URL parameters to <code>apply_action/3</code>, which handles
+  all the view setup based on the current live action.
+</p>
+
+<h3><code>apply_action/3</code></h3>
+<p>
+  Sets up the socket based on the current LiveView action. For all actions, it
+  sets an appropriate page title, then:
+</p>
+<ul>
+  <li>
+    For <code>:edit</code>, loads the specific language to be edited from the
+    database
+  </li>
+  <li>
+    For <code>:new</code>, initializes an empty language struct to be added
+  </li>
+  <li>
+    For <code>:index</code>, clears any language assigns and calls
+    <code>apply_options</code>
+    to handle pagination of the language list
+  </li>
+</ul>
+
+<h3><code>apply_options/3</code></h3>
+<p>
+  Processes pagination parameters and determines if data needs to be reloaded.
+  Uses a three-tier approach for pagination values: URL parameters when user
+  changes page or items per page, existing options when user resets current
+  view, and module defaults when accessed without any pagination parameters.
+  Takes the socket, params, and force_reset flag as arguments, and returns
+  either an updated or unchanged socket.
+</p>
+<p>Here's what happens step by step:</p>
+<ol>
+  <li>
+    <strong>Convert Parameters</strong>:
+    <p>
+      Uses <code>convert_params/2</code> to get pagination values from either
+      URL parameters, existing options, or defaults.
+    </p>
+  </li>
+  <li>
+    <strong>Validate Options</strong>:
+    <p>
+      Ensures pagination values are within valid ranges using
+      <code>validate_options/2</code>.
+    </p>
+  </li>
+  <li>
+    <strong>Check If Reset Is Needed</strong>:
+    <p>We reload the data if any of these are true:</p>
+    <ul>
+      <li>
+        <code>force_reset = true</code> - User clicked "reset" to resort the
+        list
+      </li>
+      <li>
+        <code>valid_options != options</code> - User picked a different page or
+        changed items per page
+      </li>
+      <li>
+        <code>valid_options.page != new_options.page</code> - Page number was
+        adjusted during validation. Imagine you're on penultimate page 5 and
+        delete all its items. If you try to go to last page 6, validation will
+        adjust back to page 5 (now the last page). Even though both options and
+        valid_options say "page 5", we still need to reload to show the correct
+        items for that last page.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <strong>Reload Data and Update Socket</strong>:
+    <p>
+      If any of above checks triggered a reload, fetch fresh data and update all
+      our counts and options.
+    </p>
+  </li>
+</ol>
+
+<h3><code>handle_event/3</code></h3>
+<p>This function handles three main types of user interactions:</p>
+<ul>
+  <li>
+    <strong>"change-per-page"</strong>
+    <p>
+      When users change how many items they want to see per page, two things
+      happen: we update the socket with the new value and update the URL with
+      <code>push_patch</code>. Having the correct settings in the URL means
+      users can bookmark or share their preferred view.
+    </p>
+  </li>
+  <li>
+    <strong>"reset-stream"</strong>
+    <p>
+      After adding, editing, or deleting a language, users see a flash message
+      with a "reset" link. Clicking this link fires the "reset-stream" action
+      that:
+    </p>
+    <ul>
+      <li>
+        Gets fresh data by calling <code>apply_options/3</code> with
+        <code>force_reset=true</code>, which ensures everything is in its proper
+        sorted position
+      </li>
+      <li>Cleans up by removing old flash messages</li>
+    </ul>
+  </li>
+  <li>
+    <strong>"delete"</strong>
+    <p>When users delete a language, we handle it gracefully in two steps:</p>
+    <ul>
+      <li>
+        First, we update all our counts using <code>handle_deleted/2</code>, set
+        <code>:pending_deletion=true</code>, and mark the item as deleted in the
+        UI. The item stays visible (but grayed out) until users navigate away or
+        refresh.
+      </li>
+      <li>
+        Then, we show a flash message with a reset link, encouraging users to
+        refresh their view when they're ready to see the final, sorted list
+        without the deleted item.
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3><code>handle_info/2</code></h3>
+<p>Handles messages that come in asynchronously from two sources:</p>
+<ul>
+  <li>
+    From form components when the current user creates or updates a language
+  </li>
+  <li>From broadcasts when other users make changes</li>
+</ul>
+<ol>
+  <li>
+    <h4>Form Updates (Current User's Actions)</h4>
+    <ul>
+      <li>
+        <strong>Creating a Language:</strong>
+        <p>
+          When the form component emits a
+          <code>{FormComponent, {:created, language}}</code> message, the
+          LiveView invokes <code>handle_created/2</code> to update counts and
+          insert the new language into the stream. A flash message with a reset
+          link is then displayed, allowing the user to refresh and sort the
+          list.
+        </p>
+      </li>
+      <li>
+        <strong>Updating a Language:</strong>
+        <p>
+          Similarly, when the form component sends a
+          <code>{FormComponent, {:updated, language}}</code> message,
+          <code>handle_updated/2</code> is called to update the language in the
+          stream. A flash message confirms the successful update to the user.
+        </p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <h4>Broadcast Updates (Other Users' Actions)</h4>
+    <ul>
+      <li>
+        <strong>Someone Creates a Language:</strong>
+        <p>
+          <code>{PaginatedLanguages, {:created, language}}</code> broadcast is
+          received. The LiveView uses <code>handle_created/2</code> to update
+          counts, add the language's ID to visible_ids (since it will be shown
+          at the top of the current page), and add the language to the stream. A
+          flash message with a reset link notifies the user of the new addition
+          and prompts them to refresh and sort the list.
+        </p>
+      </li>
+      <li>
+        <strong>Someone Updates a Language:</strong>
+        <p>
+          Upon receiving a
+          <code>{PaginatedLanguages, {:updated, language}}</code> broadcast, we
+          first check if the language.id is in socket.assigns.visible_ids. If it
+          is, handle_updated/2 updates the language in the stream and a flash
+          message informs the user. If not, the update is ignored since it
+          doesn't affect the current page view. This optimization reduces
+          unnecessary UI updates and improves performance in scenarios with many
+          concurrent users.
+        </p>
+      </li>
+      <li>
+        <strong>Someone Deletes a Language:</strong>
+        <p>
+          If a language is deleted by another user, a
+          <code>{PaginatedLanguages, {:deleted, language}}</code> message is
+          received. The total count is always updated to reflect the database
+          state. If the deleted item was visible on the current page, the
+          LiveView calls <code>handle_deleted/2</code> to mark the language as
+          deleted in the stream, and shows appropriate notifications: if the
+          deleted language was being edited by the current user, a flash message
+          notifies them of the deletion and closes the edit modal; otherwise, a
+          general flash message informs the user that the language has been
+          deleted and will be removed upon navigation or refresh.
+        </p>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h3>
+  <code>handle_deleted/2</code>, <code>handle_created/2</code>, and
+  <code>handle_updated/2</code>
+</h3>
+<p>
+  Both <code>handle_event/3</code> (user-initiated actions) and
+  <code>handle_info/2</code> (broadcasted actions from other users) utilize
+  these functions.
+</p>
+
+<ul>
+  <li>
+    <strong>Flagging Items:</strong>
+    <p>
+      Each function adds a specific flag to the language
+      struct—<code>:created</code>, <code>:updated</code>, or
+      <code>:deleted</code>. These flags enable the UI to visually distinguish
+      items by applying badges and colors, providing immediate feedback on their
+      status.
+    </p>
+  </li>
+  <li>
+    <strong>Updating Counts:</strong>
+    <p>
+      They adjust various count assignments such as <code>:count_all</code>,
+      <code>:count_all_summary</code>, and <code>:count_visible_rows</code>. For
+      a detailed explanation of how these counts work, refer to the
+      <code>init/2</code> section.
+    </p>
+  </li>
+</ul>
+
+<h3>Helper Functions</h3>
+<ul>
+  <li>
+    <strong><code>get_pagination_url/2</code></strong>
+    <p>
+      Generates URLs for pagination by encoding query parameters. The function
+      accepts options and an optional base path, combining them into a complete
+      URL for navigation.
+    </p>
+  </li>
+  <li>
+    <strong><code>get_flash_message_with_reset_link/1</code></strong>
+    <p>
+      Creates a flash message with an embedded "reload and sort" link, providing
+      users with both feedback and an action to refresh the data state.
+    </p>
+  </li>
+  <li>
+    <strong><code>get_page_summary/4</code></strong>
+    <p>
+      Generates the pagination summary text (e.g., "Showing 1 - 5 of 100") by
+      calculating the correct range based on current page, items per page, and
+      total count.
+    </p>
+  </li>
+  <li>
+    <strong><code>get_row_class/1</code></strong>
+    <p>
+      Determines the appropriate CSS class for table rows based on the language
+      entry's state (created, updated, or deleted), providing visual feedback
+      through different background colors and styles.
+    </p>
+  </li>
+  <li>
+    <strong><code>format_percentage/2</code></strong>
+    <p>
+      Formats numerical values into percentage strings with configurable
+      precision, using the Number.Percentage formatter for consistent display
+      across the application.
+    </p>
+  </li>
+</ul>
+
+<hr />
+
+<h2>index.html.heex</h2>
+
+<p>
+  Beyond standard Phoenix LiveView markup, here are few things worth to mention:
+</p>
+
+<h4>Count Management in UI</h4>
+<p>
+  The template uses different count variables for different UI elements, as
+  explained in the <code>init/2</code> section:
+</p>
+<ul>
+  <li>
+    The summary text uses <code>@count_all_summary</code> to maintain accurate
+    "Showing X of Y" text even when items are marked as deleted but still
+    visible
+  </li>
+  <li>
+    The pagination component uses <code>@count_all_pagination</code> to ensure
+    page numbers remain stable until the user explicitly reloads or navigates
+  </li>
+</ul>
+
+<h4>Navigation Behavior</h4>
+<p>
+  The pagination component includes a hook that automatically scrolls back to
+  the top of the page whenever the page number changes, providing a smoother
+  navigation experience.
+</p>
+
+<h4>Stream Demonstration</h4>
+<p>
+  In the countrycode column, you'll notice:
+  <code>&lt;dd>{Timex.now()}&lt;/dd></code>
+</p>
+<p>
+  This timestamp is included purely for demonstration purposes—it shows when
+  each row was stream-inserted, helping developers understand when and how the
+  stream updates. In a production application, you would typically not include
+  this debugging information.
+</p>
+
+<hr />
+
+<h2>form_component.ex</h2>
+
+<p>
+  The <code>LivePlaygroundWeb.GridsLive.Paginated.FormComponent</code> adds two
+  advanced features to standard Phoenix LiveView form handling: optimistic
+  locking for concurrent updates and dynamic country code suggestions. Let's see
+  how these work together across the component and schema:
+</p>
+
+<h3>Optimistic Locking</h3>
+<p>
+  When multiple users edit the same record simultaneously, we need to prevent
+  one user from accidentally overwriting another's changes. Phoenix and Ecto
+  provide optimistic locking to handle this. Here's how it works:
+</p>
+
+<h4>How to Implement</h4>
+<ol>
+  <li>
+    <p><strong>Add version tracking to your database table:</strong></p>
+    <pre><code>add :lock_version, :integer, default: 0</code></pre>
+  </li>
+  <li>
+    <p>
+      <strong
+        >Add the field to your schema
+        (LivePlayground.PaginatedLanguages.Language):</strong
+      >
+    </p>
+    <pre><code>field :lock_version, :integer, default: 0</code></pre>
+  </li>
+  <li>
+    <p><strong>Add force_change before optimistic_lock:</strong></p>
+    <pre><code>|> force_change(:lock_version, record.lock_version)</code></pre>
+    <p>
+      This forced update ensures version check happens even when the form data
+      itself hasn't changed. Without it, submitting an unchanged form would
+      bypass optimistic locking - if another user had modified the data in the
+      meantime, you wouldn't see a conflict message and the form would
+      incorrectly close as if successful.
+    </p>
+  </li>
+  <li>
+    <p><strong>Add optimistic lock to your changeset:</strong></p>
+    <pre><code>|> optimistic_lock(:lock_version)</code></pre>
+  </li>
+  <li>
+    <p>
+      <strong
+        >Configure update in your context
+        (LivePlayground.PaginatedLanguages):</strong
+      >
+    </p>
+    <pre><code>Repo.update(changeset, stale_error_field: :lock_version)</code></pre>
+    <p>
+      This crucial step ensures that version conflicts appear in
+      <code>changeset.errors[:lock_version]</code>
+    </p>
+  </li>
+  <li>
+    <p><strong>Include the version in your form component:</strong></p>
+    <pre><code>&lt;.input field={@form[:lock_version]} type="hidden" /&gt;</code></pre>
+  </li>
+  <li>
+    <p><strong>Handle version conflicts in your save function:</strong></p>
+    <pre><code>if changeset.errors[:lock_version] do
+  # Someone else updated the record while we were editing
+  latest_language = PaginatedLanguages.get_language!(language.id)
+  # Show the latest version to the user
+  # Let them merge their changes with the new version
+end</code></pre>
+  </li>
+</ol>
+
+<h4>How It Works</h4>
+<p>
+  Let's say two users, Alice and Bob, start editing the same language record:
+</p>
+<ol>
+  <li>Both load the record with <code>lock_version = 1</code></li>
+  <li>
+    Alice saves her changes first. The database updates the record and
+    increments
+    <code>lock_version</code> to 2
+  </li>
+  <li>
+    When Bob tries to save, his form still has <code>lock_version = 1</code>
+  </li>
+  <li>Ecto sees the mismatch and returns a <code>:lock_version</code> error</li>
+  <li>
+    Our code then loads the latest version and lets Bob merge his changes with
+    Alice's updates
+  </li>
+</ol>
+<p>
+  This approach is called "optimistic" because it assumes conflicts are rare and
+  only checks for them at save time, rather than locking the record during the
+  entire edit session.
+</p>
+
+<h3>Country Code Suggestions with Smart Validation</h3>
+<p>
+  Our form needs to both suggest valid country codes and validate the final
+  input. While we could handle these as separate events, we combine them for
+  better user experience. Here's why and how:
+</p>
+
+<p><strong>The Challenge</strong></p>
+<p>
+  If we validated the country code separately from suggestions, users would see
+  "Code not found" errors while typing, even when valid suggestions are being
+  displayed in the autocomplete list. This would be confusing and provide a poor
+  user experience.
+</p>
+
+<p><strong>The Solution</strong></p>
+<p>
+  We combine suggestion lookup and validation in the
+  <code>validate</code> event:
+</p>
+<ul>
+  <li>
+    When matches are found for autocomplete, we skip validation using
+    <code>validate_countrycode_exists: false</code>
+  </li>
+  <li>
+    When no matches exist, we enable validation using
+    <code>validate_countrycode_exists: true</code>
+  </li>
+</ul>
+
+<p><strong>How It Works</strong></p>
+<ol>
+  <li>
+    User starts typing a country code, triggering the
+    <code>validate</code> event
+  </li>
+  <li>We search for matching codes to populate the autocomplete list</li>
+  <li>
+    If matches are found:
+    <ul>
+      <li>Skip database validation</li>
+      <li>User sees suggestions without error messages</li>
+    </ul>
+  </li>
+  <li>
+    If no matches are found:
+    <ul>
+      <li>Perform database validation</li>
+      <li>User sees "Code not found" if input is invalid</li>
+    </ul>
+  </li>
+</ol>
+
+<h3>Improved Form Validation UX</h3>
+<p>
+  Our form handles validation in a way that prevents an overwhelming user
+  experience. We've addressed a common problem with real-time validation:
+</p>
+
+<p><strong>The Challenge</strong></p>
+<p>
+  With standard Phoenix LiveView validation, the form shows error messages for
+  all fields as soon as the user starts typing in <em>any</em> field - including
+  required field errors for fields the user hasn't reached yet. This creates a
+  poor experience where users see multiple red error messages before they've
+  even had a chance to fill out the form.
+</p>
+
+<p><strong>The Solution</strong></p>
+<p>
+  We modified the validation pipeline to separate different types of validation:
+</p>
+
+<pre><code>|> Map.update!(:errors, fn errors ->
+  Enum.reject(errors, fn
+    {_, {_, [validation: :required]}} -> true
+    _ -> false
+  end)
+end)</code></pre>
+
+<p>This approach:</p>
+<ol>
+  <li>Creates a changeset with all validations applied</li>
+  <li>Removes only "required field" errors during typing</li>
+  <li>Keeps other validation errors (like format, type, length)</li>
+  <li>Sets the action to display the remaining errors</li>
+</ol>
+
+<p><strong>How It Works</strong></p>
+<ol>
+  <li>
+    During form interaction, users get immediate feedback on format errors (like
+    invalid email format)
+  </li>
+  <li>
+    Required field errors are suppressed until form submission, preventing
+    premature error messages
+  </li>
+  <li>
+    When the user clicks Save, full validation occurs including required field
+    checks
+  </li>
+</ol>
+
+<p>
+  The <code>Map.update!</code> function specifically modifies the
+  <code>:errors</code> key in the changeset, filtering out required field errors
+  while keeping all others. This surgical approach gives us precise control over
+  which validation messages users see and when they see them.
+</p>
+
+<hr />
+
+<h2>paginated_languages.ex</h2>
+
+<p>
+  <code>LivePlayground.PaginatedLanguages</code> handles three key aspects of
+  our application:
+</p>
+
+<p><strong>Real-time Updates</strong></p>
+<ul>
+  <li>
+    <code>broadcast/2</code> sets up broadcasts for all database changes. Note
+    how create/update/delete functions end with
+    <code>|> broadcast(:created)</code>, <code>|> broadcast(:updated)</code>, or
+    <code>|> broadcast(:deleted)</code>. The broadcast uses
+    <code>broadcast_from</code> with <code>self()</code> to ensure the
+    originating process doesn't receive its own broadcast messages, preventing
+    redundant updates.
+  </li>
+  <li>
+    Provides <code>subscribe/0</code> function that, when called in LiveView's
+    mount, enables the view to receive these broadcasts. This means when any
+    connected user creates, updates, or deletes a language, all other connected
+    users (except the initiator) will see these changes immediately, maintaining
+    efficient real-time synchronization.
+  </li>
+</ul>
+
+<p><strong>Pagination</strong></p>
+<ul>
+  <li>
+    <code>list_languages/1</code> implements efficient database pagination that
+    combines sorting and page slicing in a single query.
+  </li>
+</ul>
+
+<p><strong>Optimistic Locking</strong></p>
+<ul>
+  <li>
+    Configures <code>Repo.update</code> with
+    <code>stale_error_field: :lock_version</code>, which enables version
+    conflict detection. This setting ensures that
+    <code>changeset.errors[:lock_version]</code> will be set in our form
+    component when concurrent update conflicts occur.
+  </li>
+</ul>

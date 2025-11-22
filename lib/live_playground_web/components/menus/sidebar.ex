@@ -109,9 +109,9 @@ defmodule LivePlaygroundWeb.Menus.Sidebar do
       },
       %{
         icon: "hero-table-cells",
-        label: "Grid",
-        path: ~p"/grid/introduction",
-        layout: :grid
+        label: "Grids",
+        path: ~p"/grids/introduction",
+        layout: :grids
       },
       %{
         icon: "hero-clipboard-document-list",

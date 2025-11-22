@@ -1,0 +1,44 @@
+<.header>
+  Listing Languages
+  <:subtitle>
+    Basic Phoenix LiveView generated with mix phx.gen.live - the starting point for all enhancements.
+  </:subtitle>
+  <:actions>
+    <.link patch={~p"/grids/generated/new"}>
+      <.button>New Language</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="languages"
+  rows={@streams.languages}
+  row_click={fn {_id, language} -> JS.navigate(~p"/grids/generated/#{language}") end}
+>
+  <:col :let={{_id, language}} label="Countrycode">{language.countrycode}</:col>
+  <:col :let={{_id, language}} label="Isofficial">{language.isofficial}</:col>
+  <:col :let={{_id, language}} label="Language">{language.language}</:col>
+  <:col :let={{_id, language}} label="Percentage">{language.percentage}</:col>
+  <:action :let={{_id, language}}>
+    <div class="sr-only">
+      <.link navigate={~p"/grids/generated/#{language}"}>Show</.link>
+    </div>
+    <.link patch={~p"/grids/generated/#{language}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, language}}>
+    <.link phx-click={JS.push("delete", value: %{id: language.id}) |> hide("##{id}")} data-confirm="Are you sure?">
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="language-modal" show on_cancel={JS.navigate(~p"/grids/generated")}>
+  <.live_component
+    module={LivePlaygroundWeb.GridsLive.Generated.FormComponent}
+    id={@language.id || :new}
+    title={@page_title}
+    action={@live_action}
+    language={@language}
+    patch={~p"/grids/generated"}
+  />
+</.modal>
