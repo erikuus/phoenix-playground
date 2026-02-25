@@ -1,3 +1,5 @@
+> **⚠️ DEPRECATED:** This repository is deprecated. It has been migrated to Phoenix 1.8 and the new repository is available at https://github.com/erikuus/phoenix-playground-18
+
 # Phoenix LiveView Playground
 
 A collection of Phoenix LiveView patterns, components, and tutorials demonstrating various implementation approaches and common use cases.
